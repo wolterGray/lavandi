@@ -29,20 +29,22 @@ function PriceSection({services}) {
           Cennik
         </SectionTitle>
 
-        <div id="prices" className="mx-auto rounded-3xl  max-w-4xl">
+        <div id="prices" className="mx-auto rounded-3xl">
           {/* Таб кнопки */}
           <div className="flex justify-center gap-4 mb-8 flex-wrap">
             {["30", "60", "75", "90", "120"].map((time) => (
               <button
                 key={time}
                 onClick={() => setSelectedTime(time)}
-                className={`relative px-6 py-2 text-lg font-medium rounded-full border 
-                transition-all duration-300 overflow-hidden
-                ${
-                  selectedTime === time
-                    ? "text-primaryColor-950 font-extrabold bg-primaryColor-500  border-primaryColor-950"
-                    : "text-primaryColor-500/30 border-primaryColor-500/30 hover:bg-primaryColor-500 hover:text-primaryColor-950"
-                }`}>
+                className={`
+    relative w-full max-w-[100px] sm:max-w-[150px] px-3 py-2 sm:px-6 sm:py-3 text-sm sm:text-lg font-semibold rounded-full border
+    transition-all duration-300 overflow-hidden text-center
+    ${
+      selectedTime === time
+        ? "text-primaryColor-950 bg-primaryColor-500 border-primaryColor-950"
+        : "text-primaryColor-500/40 border-primaryColor-500/40 hover:bg-primaryColor-500 hover:text-primaryColor-950"
+    }
+  `}>
                 {time} min
               </button>
             ))}
