@@ -73,14 +73,14 @@ export default function Footer({navItems}) {
           </h3>
           <div className="flex space-x-6">
             <a
-              href="https://facebook.com"
+              href="https://facebook.com/lavandi"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primaryColor-500 hover:text-primaryColor-300 transition-colors duration-300 text-2xl">
               <FaFacebookF />
             </a>
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/lavandi.warszawa/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primaryColor-500 hover:text-primaryColor-300 transition-colors duration-300 text-2xl">
