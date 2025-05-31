@@ -21,6 +21,7 @@ export default function CarouselServices({services}) {
         grabCursor={true}
         centeredSlides={true}
         slidesPerView={"auto"}
+        
         coverflowEffect={{
           rotate: 50,
           stretch: 0,
@@ -28,9 +29,9 @@ export default function CarouselServices({services}) {
           modifier: 1,
           slideShadows: false,
         }}
-        pagination={false}
+        pagination={{clickable: true}}
         modules={[EffectCoverflow, Pagination]}
-        className="carousel">
+        className="carousel pb-10">
         {services.map(({img, title}) => (
           <SwiperSlide key={title}>
             <div className=" select-none">

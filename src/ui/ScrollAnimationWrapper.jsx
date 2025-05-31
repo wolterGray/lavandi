@@ -10,7 +10,7 @@ export default function ScrollAnimationWrapper({
   const controls = useAnimation();
   const [ref, inView] = useInView({
     triggerOnce: once,
-    rootMargin: "-150px 0px",
+    rootMargin: "-100px 0px",
   });
 
   React.useEffect(() => {

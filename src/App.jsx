@@ -22,58 +22,51 @@ export default function App() {
     {
       title: "Masaż klasyczny",
       time: [30, 60, 90, 120],
-      price: [120, 180, 240, 290],
+      price: [170, 225, 245, 330, 420],
       desc: "Klasyczny masaż dla odprężenia i poprawy krążenia.",
       img: "/services-img/1.webp",
     },
     {
       title: "Masaż sportowy",
-      time: [30, 60, 90, 120],
-      price: [140, 200, 260, 310],
+      time: [30, 60, 75, 90, 120],
+      price: [170, 225, 245, 330, 420],
       desc: "Intensywny sportowy masaż dla osób aktywnych fizycznie.",
       img: "/services-img/2.webp",
     },
     {
       title: "Masaż relaksacyjny",
-      time: [30, 60, 90, 120],
-      price: [130, 190, 250, 300],
+      time: [30, 60, 75, 90, 120],
+      price: [170, 225, 245, 330, 420],
       desc: "Relakscyjny masaż dla redukcji stresu i napięcia.",
       img: "/services-img/3.webp",
     },
     {
       title: "Masaż limfatyczny",
-      time: [30, 60, 90, 120],
-      price: [130, 190, 250, 300],
+      time: [30, 60, 75, 90, 120],
+      price: [170, 225, 245, 330, 420],
       desc: "Masaż wspomagający układ limfatyczny i detoks organizmu.",
       img: "/services-img/4.webp",
     },
     {
       title: "Masaż antycellulitowy",
-      time: [30, 60, 90, 120],
-      price: [140, 200, 260, 310],
+      time: [30, 60, 75, 90, 120],
+      price: [170, 225, 245, 330, 420],
       desc: "Specjalistyczny masaż antycellulitowy, poprawiający wygląd skóry i redukujący cellulit.",
       img: "/services-img/5.webp",
     },
     {
-      title: "Masaż twarzy",
+      title: "Masaż twarzy i glowy",
       time: [30, 60],
-      price: [100, 160],
+      price: [149, 220],
       desc: "Delikatny masaż poprawiający krążenie i napięcie skóry twarzy.",
       img: "/services-img/6.webp",
     },
     {
       title: "Masaż autorski",
-      time: [60, 90, 120],
+      time: [60, 75, 90, 120],
       price: [200, 260, 310],
       desc: "Indywidualnie autorski dopasowany masaż łączący różne techniki.",
       img: "/services-img/7.webp",
-    },
-    {
-      title: "Masaż japoński Kobido",
-      time: [60, 90],
-      price: [160, 210],
-      desc: "Luksusowy liftingujący masaż Kobido, dla twarzy z tradycji japońskiej.",
-      img: "/services-img/8.webp",
     },
   ];
   const navItems = [
@@ -92,7 +85,7 @@ export default function App() {
         {/* Hero */}
         <Home />
       </div>
-      <div className="font-comforta text- max-w-6xl mx-auto">
+      <div className="font-comforta  container mx-auto px-4">
         {/* Services */}
         <MassageServices services={services} />
 
