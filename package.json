@@ -6,13 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "generate-seo": "node scripts/generateSeoFiles.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
     "framer-motion": "^12.15.0",
-    "gatsby-plugin-robots-txt": "^1.8.0",
-    "gatsby-plugin-sitemap": "^6.14.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-helmet": "^6.1.0",
@@ -29,8 +28,10 @@
     "eslint-plugin-react": "^7.35.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
+    "generate-robotstxt": "^8.0.3",
     "globals": "^15.9.0",
     "postcss": "^8.4.45",
+    "sitemap": "^8.0.0",
     "tailwindcss": "^3.4.10",
     "vite": "^5.4.1",
     "vite-plugin-imagemin": "^0.6.1"
