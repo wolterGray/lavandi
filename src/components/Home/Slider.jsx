@@ -31,10 +31,17 @@ function Slider() {
       title: "Do 20% rabatu na wszystkie masaże w Lavandi!",
       news: "Skorzystaj z naszej specjalnej oferty i zrelaksuj się z 20% zniżką na wszystkie masaże. Profesjonalna opieka i wyjątkowa atmosfera czekają na Ciebie. Promocja trwa do odwołania — nie przegap!",
     },
+    {
+      img: "/massage/4.webp",
+      title: "Masaż marzeń w Lavandi – czas na prawdziwy relaks",
+      news: "Zapomnij o codziennym stresie i pozwól sobie na chwilę prawdziwego odprężenia. Nasz masaż marzeń w Lavandi to połączenie delikatnych technik i profesjonalnej troski, które odmienią Twoje ciało i umysł. Odwiedź nas i przekonaj się, jak wygląda prawdziwa harmonia i regeneracja.",
+    },
   ];
 
   return (
     <div className="relative w-full h-[80vh] rounded-3xl overflow-hidden z-10">
+      <h1 className="sr-only">Najlepszy masaż w Warszawie</h1>
+
       {/* Навигационные стрелки */}
       <div className="absolute z-30 w-full top-1/2 -translate-y-1/2 flex justify-between  text-white text-4xl sm:text-5xl pointer-events-none">
         <span
@@ -80,9 +87,9 @@ function Slider() {
                 animate={{translateY: 0}}
                 transition={{duration: 1, delay: 1.2, ease: "easeOut"}}
                 className="absolute z-10 bottom-32 left-6 sm:left-16 max-w-2xl text-white">
-                <h1 className="text-3xl font-comforta sm:text-5xl font-thin mb-4">
+                <h2 className="text-3xl font-comforta sm:text-5xl font-thin mb-4">
                   {title}
-                </h1>
+                </h2>
                 <p className="text-base sm:text-lg">{news}</p>
               </motion.div>
 
