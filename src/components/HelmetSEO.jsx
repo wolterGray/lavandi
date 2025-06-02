@@ -7,7 +7,13 @@ export default function HelmetSEO() {
 
       <meta
         name="description"
-        content="Lavandi oferuje profesjonalne masaże w Warszawie: relaksacyjny, klasyczny, limfodrenaż, sportowy, antycellulitowy, twarzy oraz masaż autorski. Umów się online i poczuj ulgę i odprężenie."
+        content="Lavandi – Najlepszy masaż w Warszawie 🌟
+Zanurz się w atmosferze relaksu i troski o siebie. W Lavandi czekają na Ciebie profesjonalne masaże, które naprawdę działają: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, masaż twarzy oraz unikalny masaż autorski, dopasowany do Twoich indywidualnych potrzeb.
+
+Nie tylko masujemy – uwalniamy od napięcia, przywracamy równowagę i lekkość.
+Umów się online i poczuj różnicę już po pierwszej wizycie.
+
+"
       />
       <meta
         name="keywords"
