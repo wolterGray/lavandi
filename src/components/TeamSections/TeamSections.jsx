@@ -11,7 +11,7 @@ function TeamSections() {
     },
     {
       name: "Volodymyr",
-      img: "/team/1.jpg",
+      img: "/team/1.webp",
       desc: "Administrator",
     },
   ];

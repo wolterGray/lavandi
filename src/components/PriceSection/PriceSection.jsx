@@ -78,20 +78,16 @@ function PriceSection({services}) {
                             animate={{opacity: 1}}
                             exit={{opacity: 0}}
                             transition={{duration: 0.5, ease: "easeInOut"}}
-                            className="p-3 sm:p-4 md:p-6 overflow-hidden rounded-2xl transition-all duration-300 flex justify-between items-center border border-primaryColor-500/60">
-                            <div>
-                              <h3 className="text-xl font-semibold text-mainColor mb-1">
+                            className="p-1 sm:p-4 md:p-6 overflow-hidden  transition-all duration-300 flex justify-between items-center border-b border-dotted text-primaryColor-500 border-b-primaryColor-500/60 text-md sm:text-xl">
+                            <div className="flex justify-between w-full">
+                              <h3 className=" font-semibold  mb-1">
                                 {service.title}
                               </h3>
-                            </div>
-                            <div className="text-right">
-                              <span className="flex items-center gap-1 font-bold text-lg">
-                                <FaClock /> {service.time[timeIdx]} min
-                              </span>
-                              <p className="text-xl font-bold text-primaryColor-500">
+                              <p className=" font-bold text-primaryColor-500">
                                 {service.price[timeIdx]} zł
                               </p>
                             </div>
+                            
                           </motion.div>
                         );
                       })}

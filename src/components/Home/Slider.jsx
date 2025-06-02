@@ -43,7 +43,7 @@ function Slider() {
       <h1 className="sr-only">Najlepszy masaż w Warszawie</h1>
 
       {/* Навигационные стрелки */}
-      <div className="absolute z-30 w-full top-1/2 -translate-y-1/2 flex justify-between  text-white text-4xl sm:text-5xl pointer-events-none">
+      <div className="absolute z-30 w-full top-1/2 -translate-y-1/2 flex justify-between  text-white text-2xl sm:text-5xl pointer-events-none">
         <span
           ref={prevRef}
           className="pointer-events-auto active:-translate-x-1 cursor-pointer hover:scale-110 transition-transform hover:text-primaryColor-500">
