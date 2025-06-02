@@ -43,7 +43,12 @@ function ServiceCard({img, title, desc}) {
   return (
     <div className="select-none">
       <div className="text-center">
-        <div className="relative rounded-3xl overflow-hidden h-60 cursor-pointer group">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen(!open);
+          }}
+          className="relative rounded-3xl overflow-hidden h-60 cursor-pointer group">
           <img src={img} alt={title} className="w-full h-full object-cover" />
 
           {/* Toggle icon */}
@@ -51,12 +56,8 @@ function ServiceCard({img, title, desc}) {
             className="absolute top-2 right-2 z-10"
             initial={{opacity: 0}}
             animate={{opacity: 1}}
-            transition={{delay: 0.2}}
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpen(!open);
-            }}>
-            <div className="bg-black/50 rounded-full text-2xl text-primaryColor-500 p-2 hover:bg-black/80 shadow-md">
+            transition={{delay: 0.2}}>
+            <div className="bg-black/50  rounded-full text-2xl text-primaryColor-500 p-2 hover:bg-black/80 shadow-md">
               {open ? (
                 // Close modern eye off icon
                 <LuEyeClosed />
@@ -71,13 +72,19 @@ function ServiceCard({img, title, desc}) {
           <AnimatePresence>
             {open && (
               <motion.div
-                className="absolute inset-0 bg-black/70 text-white flex items-center justify-center p-4"
+                className="absolute inset-0  bg-black/70 text-white flex items-center justify-center p-4"
                 initial={{opacity: 0}}
                 animate={{opacity: 1}}
                 exit={{opacity: 0}}
-                transition={{duration: 0.3}}
-                onClick={(e) => e.stopPropagation()}>
-                <p className="text-base leading-relaxed">{desc}</p>
+                transition={{duration: 0.3}}>
+                <motion.p
+                  initial={{scale: 0, opacity: 0}}
+                  animate={{scale: 1, opacity: 1}}
+                  transition={{duration: 0.6}}
+                  exit={{scale: 0, opacity: 0}}
+                  className="text-lg font-semibold  leading-relaxed">
+                  {desc}
+                </motion.p>
               </motion.div>
             )}
           </AnimatePresence>
