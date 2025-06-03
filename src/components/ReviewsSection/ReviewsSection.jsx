@@ -78,7 +78,7 @@ export default function ReviewsSection() {
       }}
       id="opinie">
       {/* Чёрный фильтр поверх картинки */}
-      <div className="absolute inset-0 backdrop-blur-md bg-black bg-opacity-80 pointer-events-none z-0" />
+      <div className="absolute inset-0 backdrop-blur-sm bg-black bg-opacity-80 pointer-events-none z-0" />
 
       {/* Контент поверх фильтра */}
       <div className="relative z-10 container mx-auto px-4 py-20">
