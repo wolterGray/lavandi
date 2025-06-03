@@ -30,7 +30,7 @@ function AboutSection() {
       ref={ref}
       initial={{opacity: 0, y: 200}}
       animate={controls}
-      className="max-w-7xl mx-auto mb-10 px-4 sm:px-6 select-none">
+      className="custom-cont max-w-7xl mx-auto  px-4 sm:px-6 select-none">
       <SectionTitle>O nas</SectionTitle>
 
       <div

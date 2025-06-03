@@ -16,6 +16,7 @@ import TeamSections from "./components/TeamSections/TeamSections";
 import BookingSection from "./components/BookingSection/BookingSection";
 import Footer from "./components/Footer/Footer";
 import HelmetSEO from "./components/HelmetSEO";
+import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 
 export default function App() {
   const services = [
@@ -93,12 +94,15 @@ export default function App() {
         {/* Hero */}
         <Home />
       </div>
-      <div className="font-comforta  container mx-auto px-4">
+      <div className="font-comforta   mx-auto ">
         {/* Services */}
         <MassageServices services={services} />
 
         {/* Prices */}
         <PriceSection services={services} />
+
+        {/* Reviews */}
+        <ReviewsSection />
 
         {/* About */}
         <AboutSection />

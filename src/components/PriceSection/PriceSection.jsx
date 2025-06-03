@@ -23,7 +23,7 @@ function PriceSection({services}) {
   }
 
   return (
-    <section className="relative select-none  ">
+    <section className="custom-cont relative select-none  pb-24 sm:pb-24">
       <ScrollAnimationWrapper>
         <SectionTitle className="text-4xl font-bold text-center">
           Cennik
@@ -87,7 +87,6 @@ function PriceSection({services}) {
                                 {service.price[timeIdx]} zł
                               </p>
                             </div>
-                            
                           </motion.div>
                         );
                       })}

@@ -16,12 +16,14 @@ function TeamSections() {
     },
   ];
   return (
-    <section id="team" className="my-10  select-none">
+    <section id="team" className="custom-cont pb-24 sm:pb-24  select-none">
       <ScrollAnimationWrapper>
         <SectionTitle>Nasz zespół</SectionTitle>
         <div className="flex items-center justify-center ">
           {teamInfo.map((person) => (
-            <div key={person.img} className="w-64 text-center flex flex-col items-center space-y-3">
+            <div
+              key={person.img}
+              className="w-64 text-center flex flex-col items-center space-y-3">
               <div className="w-36 h-36 border-2 border-goldMuted rounded-full overflow-hidden">
                 <img
                   loading="lazy"

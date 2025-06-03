@@ -5,7 +5,7 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 
 function MassageServices({services}) {
   return (
-    <section id="services">
+    <section className="custom-cont" id="services">
       <ScrollAnimationWrapper>
         <SectionTitle>Usługi</SectionTitle>
         <CarouselServices services={services} />
