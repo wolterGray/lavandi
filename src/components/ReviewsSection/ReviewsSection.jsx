@@ -48,7 +48,7 @@ const ReviewCard = ({name, text, rating}) => (
     whileInView={{opacity: 1, y: 0}}
     transition={{duration: 0.5}}
     viewport={{once: true}}
-    className="relative bg-[#1c1c1c] border border-[#333] rounded-2xl p-6 shadow-md h-full flex flex-col gap-4">
+    className="relative bg-black/50 border border-[#333] rounded-2xl p-6 shadow-md h-full flex flex-col gap-4">
     <div className="flex items-center gap-4">
       <div className="bg-[#292929] text-white w-12 h-12 flex items-center justify-center rounded-full text-lg font-semibold">
         {getInitials(name)}
