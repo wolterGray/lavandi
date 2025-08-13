@@ -59,9 +59,9 @@ export default function Footer({navItems}) {
             </li>
             <li>
               <a
-                href="mailto:lavandi.warsaw@gmail.com"
+                href="mailto:nuar.contact@gmail.com"
                 className="hover:text-primaryColor transition-colors duration-300">
-                lavandi.warsaw@gmail.com
+                nuar.contact@gmail.com
               </a>
             </li>
           </ul>

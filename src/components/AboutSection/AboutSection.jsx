@@ -22,7 +22,11 @@ function AboutSection() {
 
   React.useEffect(() => {
     if (inView) {
-      controls.start({opacity: 1, y: 0, transition: {duration: 0.8, delay: 0.5}});
+      controls.start({
+        opacity: 1,
+        y: 0,
+        transition: {duration: 0.8, delay: 0.5},
+      });
     }
   }, [inView, controls]);
   return (
@@ -68,8 +72,8 @@ function AboutSection() {
           <ContactItem
             icon={<FaEnvelope className={teamColor + " text-xl"} />}
             label="Email"
-            value="lavandi.warsaw@gmail.com"
-            href="mailto:lavandi.warsaw@gmail.com"
+            value="nuar.contact@gmail.com"
+            href="mailto:nuar.contact@gmail.com"
           />
         </ContactCard>
 
@@ -90,14 +94,14 @@ function AboutSection() {
           <ContactItem
             icon={<FaInstagram className={teamColor + " text-xl"} />}
             label="Instagram"
-            value="@lavandi_massage"
-            href="https://www.instagram.com/lavandi.warszawa/"
+            value="@nuar_massage"
+            href="https://www.instagram.com/nuar_massage/"
           />
           <ContactItem
             icon={<FaFacebookF className={teamColor + " text-xl"} />}
             label="Facebook"
-            value="Lavandi Massage"
-            href="https://facebook.com/lavandi"
+            value="NUAR Massage"
+            href="https://www.facebook.com/nuarmassage/"
           />
         </ContactCard>
       </div>

@@ -3,48 +3,59 @@ import {Helmet} from "react-helmet";
 export default function HelmetSEO() {
   return (
     <Helmet>
-      <title>Lavandi – Studio masażu w Warszawie</title>
+      {/* SEO Title */}
+      <title>NUAR – Najlepszy masaż premium w Warszawie</title>
 
+      {/* Meta Description (до 160 символов) */}
       <meta
         name="description"
-        content="Lavandi – Najlepszy masaż w Warszawie 🌟
-Zanurz się w atmosferze relaksu i troski o siebie. W Lavandi czekają na Ciebie profesjonalne masaże, które naprawdę działają: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, masaż twarzy oraz unikalny masaż autorski, dopasowany do Twoich indywidualnych potrzeb.
-
-Nie tylko masujemy – uwalniamy od napięcia, przywracamy równowagę i lekkość.
-Umów się online i poczuj różnicę już po pierwszej wizycie.
-
-"
+        content="NUAR – Najlepszy masaż premium w Warszawie 🌟 Luksusowe masaże relaksacyjne, klasyczne, sportowe, limfatyczne, antycellulitowe, twarzy i autorskie."
       />
+
+      {/* Meta Keywords (не для Google, но для других поисковиков) */}
       <meta
         name="keywords"
-        content="masaż, masaż Warszawa, masaż relaksacyjny, masaż klasyczny, limfodrenaż, masaż sportowy, masaż antycellulitowy, masaż twarzy, masaż autorski, gabinet masażu, Lavandi, Śródmieście"
+        content="masaż Warszawa, masaż premium, masaż relaksacyjny, masaż klasyczny, limfodrenaż, masaż sportowy, masaż antycellulitowy, masaż twarzy, masaż autorski, gabinet masażu, NUAR, Śródmieście"
       />
+
+      {/* Индексация */}
       <meta name="robots" content="index, follow" />
-      <meta name="language" content="pl" />
 
       {/* Open Graph для соцсетей */}
       <meta
         property="og:title"
-        content="Lavandi – Studio masażu w Warszawie | Profesjonalne masaże relaksacyjne i specjalistyczne"
+        content="NUAR – Najlepszy masaż premium w Warszawie"
       />
       <meta
         property="og:description"
-        content="Profesjonalne masaże w Warszawie: relaksacyjny, klasyczny, limfodrenaż, sportowy, antycellulitowy, twarzy oraz autorski. Umów się online w Lavandi."
+        content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski. Poczuj różnicę od pierwszej wizyty."
       />
       <meta property="og:type" content="website" />
-      <meta property="og:url" content="https://lavandi.pl" />
+      <meta property="og:url" content="https://nuarr.pl" />
       <meta property="og:locale" content="pl_PL" />
-      <meta property="og:image" content="https://lavandi.pl/LavandiLogo.svg" />
+      <meta property="og:image" content="https://nuarr.pl/og-image.jpg" />
 
-      {/* Schema.org – микроразметка для Google */}
+      {/* Twitter Cards (для X/Twitter) */}
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta
+        name="twitter:title"
+        content="NUAR – Najlepszy masaż premium w Warszawie"
+      />
+      <meta
+        name="twitter:description"
+        content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski."
+      />
+      <meta name="twitter:image" content="https://nuarr.pl/og-image.jpg" />
+
+      {/* Schema.org JSON-LD */}
       <script type="application/ld+json">
         {`
         {
           "@context": "https://schema.org",
           "@type": "LocalBusiness",
-          "name": "Lavandi",
-          "image": "https://lavandi.pl/LavandiLogo.svg",
-          "description": "Profesjonalne masaże w Warszawie: relaksacyjny, klasyczny, limfodrenaż, sportowy, antycellulitowy, twarzy oraz autorski.",
+          "name": "NUAR",
+          "image": "https://nuarr.pl/logo_nuar.png",
+          "description": "Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski.",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "ul. Świętojerska 5/7",
@@ -53,12 +64,15 @@ Umów się online i poczuj różnicę już po pierwszej wizycie.
             "addressCountry": "PL"
           },
           "telephone": "+48 452 402 006",
-          "url": "https://lavandi.pl",
+          "url": "https://nuarr.pl",
           "sameAs": [
-            "https://www.facebook.com/lavandi.warszawa",
-            "https://www.instagram.com/profile.php?id=61567307305834&locale=pl_PL"
+            "https://www.facebook.com/nuarmassage",
+            "https://www.instagram.com/nuar_massage"
           ],
-          "openingHours": "Mo-Fr 09:00-22:00, Sa 10:00-20:00"
+          "openingHours": [
+            "Mo-Fr 09:00-22:00",
+            "Sa 10:00-20:00"
+          ]
         }
         `}
       </script>
