@@ -57,7 +57,7 @@ function ServiceCard({img, title, desc}) {
             initial={{opacity: 0}}
             animate={{opacity: 1}}
             transition={{delay: 0.2}}>
-            <div className="bg-black/50  rounded-full text-2xl text-primaryColor-500 p-2 hover:bg-black/80 shadow-md">
+            <div className="bg-black/50  rounded-full text-2xl text-primaryColor p-2 hover:bg-black/80 shadow-md">
               {open ? (
                 // Close modern eye off icon
                 <LuEyeClosed />

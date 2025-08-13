@@ -41,8 +41,8 @@ function PriceSection({services}) {
     transition-all duration-300 overflow-hidden text-center
     ${
       selectedTime === time
-        ? "text-primaryColor-950 bg-primaryColor-500 border-primaryColor-950"
-        : "text-primaryColor-500/40 border-primaryColor-500/40 hover:bg-primaryColor-500 hover:text-primaryColor-950"
+        ? "text-black bg-primaryColor border-primaryColor"
+        : "text-primaryColor border-primaryColor hover:bg-primaryColor hover:text-black"
     }
   `}>
                 {time} min
@@ -78,12 +78,12 @@ function PriceSection({services}) {
                             animate={{opacity: 1}}
                             exit={{opacity: 0}}
                             transition={{duration: 0.5, ease: "easeInOut"}}
-                            className="p-1 sm:p-4 md:p-6 overflow-hidden  transition-all duration-300 flex justify-between items-center border-b border-dotted text-primaryColor-500 border-b-primaryColor-500/60 text-md sm:text-xl">
+                            className="p-1 sm:p-4 md:p-6 overflow-hidden  transition-all duration-300 flex justify-between items-center border-b border-dotted text-white border-b-primaryColor/60 text-md sm:text-xl">
                             <div className="flex justify-between w-full">
                               <h3 className=" font-semibold  mb-1">
                                 {service.title}
                               </h3>
-                              <p className=" font-bold text-primaryColor-500">
+                              <p className=" font-bold text-primaryColor">
                                 {service.price[timeIdx]} zł
                               </p>
                             </div>

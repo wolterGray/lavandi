@@ -46,12 +46,12 @@ function Slider() {
       <div className="absolute z-30 w-full top-1/2 -translate-y-1/2 flex justify-between  text-white text-2xl sm:text-5xl pointer-events-none">
         <span
           ref={prevRef}
-          className="pointer-events-auto active:-translate-x-1 cursor-pointer hover:scale-110 transition-transform hover:text-primaryColor-500">
+          className="pointer-events-auto active:-translate-x-1 cursor-pointer hover:scale-110 transition-transform hover:text-primaryColor">
           <GoArrowLeft />
         </span>
         <span
           ref={nextRef}
-          className="pointer-events-auto hover:text-primaryColor-500 cursor-pointer hover:scale-110 transition-transform active:translate-x-1">
+          className="pointer-events-auto hover:text-primaryColor cursor-pointer hover:scale-110 transition-transform active:translate-x-1">
           <GoArrowRight />
         </span>
       </div>

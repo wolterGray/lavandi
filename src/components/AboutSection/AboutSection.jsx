@@ -107,7 +107,7 @@ function AboutSection() {
 
 function ContactCard({title, children}) {
   return (
-    <div className="border border-primaryColor-500/20  rounded-3xl p-6 shadow-xl backdrop-blur-sm h-full">
+    <div className="border border-primaryColor/20  rounded-3xl p-6 shadow-xl backdrop-blur-sm h-full">
       <h3 className="text-lg font-semibold text-goldMuted tracking-wide mb-4 uppercase">
         {title}
       </h3>
@@ -121,8 +121,8 @@ function ContactItem({icon, label, value, href}) {
     <div className="flex items-start gap-3">
       <div>
         <div className="flex items-center space-x-2 mb-2 font-extrabold">
-          <span className="text-primaryColor-500">{icon}</span>
-          <span className="text-sm font-bold text-primaryColor-500 uppercase tracking-wide">
+          <span className="text-primaryColor">{icon}</span>
+          <span className="text-sm font-bold text-primaryColor uppercase tracking-wide">
             {label}
           </span>
         </div>

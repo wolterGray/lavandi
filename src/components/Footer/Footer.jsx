@@ -1,6 +1,7 @@
 import {FaFacebookF, FaInstagram, FaTwitter} from "react-icons/fa";
-import LogoLavandi from "../../ui/LogoLavandi";
+
 import {Link} from "react-scroll";
+import LogoNuar from "../../ui/LogoNuar";
 
 export default function Footer({navItems}) {
   return (
@@ -9,7 +10,7 @@ export default function Footer({navItems}) {
         {/* Kolumna 1: Logo i opis */}
         <div>
           <div className="w-32 sm:w-40 lg:w-48">
-            <LogoLavandi />
+            <LogoNuar />
           </div>
           <p className="text-sm text-neutral-400 leading-relaxed max-w-sm">
             Premium salon masażu w Warszawie. Harmonia, relaks i troska o ciało.
@@ -27,7 +28,7 @@ export default function Footer({navItems}) {
                   smooth={true}
                   duration={500}
                   offset={-200}
-                  className="hover:text-primaryColor-500 transition-colors duration-300"
+                  className="hover:text-primaryColor transition-colors duration-300"
                   tabIndex={0}>
                   {label}
                 </Link>
@@ -45,21 +46,21 @@ export default function Footer({navItems}) {
                 href="https://maps.app.goo.gl/dgUhaixrhany5gm1A"
                 target="_blank"
                 rel="noopener noreferrer"
-                className=" hover:text-primaryColor-500 transition-colors duration-300 ">
+                className=" hover:text-primaryColor transition-colors duration-300 ">
                 ul. Świętojerska 5/7, Warszawa
               </a>
             </li>
             <li>
               <a
                 href="tel:+48452402006"
-                className="hover:text-primaryColor-500 transition-colors duration-300">
+                className="hover:text-primaryColor transition-colors duration-300">
                 +48 452-402-006
               </a>
             </li>
             <li>
               <a
                 href="mailto:lavandi.warsaw@gmail.com"
-                className="hover:text-primaryColor-500 transition-colors duration-300">
+                className="hover:text-primaryColor transition-colors duration-300">
                 lavandi.warsaw@gmail.com
               </a>
             </li>
@@ -76,14 +77,14 @@ export default function Footer({navItems}) {
               href="https://facebook.com/lavandi"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primaryColor-500 hover:text-primaryColor-300 transition-colors duration-300 text-2xl">
+              className="text-primaryColor hover:text-primaryColor/80 transition-colors duration-300 text-2xl">
               <FaFacebookF />
             </a>
             <a
               href="https://www.instagram.com/lavandi.warszawa/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primaryColor-500 hover:text-primaryColor-300 transition-colors duration-300 text-2xl">
+              className="text-primaryColor hover:text-primaryColor/80 transition-colors duration-300 text-2xl">
               <FaInstagram />
             </a>
           </div>

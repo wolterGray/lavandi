@@ -93,7 +93,7 @@ export default function ReviewsSection() {
 
           <p className="text-center pb-10 text-xl italic text-white">
             Ponad 50 pozytywnych opinii na{" "}
-            <span className="text-primaryColor-500 border-b-primaryColor-500 border-b">
+            <span className="text-primaryColor border-b-primaryColor border-b">
               <a
                 target="_blank"
                 rel="noopener noreferrer"

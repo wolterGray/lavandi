@@ -34,7 +34,7 @@ function TeamSections() {
               </div>
               <div>
                 <h3 className="text-xl font-bold">{person.name}</h3>
-                <p className="text-primaryColor-500">{person.desc}</p>
+                <p className="text-primaryColor">{person.desc}</p>
               </div>
             </div>
           ))}

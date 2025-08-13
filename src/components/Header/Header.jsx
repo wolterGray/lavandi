@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import CustomButton from "../../ui/CustomButton";
 import { Link } from "react-scroll";
-import LogoLavandi from "../../ui/LogoLavandi";
+
 import { motion } from "framer-motion";
+import LogoNuar from "../../ui/LogoNuar";
 
 const langList = [
   { lang: "UA", iconPath: "/lang-icon/ua.svg" },
@@ -85,7 +86,7 @@ export default function Header({ navItems }) {
             <div className="w-full h-full flex items-center justify-between px-4">
               {/* Левая часть */}
               <div className="flex items-center space-x-6 lg:space-x-16 overflow-hidden">
-                <LogoLavandi />
+                <LogoNuar />
 
                 <nav className="hidden lg:block" aria-label="Główna nawigacja">
                   <ul className="flex space-x-10 whitespace-nowrap">
@@ -106,7 +107,7 @@ export default function Header({ navItems }) {
                         >
                           {label}
                           <span
-                            className={`absolute bottom-0 left-1/2 h-px w-full bg-primaryColor-500 transition-transform duration-300 origin-center transform ${
+                            className={`absolute bottom-0 left-1/2 h-px w-full bg-primaryColor transition-transform duration-300 origin-center transform ${
                               hovered === i ? "scale-x-100" : "scale-x-0"
                             } -translate-x-1/2`}
                           />
