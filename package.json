@@ -3,16 +3,14 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://woltergray.github.io/lavandi",
   "scripts": {
-    "predeploy": "yarn build",
-    "deploy": "gh-pages -d dist",
     "dev": "vite",
     "build": "vite build",
     "generate-seo": "node scripts/generateSeoFiles.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
+  
   "dependencies": {
     "framer-motion": "^12.15.0",
     "react": "^18.3.1",
@@ -32,7 +30,6 @@
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "generate-robotstxt": "^8.0.3",
-    "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "postcss": "^8.4.45",
     "sitemap": "^8.0.0",
