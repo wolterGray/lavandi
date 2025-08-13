@@ -1,17 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import CustomButton from "../../ui/CustomButton";
-import { Link } from "react-scroll";
+import {Link} from "react-scroll";
 
-import { motion } from "framer-motion";
+import {motion} from "framer-motion";
 import LogoNuar from "../../ui/LogoNuar";
 
 const langList = [
-  { lang: "UA", iconPath: "/lang-icon/ua.svg" },
-  { lang: "PL", iconPath: "/lang-icon/pl.svg" },
-  { lang: "EN", iconPath: "/lang-icon/en.svg" },
+  {lang: "UA", iconPath: "/lang-icon/ua.svg"},
+  {lang: "PL", iconPath: "/lang-icon/pl.svg"},
+  {lang: "EN", iconPath: "/lang-icon/en.svg"},
 ];
 
-export default function Header({ navItems }) {
+export default function Header({navItems}) {
   const [hovered, setHovered] = useState(null);
   const [langSelect] = useState("UA");
   const [langOpen, setLangOpen] = useState(false);
@@ -60,7 +60,7 @@ export default function Header({ navItems }) {
   return (
     <>
       {/* Spacer для компенсации высоты фиксированного хедера */}
-      {isFixed && !mobileMenuOpen && <div style={{ height: headerHeight }} />}
+      {isFixed && !mobileMenuOpen && <div style={{height: headerHeight}} />}
 
       {/* Хедер скрывается, если открыто мобильное меню */}
       {!mobileMenuOpen && (
@@ -69,57 +69,54 @@ export default function Header({ navItems }) {
             isFixed
               ? "fixed top-0 left-0 bg-black/80 backdrop-blur-md shadow-xl rounded-full max-h-20 lg:max-h-32 mt-2"
               : "relative"
-          }`}
-        >
+          }`}>
           <motion.header
             ref={headerRef}
             initial={false}
             animate={isFixed ? "fixedVisible" : "normalVisible"}
             variants={{
-              normalVisible: { opacity: 1, y: 0 },
-              fixedVisible: { opacity: 1, y: 0 },
-              hidden: { opacity: 0, y: -20 },
+              normalVisible: {opacity: 1, y: 0},
+              fixedVisible: {opacity: 1, y: 0},
+              hidden: {opacity: 0, y: -20},
             }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="font-comforta w-full min-h-16 lg:min-h-20 flex items-center font-bold select-none"
-          >
-            <div className="w-full h-full flex items-center justify-between px-4">
+            transition={{duration: 0.3, ease: "easeOut"}}
+            className={`font-comforta  w-full min-h-16 lg:min-h-20 flex items-center font-extrabold select-none ${
+              isFixed ? "px-10" : ""
+            }`}>
+            <div className="flex items-center justify-between w-full">
               {/* Левая часть */}
-              <div className="flex items-center space-x-6 lg:space-x-16 overflow-hidden">
-                <LogoNuar />
 
-                <nav className="hidden lg:block" aria-label="Główna nawigacja">
-                  <ul className="flex space-x-10 whitespace-nowrap">
-                    {navItems.map(({ label, path }, i) => (
-                      <li
-                        key={path}
-                        className="relative"
-                        onMouseEnter={() => setHovered(i)}
-                        onMouseLeave={() => setHovered(null)}
-                      >
-                        <Link
-                          to={path}
-                          smooth={true}
-                          duration={500}
-                          offset={-200}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="inline-block px-1 py-1 relative cursor-pointer"
-                        >
-                          {label}
-                          <span
-                            className={`absolute bottom-0 left-1/2 h-px w-full bg-primaryColor transition-transform duration-300 origin-center transform ${
-                              hovered === i ? "scale-x-100" : "scale-x-0"
-                            } -translate-x-1/2`}
-                          />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
-              </div>
+              <LogoNuar />
+
+              <nav className="hidden lg:block" aria-label="Główna nawigacja">
+                <ul className="flex space-x-10 whitespace-nowrap uppercase text-sm">
+                  {navItems.map(({label, path}, i) => (
+                    <li
+                      key={path}
+                      className="relative"
+                      onMouseEnter={() => setHovered(i)}
+                      onMouseLeave={() => setHovered(null)}>
+                      <Link
+                        to={path}
+                        smooth={true}
+                        duration={500}
+                        offset={-200}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="inline-block px-1 py-1 relative cursor-pointer">
+                        {label}
+                        <span
+                          className={`absolute bottom-0 left-1/2 h-px w-full bg-primaryColor transition-transform duration-300 origin-center transform ${
+                            hovered === i ? "scale-x-100" : "scale-x-0"
+                          } -translate-x-1/2`}
+                        />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
               {/* Правая часть */}
-              <div className="flex items-center space-x-4 lg:space-x-8">
+              <div className=" space-x-4 lg:space-x-8">
                 {/* Кнопка брони (десктоп) */}
                 <div className="hidden lg:block">
                   <CustomButton>Zarezerwuj</CustomButton>
@@ -129,15 +126,13 @@ export default function Header({ navItems }) {
                 <button
                   className="lg:hidden"
                   onClick={() => setMobileMenuOpen((p) => !p)}
-                  aria-label="Меню"
-                >
+                  aria-label="Меню">
                   <svg
                     className="w-7 h-7"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth={2}
-                    viewBox="0 0 24 24"
-                  >
+                    viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -154,24 +149,21 @@ export default function Header({ navItems }) {
       {/* Мобильное меню */}
       {mobileMenuOpen && (
         <motion.nav
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "tween", duration: 0.3 }}
-          className="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-black text-white z-50 flex flex-col shadow-xl"
-        >
+          initial={{x: "100%"}}
+          animate={{x: 0}}
+          exit={{x: "100%"}}
+          transition={{type: "tween", duration: 0.3}}
+          className="lg:hidden fixed top-0 right-0 h-full w-4/5 max-w-xs bg-black text-white z-50 flex flex-col shadow-xl">
           <button
             className="self-end p-4"
             aria-label="Zamknij menu"
-            onClick={() => setMobileMenuOpen(false)}
-          >
+            onClick={() => setMobileMenuOpen(false)}>
             <svg
               className="w-6 h-6"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}
-              viewBox="0 0 24 24"
-            >
+              viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -181,7 +173,7 @@ export default function Header({ navItems }) {
           </button>
 
           <ul className="flex flex-col items-start gap-8 px-6 mt-6 text-2xl font-semibold">
-            {navItems.map(({ label, path }) => (
+            {navItems.map(({label, path}) => (
               <li key={path}>
                 <Link
                   to={path}
@@ -189,8 +181,7 @@ export default function Header({ navItems }) {
                   smooth={true}
                   duration={500}
                   onClick={() => setMobileMenuOpen(false)}
-                  className="cursor-pointer block"
-                >
+                  className="cursor-pointer block">
                   {label}
                 </Link>
               </li>

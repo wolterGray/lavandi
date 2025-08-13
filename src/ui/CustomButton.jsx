@@ -8,7 +8,7 @@ function CustomButton({children}) {
       target="_blank"
       rel="noopener noreferrer"
       role="link"
-      className="relative cursor-pointer bg-primaryColor/80 inline-flex items-center justify-center px-6 py-3 rounded-full   text-mainColor text-md tracking-wide overflow-hidden transition-all duration-500 group">
+      className="relative cursor-pointer bg-secondaryColor border-primaryColor/50 border-[1px] inline-flex items-center justify-center px-6 py-3 rounded-full   text-mainColor text-md tracking-wide overflow-hidden transition-all duration-500 group">
       <span className="absolute inset-0 bg-primaryColor transition-transform duration-500 ease-in-out transform translate-x-[-100%]  group-hover:translate-x-0 z-0 " />
 
       <span className="relative z-10 flex items-center gap-2">
