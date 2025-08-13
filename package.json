@@ -3,11 +3,12 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://woltergray.github.io/lavandi",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
     "predeploy": "yarn build",
     "deploy": "gh-pages -d dist",
+    "dev": "vite",
+    "build": "vite build",
     "generate-seo": "node scripts/generateSeoFiles.cjs",
     "lint": "eslint .",
     "preview": "vite preview"
