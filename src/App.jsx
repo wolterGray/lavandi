@@ -1,11 +1,4 @@
-// Lavandi Landing Page - React + Tailwind
-// Requirements: React 18+, Tailwind CSS, react-scroll
-// 1. Create a Vite React project:  npm create vite@latest lavandi --template react
-// 2. Install deps:  cd lavandi && npm install && npm install -D tailwindcss postcss autoprefixer && npx tailwindcss init -p && npm install react-scroll
-// 3. In src/index.css put:
-//    @tailwind base;@tailwind components;@tailwind utilities;
-// 4. Replace images in /public or import your own assets.
-// 5. Place this file as src/App.jsx and run: npm run dev
+
 
 import Header from "./components/Header/Header";
 import Home from "./components/Home/Home";

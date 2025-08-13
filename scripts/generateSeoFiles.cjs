@@ -6,7 +6,7 @@ const generateRobotstxt = require("generate-robotstxt");
 
 async function generateSitemap() {
   // Укажи базовый URL
-  const baseUrl = "https://lavandi.pl";
+  const baseUrl = "https://nuarr.pl";
 
   // Пути сайта, которые хочешь включить
   const links = [
@@ -37,8 +37,8 @@ async function generateRobots() {
         allow: "/",
       },
     ],
-    sitemap: "https://lavandi.pl/sitemap.xml",
-    host: "https://lavandi.pl",
+    sitemap: "https://nuarr.pl/sitemap.xml",
+    host: "https://nuarr.pl",
   });
 
   const robotsPath = path.resolve(__dirname, "../public/robots.txt");
