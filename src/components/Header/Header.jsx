@@ -67,7 +67,7 @@ export default function Header({navItems}) {
         <div
           className={`w-full z-50 transition-all duration-300 ${
             isFixed
-              ? "fixed top-0 left-0 bg-black/80 backdrop-blur-md shadow-xl rounded-full max-h-20 lg:max-h-32 mt-2"
+              ? "fixed top-0 left-0 bg-secondaryColor/80 backdrop-blur-md shadow-xl rounded-full max-h-20 lg:max-h-32 mt-2"
               : "relative"
           }`}>
           <motion.header
@@ -80,7 +80,7 @@ export default function Header({navItems}) {
               hidden: {opacity: 0, y: -20},
             }}
             transition={{duration: 0.3, ease: "easeOut"}}
-            className={`font-comforta  w-full min-h-16 lg:min-h-20 flex items-center font-extrabold select-none ${
+            className={`font-montserrat  w-full min-h-16 lg:min-h-20 flex items-center font-medium select-none ${
               isFixed ? "px-10" : ""
             }`}>
             <div className="flex items-center justify-between w-full">

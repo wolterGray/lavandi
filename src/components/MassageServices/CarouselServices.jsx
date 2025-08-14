@@ -52,7 +52,7 @@ function ServiceCard({img, title, desc}) {
       ">
       <div
         onClick={handleClick}
-        className="group relative h-full rounded-3xl overflow-hidden cursor-pointer"
+        className="group hover:border-[1px] border-primaryColor/20 relative h-full rounded-3xl overflow-hidden cursor-pointer"
         aria-expanded={open}
         role="button">
         {/* фон */}
@@ -63,14 +63,14 @@ function ServiceCard({img, title, desc}) {
         />
 
         {/* базовая виньетка */}
-        <div className="pointer-events-none absolute inset-0 bg-black/30" />
+        <div className=" pointer-events-none absolute inset-0 bg-black/30" />
 
         {/* затемнение фона */}
         <div
           className={[
-            "absolute inset-0 transition-colors duration-500 ease-out",
+            "absolute inset-0  transition-colors duration-500 ease-out",
             open ? "bg-black/60" : "bg-black/0",
-            "md:group-hover:bg-secondaryColor/95",
+            "md:group-hover:bg-secondaryColor/95 ",
           ].join(" ")}
         />
 
@@ -82,7 +82,7 @@ function ServiceCard({img, title, desc}) {
             descTranslate, // <— только ОДНА translate-утилита
             "md:group-hover:translate-y-0", // ховер на десктопе
           ].join(" ")}>
-          <h3 className="text-xl font-semibold text-amber-200">{title}</h3>
+          <h3 className="text-xl font-normal uppercase text-primaryColor">{title}</h3>
           <p className="text-base leading-relaxed">{desc}</p>
         </div>
 
@@ -95,7 +95,7 @@ function ServiceCard({img, title, desc}) {
               open ? "opacity-0" : "opacity-100",
               "md:group-hover:opacity-0",
             ].join(" ")}>
-            <h3 className="text-xl text-center font-semibold text-amber-200">
+            <h3 className="text-xl text-center font-normal uppercase text-amber-200">
               {title}
             </h3>
           </div>

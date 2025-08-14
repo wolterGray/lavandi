@@ -87,7 +87,7 @@ export default function App() {
         {/* Hero */}
         <Home />
       </div>
-      <div className="font-comforta   mx-auto ">
+      <div className="font-montserrat mx-auto ">
         {/* Services */}
         <MassageServices services={services} />
 

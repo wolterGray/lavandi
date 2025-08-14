@@ -6,9 +6,11 @@
 @tailwind utilities;
 
 body {
+  
+  
   background-color: #11100f;
   color: #c9b574;
 }
 .custom-cont {
-  @apply container  mx-auto px-4 pt-12  sm:pt-24;
+  @apply   mx-auto px-4 pt-12  sm:pt-24;
 }
