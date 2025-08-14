@@ -30,13 +30,14 @@ function ServiceCard({img, title, desc}) {
   const [open, setOpen] = useState(false);
 
   const handleClick = (e) => {
-    // мобилки открываем по тапу
-    if (window.innerWidth < 768) {
+    // на мобилках открываем/закрываем по тапу
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
       e.stopPropagation();
       setOpen((v) => !v);
     }
   };
 
+  // одна translate-утилита на описание
   const descTranslate = open ? "translate-y-0" : "translate-y-full";
 
   return (
@@ -60,17 +61,18 @@ function ServiceCard({img, title, desc}) {
           src={img}
           alt={title}
           className="absolute inset-0 w-full h-full object-cover"
+          loading="lazy"
         />
 
         {/* базовая виньетка */}
-        <div className=" pointer-events-none absolute inset-0 bg-black/30" />
+        <div className="pointer-events-none absolute inset-0 bg-black/30" />
 
-        {/* затемнение фона */}
+        {/* затемнение фона — одинаковое поведение на мобиле (tap) и десктопе (hover) */}
         <div
           className={[
-            "absolute inset-0  transition-colors duration-500 ease-out",
-            open ? "bg-black/60" : "bg-black/0",
-            "md:group-hover:bg-secondaryColor/95 ",
+            "absolute inset-0 transition-colors duration-500 ease-out",
+            open ? "bg-secondaryColor/95" : "bg-transparent", // ← было bg-black/60
+            "md:group-hover:bg-secondaryColor/95",
           ].join(" ")}
         />
 
@@ -80,9 +82,11 @@ function ServiceCard({img, title, desc}) {
             "absolute inset-0 flex flex-col justify-center gap-4 px-5 text-white text-left",
             "transform-gpu transition-transform duration-700 ease-in-out",
             descTranslate, // <— только ОДНА translate-утилита
-            "md:group-hover:translate-y-0", // ховер на десктопе
+            "md:group-hover:translate-y-0",
           ].join(" ")}>
-          <h3 className="text-xl font-normal uppercase text-primaryColor">{title}</h3>
+          <h3 className="text-xl font-normal uppercase text-primaryColor">
+            {title}
+          </h3>
           <p className="text-base leading-relaxed">{desc}</p>
         </div>
 
@@ -90,7 +94,7 @@ function ServiceCard({img, title, desc}) {
         <div className="absolute inset-x-0 bottom-0 p-4 z-10 pointer-events-none">
           <div
             className={[
-              "rounded-2xl px-4 py-3  ",
+              "rounded-2xl px-4 py-3",
               "transition-opacity duration-500 ease-in-out",
               open ? "opacity-0" : "opacity-100",
               "md:group-hover:opacity-0",
