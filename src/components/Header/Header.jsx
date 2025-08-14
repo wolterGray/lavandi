@@ -86,7 +86,15 @@ export default function Header({navItems}) {
             <div className="flex items-center justify-between w-full">
               {/* Левая часть */}
 
-              <LogoNuar />
+              <div
+                className="shrink-0 transition-[width] duration-300 ease-out"
+                style={{
+                  width: isFixed
+                    ? "clamp(120px, 28vw, 160px)"
+                    : "clamp(150px, 32vw, 200px)",
+                }}>
+                <LogoNuar className="block w-full h-auto" />
+              </div>
 
               <nav className="hidden lg:block" aria-label="Główna nawigacja">
                 <ul className="flex space-x-10 whitespace-nowrap uppercase text-sm">
