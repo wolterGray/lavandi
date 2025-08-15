@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import CustomButton from "../../ui/CustomButton";
 import {Link} from "react-scroll";
 import {motion, AnimatePresence} from "framer-motion";
@@ -15,7 +15,7 @@ const GOLD = "#D6B16A";
 
 export default function Header({navItems}) {
   const [hovered, setHovered] = useState(null);
-  const [langSelect] = useState("UA");
+  const [langSelect, setLangSelect] = useState("UA");
   const [langOpen, setLangOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const langMenuRef = useRef(null);
@@ -139,7 +139,41 @@ export default function Header({navItems}) {
               </nav>
 
               {/* Правый блок */}
-              <div className="space-x-4 lg:space-x-8">
+              <div className="flex items-center space-x-4 lg:space-x-8">
+                {/* выбор языка */}
+                <div className="relative" ref={langMenuRef}>
+                  <button
+                    onClick={() => setLangOpen((p) => !p)}
+                    aria-label="Wybor języka"
+                    className="w-6 h-6 rounded-full overflow-hidden">
+                    <img
+                      src={currentLang.iconPath}
+                      alt={currentLang.lang}
+                      className="w-full h-full object-cover"
+                    />
+                  </button>
+                  {langOpen && (
+                    <ul className="absolute right-0 mt-2 bg-white/90 rounded-md shadow-lg">
+                      {langList.map(({lang, iconPath}) => (
+                        <li key={lang}>
+                          <button
+                            onClick={() => {
+                              setLangSelect(lang);
+                              setLangOpen(false);
+                            }}
+                            className="block p-1">
+                            <img
+                              src={iconPath}
+                              alt={lang}
+                              className="w-6 h-6 object-cover"
+                            />
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+
                 <div className="hidden lg:block">
                   <CustomButton>Zarezerwuj</CustomButton>
                 </div>
