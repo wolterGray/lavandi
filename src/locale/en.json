@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "about": "About",
+    "prices": "Prices",
+    "team": "Team"
+  },
+  "header": {
+    "closeMenu": "Close menu",
+    "booksy": "Book on Booksy",
+    "address": "5/7 Świętojerska St. • +48 452 402 006"
+  },
+  "home": {
+    "srTitle": "The best massage in Warsaw",
+    "slides": [
+      {
+        "img": "/massage/1.jpg",
+        "title": "Summer with Lavandi – moments of relaxation and relief!",
+        "news": "Summer is the perfect time to take care of your body and mind. At Lavandi, we offer refreshing massages that help you relax and recharge for the whole summer. Check out our summer packages and feel true comfort!"
+      },
+      {
+        "img": "/massage/2.webp",
+        "title": "Time for relaxation and care at Lavandi",
+        "news": "Take care of yourself in a friendly, relaxing atmosphere. At Lavandi, we offer professional massages and rituals that combine relaxation with care for your body and well-being. Visit us and feel the difference."
+      },
+      {
+        "img": "/massage/3.webp",
+        "title": "Up to 20% off all massages at Lavandi!",
+        "news": "Take advantage of our special offer and relax with a 20% discount on all massages. Professional care and a unique atmosphere await you. The promotion lasts until further notice — don't miss out!"
+      },
+      {
+        "img": "/massage/4.webp",
+        "title": "Dream massage at Lavandi – time for real relaxation",
+        "news": "Forget about daily stress and treat yourself to a moment of true relaxation. Our dream massage at Lavandi combines gentle techniques and professional care that will transform your body and mind. Visit us and see what real harmony and renewal feel like."
+      }
+    ]
+  },
+  "servicesSection": {
+    "title": "Services"
+  },
+  "services": [
+    {
+      "title": "Classic Massage",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Classic massage is a proven method of relaxation and recovery. It relieves tension, improves circulation and loosens muscles, adapting to your needs.",
+      "img": "/services-img/1.webp"
+    },
+    {
+      "title": "Sports Massage",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "An intense massage that supports post-workout recovery. It reduces muscle tension, improves flexibility and helps prevent injuries.",
+      "img": "/services-img/2.webp"
+    },
+    {
+      "title": "Relaxing Massage",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "A gentle massage that reduces stress and tension. Smooth, rhythmic movements bring your body and mind into a state of deep relaxation.",
+      "img": "/services-img/3.webp"
+    },
+    {
+      "title": "Lymphatic Massage",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "A therapy that supports the lymphatic system. It helps reduce swelling, improves lymph flow and aids the body's detoxification process.",
+      "img": "/services-img/4.webp"
+    },
+    {
+      "title": "Anti-Cellulite Massage",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "A treatment that firms the skin and improves circulation. It effectively supports the fight against cellulite and restores smoothness and elasticity to the skin.",
+      "img": "/services-img/5.webp"
+    },
+    {
+      "title": "Face and Head Massage",
+      "time": [30, 60],
+      "price": [149, 220],
+      "desc": "A relaxing massage that relieves tension in the head and face area. It improves circulation, reduces stress and supports overall well-being.",
+      "img": "/services-img/6.webp"
+    },
+    {
+      "title": "Signature Massage",
+      "time": [60, 75, 90, 120],
+      "price": [200, 260, 310, 400],
+      "desc": "An individually tailored massage combining classic, relaxing and sports techniques. Ideal for deep relaxation and regeneration.",
+      "img": "/services-img/7.webp"
+    },
+    {
+      "title": "Massage for Children",
+      "time": [30, 60, 75, 90, 120],
+      "price": [120, 199, 230, 280, 399],
+      "desc": "A gentle massage that supports recovery and reduces stress, especially for active children and teenagers. Safe and beneficial for health. For children from 5 to 18 years old.",
+      "img": "/services-img/9.webp"
+    }
+  ],
+  "booking": {
+    "title": "Treat yourself to a moment of relaxation",
+    "subtitle": "Book a session now and save up to 20%",
+    "button": "Book on Booksy",
+    "imgAlt": "NUAR — booking"
+  },
+  "about": {
+    "title": "About us",
+    "p1": "We have over 10 years of experience working with the body and take care of the individual needs of each client. Our massages combine knowledge with a passion for relaxation and health.",
+    "p2": "We focus on a calm atmosphere, natural oils and a professional approach so you can fully relax and regain energy.",
+    "imgAlt": "NUAR — about us"
+  },
+  "prices": {
+    "title": "Prices",
+    "noService": "There are no services with this duration yet.",
+    "footnote": "Gross prices. Card / BLIK payment available.",
+    "minute": "min"
+  },
+  "reviews": {
+    "title": "Reviews",
+    "badge": {
+      "rating": "5.0 / 5 on Booksy",
+      "count": "50+ reviews",
+      "more": "See more"
+    },
+    "items": [
+      {"name": "Anna K.", "text": "It was an amazing experience. Relaxation at the highest level, like in a luxury spa.", "rating": 5},
+      {"name": "Marcin W.", "text": "Magic touch and wonderful atmosphere. Body and soul truly rested.", "rating": 5},
+      {"name": "Ewelina Z.", "text": "Great approach, calmness and top quality. I feel transformed!", "rating": 5},
+      {"name": "Karol N.", "text": "Total relaxation. I've never felt so comfortable anywhere before.", "rating": 5},
+      {"name": "Joanna M.", "text": "The touch of professionalism. I recommend it to everyone who really wants to rest.", "rating": 5}
+    ]
+  },
+  "team": {
+    "title": "Our Team",
+    "members": [
+      {"name": "Olha", "role": "Massage therapist"},
+      {"name": "Volodymyr", "role": "Administrator"}
+    ]
+  },
+  "footer": {
+    "description": "Premium massage salon in Warsaw. Harmony, relaxation and care for the body.",
+    "booksyRating": "5.0 / 5 on Booksy",
+    "navigation": "Navigation",
+    "contact": "Contact",
+    "address": "5/7 Świętojerska St., Warsaw",
+    "phone": "+48 452 402 006",
+    "email": "nuar.contact@gmail.com",
+    "social": "Social Media",
+    "rights": "© {year} NUAR. All rights reserved."
+  }
+}
