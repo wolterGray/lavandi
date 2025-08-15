@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, {useState, useMemo} from "react";
+import {motion, AnimatePresence} from "framer-motion";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 
 const GOLD = "#D6B16A";
 
-function PriceSection({ services }) {
+function PriceSection({services}) {
   const [selectedTime, setSelectedTime] = useState("60");
   const times = ["30", "60", "75", "90", "120"];
 
@@ -19,7 +19,9 @@ function PriceSection({ services }) {
   const colRight = filtered.slice(mid);
 
   return (
-    <section id="cennik" className="custom-cont bg-secondaryColor/40 border-[1px] border-primaryColor/10 select-none py-16">
+    <section
+      id="prices"
+      className="custom-cont px-4 bg-secondaryColor/40 border-[1px] border-primaryColor/10 select-none py-16">
       <ScrollAnimationWrapper>
         <SectionTitle className="text-center">Cennik</SectionTitle>
 
@@ -38,8 +40,7 @@ function PriceSection({ services }) {
                   active ? "text-white" : "text-white/60 hover:text-white/90",
                   "border-b-[1px] transition-colors",
                 ].join(" ")}
-                style={{ borderColor: active ? GOLD : "transparent" }}
-              >
+                style={{borderColor: active ? GOLD : "transparent"}}>
                 {time} min
               </button>
             );
@@ -50,14 +51,15 @@ function PriceSection({ services }) {
         <AnimatePresence mode="wait">
           <motion.div
             key={selectedTime}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="mx-auto max-w-5xl"
-          >
+            initial={{opacity: 0, y: 6}}
+            animate={{opacity: 1, y: 0}}
+            exit={{opacity: 0, y: -6}}
+            transition={{duration: 0.25, ease: "easeOut"}}
+            className="mx-auto max-w-5xl">
             {filtered.length === 0 ? (
-              <p className="text-center text-white/60">Пока нет услуг с такой длительностью.</p>
+              <p className="text-center text-white/60">
+                Пока нет услуг с такой длительностью.
+              </p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-10">
                 {[colLeft, colRight].map((col, ci) => (
@@ -70,8 +72,7 @@ function PriceSection({ services }) {
                         <div
                           key={`${service.title}-${i}`}
                           className="flex items-center justify-between min-h-[56px] py-2.5 sm:py-3
-                                     border-b border-white/10 text-white/60 hover:bg-white/[.03] transition-colors"
-                        >
+                                     border-b border-white/10 text-white/60 hover:bg-white/[.03] transition-colors">
                           <div className="pr-3">
                             <h3 className="text-[15px] sm:text-base uppercase font-medium">
                               {service.title}
@@ -85,8 +86,7 @@ function PriceSection({ services }) {
 
                           <p
                             className="text-base sm:text-sm font-semibold tabular-nums whitespace-nowrap"
-                            style={{ color: GOLD }}
-                          >
+                            style={{color: GOLD}}>
                             {price != null ? `${price} zł` : "—"}
                           </p>
                         </div>

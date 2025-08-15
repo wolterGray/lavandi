@@ -24,7 +24,7 @@ export default function AboutSection() {
       className="custom-cont max-w-7xl mx-auto px-4 sm:px-6 py-20 select-none"
     >
       <SectionTitle>O nas</SectionTitle>
-      <div className="mx-auto mt-4 mb-12 h-[2px] w-24 rounded-full" style={{ backgroundColor: GOLD }} />
+    
 
       <div className="flex flex-col lg:flex-row items-center gap-10 lg:gap-16">
         {/* текст */}

@@ -14,7 +14,8 @@ module.exports = {
       fontFamily: {
         manrope: ["Manrope", "sans-serif"],
         comforta: ["Comfortaa", "sans-serif"],
-        montserrat:["Montserrat","sans-serif"]
+        montserrat: ["Montserrat", "sans-serif"],
+        cinzel: ["Cinzel", "serif"],
       },
     },
   },

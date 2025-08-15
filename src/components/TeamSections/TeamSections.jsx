@@ -62,10 +62,10 @@ function TeamCard({ name, img, desc }) {
       </div>
 
       {/* подписи — Montserrat */}
-      <h3 className="mt-3 text-[16px] sm:text-[17px] font-semibold tracking-[0.12em] uppercase text-white">
+      <h3 className="mt-3 font-cinzel text-[16px] sm:text-[17px] font-semibold tracking-[0.12em] uppercase text-white">
         {name}
       </h3>
-      <p className="mt-0.5 text-xs text-white/65">{desc}</p>
+      <p className="mt-0.5 text-xs text-primaryColor">{desc}</p>
     </motion.article>
   );
 }

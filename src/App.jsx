@@ -1,5 +1,3 @@
-
-
 import Header from "./components/Header/Header";
 import Home from "./components/Home/Home";
 import MassageServices from "./components/MassageServices/MassageServices";
@@ -87,7 +85,7 @@ export default function App() {
         {/* Hero */}
         <Home />
       </div>
-      <div className="font-montserrat mx-auto ">
+      <div className=" ">
         {/* Services */}
         <MassageServices services={services} />
 
