@@ -35,4 +35,7 @@ export default defineConfig({
     include: ["react", "react-dom"],
     dedupe: ["react", "react-dom"],
   },
+  test: {
+    environment: 'jsdom'
+  },
 });
