@@ -1,0 +1,151 @@
+{
+  "nav": {
+    "home": "Strona główna",
+    "services": "Usługi",
+    "about": "O nas",
+    "prices": "Cennik",
+    "team": "Zespól"
+  },
+  "header": {
+    "closeMenu": "Zamknij menu",
+    "booksy": "Zarezerwuj w Booksy",
+    "address": "ul. Świętojerska 5/7 • +48 452 402 006"
+  },
+  "home": {
+    "srTitle": "Najlepszy masaż w Warszawie",
+    "slides": [
+      {
+        "img": "/massage/1.jpg",
+        "title": "Lato z Lavandi – chwile relaksu i odprężenia!",
+        "news": "Lato to czas, kiedy warto zadbać o swoje ciało i umysł. W Lavandi oferujemy orzeźwiające masaże, które pomogą Ci się zrelaksować i nabrać energii na całe lato. Sprawdź nasze letnie pakiety i poczuj prawdziwy komfort!"
+      },
+      {
+        "img": "/massage/2.webp",
+        "title": "Czas na relaks i pielęgnację w Lavandi",
+        "news": "Zadbaj o siebie w przyjaznej, odprężającej atmosferze. W Lavandi oferujemy profesjonalne masaże i rytuały, które łączą relaks z troską o Twoje ciało i samopoczucie. Odwiedź nas i poczuj różnicę."
+      },
+      {
+        "img": "/massage/3.webp",
+        "title": "Do 20% rabatu na wszystkie masaże w Lavandi!",
+        "news": "Skorzystaj z naszej specjalnej oferty i zrelaksuj się z 20% zniżką на wszystkie masaże. Profesjonalna opieka i wyjątkowa atmosfera czekają na Ciebie. Promocja trwa do odwołania — nie przegap!"
+      },
+      {
+        "img": "/massage/4.webp",
+        "title": "Masaż marzeń w Lavandi – czas na prawdziwy relaks",
+        "news": "Zapomnij o codziennym stresie i pozwól sobie на chwilę prawdziwego odprężenia. Nasz masaż marzeń w Lavandi to połączenie delikatnych technik i profesjonalnej troski, które odmienią Twoje ciało i umysł. Odwiedź нас i przekonaj się, jak wygląda prawdziwa harmonia i regeneracja."
+      }
+    ]
+  },
+  "servicesSection": {
+    "title": "Usługi"
+  },
+  "services": [
+    {
+      "title": "Masaż klasyczny",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb.",
+      "img": "/services-img/1.webp"
+    },
+    {
+      "title": "Masaż sportowy",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga запобiegać kontузjom.",
+      "img": "/services-img/2.webp"
+    },
+    {
+      "title": "Masaż relaksacyjny",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia.",
+      "img": "/services-img/3.webp"
+    },
+    {
+      "title": "Masaż limfatyczny",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Terapia wspierająca układ limфatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizму.",
+      "img": "/services-img/4.webp"
+    },
+    {
+      "title": "Masaż antycellulitowy",
+      "time": [30, 60, 75, 90, 120],
+      "price": [170, 225, 245, 330, 420],
+      "desc": "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność.",
+      "img": "/services-img/5.webp"
+    },
+    {
+      "title": "Masaż twarzy i głowy",
+      "time": [30, 60],
+      "price": [149, 220],
+      "desc": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie.",
+      "img": "/services-img/6.webp"
+    },
+    {
+      "title": "Masaż autorski",
+      "time": [60, 75, 90, 120],
+      "price": [200, 260, 310, 400],
+      "desc": "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji.",
+      "img": "/services-img/7.webp"
+    },
+    {
+      "title": "Masaż dla dzieci",
+      "time": [30, 60, 75, 90, 120],
+      "price": [120, 199, 230, 280, 399],
+      "desc": "Delikatny masaż wspierający regenerację i redukcję stresу, szczególnie у активних dzieci i молодzieży. Безpieczny i korzystny dla zdrowia. Dla dzieci od 5 do 18 lat.",
+      "img": "/services-img/9.webp"
+    }
+  ],
+  "booking": {
+    "title": "Zafunduj sobie chwilę relaksu",
+    "subtitle": "Zarezerwuj sesję już teraz i zaoszczędź do 20%",
+    "button": "Zarezerwuj w Booksy",
+    "imgAlt": "NUAR — rezerwacja"
+  },
+  "about": {
+    "title": "O nas",
+    "p1": "Mamy ponad 10 lat doświadczenia w pracy z ciałem i dbamy o indywidualne potrzeby każdego klienta. Nasze masaże łączą wiedzę z pasją do relaksu i zdrowia.",
+    "p2": "Stawiamy на atmosferę spokoju, naturalne olejki i profesjonalne podejście, byś mógł w pełni odprężyć się i odzyskać energię.",
+    "imgAlt": "NUAR — o nas"
+  },
+  "prices": {
+    "title": "Cennik",
+    "noService": "Brak usług o takiej długości.",
+    "footnote": "Ceny brutto. Płatność kartą / BLIK dostępна.",
+    "minute": "min"
+  },
+  "reviews": {
+    "title": "Opinie",
+    "badge": {
+      "rating": "5.0 / 5 na Booksy",
+      "count": "50+ opinii",
+      "more": "Zobacz więcej"
+    },
+    "items": [
+      {"name": "Anna K.", "text": "To było niesamowite doświadczenie. Relaks на najwyższym poziomie, jak w luksusowym spa.", "rating": 5},
+      {"name": "Marcin W.", "text": "Magia dotyku i cudowna atmosfera. Ciało i dusza naprawdę odpoczęły.", "rating": 5},
+      {"name": "Ewelina Z.", "text": "Wspaniałe podejście, spokój i najwyższa jakość. Czuję się odmieniona!", "rating": 5},
+      {"name": "Karol N.", "text": "Relaks totalny. Nigdzie wcześniej nie czułem się tak komfortowo.", "rating": 5},
+      {"name": "Joanna M.", "text": "Dotyk profesjonalizmu. Polecam każdemu, kto chce naprawdę odpocząć.", "rating": 5}
+    ]
+  },
+  "team": {
+    "title": "Nasz Zespół",
+    "members": [
+      {"name": "Olha", "role": "Masażystка"},
+      {"name": "Volodymyr", "role": "Administrator"}
+    ]
+  },
+  "footer": {
+    "description": "Premium salon masażu w Warszawie. Harmonia, relaks i troska o ciało.",
+    "booksyRating": "5.0 / 5 na Booksy",
+    "navigation": "Nawigacja",
+    "contact": "Kontakt",
+    "address": "ul. Świętojerska 5/7, Warszawa",
+    "phone": "+48 452 402 006",
+    "email": "nuar.contact@gmail.com",
+    "social": "Social Media",
+    "rights": "© {year} NUAR. Wszelkie prawa zastrzeżone."
+  }
+}
