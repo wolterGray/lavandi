@@ -8,6 +8,7 @@ import BookingSection from "./components/BookingSection/BookingSection";
 import Footer from "./components/Footer/Footer";
 import HelmetSEO from "./components/HelmetSEO";
 import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
+import NuarBookingWidget from "./components/NuarReservation/NuarReservation";
 
 export default function App() {
   const services = [
@@ -97,7 +98,7 @@ export default function App() {
 
         {/* About */}
         <AboutSection />
-
+        {/* <NuarBookingWidget /> */}
         {/* Team */}
         <TeamSections />
       </div>
