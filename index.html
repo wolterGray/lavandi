@@ -3,15 +3,25 @@
 
 <head>
 
-  <!-- Google analytic tag (gtag.js) -->
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-NYM3P4FJJE"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
 
-    gtag('config', 'G-NYM3P4FJJE');
+    /* 1) По умолчанию НЕТ аналитики, пока юзер не согласится */
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted'
+    });
+
+    /* 2) Инициализация, но без auto page_view */
+    gtag('js', new Date());
+    gtag('config', 'G-NYM3P4FJJE', { send_page_view: false });
   </script>
+
   <!--  -->
   <meta charset="UTF-8" />
 
