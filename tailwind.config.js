@@ -11,6 +11,9 @@ module.exports = {
         headerBg: "#1e1412",
         mainBg: "#11100f",
       },
+      animation: {
+        "pulse-slow": "pulse 2.5s infinite",
+      },
       fontFamily: {
         manrope: ["Manrope", "sans-serif"],
         comforta: ["Comfortaa", "sans-serif"],

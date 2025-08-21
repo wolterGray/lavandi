@@ -11,7 +11,6 @@ function MassageServices({services}) {
       <ScrollAnimationWrapper>
         <SectionTitle>Usługi</SectionTitle>
         <CarouselServices services={services} />
-       
       </ScrollAnimationWrapper>
     </section>
   );

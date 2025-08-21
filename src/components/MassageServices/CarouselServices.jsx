@@ -18,7 +18,7 @@ export default function CarouselServices({services = []}) {
         1024: {slidesPerView: 3.2, spaceBetween: 24, centeredSlides: true},
         1280: {slidesPerView: 4, spaceBetween: 28, centeredSlides: true},
       }}
-      className=" pb-8 px-3 md:px-6">
+      className=" px-3 md:px-6">
       {services.map((s) => (
         <SwiperSlide key={s.title} className="flex">
           <ServiceCard {...s} />

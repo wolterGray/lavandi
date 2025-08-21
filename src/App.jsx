@@ -9,6 +9,8 @@ import Footer from "./components/Footer/Footer";
 import HelmetSEO from "./components/HelmetSEO";
 import ReviewsSection from "./components/ReviewsSection/ReviewsSection";
 import NuarBookingWidget from "./components/NuarReservation/NuarReservation";
+import React from "react";
+import CallWidget from "./ui/CallWidget";
 
 export default function App() {
   const services = [
@@ -69,7 +71,7 @@ export default function App() {
       img: "/services-img/9.webp",
     },
   ];
-
+  const [openModalRes, setOpenModalRes] = React.useState(false);
   const navItems = [
     {label: "Strona główna", path: "home"},
     {label: "Usługi", path: "services"},
@@ -82,10 +84,11 @@ export default function App() {
       <HelmetSEO />
       {/* Navbar */}
       <div className="w-[94vw] relative mx-auto">
-        <Header navItems={navItems} />
+        <Header navItems={navItems} setOpenModalRes={setOpenModalRes} />
         {/* Hero */}
         <Home />
       </div>
+      <CallWidget/>
       <div className=" ">
         {/* Services */}
         <MassageServices services={services} />
@@ -98,7 +101,14 @@ export default function App() {
 
         {/* About */}
         <AboutSection />
-        {/* <NuarBookingWidget /> */}
+
+        {/* Reservation */}
+        <NuarBookingWidget
+          services={services}
+          open={openModalRes}
+          setOpen={setOpenModalRes}
+        />
+
         {/* Team */}
         <TeamSections />
       </div>

@@ -21,7 +21,7 @@ export default function AboutSection() {
       id="about"
       initial={{ opacity: 0, y: 120 }}
       animate={controls}
-      className="custom-cont max-w-7xl mx-auto px-4 sm:px-6 py-20 select-none"
+      className="custom-cont max-w-7xl mx-auto px-4 sm:px-6  select-none"
     >
       <SectionTitle>O nas</SectionTitle>
     

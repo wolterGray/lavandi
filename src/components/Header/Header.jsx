@@ -4,6 +4,7 @@ import {Link} from "react-scroll";
 import {motion, AnimatePresence} from "framer-motion";
 import LogoNuar from "../../ui/LogoNuar";
 import {FaFacebookF, FaInstagram} from "react-icons/fa";
+import {FaArrowRightLong} from "react-icons/fa6";
 
 const langList = [
   {lang: "UA", iconPath: "/lang-icon/ua.svg"},
@@ -13,7 +14,7 @@ const langList = [
 
 const GOLD = "#D6B16A";
 
-export default function Header({navItems}) {
+export default function Header({navItems, setOpenModalRes}) {
   const [hovered, setHovered] = useState(null);
   const [langSelect] = useState("UA");
   const [langOpen, setLangOpen] = useState(false);
@@ -141,9 +142,11 @@ export default function Header({navItems}) {
               {/* Правый блок */}
               <div className="space-x-4 lg:space-x-8">
                 <div className="hidden lg:block">
-                  <CustomButton>Zarezerwuj</CustomButton>
+                  <CustomButton
+                    text={"Rezerwuj"}
+                    onClick={setOpenModalRes}
+                  />
                 </div>
-
                 {/* Бургер (мобилки) */}
                 <button
                   className="lg:hidden"
@@ -247,20 +250,12 @@ export default function Header({navItems}) {
               </motion.ul>
 
               {/* низ карточки */}
-              <div className="mt-auto px-5 pb-6">
-                {/* кнопка Booksy */}
-                <a
-                  href="https://booksy.com/pl-pl/262690_lavandi-studio-masazu_masaz_3_warszawa#ba_s=seo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex justify-center">
-                  <CustomButton
-                    className="w-full text-base py-3 rounded-full text-black font-semibold"
-                    style={{backgroundColor: GOLD}}>
-                    Zarezerwuj w Booksy
-                  </CustomButton>
-                </a>
+              <div className="mt-auto text-center px-5 pb-6">
+                {/* кнопка Reservation */}
+                
 
+                <CustomButton text={"Rezerwuj"} onClick={setOpenModalRes} />
+               
                 {/* соцсети */}
                 <div className="mt-4 flex items-center justify-center gap-4">
                   <SocialIcon
