@@ -1,7 +1,7 @@
 import React from "react";
-import { FaPhoneAlt } from "react-icons/fa";
+import {FaPhoneAlt} from "react-icons/fa";
 
-function CallWidget({ phone = "+48 123 456 789" }) {
+function CallWidget({phone = "+48 452 402 006"}) {
   return (
     <>
       <style>
@@ -30,8 +30,7 @@ function CallWidget({ phone = "+48 123 456 789" }) {
         "
         style={{
           animation: "subtle-glow 2s infinite ease-in-out",
-        }}
-      >
+        }}>
         <FaPhoneAlt className="text-lg md:text-xl" />
       </a>
     </>
