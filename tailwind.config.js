@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         mainColor: "white",
-        primaryColor: "",
+        primaryColor: "#b7864d",
         secondaryColor: "#0d0510",
         headerBg: "#1e1412",
         mainBg: "#11100f",
@@ -24,4 +24,3 @@ module.exports = {
   },
   plugins: [],
 };
-// "#b7864d"
