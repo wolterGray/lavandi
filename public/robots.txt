@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+
 Sitemap: https://nuarr.pl/sitemap.xml
-Host: https://nuarr.pl
+Host: nuarr.pl
