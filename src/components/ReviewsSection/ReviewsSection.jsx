@@ -1,12 +1,12 @@
 import { AiFillStar } from "react-icons/ai";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay } from "swiper/modules";
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import "swiper/css";
 import "swiper/css/pagination";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const GOLD = "#D6B16A";
 const EGGPLANT = "#100613";
@@ -38,11 +38,46 @@ function PremiumStars({ rating = 5, className = "" }) {
   );
 }
 
+/** ====== КАРТОЧКА С ПРОКРУТКОЙ ДЛИННОГО ТЕКСТА ====== */
 function ReviewCard({ name, text, rating }) {
-  const [expanded, setExpanded] = useState(false);
+  const scrollRef = useRef(null);
+  const [canScroll, setCanScroll] = useState(false);
+  const [atTop, setAtTop] = useState(true);
+  const [atBottom, setAtBottom] = useState(false);
 
-  const PREVIEW_MAX = 180;
-  const isLong = text.length > PREVIEW_MAX;
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const check = () => {
+      setCanScroll(el.scrollHeight > el.clientHeight + 1);
+      setAtTop(el.scrollTop <= 0);
+      setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1);
+    };
+    check();
+    el.addEventListener("scroll", check, { passive: true });
+    // пересчитать при ресайзе/смене шрифта
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", check);
+      ro.disconnect();
+    };
+  }, []);
+
+  // чтобы колесо мыши скроллило текст, а не листало слайд (Swiper)
+  const onWheel = (e) => {
+    const el = scrollRef.current;
+    if (!el || !canScroll) return;
+    const delta = e.deltaY;
+    const atTopNow = el.scrollTop <= 0;
+    const atBottomNow = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+
+    // если можем скроллить внутри — не даём событию уйти наружу
+    if ((delta < 0 && !atTopNow) || (delta > 0 && !atBottomNow)) {
+      e.stopPropagation();
+      // позволяем нативный скролл внутри
+    }
+  };
 
   return (
     <motion.figure
@@ -50,8 +85,7 @@ function ReviewCard({ name, text, rating }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      animate={{ height: expanded ? "auto" : 200 }}
-      className="relative w-full rounded-2xl p-[1px] overflow-hidden"
+      className="relative w-full h-[200px] rounded-2xl p-[1px] overflow-hidden"
       style={{
         backgroundImage: `linear-gradient(120deg, ${GOLD}99, transparent 35%, ${GOLD}22)`,
       }}
@@ -66,7 +100,7 @@ function ReviewCard({ name, text, rating }) {
         </div>
 
         {/* шапка */}
-        <div className="flex items-center gap-4 mb-3">
+        <div className="flex items-center gap-4 mb-3 shrink-0">
           <div className="relative">
             <div className="w-12 h-12 rounded-full grid place-items-center bg-white/5 text-white font-semibold">
               {getInitials(name)}
@@ -84,34 +118,33 @@ function ReviewCard({ name, text, rating }) {
           </div>
         </div>
 
-        {/* текст */}
-        <div className="flex-1 overflow-hidden">
+        {/* ТЕКСТ — скроллим внутри */}
+        <div className="relative flex-1 min-h-0">
+          {/* затемнения сверху/снизу как подсказка прокрутки */}
+          {canScroll && !atTop && (
+            <div className="pointer-events-none absolute -top-2 left-0 right-0 h-6 bg-gradient-to-b from-black/40 to-transparent rounded-t-2xl" />
+          )}
+          {canScroll && !atBottom && (
+            <div className="pointer-events-none absolute -bottom-2 left-0 right-0 h-6 bg-gradient-to-t from-black/35 to-transparent rounded-b-2xl" />
+          )}
+
           <blockquote
-            className="text-base leading-relaxed text-white/90 break-words [hyphens:auto] transition-all duration-500"
+            ref={scrollRef}
+            onWheel={onWheel}
+            tabIndex={0}
+            className="h-full overflow-y-auto pr-1 text-base leading-relaxed text-white/90 break-words [hyphens:auto] focus:outline-none scroll-smooth"
             style={{
-              maxHeight: expanded ? "none" : "100px", // ограничение только когда свернуто
-              overflow: "hidden",
+              // тонкая полоса прокрутки в Firefox
+              scrollbarWidth: "thin",
+              scrollbarColor: `${GOLD}33 transparent`,
             }}
           >
             {text}
           </blockquote>
         </div>
 
-        {/* кнопка только если текст длинный */}
-        {isLong && (
-          <div className="mt-3">
-            <button
-              type="button"
-              onClick={() => setExpanded((v) => !v)}
-              className="text-xs uppercase tracking-wide"
-              style={{ color: GOLD }}
-            >
-              {expanded ? "Mniej" : "Pokaż więcej"}
-            </button>
-          </div>
-        )}
-
-        <div className="mt-4">
+        {/* низ карточки */}
+        <div className="mt-4 shrink-0">
           <div className="h-px w-1/3" style={{ backgroundColor: `${GOLD}66` }} />
         </div>
       </div>
@@ -119,23 +152,36 @@ function ReviewCard({ name, text, rating }) {
   );
 }
 
-
-
 export default function ReviewsSection({ reviews = [] }) {
+  const ref = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"],
+  });
+
+  const bgY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
+
   return (
-    <section
-      id="opinie"
-      className="relative select-none overflow-hidden"
-      style={{
-        backgroundColor: EGGPLANT,
-        backgroundImage: `linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.85)), url('/reviews-img/rev.webp')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <section id="opinie" ref={ref} className="relative h-[90vh] select-none overflow-hidden">
+      {/* Параллакс-фон */}
+      <motion.div
+        className="absolute inset-0 -z-10"
+        style={{
+          y: bgY,
+          backgroundImage: `linear-gradient(0deg, rgba(0,0,0,0.8), rgba(0,0,0,0.85)), url('/reviews-img/rev.webp')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          willChange: "transform",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Виньетка */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{ boxShadow: "inset 0 0 200px rgba(0,0,0,0.8)" }}
+        aria-hidden="true"
       />
 
       <div className="relative z-10 container mx-auto px-4 py-20">

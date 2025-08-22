@@ -14,7 +14,7 @@ export default function TeamSections() {
   return (
     <section
       id="team"
-      className="custom-cont bg-secondaryColor/40 border-[1px] border-primaryColor/10 pb-12 select-none font-montserrat"
+      className="py-5 sm:py-16"
     >
       <ScrollAnimationWrapper>
         <SectionTitle>Our Team</SectionTitle>
@@ -37,7 +37,7 @@ function TeamCard({ name, img, desc }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.45, ease: "easeOut" }}
-      className="group flex flex-col items-center text-center"
+      className=" flex flex-col items-center text-center"
     >
       {/* круглое фото с золотым обводом */}
       <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full p-[2px]"
