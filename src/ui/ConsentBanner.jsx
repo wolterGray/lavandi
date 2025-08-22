@@ -49,9 +49,7 @@ export default function ConsentBanner() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[1000] px-4 pb-4">
-      <div
-        className="mx-auto max-w-3xl rounded-2xl border bg-[#0d0510]/95 text-white shadow-2xl backdrop-blur
-                   border-white/10">
+      <div className="mx-auto max-w-3xl rounded-2xl border bg-[#0d0510]/95 text-white shadow-2xl backdrop-blur border-white/10">
         <div className="p-5 md:p-6">
           <h3 className="text-[15px] font-semibold text-[#D6B16A] tracking-wide mb-2">
             Pliki cookie & analityka
@@ -65,24 +63,24 @@ export default function ConsentBanner() {
           <div className="mt-4 flex flex-col sm:flex-row gap-3">
             <button
               onClick={accept}
-              className="inline-flex items-center justify-center rounded-full px-6 py-2.5
-                         font-semibold text-white bg-[#E94560] hover:bg-[#B21E3F]
-                         transition shadow-[0_6px_24px_rgba(233,69,96,.45)]">
+              className="inline-flex items-center justify-center rounded-full px-6 py-2.5 font-semibold text-white bg-[#E94560] hover:bg-[#B21E3F] transition shadow-[0_6px_24px_rgba(233,69,96,.45)]"
+            >
               Akceptuję
             </button>
 
             <button
               onClick={deny}
-              className="inline-flex items-center justify-center rounded-full px-6 py-2.5
-                         font-semibold text-white/90 bg-white/10 hover:bg-white/[0.15]
-                         transition border border-white/10">
+              className="inline-flex items-center justify-center rounded-full px-6 py-2.5 font-semibold text-white/90 bg-white/10 hover:bg-white/[0.15] transition border border-white/10"
+            >
               Tylko niezbędne
             </button>
 
+            {/* ВАЖНО: ведём на статический файл */}
             <a
-              href="/polityka-prywatnosci"
-              className="sm:ml-auto text-sm underline decoration-[#D6B16A]/70 underline-offset-4
-                         hover:text-[#D6B16A]">
+              href="/polityka-prywatnosci.html"
+              className="sm:ml-auto text-sm underline decoration-[#D6B16A]/70 underline-offset-4 hover:text-[#D6B16A]"
+              rel="noopener"
+            >
               Polityka prywatności
             </a>
           </div>
