@@ -1,42 +1,22 @@
-import {Helmet} from "react-helmet";
+import { Helmet } from "react-helmet";
 
 export default function HelmetSEO() {
   return (
     <Helmet>
-      {/* Meta Keywords (не для Google, но для других поисковиков) */}
-      <meta
-        name="keywords"
-        content="masaż Warszawa, masaż premium, masaż relaksacyjny, masaż klasyczny, limfodrenaż, masaż sportowy, masaż antycellulitowy, masaż twarzy, masaż autorski, gabinet masażu, NUAR, Śródmieście"
-      />
-
-      {/* Индексация */}
-      <meta name="robots" content="index, follow" />
-
-      {/* Open Graph для соцсетей */}
-      <meta
-        property="og:title"
-        content="NUAR – Najlepszy masaż premium w Warszawie"
-      />
-      <meta
-        property="og:description"
-        content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski. Poczuj różnicę od pierwszej wizyty."
-      />
+      {/* Open Graph */}
+      <meta property="og:title" content="NUAR – Najlepszy masaż premium w Warszawie" />
+      <meta property="og:description" content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski. Poczuj różnicę od pierwszej wizyty." />
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://nuarr.pl" />
       <meta property="og:locale" content="pl_PL" />
       <meta property="og:image" content="https://nuarr.pl/og-image.jpg" />
 
-      {/* Twitter Cards (для X/Twitter) */}
+      {/* Twitter */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta
-        name="twitter:title"
-        content="NUAR – Najlepszy masaż premium w Warszawie"
-      />
-      <meta
-        name="twitter:description"
-        content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski."
-      />
+      <meta name="twitter:title" content="NUAR – Najlepszy masaż premium w Warszawie" />
+      <meta name="twitter:description" content="Luksusowe masaże w Warszawie: relaksacyjny, klasyczny, sportowy, limfatyczny, antycellulitowy, twarzy i autorski." />
       <meta name="twitter:image" content="https://nuarr.pl/og-image.jpg" />
+      <meta name="twitter:site" content="@nuar_massage" />
 
       {/* Schema.org JSON-LD */}
       <script type="application/ld+json">
@@ -60,10 +40,8 @@ export default function HelmetSEO() {
             "https://www.facebook.com/nuarmassage",
             "https://www.instagram.com/nuar_massage"
           ],
-          "openingHours": [
-            "Mo-Fr 09:00-22:00",
-            "Sa 10:00-20:00"
-          ]
+          "openingHours": ["Mo-Fr 09:00-22:00", "Sa 10:00-20:00"],
+          "priceRange": "PLN 150-400"
         }
         `}
       </script>

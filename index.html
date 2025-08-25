@@ -1,33 +1,19 @@
-<!doctype html>
-<html lang="pl">
-
 <head>
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NYM3P4FJJE"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-
-    /* 1) По умолчанию НЕТ аналитики, пока юзер не согласится */
-    gtag('consent', 'default', {
-      ad_storage: 'denied',
-      analytics_storage: 'denied',
-      functionality_storage: 'granted',
-      security_storage: 'granted'
-    });
-
-    /* 2) Инициализация, но без auto page_view */
-    gtag('js', new Date());
-    gtag('config', 'G-NYM3P4FJJE', { send_page_view: false });
-  </script>
-
-  <!--  -->
+  <!-- Critical meta first -->
   <meta charset="UTF-8" />
-  <title>NUAR — premium masaż w centrum Warszawy | Relaks & Odprężenie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="index,follow" />
+  <meta name="theme-color" content="#0D0510" />
+  <meta name="color-scheme" content="light dark" />
+
+  <title>NUAR — Masaż premium w centrum Warszawy | Relaks & Odprężenie</title>
   <meta name="description"
-    content="NUAR – premium masaż  w Warszawie 🌟 Luksusowe masaże relaksacyjne, klasyczne, sportowe, limfatyczne, antycellulitowe, twarzy i autorskie." />
-  <!-- Favicon -->
+    content="NUAR: masaże premium w centrum Warszawy — relaksacyjny, klasyczny, sportowy i limfatyczny. Zarezerwuj online i poczuj różnicę od pierwszej wizyty." />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://nuarr.pl/" />
+
+  <!-- Favicon / PWA -->
   <link rel="icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -37,29 +23,36 @@
   <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png">
   <link rel="manifest" href="/site.webmanifest">
 
+  <!-- Social (static fallback) -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="NUAR — Masaż premium w Warszawie">
+  <meta property="og:description" content="Relaks, odprężenie i luksusowe masaże w centrum Warszawy. Rezerwuj online.">
+  <meta property="og:url" content="https://nuarr.pl/">
+  <meta property="og:image" content="https://nuarr.pl/og-image.jpg">
+  <meta property="og:locale" content="pl_PL">
+  <meta name="twitter:card" content="summary_large_image">
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!-- Performance: fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Canonical -->
-  <link rel="canonical" href="https://nuarr.pl/" />
-
-  <!-- Viewport -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Basic Title (заменится HelmetSEO) -->
-
-
-
-
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-NYM3P4FJJE"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('consent', 'default', {
+      ad_storage: 'denied',
+      analytics_storage: 'denied',
+      functionality_storage: 'granted',
+      security_storage: 'granted'
+    });
+    gtag('js', new Date());
+    gtag('config', 'G-NYM3P4FJJE', { send_page_view: false });
+  </script>
 </head>
-
-
-
 
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.jsx"></script>
 </body>
-
-</html>
