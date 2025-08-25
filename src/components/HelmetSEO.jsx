@@ -3,12 +3,6 @@ import {Helmet} from "react-helmet";
 export default function HelmetSEO() {
   return (
     <Helmet>
-      {/* SEO Title */}
-      <title>NUAR – Najlepszy masaż premium w Warszawie</title>
-
-      {/* Meta Description (до 160 символов) */}
-      
-
       {/* Meta Keywords (не для Google, но для других поисковиков) */}
       <meta
         name="keywords"
