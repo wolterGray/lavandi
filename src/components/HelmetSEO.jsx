@@ -7,10 +7,7 @@ export default function HelmetSEO() {
       <title>NUAR – Najlepszy masaż premium w Warszawie</title>
 
       {/* Meta Description (до 160 символов) */}
-      <meta
-        name="description"
-        content="NUAR – premium masaż  w Warszawie 🌟 Luksusowe masaże relaksacyjne, klasyczne, sportowe, limfatyczne, antycellulitowe, twarzy i autorskie."
-      />
+      
 
       {/* Meta Keywords (не для Google, но для других поисковиков) */}
       <meta
