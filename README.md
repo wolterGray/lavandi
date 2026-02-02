@@ -1,8 +1,38 @@
-# React + Vite
+# Nuarr Massage Studio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Односторінковий веб‑додаток на React і Vite для презентації послуг студії масажу Nuarr. Проєкт містить розділи з описом послуг, команди, цін, відгуків і формою для онлайн‑запису.
 
-Currently, two official plugins are available:
+## Основні можливості
+- адаптивний інтерфейс на базі Tailwind CSS;
+- анімації та слайдери з Framer Motion і Swiper;
+- навігація з плавною прокруткою та SEO‑оптимізація.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Встановлення
+1. Клонувати репозиторій.
+2. Встановити залежності:
+   ```bash
+   npm install
+   ```
+   > альтернативно можна використати `yarn install`.
+
+## Режим розробки
+```bash
+npm run dev
+```
+Запускає локальний сервер з гарячим перезавантаженням.
+
+## Збірка та попередній перегляд
+```bash
+npm run build
+npm run preview
+```
+Перша команда збирає оптимізовану версію застосунку, друга — відкриває локальний сервер для попереднього перегляду.
+
+## Генерація SEO‑файлів
+```bash
+npm run generate-seo
+```
+Створює `sitemap.xml` та `robots.txt` у каталозі `public`.
+
+## Корисні скрипти
+- `npm run lint` — перевірка коду ESLint.
