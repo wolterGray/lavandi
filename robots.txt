@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
-Sitemap: https://lavandi.pl/sitemap.xml
-Host: https://lavandi.pl
+
+Sitemap: https://nuarr.pl/sitemap.xml
+Host: nuarr.pl
