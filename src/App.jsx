@@ -289,7 +289,7 @@ export default function App() {
       img: "/services-img/9.webp",
     },
   ];
-  const [openModalRes, setOpenModalRes] = React.useState(false);
+
   const navItems = [
     {label: "Strona główna", path: "home"},
     {label: "Usługi", path: "services"},
@@ -297,17 +297,23 @@ export default function App() {
     {label: "Cennik", path: "prices"},
     {label: "Zespól", path: "team"},
   ];
+  const homeBanner = [
+      { img: "/massage/1.png", title: "Atmosfera NUAR", news: "Spokój. Cisza. Regeneracja." },
+      { img: "/massage/2.png", title: "Droga do relaksu", news: "Tu zaczyna się Twoja regeneracja" },
+      { img: "/massage/3.png", title: "Wiosna w NUAR", news: "Do -20% na wybrane masaże" },
+    ];
   return (
     <div className="antialiased  text-mainColor scroll-smooth">
       <HelmetSEO />
       {/* Navbar */}
-      <div className="w-[94vw] relative mx-auto">
+      <div className="w-[90vw] relative mx-auto">
         <Header navItems={navItems} />
-        {/* Hero */}
-        <Home />
+       
       </div>
+       {/* Hero */}
+        <Home homeBanner={homeBanner} />
       <CallWidget />
-      <div className=" ">
+      <div className=" w-[90vw] relative mx-auto">
         {/* Services */}
         <MassageServices services={services} />
 

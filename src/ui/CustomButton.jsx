@@ -20,9 +20,9 @@ function CustomButton({text, onClick}) {
         relative cursor-pointer 
         bg-secondaryColor border-primaryColor/50 border 
         inline-flex items-center justify-center 
-        px-4 py-4 text-xl sm:w-max w-full
-        sm:px-6 sm:py-3 sm:text-base
-        md:px-6 md:py-3 md:text-lg
+        px-2 py-2 text-xl sm:w-max w-full
+        sm:px-3 sm:py-1 sm:text-base
+        md:px-3 md:py-1 md:text-lg
         rounded-full text-primaryColor hover:text-secondaryColor 
         tracking-wide overflow-hidden transition-all duration-500 group
       ">

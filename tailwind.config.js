@@ -6,7 +6,7 @@ module.exports = {
     extend: {
       colors: {
         mainColor: "white",
-        primaryColor: "#b7864d",
+        primaryColor: "#b79d4d",
         secondaryColor: "#0d0510",
         headerBg: "#1e1412",
         mainBg: "#11100f",
@@ -19,8 +19,11 @@ module.exports = {
         comforta: ["Comfortaa", "sans-serif"],
         montserrat: ["Montserrat", "sans-serif"],
         cinzel: ["Cinzel", "serif"],
+        crossorigin: ["Outfit", "sans-serif"],
+
       },
     },
   },
   plugins: [],
 };
+// #b7864d
