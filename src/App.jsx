@@ -238,6 +238,7 @@ export default function App() {
       price: [170, 255, 310, 360, 450],
       desc: "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb.",
       img: "/services-img/1.webp",
+      discount: 18
     },
     {
       title: "Masaż sportowy",
@@ -245,6 +246,7 @@ export default function App() {
       price: [170, 255, 310, 360, 450],
       desc: "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga zapobiegać kontuzjom.",
       img: "/services-img/2.webp",
+      discount: 18
     },
     {
       title: "Masaż relaksacyjny",
@@ -252,6 +254,7 @@ export default function App() {
       price: [170, 255, 310, 360, 450],
       desc: "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia.",
       img: "/services-img/3.webp",
+      discount: 18
     },
     {
       title: "Masaż limfatyczny",
@@ -259,6 +262,7 @@ export default function App() {
       price: [170, 255, 310, 360, 450],
       desc: "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizmu.",
       img: "/services-img/4.webp",
+      discount: 18
     },
     {
       title: "Masaż antycellulitowy",
@@ -266,6 +270,7 @@ export default function App() {
       price: [170, 255, 310, 360, 450],
       desc: "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność.",
       img: "/services-img/5.webp",
+      discount: 18
     },
     {
       title: "Masaż twarzy i głowy",
@@ -273,6 +278,7 @@ export default function App() {
       price: [149, 220],
       desc: "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie.",
       img: "/services-img/6.webp",
+      discount: 18
     },
     {
       title: "Masaż autorski",
@@ -280,6 +286,7 @@ export default function App() {
       price: [490, 590],
       desc: "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji.",
       img: "/services-img/7.webp",
+      discount: 18
     },
     {
       title: "Masaż dla dzieci",
@@ -287,6 +294,7 @@ export default function App() {
       price: [170, 250, 310, 360, 450],
       desc: "Delikatny masaż wspierający regenerację i redukcję stresu, szczególnie u aktywnych dzieci i młodzieży. Bezpieczny i korzystny dla zdrowia. Dla dzieci od 5 do 18 lat.",
       img: "/services-img/9.webp",
+      discount: 18
     },
   ];
 
