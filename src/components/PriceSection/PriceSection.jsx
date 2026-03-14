@@ -29,7 +29,7 @@ function PriceSection({ services = [] }) {
       className="relative "
     >
       <ScrollAnimationWrapper>
-        <div className="custom-cont relative overflow-hidden rounded-[28px] shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-sm ">
+        <div className="custom-cont border border-primaryColor/50 p-10 m-10 relative overflow-hidden rounded-[28px] shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-sm ">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-primaryColor/8 blur-3xl" />
             <div className="absolute bottom-0 right-0 h-40 w-40 rounded-full bg-[#d6b16a]/10 blur-3xl" />
@@ -124,7 +124,7 @@ function PriceSection({ services = [] }) {
             </AnimatePresence>
 
             {/* footer */}
-            <div className="mt-8 flex flex-col items-center gap-4 border-t border-white/10 pt-6 text-center sm:mt-10">
+            <div className="mt-8 flex flex-col items-center gap-4  pt-6 text-center sm:mt-10">
               <p className="max-w-xl text-xs leading-5 text-white/45 sm:text-sm">
                 Ceny brutto. Płatność kartą, BLIK oraz gotówką dostępna na
                 miejscu.
