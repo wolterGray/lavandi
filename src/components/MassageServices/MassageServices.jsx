@@ -8,7 +8,7 @@ function MassageServices({ services = [] }) {
   const rightColumn = services.slice(half);
 
   return (
-    <section className="custom-cont py-12 sm:py-14 md:py-16" id="services">
+    <section className="custom-cont" id="services">
       <ScrollAnimationWrapper>
         <div className="mx-auto mb-10 text-center sm:mb-12 md:mb-14">
           <SectionTitle>Usługi</SectionTitle>

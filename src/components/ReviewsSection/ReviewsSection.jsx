@@ -1,235 +1,235 @@
-import {AiFillStar} from "react-icons/ai";
-import {Swiper, SwiperSlide} from "swiper/react";
-import {Pagination, Autoplay} from "swiper/modules";
-import {motion, useScroll, useTransform} from "framer-motion";
-import "swiper/css";
-import "swiper/css/pagination";
+import React, { useEffect, useMemo, useState } from "react";
+import { AiFillStar } from "react-icons/ai";
+import { AnimatePresence, motion } from "framer-motion";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
-import React, {useState, useRef, useEffect} from "react";
 
-const getInitials = (name) =>
+const getInitials = (name = "") =>
   name
     .split(" ")
-    .map((n) => n[0])
+    .filter(Boolean)
+    .map((part) => part[0])
     .join("")
     .toUpperCase();
 
-function PremiumStars({rating = 5, className = ""}) {
+function PremiumStars({ rating = 5 }) {
   return (
-    <div
-      className={`flex items-center gap-1 ${className}`}
-      aria-label={`Ocena ${rating} na 5`}>
-      {Array.from({length: rating}).map((_, i) => (
-        <AiFillStar key={i} className="w-4 h-4 text-primaryColor" />
+    <div className="flex items-center gap-0.5">
+      {Array.from({ length: rating }).map((_, i) => (
+        <AiFillStar key={i} className="h-3.5 w-3.5 text-primaryColor" />
       ))}
     </div>
   );
 }
 
-/** ====== КАРТОЧКА С ПРОКРУТКОЙ ДЛИННОГО ТЕКСТА ====== */
-function ReviewCard({name, text, rating}) {
-  const scrollRef = useRef(null);
-  const [canScroll, setCanScroll] = useState(false);
-  const [atTop, setAtTop] = useState(true);
-  const [atBottom, setAtBottom] = useState(false);
+function ReviewCard({ name, text, rating = 5, position = "center" }) {
+  const isCenter = position === "center";
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const check = () => {
-      setCanScroll(el.scrollHeight > el.clientHeight + 1);
-      setAtTop(el.scrollTop <= 0);
-      setAtBottom(el.scrollTop + el.clientHeight >= el.scrollHeight - 1);
-    };
-    check();
-    el.addEventListener("scroll", check, {passive: true});
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => {
-      el.removeEventListener("scroll", check);
-      ro.disconnect();
-    };
-  }, []);
-
-  const onWheel = (e) => {
-    const el = scrollRef.current;
-    if (!el || !canScroll) return;
-    const delta = e.deltaY;
-    const atTopNow = el.scrollTop <= 0;
-    const atBottomNow = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
-    if ((delta < 0 && !atTopNow) || (delta > 0 && !atBottomNow)) {
-      e.stopPropagation();
-    }
+  const variants = {
+    center: {
+      x: "-50%",
+      y: 0,
+      scale: 1.05,
+      opacity: 1,
+      filter: "blur(0px)",
+      zIndex: 40,
+    },
+    backLeft: {
+      x: "calc(-50% - 88px)",
+      y: 42,
+      scale: 0.84,
+      opacity: 0.22,
+      filter: "blur(4px)",
+      zIndex: 10,
+    },
+    backRight: {
+      x: "calc(-50% + 88px)",
+      y: 42,
+      scale: 0.84,
+      opacity: 0.22,
+      filter: "blur(4px)",
+      zIndex: 10,
+    },
   };
 
   return (
-    <motion.figure
-      initial={{opacity: 0, y: 24}}
-      whileInView={{opacity: 1, y: 0}}
-      viewport={{once: true}}
-      transition={{duration: 0.5, ease: "easeOut"}}
-      className="
-        relative w-full h-[200px] rounded-2xl p-[1px] overflow-hidden
-        bg-gradient-to-tr from-primaryColor/60 via-transparent to-primaryColor/20
-      ">
+    <motion.div
+      initial={{
+        x: "-50%",
+        y: 24,
+        scale: 0.8,
+        opacity: 0,
+        filter: "blur(8px)",
+      }}
+      animate={variants[position]}
+      exit={{
+        x: "-50%",
+        y: -10,
+        scale: 0.78,
+        opacity: 0,
+        filter: "blur(8px)",
+      }}
+      transition={{
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+      }}
+      className="absolute left-1/2 top-0 w-[92%] max-w-[760px]"
+      style={{ transformOrigin: "center center" }}
+    >
       <div
-        className="
-        relative flex flex-col h-full rounded-2xl
-        bg-secondaryColor/60 backdrop-blur-lg
-        px-6 py-5
-        shadow-[inset_0_1px_0_rgba(255,255,255,0.07),0_10px_30px_rgba(0,0,0,0.4)]
-      ">
-        {/* кавычка */}
-        <div className="pointer-events-none absolute -top-3 left-6 text-5xl leading-none select-none text-primaryColor/40">
-          “
-        </div>
+        className={`
+          relative overflow-hidden rounded-[30px] border p-5 md:p-6
+          ${
+            isCenter
+              ? "border-white/20 bg-white/[0.14] shadow-[0_30px_100px_rgba(0,0,0,0.52)] backdrop-blur-2xl"
+              : "border-white/5 bg-white/[0.025] shadow-none backdrop-blur-md"
+          }
+        `}
+      >
+        {isCenter && (
+          <>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.22),transparent_38%)]" />
+            <div className="absolute -left-10 top-0 h-28 w-28 rounded-full bg-primaryColor/10 blur-3xl" />
+            <div className="absolute -right-10 bottom-0 h-28 w-28 rounded-full bg-white/10 blur-3xl" />
+          </>
+        )}
 
-        {/* шапка */}
-        <div className="flex items-center gap-4 mb-3 shrink-0">
-          <div className="relative">
-            <div className="w-12 h-12 rounded-full grid place-items-center bg-white/5 text-white font-semibold">
-              {getInitials(name)}
+        <div className="relative flex items-start gap-4">
+          <div
+            className={`
+              flex h-12 w-12 shrink-0 items-center justify-center rounded-full
+              text-xs font-semibold uppercase tracking-[0.12em]
+              ${
+                isCenter
+                  ? "bg-primaryColor/25 text-white ring-1 ring-primaryColor/45"
+                  : "bg-white/8 text-white/55 ring-1 ring-white/5"
+              }
+            `}
+          >
+            {getInitials(name)}
+          </div>
+
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span
+                className={`text-[13px] font-semibold tracking-[0.12em] ${
+                  isCenter ? "text-white" : "text-white/55"
+                }`}
+              >
+                {name}
+              </span>
+
+              <span className="text-white/20">•</span>
+
+              <PremiumStars rating={rating} />
             </div>
-            <span className="absolute inset-0 rounded-full pointer-events-none ring-1 ring-primaryColor/35" />
+
+            <p
+              className={`mt-3 ${
+                isCenter
+                  ? "text-[16px] leading-7 text-white/95 md:text-[18px] md:leading-8"
+                  : "text-[14px] leading-6 text-white/45"
+              }`}
+            >
+              {text}
+            </p>
           </div>
-          <div className="flex flex-col">
-            <span className="text-sm tracking-[0.12em] uppercase text-white font-medium">
-              {name}
-            </span>
-            <PremiumStars rating={rating} />
-          </div>
-        </div>
-
-        {/* ТЕКСТ — скроллим внутри */}
-        <div className="relative flex-1 min-h-0">
-          {/* подсказочные затемнения */}
-          {canScroll && !atTop && (
-            <div className="pointer-events-none absolute -top-2 left-0 right-0 h-6 bg-gradient-to-b from-black/40 to-transparent rounded-t-2xl" />
-          )}
-          {canScroll && !atBottom && (
-            <div className="pointer-events-none absolute -bottom-2 left-0 right-0 h-6 bg-gradient-to-t from-black/35 to-transparent rounded-b-2xl" />
-          )}
-
-          <blockquote
-            ref={scrollRef}
-            onWheel={onWheel}
-            tabIndex={0}
-            className="
-              h-full overflow-y-auto pr-1
-              text-base leading-relaxed text-white/90
-              break-words [hyphens:auto] focus:outline-none scroll-smooth
-              scrollbar-thin scrollbar-thumb-primaryColor/30 scrollbar-track-transparent
-            ">
-            {text}
-          </blockquote>
-        </div>
-
-        {/* низ карточки */}
-        <div className="mt-4 shrink-0">
-          <div className="h-px w-1/3 bg-primaryColor/40" />
         </div>
       </div>
-    </motion.figure>
+    </motion.div>
   );
 }
 
-export default function ReviewsSection({reviews = []}) {
-  const ref = useRef(null);
-  const {scrollYProgress} = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  const bgY = useTransform(scrollYProgress, [0, 1], [-120, 120]);
+export default function ReviewsSection({ reviews = [] }) {
+  const preparedReviews = useMemo(() => reviews, [reviews]);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  useEffect(() => {
+    if (preparedReviews.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setActiveIndex((prev) => (prev + 1) % preparedReviews.length);
+    }, 4200);
+
+    return () => clearInterval(interval);
+  }, [preparedReviews.length]);
+
+  if (!preparedReviews.length) return null;
+
+  const current = preparedReviews[activeIndex];
+  const prev =
+    preparedReviews[
+      (activeIndex - 1 + preparedReviews.length) % preparedReviews.length
+    ];
+  const next =
+    preparedReviews[
+      (activeIndex + 1) % preparedReviews.length
+    ];
 
   return (
     <section
       id="opinie"
-      ref={ref}
-      className="relative h-[90vh] select-none overflow-hidden">
-      {/* Параллакс-фон */}
-      <motion.div
-        className="absolute inset-0 -z-10"
-        style={{y: bgY}}
-        aria-hidden="true">
-        {/* фон-картинка */}
-        <div
-          className="
-            absolute inset-0 bg-cover bg-center
-            bg-[url('/reviews-img/rev.webp')]
-            transition-transform
-          "
-        />
-        {/* ФИЛЬТР ИЗ secondaryColor: multiply-тонировка + градиенты/блик */}
-        <div className="pointer-events-none absolute inset-0">
-          {/* тонировка фирменным */}
-          <div className="absolute inset-0 bg-secondaryColor/80 mix-blend-multiply" />
-          {/* вертикальный градиент из secondary → прозрачный → secondary */}
-          <div className="absolute inset-0 bg-gradient-to-b from-secondaryColor/30 via-transparent to-secondaryColor/90" />
-         
-         
-          {/* лёгкий радиальный блик */}
-          <div
-            className="absolute inset-0 mix-blend-overlay"
-            style={{
-              background:
-                "radial-gradient(60% 50% at 50% 30%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%)",
-            }}
-          />
-          {/* виньетка по краям */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(120% 100% at 50% 60%, rgba(0,0,0,0) 72%, rgba(0,0,0,0.33) 100%)",
-            }}
-          />
-        </div>
-      </motion.div>
+      className="relative custom-cont select-none rounded-[28px] overflow-hidden py-14 md:py-[72px]"
+    >
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[url('/reviews-img/rev.webp')] bg-cover bg-center" />
+        <div className="absolute inset-0 bg-secondaryColor/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-secondaryColor/50 via-secondaryColor/80 to-secondaryColor/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),transparent_42%)]" />
+      </div>
 
-      {/* Виньетка поверх (мягкая затемняющая рамка секции) */}
-      <div
-        className="pointer-events-none absolute inset-0 ring-0"
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 container mx-auto px-4 py-20">
+      <div className="relative z-10 w-full">
         <ScrollAnimationWrapper>
-          <SectionTitle>Opinie</SectionTitle>
+          <div className="mx-auto max-w-3xl text-center">
+            <SectionTitle>Opinie</SectionTitle>
 
-          {/* бейдж */}
-          <div className="text-center pb-8">
-            <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-5 py-2 rounded-full bg-white/5 text-white/90 backdrop-blur-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-white/70 md:text-[15px]">
+              Prawdziwe wrażenia klientów po wizytach w naszym studio.
+            </p>
+
+            <div className="mt-6 inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-full border border-white/10 bg-white/[0.05] px-5 py-2.5 text-white/90 backdrop-blur-sm">
               <PremiumStars rating={5} />
-              <span className="text-sm tracking-[0.18em] uppercase">
+              <span className="text-sm uppercase tracking-[0.18em]">
                 5.0 / 5 na Booksy
               </span>
-              <span className="text-white/60 hidden xs:inline">•</span>
-              <span className="text-sm text-white/70">50+ opinii</span>
+              <span className="hidden text-white/40 sm:inline">•</span>
+              <span className="text-sm text-white/65">50+ opinii</span>
               <a
                 href="https://booksy.com/pl-pl/262690_lavandi-studio-masazu_masaz_3_warszawa#ba_s=seo"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="underline decoration-2 underline-offset-4 text-primaryColor decoration-primaryColor/60">
+                className="text-primaryColor underline decoration-primaryColor/50 underline-offset-4 hover:opacity-80"
+              >
                 Zobacz więcej
               </a>
             </div>
           </div>
 
-          <Swiper
-            modules={[Pagination, Autoplay]}
-            spaceBetween={24}
-            slidesPerView={1}
-            breakpoints={{768: {slidesPerView: 2}, 1200: {slidesPerView: 3}}}
-            autoplay={{delay: 7000, disableOnInteraction: false}}
-            loop
-            className="pb-10 [--swiper-theme-color:theme(colors.white)]">
-            {reviews.map((r, i) => (
-              <SwiperSlide key={i} className="h-[480px]">
-                <ReviewCard {...r} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <div className="relative mx-auto mt-12 h-[320px] w-full max-w-5xl md:mt-16 md:h-[360px]">
+            <AnimatePresence mode="popLayout">
+              {prev && (
+                <ReviewCard
+                  key={`prev-${activeIndex}`}
+                  {...prev}
+                  position="backLeft"
+                />
+              )}
+
+              {next && (
+                <ReviewCard
+                  key={`next-${activeIndex}`}
+                  {...next}
+                  position="backRight"
+                />
+              )}
+
+              <ReviewCard
+                key={`current-${activeIndex}`}
+                {...current}
+                position="center"
+              />
+            </AnimatePresence>
+          </div>
         </ScrollAnimationWrapper>
       </div>
     </section>

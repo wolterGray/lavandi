@@ -11,5 +11,5 @@ body {
   color: #c9b574;
 }
 .custom-cont {
-  @apply mx-auto  py-5  sm:py-12 ;
+  @apply mx-auto mb-10   sm:mb-12 md:mb-14 ;
 }
