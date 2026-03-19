@@ -8,16 +8,16 @@ const GOLD = "#D6B16A";
 const teamInfo = [
   {
     id: 1,
-    name: "Olha",
+    name: "Anna",
     img: "/team/2.png",
-    role: "Top Master",
+    role: "Master",
     category: "top",
   },
   {
     id: 2,
-    name: "Anna",
+    name: "Olha",
     img: "/team/1.png",
-    role: "Master",
+    role: "Top Master ⭐️",
     category: "master",
   },
   {
