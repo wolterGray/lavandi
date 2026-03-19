@@ -172,7 +172,7 @@ export default function ReviewsSection({ reviews = [] }) {
       className="relative custom-cont select-none rounded-[28px] overflow-hidden py-14 md:py-[72px]"
     >
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[url('/reviews-img/rev.webp')] bg-cover bg-center" />
+        
         <div className="absolute inset-0 bg-secondaryColor/70" />
         <div className="absolute inset-0 bg-gradient-to-b from-secondaryColor/50 via-secondaryColor/80 to-secondaryColor/95" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.12),transparent_42%)]" />

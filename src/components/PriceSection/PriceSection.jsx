@@ -29,7 +29,7 @@ function PriceSection({ services = [] }) {
       className="relative custom-cont"
     >
       <ScrollAnimationWrapper>
-        <div className="custom-cont  border-t border-b bg-[#1a140f]/20 border-primaryColor/50 p-10 sm:p-2 sm:m-2 m-10 relative overflow-hidden rounded-[28px] shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-sm ">
+        <div className="custom-cont  border-t border-b bg-[#1a140f]/20 border-primaryColor/50  relative overflow-hidden rounded-[28px] shadow-[0_10px_40px_rgba(0,0,0,0.22)] backdrop-blur-sm ">
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute left-0 top-0 h-32 w-32 rounded-full bg-primaryColor/8 blur-3xl" />
             <div className="absolute bottom-0 right-0 h-40 w-40 rounded-full bg-[#d6b16a]/10 blur-3xl" />
@@ -181,7 +181,7 @@ function PriceColumn({ items, selectedTime, getDiscountedPrice }) {
             layout="position"
             key={`${service.title}-${selectedTime}-${i}`}
             className={[
-              "group flex items-center justify-between gap-4 px-4 py-4 sm:px-5 sm:py-4",
+              "group flex items-center justify-between gap-4 px-2 py-2 sm:px-5 sm:py-4",
               "min-h-[84px] sm:min-h-[92px]",
               "transition-colors duration-300 hover:bg-white/[0.03]",
                "border-b border-white/10" ,
