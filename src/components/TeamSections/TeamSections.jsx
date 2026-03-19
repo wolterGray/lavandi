@@ -11,14 +11,14 @@ const teamInfo = [
     name: "Anna",
     img: "/team/2.png",
     role: "Master",
-    category: "top",
+    category: "master",
   },
   {
     id: 2,
     name: "Olha",
     img: "/team/1.png",
     role: "Top Master ⭐️",
-    category: "master",
+    category: "top",
   },
   {
     id: 3,
