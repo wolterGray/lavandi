@@ -22,11 +22,12 @@ const teamInfo = [
   },
   {
     id: 3,
-    name: "Volodymyr",
+    name: "Max",
     img: "/team/3.png",
-    role: "Administrator",
-    category: "admin",
+    role: "Top Master ⭐️",
+    category: "top",
   },
+  
 ];
 
 export default function TeamSections() {
