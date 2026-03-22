@@ -24,10 +24,9 @@ const teamInfo = [
     id: 3,
     name: "Max",
     img: "/team/3.png",
-    role: "Top Master ⭐️",
-    category: "top",
+    role: "Master",
+    category: "master",
   },
-  
 ];
 
 export default function TeamSections() {
@@ -69,11 +68,17 @@ function TeamCard({ name, img, role, index }) {
       className="group relative flex flex-col items-center text-center"
     >
       <div className="relative flex h-[220px] w-full items-end justify-center sm:h-[380px] lg:h-[320px]">
+
+        {/* 🔥 золотое свечение */}
         <div
           className="absolute bottom-6 h-28 w-28 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-30 sm:bottom-8 sm:h-36 sm:w-36"
           style={{ background: GOLD }}
         />
 
+        {/* 🔥 ГРАДИЕНТ СНИЗУ (главное) */}
+        <div className="absolute bottom-0 left-0 w-full h-1/4 bg-gradient-to-t from-black/100 via-black/20 to-transparent z-20 pointer-events-none" />
+
+        {/* изображение */}
         <img
           src={img}
           alt={name}
