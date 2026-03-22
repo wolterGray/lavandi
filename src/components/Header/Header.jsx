@@ -111,19 +111,19 @@ export default function Header({ navItems, setOpenModalRes }) {
                 <div className="flex items-center justify-end gap-3 sm:gap-4 lg:col-start-3 lg:justify-self-end lg:gap-8">
                   {/* Контакты только с md */}
                   <div className="hidden items-center gap-4 md:flex lg:gap-6">
-                    <div className="flex items-center gap-2 whitespace-nowrap">
+                    <div className="flex items-center transition-transform duration-300 hover:scale-110 gap-2 whitespace-nowrap">
                       <FaRegCalendarAlt className="text-base text-primaryColor" />
                       <a
                         href="https://nuarr.booksy.com/a"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm text-primaryColor transition-colors duration-300 hover:text-secondaryColor lg:text-[15px]"
+                        className="text-sm text-primaryColor   lg:text-[15px]"
                       >
                         Rezerwuj
                       </a>
                     </div>
 
-                    <div className="flex items-center gap-2 whitespace-nowrap">
+                    <div className="flex items-center transition-transform duration-300 hover:scale-110 gap-2 whitespace-nowrap">
                       <PiPhoneCallFill className="text-base text-primaryColor" />
                       <a
                         href="tel:+48452402006"
