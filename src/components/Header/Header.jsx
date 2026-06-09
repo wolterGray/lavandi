@@ -1,322 +1,152 @@
-import React, { useEffect, useState } from "react";
-import CustomButton from "../../ui/CustomButton";
+import { useEffect, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import { Link } from "react-scroll";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import LogoNuar from "../../ui/LogoNuar";
-import { FaFacebookF, FaInstagram, FaRegCalendarAlt } from "react-icons/fa";
-import { PiPhoneCallFill } from "react-icons/pi";
+import Button from "../../ui/Button";
+import LanguageSwitcher from "../../ui/LanguageSwitcher";
+import { useTranslation } from "../../i18n/LanguageProvider";
+import { BOOKSY_URL, PHONE, PHONE_DISPLAY } from "../../constants/theme";
 
-const langList = [
-  { lang: "UA", iconPath: "/lang-icon/ua.svg" },
-  { lang: "PL", iconPath: "/lang-icon/pl.svg" },
-  { lang: "EN", iconPath: "/lang-icon/en.svg" },
-];
+function NavLink({ label, path, className, onClick, linkToHome, offset = -80 }) {
+  const base = `cursor-pointer ${className ?? ""}`;
+  if (linkToHome) {
+    return (
+      <a href={`/#${path}`} className={base} onClick={onClick}>
+        {label}
+      </a>
+    );
+  }
+  return (
+    <Link to={path} smooth duration={600} offset={offset} className={base} onClick={onClick}>
+      {label}
+    </Link>
+  );
+}
 
-const GOLD = "#D6B16A";
-
-export default function Header({ navItems, setOpenModalRes }) {
-  const [hovered, setHovered] = useState(null);
+export default function Header({ navItems, linkToHome = false }) {
+  const { t } = useTranslation();
+  const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
+    return () => { document.body.style.overflow = ""; };
   }, [mobileMenuOpen]);
 
   useEffect(() => {
-    const onKey = (e) => {
-      if (e.key === "Escape") setMobileMenuOpen(false);
-    };
-
+    const onKey = (e) => { if (e.key === "Escape") setMobileMenuOpen(false); };
     if (mobileMenuOpen) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileMenuOpen]);
 
-  const listVariants = {
-    hidden: { opacity: 0 },
-    show: { opacity: 1, transition: { staggerChildren: 0.06 } },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 10 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { ease: "easeOut", duration: 0.25 },
-    },
-  };
+  const headerBg =
+    scrolled || mobileMenuOpen
+      ? "bg-void/85 backdrop-blur-md border-b border-white/[0.06]"
+      : "bg-transparent border-b border-transparent";
 
   return (
     <>
-      {!mobileMenuOpen && (
-        <div className="relative z-50 w-full">
-          <motion.header
-            initial={false}
-            variants={{
-              normalVisible: { opacity: 1, y: 0 },
-              fixedVisible: { opacity: 1, y: 0 },
-              hidden: { opacity: 0, y: -20 },
-            }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="font-crossorigin flex min-h-[72px] w-full items-center select-none py-3 sm:min-h-[82px] sm:py-4 lg:min-h-32 lg:py-0"
-          >
-            <div className="w-full">
-              <div className="flex items-center justify-between gap-3 sm:gap-4 lg:grid lg:grid-cols-3 lg:items-center">
-                {/* Логотип */}
-                <div
-                  className="shrink-0 lg:col-start-1 lg:justify-self-start"
-                  style={{
-                    width: "clamp(128px, 34vw, 200px)",
-                  }}
-                >
-                  <LogoNuar className="block h-auto w-full" />
-                </div>
+      <header className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${headerBg}`}>
+        <div className="mx-auto flex max-w-content items-center justify-between gap-3 px-5 py-4 sm:px-6 lg:px-8 lg:py-5">
+          <div className="w-[100px] shrink-0 sm:w-[120px]">
+            {linkToHome ? (
+              <RouterLink to="/"><LogoNuar className="block h-auto w-full" /></RouterLink>
+            ) : (
+              <LogoNuar className="block h-auto w-full" />
+            )}
+          </div>
 
-                {/* Навигация десктоп */}
-                <nav
-                  className="hidden lg:col-start-2 lg:block"
-                  aria-label="Główna nawigacja"
-                >
-                  <ul className="flex items-center justify-center space-x-6 whitespace-nowrap text-[11px] uppercase tracking-[0.18em] xl:space-x-8">
-                    {navItems.map(({ label, path }, i) => (
-                      <li
-                        key={path}
-                        className="relative"
-                        onMouseEnter={() => setHovered(i)}
-                        onMouseLeave={() => setHovered(null)}
-                      >
-                        <Link
-                          to={path}
-                          smooth={true}
-                          duration={500}
-                          offset={-200}
-                          onClick={() => setMobileMenuOpen(false)}
-                          className="relative inline-block cursor-pointer px-1 py-1"
-                        >
-                          {label}
-                          <span
-                            className={`absolute bottom-0 left-1/2 h-px w-full -translate-x-1/2 origin-center transform bg-primaryColor transition-transform duration-300 ${
-                              hovered === i ? "scale-x-100" : "scale-x-0"
-                            }`}
-                          />
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </nav>
+          <nav className="hidden items-center gap-6 xl:gap-8 lg:flex" aria-label={t("nav.mainNav")}>
+            {navItems.map(({ label, path }) => (
+              <NavLink
+                key={path}
+                label={label}
+                path={path}
+                linkToHome={linkToHome}
+                className="cursor-pointer text-[11px] font-medium uppercase tracking-[0.18em] text-stone transition hover:text-milk"
+              />
+            ))}
+          </nav>
 
-                {/* Правый блок */}
-                <div className="flex items-center justify-end gap-3 sm:gap-4 lg:col-start-3 lg:justify-self-end lg:gap-8">
-                  {/* Контакты только с md */}
-                  <div className="hidden items-center gap-4 md:flex lg:gap-6">
-                    <div className="flex items-center transition-transform duration-300 hover:scale-110 gap-2 whitespace-nowrap">
-                      <FaRegCalendarAlt className="text-base text-primaryColor" />
-                      <a
-                        href="https://nuarr.booksy.com/a"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-sm text-primaryColor   lg:text-[15px]"
-                      >
-                        Rezerwuj
-                      </a>
-                    </div>
-
-                    <div className="flex items-center transition-transform duration-300 hover:scale-110 gap-2 whitespace-nowrap">
-                      <PiPhoneCallFill className="text-base text-primaryColor" />
-                      <a
-                        href="tel:+48452402006"
-                        className="text-sm text-primaryColor lg:text-[15px]"
-                      >
-                        Zadzwoń
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Бургер */}
-                  <button
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-primaryColor transition-colors hover:bg-white/10 lg:hidden"
-                    onClick={() => setMobileMenuOpen((p) => !p)}
-                    aria-label="Menu"
-                  >
-                    <svg
-                      className="h-6 w-6"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4 6h16M4 12h16M4 18h16"
-                      />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-
-              {/* Мини-контакты под хедером на мобилке */}
-              <div className="mt-2 flex items-center justify-between gap-3 border-t border-white/5 pt-2 md:hidden">
-                <a
-                  href="https://nuarr.booksy.com/a"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-w-0 items-center gap-2 text-[13px] text-primaryColor"
-                >
-                  <FaRegCalendarAlt className="shrink-0 text-sm" />
-                  <span className="truncate">Rezerwuj</span>
-                </a>
-
-                <a
-                  href="tel:+48452402006"
-                  className="flex min-w-0 items-center gap-2 text-[13px] text-primaryColor"
-                >
-                  <PiPhoneCallFill className="shrink-0 text-sm" />
-                  <span className="truncate">+48 452 402 006</span>
-                </a>
-              </div>
-            </div>
-          </motion.header>
+          <div className="flex items-center gap-2 sm:gap-3">
+            <LanguageSwitcher className="hidden sm:flex" />
+            <a
+              href={`tel:${PHONE}`}
+              className="hidden text-[11px] uppercase tracking-[0.14em] text-stone transition hover:text-milk xl:inline"
+            >
+              {PHONE_DISPLAY}
+            </a>
+            <Button href={BOOKSY_URL} size="sm" className="hidden md:inline-flex">
+              {t("nav.book")}
+            </Button>
+            <button
+              type="button"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-milk lg:hidden"
+              onClick={() => setMobileMenuOpen(true)}
+              aria-label={t("nav.menu")}
+              aria-expanded={mobileMenuOpen}
+            >
+              <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24">
+                <path strokeLinecap="round" d="M4 7h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
         </div>
-      )}
+      </header>
 
       <AnimatePresence>
         {mobileMenuOpen && (
           <>
             <motion.button
-              aria-label="Zamknij menu"
-              className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
+              aria-label={t("nav.close")}
+              className="fixed inset-0 z-50 bg-void/80 backdrop-blur-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setMobileMenuOpen(false)}
             />
-
             <motion.nav
               role="dialog"
               aria-modal="true"
-              initial={{ y: 40, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 40, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 280, damping: 28 }}
-              className="fixed inset-x-3 top-3 bottom-3 z-50 flex flex-col overflow-hidden rounded-[28px] bg-white/6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ring-1 ring-white/10 backdrop-blur-md sm:inset-x-4 sm:top-5 sm:bottom-5 sm:rounded-3xl"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 16 }}
+              className="fixed inset-x-4 top-4 bottom-4 z-50 flex flex-col rounded-2xl border border-white/[0.06] bg-graphite p-6"
             >
-              {/* Верх */}
-              <div className="flex items-center justify-between px-4 pt-4 sm:px-5 sm:pt-5">
-                <div className="w-[118px] sm:w-[140px]">
-                  <LogoNuar className="h-auto w-full" />
+              <div className="flex items-center justify-between gap-3">
+                <LogoNuar className="w-[100px]" />
+                <div className="flex items-center gap-2">
+                  <LanguageSwitcher />
+                  <button type="button" aria-label={t("nav.close")} onClick={() => setMobileMenuOpen(false)} className="rounded-full p-2 text-stone hover:text-milk">✕</button>
                 </div>
-
-                <button
-                  onClick={() => setMobileMenuOpen(false)}
-                  aria-label="Zamknij menu"
-                  className="rounded-full bg-white/5 p-2 ring-1 ring-white/10 transition-colors hover:bg-white/10"
-                >
-                  <svg
-                    width="22"
-                    height="22"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    className="text-white/80"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
               </div>
 
-              <div
-                className="mx-4 mt-4 h-px sm:mx-5"
-                style={{
-                  backgroundImage: `linear-gradient(90deg, transparent, ${GOLD}, transparent)`,
-                }}
-              />
+              <ul className="mt-10 flex flex-1 flex-col gap-6">
+                {navItems.map(({ label, path }) => (
+                  <li key={path}>
+                    <NavLink label={label} path={path} linkToHome={linkToHome} onClick={() => setMobileMenuOpen(false)} className="font-display text-3xl text-milk" />
+                  </li>
+                ))}
+              </ul>
 
-              {/* Навигация */}
-              <motion.ul
-                variants={listVariants}
-                initial="hidden"
-                animate="show"
-                className="overflow-y-auto px-4 pt-5 pb-4 sm:px-5 sm:pt-6"
-              >
-                <div className="space-y-3 sm:space-y-4">
-                  {navItems.map(({ label, path }) => (
-                    <motion.li key={path} variants={itemVariants}>
-                      <Link
-                        to={path}
-                        offset={path === "prices" ? -150 : -128}
-                        smooth={true}
-                        duration={500}
-                        onClick={() => setMobileMenuOpen(false)}
-                        className="block text-[28px] font-light tracking-[0.02em] text-white/90 transition-colors hover:text-white sm:text-[32px]"
-                      >
-                        {label}
-                      </Link>
-                    </motion.li>
-                  ))}
-                </div>
-              </motion.ul>
-
-              {/* Низ */}
-              <div className="mt-auto px-4 pb-5 text-center sm:px-5 sm:pb-6">
-                <div className="mx-auto w-full max-w-sm">
-                  <CustomButton text={"Rezerwuj"} onClick={setOpenModalRes} />
-                </div>
-
-                <div className="mt-4 flex items-center justify-center gap-4">
-                  <SocialIcon
-                    href="https://www.facebook.com/nuarmassage/"
-                    ariaLabel="Facebook"
-                    icon={<FaFacebookF className="h-4 w-4" />}
-                  />
-                  <SocialIcon
-                    href="https://www.instagram.com/nuar_massage/"
-                    ariaLabel="Instagram"
-                    icon={<FaInstagram className="h-4 w-4" />}
-                  />
-                </div>
-
-                <div className="mt-4 space-y-1 text-center">
-                  <p className="text-xs text-white/65 sm:text-sm">
-                    ul. Świętojerska 5/7
-                  </p>
-                  <a
-                    href="tel:+48452402006"
-                    className="inline-block text-xs text-white/55 transition-colors hover:text-white/80 sm:text-sm"
-                  >
-                    +48 452 402 006
-                  </a>
-                </div>
+              <div className="space-y-3 border-t border-white/[0.06] pt-6">
+                <Button href={BOOKSY_URL} className="w-full" onClick={() => setMobileMenuOpen(false)}>
+                  {t("nav.bookVisit")}
+                </Button>
+                <a href={`tel:${PHONE}`} className="block text-center text-sm text-stone">{PHONE_DISPLAY}</a>
               </div>
             </motion.nav>
           </>
         )}
       </AnimatePresence>
     </>
-  );
-}
-
-function SocialIcon({ href, ariaLabel, icon }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={ariaLabel}
-      className="group relative inline-grid h-10 w-10 place-items-center rounded-full bg-white/5 ring-1 ring-primaryColor/50 transition-colors hover:bg-white/[.08]"
-    >
-      <span className="sr-only">{ariaLabel}</span>
-
-      <span className="text-primaryColor/80 transition-colors group-hover:text-white">
-        {icon}
-      </span>
-
-      <span className="pointer-events-none absolute bottom-1 left-1/2 h-[2px] w-4 -translate-x-1/2 scale-x-0 rounded-full transition-transform duration-300 group-hover:scale-x-100" />
-    </a>
   );
 }

@@ -1,68 +1,103 @@
-import React from "react";
+import { useRef } from "react";
+import { Link } from "react-router-dom";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { FreeMode } from "swiper/modules";
+import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
+import { CarouselControls } from "../../ui/CarouselControls";
+import { useTranslation } from "../../i18n/LanguageProvider";
+
+import "swiper/css";
+import "swiper/css/free-mode";
+
+const CARD_HEIGHT = 268;
+const CARD_WIDTH = 264;
 
 function MassageServices({ services = [] }) {
-  const half = Math.ceil(services.length / 2);
-  const leftColumn = services.slice(0, half);
-  const rightColumn = services.slice(half);
+  const { t } = useTranslation();
+  const swiperRef = useRef(null);
 
   return (
-    <section className="custom-cont" id="services">
-      <ScrollAnimationWrapper>
-        <div className="mx-auto mb-10 text-center sm:mb-12 md:mb-14">
-          <SectionTitle>Usługi</SectionTitle>
-
-          <p className="mx-auto mt-3 max-w-2xl px-2 text-sm leading-6 text-[#c9b39a] sm:text-[15px] sm:leading-7 md:mt-4 md:px-0 md:text-base">
-            Odkryj wybrane rytuały masażu stworzone dla relaksu, regeneracji
-            i harmonii ciała.
-          </p>
-        </div>
-
-        <div className="mx-auto grid grid-cols-1 gap-x-10 gap-y-0 md:grid-cols-2 xl:gap-x-24">
-          <div>
-            {leftColumn.map((service) => (
-              <ServiceRow key={service.title} service={service} />
-            ))}
-          </div>
-
-          <div>
-            {rightColumn.map((service) => (
-              <ServiceRow key={service.title} service={service} />
-            ))}
-          </div>
-        </div>
-      </ScrollAnimationWrapper>
-    </section>
-  );
-}
-
-function ServiceRow({ service }) {
-  return (
-    <article className="border-b border-[#3b2d21] py-3 sm:py-4 md:py-5">
-      <div className="flex items-start justify-between gap-3 sm:gap-4 md:gap-6">
-        <div className="min-w-0 flex-1">
-          <h3 className="font-cinzel text-[16px] uppercase leading-tight tracking-[0.03em] text-[#f4eadf] sm:text-[18px] md:text-[20px]">
-            {service.title}
-          </h3>
-
-          <p className="mt-2 font-cormorant text-[16px] leading-5 text-[#d6b38b] opacity-80 sm:mt-3 sm:text-[17px] sm:leading-6 md:text-[18px]">
-            {service.desc}
-          </p>
-        </div>
-
-        <div className="shrink-0 pt-1">
-          <div className="h-[56px] w-[56px] overflow-hidden rounded-[12px] border border-[#3b2d21] bg-[#120d09] sm:h-[64px] sm:w-[64px] md:h-[76px] md:w-[76px] md:rounded-[14px]">
-            <img
-              src={service.img}
-              alt={service.title}
-              loading="lazy"
-              className="h-full w-full object-cover"
+    <section id="services" className="section-padding overflow-x-hidden border-t border-white/[0.06]">
+      <Container>
+        <ScrollAnimationWrapper>
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <SectionTitle label={t("services.label")} description={t("services.description")} align="left" className="mb-0">
+              {t("services.title")}
+            </SectionTitle>
+            <CarouselControls
+              onPrev={() => swiperRef.current?.slidePrev()}
+              onNext={() => swiperRef.current?.slideNext()}
+              prevLabel={t("services.prev")}
+              nextLabel={t("services.next")}
             />
           </div>
-        </div>
-      </div>
-    </article>
+
+          <div className="overflow-hidden">
+          <Swiper
+            onSwiper={(swiper) => { swiperRef.current = swiper; }}
+            modules={[FreeMode]}
+            spaceBetween={14}
+            slidesPerView="auto"
+            freeMode={{ enabled: true, momentum: true }}
+            className="services-carousel"
+          >
+            {services.map((service, index) => {
+              const priceIdx = service.time.indexOf(60) >= 0 ? service.time.indexOf(60) : 0;
+              const fromPrice = service.discount
+                ? Math.round(service.price[priceIdx] * (1 - service.discount / 100))
+                : service.price[priceIdx];
+
+              return (
+                <SwiperSlide
+                  key={service.slug}
+                  className="!flex"
+                  style={{ width: CARD_WIDTH, height: CARD_HEIGHT }}
+                >
+                  <Link
+                    to={`/uslugi/${service.slug}`}
+                    className="group flex w-full cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/[0.06] bg-graphite/60 p-5 backdrop-blur-sm transition duration-500 hover:border-gold/25 hover:bg-graphite"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] uppercase tracking-[0.24em] text-gold">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      {service.discount > 0 && (
+                        <span className="rounded-full border border-gold/20 px-2 py-0.5 text-[9px] uppercase tracking-wider text-gold">
+                          -{service.discount}%
+                        </span>
+                      )}
+                    </div>
+
+                    <h3 className="mt-4 line-clamp-2 min-h-[2.75rem] font-display text-lg leading-snug text-milk">
+                      {service.title}
+                    </h3>
+
+                    <p className="mt-2 line-clamp-3 min-h-[3.75rem] text-xs leading-relaxed text-stone">
+                      {service.desc}
+                    </p>
+
+                    <div className="mt-auto flex items-end justify-between gap-2 border-t border-white/[0.06] pt-4">
+                      <span className="text-[10px] uppercase tracking-[0.16em] text-muted">
+                        {t("services.from")} {fromPrice} {t("common.pln")}
+                      </span>
+                      <span
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/10 text-gold transition group-hover:border-gold/30 group-hover:text-champagne"
+                        aria-hidden="true"
+                      >
+                        →
+                      </span>
+                    </div>
+                  </Link>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
+          </div>
+        </ScrollAnimationWrapper>
+      </Container>
+    </section>
   );
 }
 

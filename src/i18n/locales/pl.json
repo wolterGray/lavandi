@@ -1,0 +1,294 @@
+{
+  "meta": {
+    "title": "NUAR — Masaż premium w centrum Warszawy | Relaks & Odprężenie",
+    "description": "NUAR: masaże premium w centrum Warszawy. Zarezerwuj online i poczuj różnicę od pierwszej wizyty."
+  },
+  "nav": {
+    "rituals": "Rytuały",
+    "about": "O nas",
+    "reviews": "Opinie",
+    "contact": "Kontakt",
+    "book": "Rezerwuj",
+    "bookVisit": "Zarezerwuj wizytę",
+    "menu": "Menu",
+    "close": "Zamknij menu",
+    "mainNav": "Główna nawigacja"
+  },
+  "hero": {
+    "eyebrow": "NUAR · Warszawa",
+    "title": "Przestrzeń, w której ciało odzyskuje równowagę",
+    "subtitle": "Masaż premium w centrum miasta. Troska, spokój i doświadczeni specjaliści, którym możesz zaufać.",
+    "cta": "Zarezerwuj wizytę",
+    "ctaSecondary": "Poznaj rytuały →",
+    "scroll": "Scroll",
+    "imageAlt": "Atmosfera studia masażu NUAR w Warszawie"
+  },
+  "announcements": {
+    "items": [
+      {
+        "img": "/massage/1.webp",
+        "title": "Atmosfera NUAR",
+        "news": "Spokój. Cisza. Regeneracja — przestrzeń, w której ciało odzyskuje równowagę."
+      },
+      {
+        "img": "/massage/2.webp",
+        "title": "Droga do relaksu",
+        "news": "Masaż premium w centrum Warszawy. Twoja regeneracja zaczyna się tutaj."
+      },
+      {
+        "img": "/massage/3.webp",
+        "title": "Oferta sezonowa",
+        "news": "Do -18% na wybrane rytuały. Zarezerwuj termin online w Booksy."
+      }
+    ]
+  },
+  "about": {
+    "label": "Filozofia",
+    "title": "Cisza. Spokój. Oddech.",
+    "text": "Tworzymy przestrzeń, w której możesz zatrzymać się na chwilę. Każdy masaż to nie tylko technika — to doświadczenie, które przywraca równowagę ciała i umysłu.",
+    "location": "ul. Świętojerska 5/7 · Warszawa"
+  },
+  "stats": {
+    "label": "NUAR w liczbach",
+    "title": "Doświadczenie, któremu możesz zaufać",
+    "description": "Lata troski, tysiące gości i reputacja budowana wizytę po wizycie.",
+    "items": [
+      { "id": "clients", "value": 3000, "suffix": "+", "prefix": "", "label": "Zadowolonych klientów" },
+      { "id": "experience", "value": 10, "suffix": "+", "prefix": "", "label": "Lat doświadczenia" },
+      { "id": "reviews", "value": 110, "suffix": "+", "prefix": "", "label": "Pozytywnych opinii" },
+      { "id": "rating", "value": 5, "suffix": ".0", "prefix": "", "label": "Średnia ocena" },
+      { "id": "rituals", "value": 8, "suffix": "", "prefix": "", "label": "Rytuałów masażu" }
+    ]
+  },
+  "signature": {
+    "label": "Rytuały",
+    "title": "Wybrane rytuały",
+    "description": "Trzy doświadczenia, które najlepiej oddają filozofię NUAR — indywidualną troskę, spokój i regenerację."
+  },
+  "services": {
+    "label": "Menu",
+    "title": "Wszystkie usługi",
+    "description": "Pełna oferta rytuałów masażu — od regeneracji sportowej po głęboki relaks.",
+    "from": "Od",
+    "details": "Szczegóły →",
+    "prev": "Poprzednia usługa",
+    "next": "Następna usługa"
+  },
+  "team": {
+    "label": "Zespół",
+    "title": "Ludzie NUAR",
+    "description": "Specjaliści, którym powierzasz swoje ciało — z doświadczeniem, intuicją i indywidualnym podejściem.",
+    "learnMore": "Dowiedz się więcej",
+    "learnMoreAbout": "Dowiedz się więcej o {{name}}",
+    "close": "Zamknij",
+    "specialties": "Specjalizacje",
+    "roles": {
+      "master": "Master",
+      "topMaster": "Top Master"
+    },
+    "members": {
+      "olha": {
+        "bio": "Olha to Top Master z wieloletnim doświadczeniem w masażu terapeutycznym i relaksacyjnym. Goście chwalą jej intuicyjny dotyk i umiejętność znajdowania miejsc, w których ciało trzyma napięcie.",
+        "specialties": ["Masaż relaksacyjny", "Masaż autorski", "Masaż sportowy", "Masaż twarzy i głowy"]
+      },
+      "max": {
+        "bio": "Max specjalizuje się w masażu sportowym i regeneracyjnym. Precyzyjnie pracuje na przeciążonych mięśniach, pomagając sportowcom i aktywnym osobom szybciej wracać do formy.",
+        "specialties": ["Masaż sportowy", "Masaż klasyczny", "Masaż dla dzieci", "Głębokie tkanki"]
+      }
+    }
+  },
+  "reviews": {
+    "label": "Opinie",
+    "title": "Zaufanie, które mówi samo za siebie",
+    "description": "Historie gości, którzy zaufali nam swoje ciało i czas.",
+    "rating": "5.0",
+    "count": "{{count}} opinii na Booksy",
+    "seeMore": "Zobacz więcej na Booksy →",
+    "seeAllOnBooksy": "Wszystkie {{count}} opinii na Booksy →"
+  },
+  "pricing": {
+    "label": "Cennik",
+    "title": "Inwestycja w siebie",
+    "description": "Przejrzyste ceny brutto. Wybierz czas trwania zabiegu.",
+    "empty": "Brak usług dla wybranego czasu.",
+    "footer": "Ceny brutto · Płatność kartą, BLIK i gotówką na miejscu",
+    "discount": "-{{percent}}%"
+  },
+  "lang": {
+    "switcher": "Język"
+  },
+  "visit": {
+    "label": "Wizyta",
+    "title": "Twoja droga do NUAR",
+    "description": "Jak do nas trafić i czego się spodziewać.",
+    "mapTitle": "Mapa dojazdu — NUAR, ul. Świętojerska 5/7, Warszawa",
+    "steps": [
+      {
+        "id": "ritual",
+        "title": "Wybierz rytuał",
+        "description": "Przejrzyj menu masaży i wybierz doświadczenie dopasowane do Ciebie."
+      },
+      {
+        "id": "book",
+        "title": "Zarezerwuj online",
+        "description": "Wybierz termin w Booksy — szybko, bez dzwonienia."
+      },
+      {
+        "id": "arrive",
+        "title": "Przyjdź do nas",
+        "description": "ul. Świętojerska 5/7 — kilka minut od Metro Ratusz Arsenał."
+      }
+    ],
+    "metro": "Metro Ratusz Arsenał · 5 min spacerem",
+    "maps": "Google Maps →",
+    "openMaps": "Otwórz w Mapach",
+    "book": "Zarezerwuj wizytę"
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Pytania gości",
+    "description": "Odpowiedzi na najczęstsze pytania przed pierwszą wizytą.",
+    "items": [
+      {
+        "question": "Jak zarezerwować wizytę?",
+        "answer": "Najszybciej przez Booksy — wybierz usługę, masażystę i dogodny termin. Możesz też zadzwonić pod numer +48 452 402 006."
+      },
+      {
+        "question": "Gdzie znajduje się studio NUAR?",
+        "answer": "Jesteśmy w centrum Warszawy, przy ul. Świętojerska 5/7 (00-236). Studio znajduje się kilka minut spacerem od stacji Metro Ratusz Arsenał."
+      },
+      {
+        "question": "Jakie formy płatności akceptujecie?",
+        "answer": "Przyjmujemy płatności gotówką, kartą, BLIK oraz przelewem. Szczegóły potwierdzisz przy rezerwacji w Booksy."
+      },
+      {
+        "question": "Czy mogę odwołać lub przełożyć wizytę?",
+        "answer": "Tak — zmiany terminu możesz wprowadzić bezpośrednio w aplikacji Booksy. Prosimy o jak najszybszą informację."
+      },
+      {
+        "question": "Który masaż wybrać po raz pierwszy?",
+        "answer": "Jeśli nie masz pewności, polecamy masaż relaksacyjny lub autorski — masażysta dopasuje technikę po krótkiej rozmowie."
+      },
+      {
+        "question": "Czy masaże są dostępne dla dzieci?",
+        "answer": "Tak, oferujemy masaż dla dzieci od 5 do 18 lat. Delikatny, bezpieczny i wspierający regenerację."
+      },
+      {
+        "question": "Czy obowiązuje zniżka na pierwszą wizytę?",
+        "answer": "Regularnie oferujemy promocje na wybrane masaże — aktualne rabaty widoczne są w sekcji cennika."
+      }
+    ]
+  },
+  "booking": {
+    "label": "Rezerwacja",
+    "title": "Zatrzymaj się. Oddychaj. Zarezerwuj chwilę tylko dla siebie.",
+    "subtitle": "Do -18% na wybrane rytuały. Terminy dostępne online w Booksy.",
+    "cta": "Zarezerwuj w Booksy"
+  },
+  "footer": {
+    "description": "Premium studio masażu w sercu Warszawy. Harmonia, regeneracja i indywidualna troska.",
+    "booksy": "5.0 · Booksy",
+    "menu": "Menu",
+    "navLabel": "Nawigacja stopki",
+    "contact": "Kontakt",
+    "social": "Social",
+    "emailAria": "Email do newslettera",
+    "copyright": "Wszelkie prawa zastrzeżone.",
+    "instagram": "Instagram",
+    "follow": "Obserwuj",
+    "newsletter": "Newsletter",
+    "newsletterTitle": "Bądź na bieżąco z promocjami",
+    "emailPlaceholder": "Twój email",
+    "subscribe": "Zapisz się",
+    "subscribing": "...",
+    "subscribeSuccess": "Dziękujemy za zapis.",
+    "subscribeError": "Spróbuj ponownie lub napisz na {{email}}"
+  },
+  "consent": {
+    "title": "Pliki cookie & analityka",
+    "description": "Używamy plików cookie do analityki (Google Analytics), aby ulepszać działanie strony. Możesz zaakceptować lub odrzucić analitykę.",
+    "accept": "Akceptuję",
+    "deny": "Tylko niezbędne",
+    "privacy": "Polityka prywatności"
+  },
+  "sticky": {
+    "text": "Masaż premium w centrum Warszawy",
+    "cta": "Rezerwuj",
+    "ariaLabel": "Szybka rezerwacja"
+  },
+  "call": {
+    "label": "Zadzwoń: {{phone}}"
+  },
+  "skip": "Przejdź do treści",
+  "common": {
+    "min": "min",
+    "pln": "zł",
+    "from": "od",
+    "brutto": "brutto",
+    "home": "Strona główna",
+    "backHome": "← Wróć na stronę główną"
+  },
+  "notFound": {
+    "label": "404",
+    "title": "Strona nie istnieje",
+    "description": "Wróć na stronę główną i zarezerwuj wizytę w NUAR."
+  },
+  "servicePage": {
+    "location": "NUAR · Warszawa",
+    "discount": "Aktualnie do -{{percent}}%",
+    "priceList": "Cennik",
+    "book": "Zarezerwuj w Booksy",
+    "backToServices": "← Wszystkie usługi",
+    "navLabel": "Nawigacja strony usługi"
+  },
+  "servicesItems": {
+    "masaz-klasyczny": {
+      "title": "Masaż klasyczny",
+      "desc": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie.",
+      "seoTitle": "Masaż klasyczny — NUAR Warszawa | Masaż premium",
+      "seoDescription": "Masaż klasyczny w centrum Warszawy. Zarezerwuj online w NUAR, ul. Świętojerska 5/7."
+    },
+    "masaz-sportowy": {
+      "title": "Masaż sportowy",
+      "desc": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni i poprawia elastyczność.",
+      "seoTitle": "Masaż sportowy — NUAR Warszawa",
+      "seoDescription": "Masaż sportowy w Warszawie. Rezerwacja online w NUAR."
+    },
+    "masaz-relaksacyjny": {
+      "title": "Masaż relaksacyjny",
+      "desc": "Delikatny masaż redukujący stres i napięcie. Płynne ruchy wprowadzają ciało i umysł w głębokie odprężenie.",
+      "seoTitle": "Masaż relaksacyjny — NUAR Warszawa",
+      "seoDescription": "Masaż relaksacyjny w centrum Warszawy. NUAR — rezerwacja online."
+    },
+    "masaz-limfatyczny": {
+      "title": "Masaż limfatyczny",
+      "desc": "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki i poprawia przepływ limfy.",
+      "seoTitle": "Masaż limfatyczny — NUAR Warszawa",
+      "seoDescription": "Masaż limfatyczny w Warszawie. NUAR, ul. Świętojerska 5/7."
+    },
+    "masaz-antycellulitowy": {
+      "title": "Masaż antycellulitowy",
+      "desc": "Zabieg ujędrniający skórę i poprawiający krążenie. Wspiera walkę z cellulitem.",
+      "seoTitle": "Masaż antycellulitowy — NUAR Warszawa",
+      "seoDescription": "Masaż antycellulitowy w Warszawie. Rezerwuj w NUAR."
+    },
+    "masaz-twarzy-i-glowy": {
+      "title": "Masaż twarzy i głowy",
+      "desc": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy.",
+      "seoTitle": "Masaż twarzy i głowy — NUAR Warszawa",
+      "seoDescription": "Masaż twarzy i głowy w centrum Warszawy."
+    },
+    "masaz-autorski": {
+      "title": "Masaż autorski",
+      "desc": "Indywidualnie dopasowany masaż łączący techniki klasyczne, relaksacyjne i sportowe.",
+      "seoTitle": "Masaż autorski — NUAR Warszawa",
+      "seoDescription": "Autorski masaż w NUAR Warszawa. Rezerwacja online."
+    },
+    "masaz-dla-dzieci": {
+      "title": "Masaż dla dzieci",
+      "desc": "Delikatny masaż dla dzieci od 5 do 18 lat. Bezpieczny i wspierający regenerację.",
+      "seoTitle": "Masaż dla dzieci — NUAR Warszawa",
+      "seoDescription": "Masaż dla dzieci w Warszawie. NUAR studio."
+    }
+  }
+}

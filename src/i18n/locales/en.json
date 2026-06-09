@@ -1,0 +1,294 @@
+{
+  "meta": {
+    "title": "NUAR — Premium Massage in Warsaw | Relax & Restore",
+    "description": "NUAR: premium massages in central Warsaw. Book online and feel the difference from your very first visit."
+  },
+  "nav": {
+    "rituals": "Rituals",
+    "about": "About",
+    "reviews": "Reviews",
+    "contact": "Contact",
+    "book": "Book",
+    "bookVisit": "Book a visit",
+    "menu": "Menu",
+    "close": "Close menu",
+    "mainNav": "Main navigation"
+  },
+  "hero": {
+    "eyebrow": "NUAR · Warsaw",
+    "title": "A space where your body finds balance again",
+    "subtitle": "Premium massage in the heart of the city. Care, calm, and specialists you can trust with your body.",
+    "cta": "Book a visit",
+    "ctaSecondary": "Explore rituals →",
+    "scroll": "Scroll",
+    "imageAlt": "NUAR massage studio atmosphere in Warsaw"
+  },
+  "announcements": {
+    "items": [
+      {
+        "img": "/massage/1.webp",
+        "title": "The NUAR atmosphere",
+        "news": "Calm. Silence. Restoration — a space where your body finds balance again."
+      },
+      {
+        "img": "/massage/2.webp",
+        "title": "Your path to relaxation",
+        "news": "Premium massage in central Warsaw. Your regeneration starts here."
+      },
+      {
+        "img": "/massage/3.webp",
+        "title": "Seasonal offer",
+        "news": "Up to 18% off selected rituals. Book your time online on Booksy."
+      }
+    ]
+  },
+  "about": {
+    "label": "Philosophy",
+    "title": "Silence. Calm. Breath.",
+    "text": "We create a space where you can pause for a moment. Every massage is not only technique — it is an experience that restores balance to body and mind.",
+    "location": "ul. Świętojerska 5/7 · Warsaw"
+  },
+  "stats": {
+    "label": "NUAR in numbers",
+    "title": "Experience you can trust",
+    "description": "Years of care, thousands of guests, and a reputation built one visit at a time.",
+    "items": [
+      { "id": "clients", "value": 3000, "suffix": "+", "prefix": "", "label": "Happy clients" },
+      { "id": "experience", "value": 10, "suffix": "+", "prefix": "", "label": "Years of experience" },
+      { "id": "reviews", "value": 110, "suffix": "+", "prefix": "", "label": "Positive reviews" },
+      { "id": "rating", "value": 5, "suffix": ".0", "prefix": "", "label": "Average rating" },
+      { "id": "rituals", "value": 8, "suffix": "", "prefix": "", "label": "Massage rituals" }
+    ]
+  },
+  "signature": {
+    "label": "Rituals",
+    "title": "Selected rituals",
+    "description": "Three experiences that best reflect the NUAR philosophy — individual care, calm, and restoration."
+  },
+  "services": {
+    "label": "Menu",
+    "title": "All services",
+    "description": "Our full menu of massage rituals — from sports recovery to deep relaxation.",
+    "from": "From",
+    "details": "Details →",
+    "prev": "Previous service",
+    "next": "Next service"
+  },
+  "team": {
+    "label": "Team",
+    "title": "The people of NUAR",
+    "description": "Specialists you entrust your body to — with experience, intuition, and a personal approach.",
+    "learnMore": "Learn more",
+    "learnMoreAbout": "Learn more about {{name}}",
+    "close": "Close",
+    "specialties": "Specialties",
+    "roles": {
+      "master": "Master",
+      "topMaster": "Top Master"
+    },
+    "members": {
+      "olha": {
+        "bio": "Olha is a Top Master with years of experience in therapeutic and relaxing massage. Guests praise her intuitive touch and ability to find exactly where the body holds tension.",
+        "specialties": ["Relaxing massage", "Signature massage", "Sports massage", "Face & head"]
+      },
+      "max": {
+        "bio": "Max specializes in sports and restorative massage. He works precisely on overloaded muscles, helping athletes and active professionals recover faster and move with ease.",
+        "specialties": ["Sports massage", "Classic massage", "Children's massage", "Deep tissue"]
+      }
+    }
+  },
+  "reviews": {
+    "label": "Reviews",
+    "title": "Trust that speaks for itself",
+    "description": "Stories from guests who trusted us with their body and their time.",
+    "rating": "5.0",
+    "count": "{{count}} reviews on Booksy",
+    "seeMore": "See more on Booksy →",
+    "seeAllOnBooksy": "All {{count}} reviews on Booksy →"
+  },
+  "pricing": {
+    "label": "Pricing",
+    "title": "An investment in yourself",
+    "description": "Transparent gross prices. Choose your session duration.",
+    "empty": "No services for the selected duration.",
+    "footer": "Gross prices · Card, BLIK and cash accepted on site",
+    "discount": "-{{percent}}%"
+  },
+  "lang": {
+    "switcher": "Language"
+  },
+  "visit": {
+    "label": "Visit",
+    "title": "Your path to NUAR",
+    "description": "How to find us and what to expect.",
+    "mapTitle": "Directions — NUAR, ul. Świętojerska 5/7, Warsaw",
+    "steps": [
+      {
+        "id": "ritual",
+        "title": "Choose a ritual",
+        "description": "Browse our menu and select an experience tailored to you."
+      },
+      {
+        "id": "book",
+        "title": "Book online",
+        "description": "Pick a time on Booksy — quick and easy, no phone call needed."
+      },
+      {
+        "id": "arrive",
+        "title": "Come to us",
+        "description": "ul. Świętojerska 5/7 — a few minutes from Ratusz Arsenał metro."
+      }
+    ],
+    "metro": "Ratusz Arsenał metro · 5 min walk",
+    "maps": "Google Maps →",
+    "openMaps": "Open in Maps",
+    "book": "Book a visit"
+  },
+  "faq": {
+    "label": "FAQ",
+    "title": "Guest questions",
+    "description": "Answers to the most common questions before your first visit.",
+    "items": [
+      {
+        "question": "How do I book a visit?",
+        "answer": "Fastest via Booksy — choose a service, therapist, and convenient time. You can also call +48 452 402 006."
+      },
+      {
+        "question": "Where is NUAR studio located?",
+        "answer": "In central Warsaw at ul. Świętojerska 5/7 (00-236). A few minutes' walk from Ratusz Arsenał metro."
+      },
+      {
+        "question": "What payment methods do you accept?",
+        "answer": "We accept cash, card, BLIK, and bank transfer. Details are confirmed when booking on Booksy."
+      },
+      {
+        "question": "Can I cancel or reschedule?",
+        "answer": "Yes — change your appointment directly in the Booksy app. Please notify us as early as possible."
+      },
+      {
+        "question": "Which massage should I choose for my first visit?",
+        "answer": "If unsure, we recommend a relaxing or signature massage — your therapist will adapt the technique after a brief consultation."
+      },
+      {
+        "question": "Are massages available for children?",
+        "answer": "Yes, we offer massage for children aged 5–18. Gentle, safe, and supportive for active young athletes."
+      },
+      {
+        "question": "Is there a discount for first visits?",
+        "answer": "We regularly offer promotions on selected massages — current discounts are shown in the pricing section."
+      }
+    ]
+  },
+  "booking": {
+    "label": "Booking",
+    "title": "Pause. Breathe. Book a moment just for yourself.",
+    "subtitle": "Up to 18% off selected rituals. Available times online on Booksy.",
+    "cta": "Book on Booksy"
+  },
+  "footer": {
+    "description": "Premium massage studio in the heart of Warsaw. Harmony, restoration, and individual care.",
+    "booksy": "5.0 · Booksy",
+    "menu": "Menu",
+    "navLabel": "Footer navigation",
+    "contact": "Contact",
+    "social": "Social",
+    "emailAria": "Newsletter email",
+    "copyright": "All rights reserved.",
+    "instagram": "Instagram",
+    "follow": "Follow",
+    "newsletter": "Newsletter",
+    "newsletterTitle": "Stay updated on promotions",
+    "emailPlaceholder": "Your email",
+    "subscribe": "Subscribe",
+    "subscribing": "...",
+    "subscribeSuccess": "Thank you for subscribing.",
+    "subscribeError": "Something went wrong. Please email us at {{email}}"
+  },
+  "consent": {
+    "title": "Cookies & analytics",
+    "description": "We use cookies for analytics (Google Analytics) to improve the website. You can accept or decline analytics. Essential cookies always remain active.",
+    "accept": "Accept",
+    "deny": "Essential only",
+    "privacy": "Privacy policy"
+  },
+  "sticky": {
+    "text": "Premium massage in central Warsaw",
+    "cta": "Book",
+    "ariaLabel": "Quick booking"
+  },
+  "call": {
+    "label": "Call: {{phone}}"
+  },
+  "skip": "Skip to content",
+  "common": {
+    "min": "min",
+    "pln": "PLN",
+    "from": "from",
+    "brutto": "gross",
+    "home": "Home",
+    "backHome": "← Back to home"
+  },
+  "notFound": {
+    "label": "404",
+    "title": "Page not found",
+    "description": "Return to the homepage and book your visit at NUAR."
+  },
+  "servicePage": {
+    "location": "NUAR · Warsaw",
+    "discount": "Currently up to -{{percent}}% off",
+    "priceList": "Pricing",
+    "book": "Book on Booksy",
+    "backToServices": "← All services",
+    "navLabel": "Service page navigation"
+  },
+  "servicesItems": {
+    "masaz-klasyczny": {
+      "title": "Classic massage",
+      "desc": "A proven method for relaxation and recovery. Eases tension, improves circulation, and releases muscles tailored to your needs.",
+      "seoTitle": "Classic Massage — NUAR Warsaw | Premium Massage",
+      "seoDescription": "Classic massage for relaxation and recovery in central Warsaw. Book online at NUAR, ul. Świętojerska 5/7."
+    },
+    "masaz-sportowy": {
+      "title": "Sports massage",
+      "desc": "Intensive massage supporting recovery after exertion. Reduces muscle tension, improves flexibility, and helps prevent injury.",
+      "seoTitle": "Sports Massage — NUAR Warsaw | Premium Massage",
+      "seoDescription": "Sports massage for recovery and performance in Warsaw. Book online at NUAR."
+    },
+    "masaz-relaksacyjny": {
+      "title": "Relaxing massage",
+      "desc": "A gentle massage that reduces stress and tension. Fluid, rhythmic movements bring body and mind into deep relaxation.",
+      "seoTitle": "Relaxing Massage — NUAR Warsaw | Premium Massage",
+      "seoDescription": "Relaxing massage in central Warsaw. Book your session at NUAR online."
+    },
+    "masaz-limfatyczny": {
+      "title": "Lymphatic massage",
+      "desc": "Therapy supporting the lymphatic system. Helps reduce swelling, improves lymph flow, and supports detoxification.",
+      "seoTitle": "Lymphatic Massage — NUAR Warsaw | Premium Massage",
+      "seoDescription": "Lymphatic drainage massage in Warsaw. Book at NUAR, ul. Świętojerska 5/7."
+    },
+    "masaz-antycellulitowy": {
+      "title": "Anti-cellulite massage",
+      "desc": "A firming treatment that improves circulation. Effectively supports cellulite reduction and restores skin smoothness.",
+      "seoTitle": "Anti-cellulite Massage — NUAR Warsaw",
+      "seoDescription": "Anti-cellulite massage in Warsaw. Book online at NUAR."
+    },
+    "masaz-twarzy-i-glowy": {
+      "title": "Face & head massage",
+      "desc": "A relaxing massage easing tension in the head and face. Improves circulation, reduces stress, and supports wellbeing.",
+      "seoTitle": "Face & Head Massage — NUAR Warsaw",
+      "seoDescription": "Face and head massage in central Warsaw. Book at NUAR."
+    },
+    "masaz-autorski": {
+      "title": "Signature massage",
+      "desc": "Individually tailored massage combining classic, relaxing, and sports techniques. Ideal for deep relaxation and recovery.",
+      "seoTitle": "Signature Massage — NUAR Warsaw | Premium Massage",
+      "seoDescription": "NUAR signature massage in Warsaw. A bespoke experience. Book online."
+    },
+    "masaz-dla-dzieci": {
+      "title": "Children's massage",
+      "desc": "Gentle massage supporting recovery and stress relief for active children and teens. Safe and beneficial. Ages 5–18.",
+      "seoTitle": "Children's Massage — NUAR Warsaw",
+      "seoDescription": "Children's massage in Warsaw. Gentle and professional care at NUAR."
+    }
+  }
+}

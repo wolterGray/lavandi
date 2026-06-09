@@ -1,24 +1,55 @@
-import {useEffect, useState} from "react";
+import { useEffect, useRef, useState } from "react";
+import Button from "./Button";
+import { useTranslation } from "../i18n/LanguageProvider";
 
-const GA_ID = "G-NYM3P4FJJE"; // твой GA4 ID
-const LS_KEY = "nuar_consent"; // ключ в localStorage: 'granted' | 'denied'
+const GA_ID = "G-NYM3P4FJJE";
+const LS_KEY = "nuar_consent";
+
+const FOCUSABLE =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 export default function ConsentBanner() {
+  const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
+  const dialogRef = useRef(null);
 
-  // показать баннер, если нет сохранённого выбора
   useEffect(() => {
     const saved = localStorage.getItem(LS_KEY);
     if (!saved) setVisible(true);
-    // если ранее соглашался — дожимаем конфиг (на случай хард-рефреша)
     if (saved === "granted" && window.gtag) {
       window.gtag("consent", "update", {
         ad_storage: "granted",
         analytics_storage: "granted",
       });
-      window.gtag("config", GA_ID); // отправит первый page_view
+      window.gtag("config", GA_ID);
     }
   }, []);
+
+  useEffect(() => {
+    if (!visible || !dialogRef.current) return;
+
+    const dialog = dialogRef.current;
+    const focusable = dialog.querySelectorAll(FOCUSABLE);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    first?.focus();
+
+    const onKeyDown = (event) => {
+      if (event.key !== "Tab" || focusable.length === 0) return;
+
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+
+    dialog.addEventListener("keydown", onKeyDown);
+    return () => dialog.removeEventListener("keydown", onKeyDown);
+  }, [visible]);
 
   const accept = () => {
     localStorage.setItem(LS_KEY, "granted");
@@ -27,8 +58,8 @@ export default function ConsentBanner() {
         ad_storage: "granted",
         analytics_storage: "granted",
       });
-      window.gtag("config", GA_ID); // первый page_view после согласия
-      window.gtag("event", "consent_accept", {source: "banner"});
+      window.gtag("config", GA_ID);
+      window.gtag("event", "consent_accept", { source: "banner" });
     }
     setVisible(false);
   };
@@ -40,7 +71,7 @@ export default function ConsentBanner() {
         ad_storage: "denied",
         analytics_storage: "denied",
       });
-      window.gtag("event", "consent_deny", {source: "banner"});
+      window.gtag("event", "consent_deny", { source: "banner" });
     }
     setVisible(false);
   };
@@ -49,39 +80,35 @@ export default function ConsentBanner() {
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[1000] px-4 pb-4">
-      <div className="mx-auto max-w-3xl rounded-2xl border bg-[#0d0510]/95 text-white shadow-2xl backdrop-blur border-white/10">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="consent-title"
+        aria-describedby="consent-desc"
+        className="mx-auto max-w-3xl rounded-2xl border border-white/[0.06] bg-graphite/95 text-milk shadow-2xl backdrop-blur-md"
+      >
         <div className="p-5 md:p-6">
-          <h3 className="text-[15px] font-semibold text-[#D6B16A] tracking-wide mb-2">
-            Pliki cookie & analityka
+          <h3 id="consent-title" className="mb-2 text-sm font-medium tracking-wide text-gold">
+            {t("consent.title")}
           </h3>
-          <p className="text-sm text-white/80 leading-relaxed">
-            Używamy plików cookie do analityki (Google Analytics), aby ulepszać
-            działanie strony. Możesz zaakceptować lub odrzucić analitykę.
-            Niezbędne pliki cookie działają zawsze.
+          <p id="consent-desc" className="text-sm leading-relaxed text-stone">
+            {t("consent.description")}
           </p>
 
-          <div className="mt-4 flex flex-col sm:flex-row gap-3">
-            <button
-              onClick={accept}
-              className="inline-flex items-center justify-center rounded-full px-6 py-2.5 font-semibold text-white bg-[#E94560] hover:bg-[#B21E3F] transition shadow-[0_6px_24px_rgba(233,69,96,.45)]"
-            >
-              Akceptuję
-            </button>
-
-            <button
-              onClick={deny}
-              className="inline-flex items-center justify-center rounded-full px-6 py-2.5 font-semibold text-white/90 bg-white/10 hover:bg-white/[0.15] transition border border-white/10"
-            >
-              Tylko niezbędne
-            </button>
-
-            {/* ВАЖНО: ведём на статический файл */}
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+            <Button onClick={accept} size="sm">
+              {t("consent.accept")}
+            </Button>
+            <Button onClick={deny} variant="secondary" size="sm">
+              {t("consent.deny")}
+            </Button>
             <a
               href="/polityka-prywatnosci.html"
-              className="sm:ml-auto text-sm underline decoration-[#D6B16A]/70 underline-offset-4 hover:text-[#D6B16A]"
+              className="text-sm text-stone underline decoration-white/20 underline-offset-4 transition hover:text-milk sm:ml-auto"
               rel="noopener"
             >
-              Polityka prywatności
+              {t("consent.privacy")}
             </a>
           </div>
         </div>

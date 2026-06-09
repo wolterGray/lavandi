@@ -1,53 +1,25 @@
-import React from "react";
-import SectionTitle from "../../ui/SectionTitle";
 import { motion } from "framer-motion";
+import Container from "../../ui/Container";
+import SectionTitle from "../../ui/SectionTitle";
+import { useTranslation } from "../../i18n/LanguageProvider";
 
 export default function AboutSection() {
+  const { t } = useTranslation();
+
   return (
-    <section className="custom-cont mx-auto px-4 py-12 select-none sm:px-6 sm:py-16 lg:py-20">
-      <SectionTitle>O nas</SectionTitle>
-
-      <div className="grid items-center gap-10 sm:gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
-        {/* ТЕКСТ */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          viewport={{ once: true }}
-          className="order-2 lg:order-1"
-        >
-          <h3 className="max-w-xl text-2xl font-medium leading-tight text-white sm:text-3xl md:text-4xl lg:text-[42px]">
-            Cisza. Spokój. Oddech.
-          </h3>
-
-          <p className="mt-5 max-w-lg text-sm leading-7 text-white/60 sm:mt-6 sm:text-base sm:leading-8">
-            Tworzymy przestrzeń, w której możesz zatrzymać się na chwilę.
-            Każdy masaż to nie tylko technika — to doświadczenie, które
-            przywraca równowagę ciała i umysłu.
-          </p>
-
-          <p className="mt-4 text-xs tracking-[0.2em] text-white/50 sm:text-sm">
-            NUAR • Warszawa
-          </p>
-        </motion.div>
-
-        {/* ФОТО */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7 }}
-          viewport={{ once: true }}
-          className="relative order-1 lg:order-2"
-        >
-          <img
-            src="/about/about.PNG"
-            alt="NUAR massage"
-            className="h-[280px] w-full rounded-2xl object-cover sm:h-[360px] md:h-[440px] lg:h-[500px]"
-          />
-
-          <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 to-transparent" />
-        </motion.div>
-      </div>
+    <section id="about" className="section-padding border-t border-white/[0.06]">
+      <Container>
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
+          <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.65 }} viewport={{ once: true }}>
+            <SectionTitle label={t("about.label")} align="left">{t("about.title")}</SectionTitle>
+            <p className="-mt-6 max-w-lg text-base leading-relaxed text-stone md:text-[17px] md:leading-8">{t("about.text")}</p>
+            <p className="mt-6 text-[11px] uppercase tracking-[0.22em] text-muted">{t("about.location")}</p>
+          </motion.div>
+          <motion.div initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} transition={{ duration: 0.65, delay: 0.1 }} viewport={{ once: true }}>
+            <img src="/about/about.webp" alt={t("hero.imageAlt")} loading="lazy" className="aspect-[4/5] w-full rounded-2xl object-cover" />
+          </motion.div>
+        </div>
+      </Container>
     </section>
   );
 }

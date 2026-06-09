@@ -1,13 +1,30 @@
-function SectionTitle({children}) {
-  return (
-    <div className="flex flex-col items-center  pb-4 sm:pb-12 px-3 sm:px-6">
-      <span className="w-12 sm:w-20 md:w-24 h-0.5 bg-primaryColor-600/20 block" />
+import SectionLabel from "./SectionLabel";
 
-      <h2 className="text-primaryColor text-3xl lg:text-5xl font-cinzel font-medium text-center  leading-snug">
+export default function SectionTitle({
+  children,
+  label,
+  description,
+  align = "center",
+  className = "",
+}) {
+  const alignClass =
+    align === "left"
+      ? "items-start text-left"
+      : align === "right"
+        ? "items-end text-right"
+        : "items-center text-center";
+
+  return (
+    <div className={`mb-10 flex flex-col gap-3 md:mb-14 ${alignClass} ${className}`}>
+      {label && <SectionLabel>{label}</SectionLabel>}
+      <h2 className="font-display text-display-sm md:text-display-md text-milk text-balance font-medium">
         {children}
       </h2>
+      {description && (
+        <p className="max-w-xl text-base leading-relaxed text-stone md:text-[17px] md:leading-7">
+          {description}
+        </p>
+      )}
     </div>
   );
 }
-
-export default SectionTitle;

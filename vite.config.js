@@ -1,22 +1,31 @@
-import {defineConfig} from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import viteImagemin from "vite-plugin-imagemin";
+import { copyFileSync } from "fs";
+import { resolve } from "path";
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
-    viteImagemin({
-      gifsicle: {optimizationLevel: 7},
-      optipng: {optimizationLevel: 7},
-      mozjpeg: {quality: 70},
-      svgo: {
-        plugins: [
-          {name: "removeViewBox"},
-          {name: "removeEmptyAttrs", active: false},
-        ],
+    command === "build" &&
+      viteImagemin({
+        gifsicle: { optimizationLevel: 7 },
+        optipng: { optimizationLevel: 7 },
+        mozjpeg: { quality: 70 },
+        svgo: {
+          plugins: [
+            { name: "removeViewBox" },
+            { name: "removeEmptyAttrs", active: false },
+          ],
+        },
+      }),
+    command === "build" && {
+      name: "spa-fallback",
+      closeBundle() {
+        copyFileSync(resolve("dist/index.html"), resolve("dist/404.html"));
       },
-    }),
-  ],
+    },
+  ].filter(Boolean),
   build: {
     minify: "esbuild", // или 'terser', если нужно сильнее ужать
     sourcemap: false, // отключает карты, экономит вес
@@ -32,7 +41,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ["react", "react-dom"],
+    include: ["react", "react-dom", "react-icons/fa"],
     dedupe: ["react", "react-dom"],
   },
-});
+}));

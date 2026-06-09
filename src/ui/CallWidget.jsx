@@ -1,39 +1,18 @@
-import React from "react";
-import {FaPhoneAlt} from "react-icons/fa";
+import { FaPhoneAlt } from "react-icons/fa";
+import { useTranslation } from "../i18n/LanguageProvider";
+import { PHONE, PHONE_DISPLAY } from "../constants/theme";
 
-function CallWidget({phone = "+48 452 402 006"}) {
+function CallWidget({ phone = PHONE_DISPLAY }) {
+  const { t } = useTranslation();
+
   return (
-    <>
-      <style>
-        {`
-          @keyframes subtle-glow {
-            0%   { transform: scale(1);   box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-            50%  { transform: scale(1.05); box-shadow: 0 0 20px rgba(255, 215, 0, 0.35); }
-            100% { transform: scale(1);   box-shadow: 0 0 10px rgba(255, 215, 0, 0.2); }
-          }
-        `}
-      </style>
-
-      <a
-        href={`tel:${phone}`}
-        className="
-          fixed bottom-10 right-6 z-50
-          flex items-center justify-center
-          w-14 h-14 md:w-16 md:h-16
-          rounded-full
-          bg-black/40 backdrop-blur-md
-          text-primaryColor
-          border border-yellow-500/30
-          hover:scale-105 active:scale-95
-          transition-all duration-200
-			 
-        "
-        style={{
-          animation: "subtle-glow 2s infinite ease-in-out",
-        }}>
-        <FaPhoneAlt className="text-lg md:text-xl" />
-      </a>
-    </>
+    <a
+      href={`tel:${PHONE}`}
+      aria-label={t("call.label", { phone })}
+      className="fixed bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-graphite/90 text-gold backdrop-blur-md transition duration-300 hover:border-gold/30 hover:text-champagne md:bottom-8 md:right-8 md:h-14 md:w-14"
+    >
+      <FaPhoneAlt className="text-sm md:text-base" />
+    </a>
   );
 }
 

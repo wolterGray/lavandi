@@ -1,16 +1,11 @@
-import {motion} from "framer-motion";
-import Slider from "./Slider";
+import HeroCarousel from "./HeroCarousel";
 
-function Home({homeBanner}) {
+function Home() {
   return (
-    <motion.section
-      initial={{opacity: 0}}
-      animate={{opacity: 1}}
-      transition={{duration: 2, delay: 1.2, ease: "easeOut"}}
-      id="home"
-      className="font-manrope custom-cont relative h-[75vh] sm:h-[70vh] overflow-hidden">
-      <Slider homeBanner={homeBanner} />
-    </motion.section>
+    <section id="home" className="relative h-[88vh] min-h-[560px] max-h-[920px] w-full">
+      <HeroCarousel />
+    </section>
   );
 }
+
 export default Home;

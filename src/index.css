@@ -1,15 +1,71 @@
-@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #000000;
-  color: #c9b574;
+@layer base {
+  :root {
+    --color-void: #050505;
+    --color-graphite: #0f0f0f;
+    --color-anthracite: #171717;
+    --color-milk: #f5f0e8;
+    --color-stone: #a8a096;
+    --color-muted: #6b6560;
+    --color-gold: #c4a962;
+    --color-champagne: #e8dfd0;
+    --border-subtle: rgba(255, 255, 255, 0.06);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  body {
+    @apply overflow-x-hidden bg-void font-sans text-stone antialiased;
+  }
+
+  ::selection {
+    background: rgba(196, 169, 98, 0.25);
+    color: var(--color-milk);
+  }
 }
-.custom-cont {
-  @apply mx-auto mb-10 sm:mb-5 md:mb-8 ;
+
+@layer components {
+  .section-padding {
+    @apply py-section-sm md:py-section;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-white/[0.06];
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .hero-pagination .swiper-pagination-bullet {
+    @apply h-1.5 w-6 rounded-full bg-white/20 opacity-100 transition;
+  }
+
+  .hero-pagination .swiper-pagination-bullet-active {
+    @apply w-10 bg-gold;
+  }
+
+  .studio-map .leaflet-container {
+    background: #0f0f0f;
+    font-family: inherit;
+  }
 }
