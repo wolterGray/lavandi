@@ -121,8 +121,8 @@ export default function AdminSettingsPage() {
               {busy ? adminRu.sync.publishing : adminRu.sync.publishFull}
             </AdminButton>
             <p className="mt-3 text-xs text-muted">
-              Публикует полный снимок сайта (услуги, тексты PL/EN/UA, отзывы, галерея, FAQ) в <code className="text-gold">site_content</code>.
-              Загруженные фото хранятся в таблице <code className="text-gold">site_images</code>, в контенте — ссылка <code className="text-gold">dbimg:…</code>.
+              Публикует полный снимок CMS (тексты PL/EN/UA, отзывы, галерея, FAQ, фото услуг) в <code className="text-gold">site_content</code>.
+              Цены и длительности услуг приходят из CRM автоматически. Фото — в <code className="text-gold">site_images</code>, ссылка <code className="text-gold">dbimg:…</code>.
             </p>
           </AdminPanel>
         )}

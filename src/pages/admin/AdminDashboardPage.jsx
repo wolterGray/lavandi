@@ -5,7 +5,7 @@ import { useContent } from "../../context/ContentProvider";
 
 const LINKS = [
   { to: "/admin/home", title: "Главная", desc: "Слайды hero — фото и тексты" },
-  { to: "/admin/services", title: "Услуги", desc: "Цены, длительности, скидки, названия и описания" },
+  { to: "/admin/services", title: "Услуги", desc: "Фото и тексты (цены — в CRM)" },
   { to: "/admin/cosmetics", title: "Косметика", desc: "Каталог продуктов и тексты" },
   { to: "/admin/about", title: "Философия", desc: "Секция «О нас» — текст и фото" },
   { to: "/admin/trust", title: "Доверие", desc: "Пять карточек «Опыт, которому можно доверять»" },
