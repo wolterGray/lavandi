@@ -1,5 +1,8 @@
 import { useImageSrc } from "../../hooks/useImageSrc";
-import { PLACEHOLDER_GRADIENTS } from "./cosmeticsShared";
+import {
+  getProductImageSurfaceClass,
+  PLACEHOLDER_GRADIENTS,
+} from "./cosmeticsShared";
 
 export default function CosmeticProductImage({
   product,
@@ -9,12 +12,13 @@ export default function CosmeticProductImage({
 }) {
   const imageSrc = useImageSrc(product.img);
   const gradient = PLACEHOLDER_GRADIENTS[product.accent % PLACEHOLDER_GRADIENTS.length];
+  const surfaceClass = imageSrc
+    ? getProductImageSurfaceClass(product, { hasImage: true })
+    : gradient;
 
   return (
     <div
-      className={`relative flex min-h-0 items-center justify-center bg-void p-3 sm:p-4 ${
-        imageSrc ? "bg-void" : gradient
-      } ${className}`}
+      className={`relative flex min-h-0 items-center justify-center p-3 sm:p-4 ${surfaceClass} ${className}`}
     >
       {imageSrc ? (
         <img

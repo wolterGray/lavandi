@@ -1,5 +1,20 @@
 import cosmeticsBase from "../../data/cosmetics.json";
 
+/** Warm studio sweep for PNG/WebP product shots without a baked-in background. */
+export const PRODUCT_TRANSPARENT_BG =
+  "bg-[linear-gradient(165deg,#FAF7F2_0%,#F3EDE4_42%,#E9E0D5_100%)] ring-1 ring-black/5";
+
+export const PRODUCT_OPAQUE_BG = "bg-void";
+
+export function usesTransparentProductPhoto(product) {
+  return product?.transparentPhoto !== false;
+}
+
+export function getProductImageSurfaceClass(product, { hasImage = true } = {}) {
+  if (!hasImage) return "";
+  return usesTransparentProductPhoto(product) ? PRODUCT_TRANSPARENT_BG : PRODUCT_OPAQUE_BG;
+}
+
 export const PLACEHOLDER_GRADIENTS = [
   "bg-[radial-gradient(ellipse_at_25%_15%,rgba(184,149,107,0.28)_0%,transparent_52%),radial-gradient(ellipse_at_85%_90%,rgba(12,10,16,0.75)_0%,transparent_58%)]",
   "bg-[radial-gradient(ellipse_at_70%_20%,rgba(154,132,88,0.22)_0%,transparent_50%),radial-gradient(ellipse_at_15%_85%,rgba(8,6,12,0.8)_0%,transparent_55%)]",

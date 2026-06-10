@@ -10,9 +10,11 @@ import { adminRu } from "../../admin/adminStrings";
 import {
   CATEGORY_KEYS,
   generateCosmeticNumericId,
+  getProductImageSurfaceClass,
   MAX_FEATURED_COSMETICS,
   normalizeFeaturedCosmeticIds,
   PLACEHOLDER_GRADIENTS,
+  usesTransparentProductPhoto,
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
 import { deleteSiteImageByRef, isImageRef } from "../../admin/siteImages";
@@ -132,6 +134,7 @@ export default function AdminCosmeticsPage() {
         category: "oils",
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
+        transparentPhoto: true,
       },
       ...prev,
     ]);
@@ -389,10 +392,30 @@ export default function AdminCosmeticsPage() {
                     folder="cosmetics"
                     label={adminRu.cosmetics.photo}
                     value={item.img}
-                    previewClassName="mt-3 flex h-48 w-full max-w-sm items-center justify-center rounded-card bg-void p-3 ring-1 ring-border/50"
+                    previewClassName={`mt-3 flex h-48 w-full max-w-sm items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
                     onChange={(img) => updateItem(index, { img: img || undefined })}
                   />
                 </div>
+
+                <AdminField label={adminRu.cosmetics.transparentPhoto}>
+                  <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
+                    <input
+                      type="checkbox"
+                      checked={usesTransparentProductPhoto(item)}
+                      onChange={() =>
+                        updateItem(index, {
+                          transparentPhoto: !usesTransparentProductPhoto(item),
+                        })
+                      }
+                      className="h-4 w-4 accent-gold"
+                    />
+                    <span className="text-sm text-stone">
+                      {usesTransparentProductPhoto(item)
+                        ? adminRu.cosmetics.transparentPhotoOn
+                        : adminRu.cosmetics.transparentPhotoOff}
+                    </span>
+                  </label>
+                </AdminField>
 
                 <AdminField label={adminRu.cosmetics.category}>
                   <select
