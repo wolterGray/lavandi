@@ -1,9 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build",
-  "outputDirectory": "dist",
-  "installCommand": "npm ci --include=dev",
-  "framework": "vite",
+  "ignoreCommand": "echo 'Deploy via GitHub Pages only (CI / Deploy on push to main)' && exit 0",
   "rewrites": [
     {
       "source": "/(.*)",

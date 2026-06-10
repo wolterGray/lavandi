@@ -5,7 +5,9 @@ import { copyFileSync } from "fs";
 import { resolve } from "path";
 
 const enableImagemin =
-  process.env.VERCEL !== "1" && process.env.SKIP_IMAGEMIN !== "1";
+  process.env.VERCEL !== "1" &&
+  process.env.CI !== "true" &&
+  process.env.SKIP_IMAGEMIN !== "1";
 
 export default defineConfig(({ command }) => ({
   plugins: [
