@@ -55,6 +55,8 @@ export function buildCosmeticInquiryMailto(email, t, product) {
   return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
+export const COSMETIC_TEXT_FIELDS = ["name", "description", "volume", "composition"];
+
 export function normalizeCosmeticCopy(source = {}) {
   return {
     name: source.name ?? "",
@@ -62,6 +64,21 @@ export function normalizeCosmeticCopy(source = {}) {
     volume: source.volume ?? "",
     composition: source.composition ?? source.brand ?? "",
   };
+}
+
+export function sanitizeCosmeticsProductsDraft(products = {}) {
+  const cleaned = {};
+  Object.entries(products).forEach(([id, texts]) => {
+    const entry = {};
+    COSMETIC_TEXT_FIELDS.forEach((field) => {
+      const value = texts?.[field];
+      if (typeof value === "string" && value.trim()) {
+        entry[field] = value.trim();
+      }
+    });
+    if (Object.keys(entry).length) cleaned[id] = entry;
+  });
+  return cleaned;
 }
 
 export function getLocalizedProducts(t, products = cosmeticsBase) {

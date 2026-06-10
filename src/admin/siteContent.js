@@ -42,7 +42,16 @@ export function mergeServiceTexts(lang, slug, overrides, fallbackItem) {
 export function mergeProductTexts(lang, productId, overrides, fallbackItem) {
   const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
   if (!patch) return fallbackItem;
-  return { ...fallbackItem, ...patch };
+
+  const merged = { ...fallbackItem };
+  Object.entries(patch).forEach(([key, value]) => {
+    if (typeof value === "string") {
+      if (value.trim()) merged[key] = value;
+      return;
+    }
+    if (value != null) merged[key] = value;
+  });
+  return merged;
 }
 
 export function mergeTeamMemberTexts(lang, memberId, overrides, fallbackMember) {

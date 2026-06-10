@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { adminRu } from "./adminStrings";
 
 export function AdminTabs({ tabs, activeId, onChange }) {
@@ -55,13 +56,16 @@ export function AdminPageHeader({ title, description, actions }) {
   );
 }
 
-export function AdminPanel({ children, className = "" }) {
+export const AdminPanel = forwardRef(function AdminPanel({ children, className = "" }, ref) {
   return (
-    <div className={`rounded-card border border-border/50 bg-card p-5 shadow-spa sm:p-6 ${className}`}>
+    <div
+      ref={ref}
+      className={`rounded-card border border-border/50 bg-card p-5 shadow-spa sm:p-6 ${className}`}
+    >
       {children}
     </div>
   );
-}
+});
 
 export function AdminField({ label, hint, children }) {
   return (
@@ -91,6 +95,56 @@ export function AdminButton({ variant = "primary", className = "", type = "butto
       className={`inline-flex items-center justify-center rounded-pill px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
       {...props}
     />
+  );
+}
+
+export function AdminConfirmDialog({
+  open,
+  title,
+  message,
+  confirmLabel = adminRu.common.confirm,
+  cancelLabel = adminRu.common.cancel,
+  variant = "primary",
+  onConfirm,
+  onCancel,
+}) {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-void/75 p-4 backdrop-blur-sm">
+      <AdminPanel className="w-full max-w-md border-gold/25">
+        <h3 className="font-display text-xl text-milk">{title}</h3>
+        {message ? <p className="mt-3 text-sm leading-relaxed text-stone">{message}</p> : null}
+        <div className="mt-6 flex flex-wrap justify-end gap-2">
+          <AdminButton variant="ghost" onClick={onCancel}>
+            {cancelLabel}
+          </AdminButton>
+          <AdminButton variant={variant} onClick={onConfirm}>
+            {confirmLabel}
+          </AdminButton>
+        </div>
+      </AdminPanel>
+    </div>
+  );
+}
+
+export function AdminStatusToast({ message, tone = "info" }) {
+  if (!message) return null;
+
+  const tones = {
+    success: "border-emerald-900/40 bg-emerald-950/50 text-emerald-100",
+    error: "border-red-900/40 bg-red-950/50 text-red-100",
+    info: "border-gold/30 bg-gold/10 text-gold",
+  };
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className={`fixed right-4 top-20 z-[110] max-w-sm rounded-card border px-4 py-3 text-sm shadow-spa-hover backdrop-blur-sm ${tones[tone] ?? tones.info}`}
+    >
+      {message}
+    </div>
   );
 }
 

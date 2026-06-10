@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { localeDefaults } from "../../admin/siteContent";
 import {
@@ -16,11 +16,24 @@ import {
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
 import { deleteSiteImageByRef, isImageRef } from "../../admin/siteImages";
-import { AdminButton, AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
+import {
+  AdminButton,
+  AdminConfirmDialog,
+  AdminField,
+  AdminPageHeader,
+  AdminPanel,
+  AdminSaveBar,
+  AdminStatusToast,
+  adminInputClass,
+} from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
-import { normalizeCosmeticCopy } from "../../components/CosmeticsSection/cosmeticsShared";
+import {
+  normalizeCosmeticCopy,
+  sanitizeCosmeticsProductsDraft,
+} from "../../components/CosmeticsSection/cosmeticsShared";
 
 const PRODUCT_CATEGORIES = CATEGORY_KEYS.filter((key) => key !== "all");
+const STATUS_TIMEOUT_MS = 4000;
 
 const EMPTY_PRODUCT_TEXT = {
   name: "",
@@ -51,6 +64,10 @@ export default function AdminCosmeticsPage() {
   const [idPickerOpen, setIdPickerOpen] = useState(false);
   const [selectedRetiredId, setSelectedRetiredId] = useState("");
   const [featuredLimitHint, setFeaturedLimitHint] = useState("");
+  const [highlightId, setHighlightId] = useState("");
+  const [status, setStatus] = useState(null);
+  const [confirm, setConfirm] = useState(null);
+  const cardRefs = useRef({});
 
   const defaultTexts = useMemo(
     () => buildDefaultTexts(cosmetics, activeLang, overrides),
@@ -65,12 +82,31 @@ export default function AdminCosmeticsPage() {
     setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setDirty(false);
+    setHighlightId("");
   }, [cosmetics, defaultTexts, featuredCosmeticIds, cosmeticRetiredIds]);
 
   useEffect(() => {
     if (!idPickerOpen) return;
     setSelectedRetiredId(retiredDraft[0] ?? "");
   }, [idPickerOpen, retiredDraft]);
+
+  useEffect(() => {
+    if (!status) return undefined;
+    const timer = window.setTimeout(() => setStatus(null), STATUS_TIMEOUT_MS);
+    return () => window.clearTimeout(timer);
+  }, [status]);
+
+  useEffect(() => {
+    if (!highlightId) return undefined;
+    const node = cardRefs.current[highlightId];
+    if (node) {
+      node.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    const timer = window.setTimeout(() => setHighlightId(""), 2400);
+    return () => window.clearTimeout(timer);
+  }, [highlightId, draft]);
+
+  const showStatus = (message, tone = "info") => setStatus({ message, tone });
 
   const updateItem = (index, patch) => {
     setDraft((prev) => prev.map((item, i) => (i === index ? { ...item, ...patch } : item)));
@@ -91,13 +127,13 @@ export default function AdminCosmeticsPage() {
     }
 
     setDraft((prev) => [
-      ...prev,
       {
         id,
         category: "oils",
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
       },
+      ...prev,
     ]);
     setTextDraft((prev) => ({ ...prev, [id]: { ...EMPTY_PRODUCT_TEXT } }));
 
@@ -106,27 +142,53 @@ export default function AdminCosmeticsPage() {
       return [...prev, id];
     });
 
+    setHighlightId(id);
     setDirty(true);
     setIdPickerOpen(false);
+    showStatus(adminRu.cosmetics.statusAdded, "success");
   };
 
-  const startAddProduct = () => {
+  const requestAddProduct = () => {
     if (retiredDraft.length > 0) {
       setIdPickerOpen(true);
       return;
     }
-    const id = generateCosmeticNumericId(activeIds, retiredDraft);
-    addProductToDraft(id);
+    setConfirm({
+      type: "add",
+      title: adminRu.cosmetics.confirmAddTitle,
+      message: adminRu.cosmetics.confirmAddMessage,
+      onConfirm: () => {
+        const id = generateCosmeticNumericId(activeIds, retiredDraft);
+        addProductToDraft(id);
+        setConfirm(null);
+      },
+    });
   };
 
-  const addWithRetiredId = () => {
+  const requestAddWithRetiredId = () => {
     if (!selectedRetiredId) return;
-    addProductToDraft(selectedRetiredId, { fromRetired: true });
+    setConfirm({
+      type: "addRetired",
+      title: adminRu.cosmetics.confirmRetiredIdTitle,
+      message: adminRu.cosmetics.confirmRetiredIdMessage(selectedRetiredId),
+      onConfirm: () => {
+        addProductToDraft(selectedRetiredId, { fromRetired: true });
+        setConfirm(null);
+      },
+    });
   };
 
-  const addWithNewId = () => {
-    const id = generateCosmeticNumericId(activeIds, retiredDraft);
-    addProductToDraft(id);
+  const requestAddWithNewId = () => {
+    setConfirm({
+      type: "addNew",
+      title: adminRu.cosmetics.confirmNewIdTitle,
+      message: adminRu.cosmetics.confirmNewIdMessage,
+      onConfirm: () => {
+        const id = generateCosmeticNumericId(activeIds, retiredDraft);
+        addProductToDraft(id);
+        setConfirm(null);
+      },
+    });
   };
 
   const toggleFeatured = (productId) => {
@@ -167,6 +229,25 @@ export default function AdminCosmeticsPage() {
       setRetiredDraft((prev) => (prev.includes(id) ? prev : [...prev, id]));
     }
     setDirty(true);
+    showStatus(adminRu.cosmetics.statusDeleted, "success");
+  };
+
+  const requestRemoveItem = (index) => {
+    const item = draft[index];
+    if (!item) return;
+    const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+    const name = texts.name?.trim() || adminRu.cosmetics.newProduct;
+    setConfirm({
+      type: "delete",
+      title: adminRu.cosmetics.confirmDeleteTitle,
+      message: adminRu.cosmetics.confirmDeleteMessage(name, item.id),
+      variant: "danger",
+      confirmLabel: adminRu.common.delete,
+      onConfirm: async () => {
+        setConfirm(null);
+        await removeItem(index);
+      },
+    });
   };
 
   const handleSave = async () => {
@@ -187,19 +268,36 @@ export default function AdminCosmeticsPage() {
           featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
           cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
         };
-        return patchLocaleBlock(next, activeLang, "cosmetics", { products: textDraft });
+        return patchLocaleBlock(next, activeLang, "cosmetics", {
+          products: sanitizeCosmeticsProductsDraft(textDraft),
+        });
       })
     );
-    if (ok) setDirty(false);
+    if (ok) {
+      setDirty(false);
+      showStatus(adminRu.cosmetics.statusSaved, "success");
+    }
   };
 
   return (
     <>
+      <AdminStatusToast message={status?.message} tone={status?.tone} />
+
+      <AdminConfirmDialog
+        open={Boolean(confirm)}
+        title={confirm?.title}
+        message={confirm?.message}
+        variant={confirm?.variant ?? "primary"}
+        confirmLabel={confirm?.confirmLabel}
+        onConfirm={confirm?.onConfirm}
+        onCancel={() => setConfirm(null)}
+      />
+
       <AdminPageHeader
         title={adminRu.nav.cosmetics}
         description={adminRu.cosmetics.description}
         actions={
-          <AdminButton onClick={startAddProduct}>
+          <AdminButton onClick={requestAddProduct}>
             <Plus className="mr-1 h-3.5 w-3.5" /> {adminRu.cosmetics.addProduct}
           </AdminButton>
         }
@@ -225,8 +323,8 @@ export default function AdminCosmeticsPage() {
                 ))}
               </select>
             </AdminField>
-            <AdminButton onClick={addWithRetiredId}>{adminRu.cosmetics.useRetiredId}</AdminButton>
-            <AdminButton variant="secondary" onClick={addWithNewId}>
+            <AdminButton onClick={requestAddWithRetiredId}>{adminRu.cosmetics.useRetiredId}</AdminButton>
+            <AdminButton variant="secondary" onClick={requestAddWithNewId}>
               {adminRu.cosmetics.generateNewId}
             </AdminButton>
           </div>
@@ -246,18 +344,36 @@ export default function AdminCosmeticsPage() {
         {draft.map((item, index) => {
           const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
           const isFeatured = featuredDraft.includes(item.id);
+          const isHighlighted = highlightId === item.id;
           return (
-            <AdminPanel key={item.id}>
+            <AdminPanel
+              key={item.id}
+              ref={(node) => {
+                cardRefs.current[item.id] = node;
+              }}
+              className={isHighlighted ? "border-gold/50 ring-1 ring-gold/30" : ""}
+            >
               <div className="mb-4 flex items-center justify-between gap-3">
                 <div>
-                  <p className="font-display text-lg text-milk">
-                    {texts.name?.trim() || adminRu.cosmetics.newProduct}
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-display text-lg text-milk">
+                      {texts.name?.trim() || adminRu.cosmetics.newProduct}
+                    </p>
+                    {isHighlighted ? (
+                      <span className="rounded-pill border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
+                        {adminRu.cosmetics.newProductBadge}
+                      </span>
+                    ) : null}
+                  </div>
                   <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
                     {adminRu.cosmetics.productId}: {item.id}
                   </p>
                 </div>
-                <AdminButton variant="danger" onClick={() => removeItem(index)} aria-label={adminRu.common.delete}>
+                <AdminButton
+                  variant="danger"
+                  onClick={() => requestRemoveItem(index)}
+                  aria-label={adminRu.common.delete}
+                >
                   <Trash2 className="h-4 w-4" />
                 </AdminButton>
               </div>
@@ -299,9 +415,7 @@ export default function AdminCosmeticsPage() {
                       className="h-4 w-4 accent-gold"
                     />
                     <span className="text-sm text-stone">
-                      {isFeatured
-                        ? adminRu.cosmetics.featuredOn
-                        : adminRu.cosmetics.featuredOff}
+                      {isFeatured ? adminRu.cosmetics.featuredOn : adminRu.cosmetics.featuredOff}
                     </span>
                   </label>
                 </AdminField>
@@ -354,11 +468,16 @@ export default function AdminCosmeticsPage() {
         })}
       </div>
 
-      {saveError && <p className="mt-4 text-sm text-red-300">{saveError}</p>}
+      {saveError ? (
+        <p className="mt-4 text-sm text-red-300" role="alert">
+          {saveError}
+        </p>
+      ) : null}
       <AdminSaveBar
         dirty={dirty}
         saving={contentSaving}
         onSave={handleSave}
+        hint={status?.message && !dirty ? status.message : undefined}
         onDiscard={() => {
           setDraft(cosmetics);
           setTextDraft(defaultTexts);
@@ -366,6 +485,7 @@ export default function AdminCosmeticsPage() {
           setRetiredDraft(cosmeticRetiredIds);
           setIdPickerOpen(false);
           setFeaturedLimitHint("");
+          setHighlightId("");
           setDirty(false);
         }}
       />
