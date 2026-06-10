@@ -54,7 +54,11 @@ export default function AdminImageField({
   return (
     <AdminField label={label}>
       <div className="flex flex-wrap items-start gap-3">
-        {previewSrc ? <img src={previewSrc} alt="" className={previewClassName} /> : null}
+        {previewSrc ? (
+          <div className={previewClassName}>
+            <img src={previewSrc} alt="" className="max-h-full w-full object-contain object-center" />
+          </div>
+        ) : null}
         <div className="min-w-0 flex-1 space-y-2">
           {isImageRef(value) ? (
             <p className="rounded-card border border-border/60 bg-surface px-3 py-2.5 text-xs text-stone">

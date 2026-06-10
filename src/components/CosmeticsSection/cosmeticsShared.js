@@ -57,11 +57,19 @@ export function buildCosmeticInquiryMailto(email, t, product) {
 
 export const COSMETIC_TEXT_FIELDS = ["name", "description", "volume", "composition"];
 
+export function formatCosmeticVolume(volume) {
+  const raw = String(volume ?? "").trim();
+  if (!raw) return "";
+  if (/ml|мл/i.test(raw)) return raw;
+  if (/^\d+([.,]\d+)?$/.test(raw)) return `${raw} ml`;
+  return raw;
+}
+
 export function normalizeCosmeticCopy(source = {}) {
   return {
     name: source.name ?? "",
     description: source.description ?? source.tagline ?? "",
-    volume: source.volume ?? "",
+    volume: formatCosmeticVolume(source.volume ?? ""),
     composition: source.composition ?? source.brand ?? "",
   };
 }

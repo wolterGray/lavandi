@@ -39,17 +39,33 @@ export function mergeServiceTexts(lang, slug, overrides, fallbackItem) {
   return { ...fallbackItem, ...patch };
 }
 
+function collectProductTextPatch(productId, overrides, preferredLang) {
+  const merged = {};
+  const langs = [preferredLang, ...LANG_CODES.filter((code) => code !== preferredLang)];
+
+  langs.forEach((lang) => {
+    const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
+    if (!patch) return;
+
+    Object.entries(patch).forEach(([key, value]) => {
+      if (typeof value === "string") {
+        if (value.trim() && !merged[key]) merged[key] = value.trim();
+        return;
+      }
+      if (value != null && merged[key] == null) merged[key] = value;
+    });
+  });
+
+  return merged;
+}
+
 export function mergeProductTexts(lang, productId, overrides, fallbackItem) {
-  const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
-  if (!patch) return fallbackItem;
+  const patch = collectProductTextPatch(productId, overrides, lang);
+  if (!Object.keys(patch).length) return fallbackItem;
 
   const merged = { ...fallbackItem };
   Object.entries(patch).forEach(([key, value]) => {
-    if (typeof value === "string") {
-      if (value.trim()) merged[key] = value;
-      return;
-    }
-    if (value != null) merged[key] = value;
+    merged[key] = value;
   });
   return merged;
 }

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { localeDefaults } from "../../admin/siteContent";
+import { LANG_CODES, localeDefaults } from "../../admin/siteContent";
 import {
   LangTabs,
   deriveCosmeticInitials,
@@ -262,15 +262,17 @@ export default function AdminCosmeticsPage() {
 
     const ok = await runSave(() =>
       saveMerged((current) => {
-        const next = {
+        let next = {
           ...current,
           cosmetics: enriched,
           featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
           cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
         };
-        return patchLocaleBlock(next, activeLang, "cosmetics", {
-          products: sanitizeCosmeticsProductsDraft(textDraft),
+        const products = sanitizeCosmeticsProductsDraft(textDraft);
+        LANG_CODES.forEach((lang) => {
+          next = patchLocaleBlock(next, lang, "cosmetics", { products });
         });
+        return next;
       })
     );
     if (ok) {
@@ -387,7 +389,7 @@ export default function AdminCosmeticsPage() {
                     folder="cosmetics"
                     label={adminRu.cosmetics.photo}
                     value={item.img}
-                    previewClassName="mt-3 h-40 w-full max-w-xs rounded-card bg-void object-contain object-center p-3 ring-1 ring-border/50"
+                    previewClassName="mt-3 flex h-48 w-full max-w-sm items-center justify-center rounded-card bg-void p-3 ring-1 ring-border/50"
                     onChange={(img) => updateItem(index, { img: img || undefined })}
                   />
                 </div>

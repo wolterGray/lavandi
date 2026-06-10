@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,26 +28,8 @@ jobs:
       - run: npm run lint
       - run: npm run build
 
-      - uses: actions/upload-artifact@v4
-        if: github.event_name == 'push'
-        with:
-          name: site-dist
-          path: dist
-          retention-days: 1
-
-  deploy:
-    if: github.event_name == 'push'
-    needs: quality
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: site-dist
-          path: dist
-
       - name: Publish to gh-pages
+        if: github.event_name == 'push'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ github.token }}

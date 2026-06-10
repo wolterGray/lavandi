@@ -31,7 +31,7 @@ export function LanguageProvider({ children }) {
   const { services: servicesBase, getServiceTexts } = useContent();
   const [lang, setLangState] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return LANGUAGES.some((l) => l.code === saved) ? saved : "en";
+    return LANGUAGES.some((l) => l.code === saved) ? saved : "pl";
   });
 
   const setLang = useCallback((code) => {

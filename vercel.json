@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "echo 'Deploy via GitHub Pages only (CI / Deploy on push to main)' && exit 0",
   "rewrites": [
     {
       "source": "/(.*)",

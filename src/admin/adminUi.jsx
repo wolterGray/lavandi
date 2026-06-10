@@ -111,7 +111,7 @@ export function AdminConfirmDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[120] flex items-center justify-center bg-void/75 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-void/80 p-4 backdrop-blur-sm">
       <AdminPanel className="w-full max-w-md border-gold/25">
         <h3 className="font-display text-xl text-milk">{title}</h3>
         {message ? <p className="mt-3 text-sm leading-relaxed text-stone">{message}</p> : null}
@@ -141,7 +141,7 @@ export function AdminStatusToast({ message, tone = "info" }) {
     <div
       role="status"
       aria-live="polite"
-      className={`fixed right-4 top-20 z-[110] max-w-sm rounded-card border px-4 py-3 text-sm shadow-spa-hover backdrop-blur-sm ${tones[tone] ?? tones.info}`}
+      className={`fixed bottom-24 right-4 z-[190] max-w-sm rounded-card border px-4 py-3 text-sm shadow-spa-hover backdrop-blur-sm sm:bottom-8 ${tones[tone] ?? tones.info}`}
     >
       {message}
     </div>

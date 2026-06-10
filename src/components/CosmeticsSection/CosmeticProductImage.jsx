@@ -4,7 +4,7 @@ import { PLACEHOLDER_GRADIENTS } from "./cosmeticsShared";
 export default function CosmeticProductImage({
   product,
   className = "",
-  imageClassName = "max-h-full max-w-full object-contain object-center",
+  imageClassName = "h-full w-full object-contain object-center",
   initialsClassName = "font-display text-4xl font-semibold tracking-[0.08em] text-milk/25 sm:text-5xl",
 }) {
   const imageSrc = useImageSrc(product.img);
@@ -12,12 +12,18 @@ export default function CosmeticProductImage({
 
   return (
     <div
-      className={`relative flex items-center justify-center overflow-hidden p-4 sm:p-5 ${
+      className={`relative flex min-h-0 items-center justify-center bg-void p-3 sm:p-4 ${
         imageSrc ? "bg-void" : gradient
       } ${className}`}
     >
       {imageSrc ? (
-        <img src={imageSrc} alt="" className={imageClassName} />
+        <img
+          src={imageSrc}
+          alt=""
+          className={imageClassName}
+          loading="lazy"
+          decoding="async"
+        />
       ) : (
         <span className={initialsClassName}>{product.initials}</span>
       )}

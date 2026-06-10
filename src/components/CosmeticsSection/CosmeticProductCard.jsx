@@ -14,9 +14,9 @@ export default function CosmeticProductCard({ product, index, categoryLabel }) {
       <Link
         to={productUrl}
         aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
-        className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
+        className="group flex h-full flex-col rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
       >
-        <CosmeticProductImage product={product} className="aspect-square" />
+        <CosmeticProductImage product={product} className="aspect-[4/5] w-full shrink-0" />
         <div className="flex flex-1 flex-col p-5">
           <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">{categoryLabel}</p>
           <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{product.name}</h3>

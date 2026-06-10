@@ -79,11 +79,11 @@ export default function CosmeticProductPage({ product }) {
 
         <div className="mt-8 grid gap-12 lg:grid-cols-2">
           <ScrollAnimationWrapper direction="left">
-            <div className="card-gradient-border overflow-hidden rounded-card shadow-spa">
+            <div className="card-gradient-border rounded-card shadow-spa">
               <CosmeticProductImage
                 product={product}
-                className="min-h-[320px] aspect-square sm:min-h-[420px]"
-                imageClassName="max-h-[min(100%,520px)] max-w-full object-contain object-center"
+                className="min-h-[360px] w-full sm:min-h-[480px]"
+                imageClassName="max-h-[min(72vh,560px)] h-full w-full object-contain object-center"
                 initialsClassName="font-display text-6xl font-semibold tracking-[0.08em] text-milk/25"
               />
             </div>
