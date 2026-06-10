@@ -5,9 +5,18 @@ import reviewsDefault from "../data/reviews.json";
 import teamDefault from "../data/team.json";
 import contactDefault from "../data/contact.json";
 
-export const LANG_CODES = ["pl", "en", "uk"];
+export const SITE_LANG_CODES = ["pl", "en", "uk"];
+export const CMS_AUTHOR_LANG = "ru";
+export const ADMIN_LANG_CODES = ["ru", ...SITE_LANG_CODES];
+/** @deprecated use SITE_LANG_CODES on the public site */
+export const LANG_CODES = SITE_LANG_CODES;
 
-export const LANG_LABELS = { pl: "PL", en: "EN", uk: "UA" };
+export const LANG_LABELS = {
+  ru: "RU",
+  pl: "PL",
+  en: "EN",
+  uk: "UA",
+};
 
 export const localeDefaults = { pl, en, uk };
 
@@ -39,39 +48,30 @@ export function mergeServiceTexts(lang, slug, overrides, fallbackItem) {
   return { ...fallbackItem, ...patch };
 }
 
-function collectProductTextPatch(productId, overrides, preferredLang) {
-  const merged = {};
-  const langs = [preferredLang, ...LANG_CODES.filter((code) => code !== preferredLang)];
+function applyLocalePatch(fallbackItem, patch) {
+  if (!patch) return fallbackItem;
 
-  langs.forEach((lang) => {
-    const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
-    if (!patch) return;
-
-    Object.entries(patch).forEach(([key, value]) => {
-      if (typeof value === "string") {
-        if (value.trim() && !merged[key]) merged[key] = value.trim();
-        return;
-      }
-      if (value != null && merged[key] == null) merged[key] = value;
-    });
+  const merged = { ...fallbackItem };
+  Object.entries(patch).forEach(([key, value]) => {
+    if (typeof value === "string") {
+      if (value.trim()) merged[key] = value.trim();
+      return;
+    }
+    if (Array.isArray(value)) {
+      if (value.length) merged[key] = value;
+      return;
+    }
+    if (value != null) merged[key] = value;
   });
-
   return merged;
 }
 
 export function mergeProductTexts(lang, productId, overrides, fallbackItem) {
-  const patch = collectProductTextPatch(productId, overrides, lang);
-  if (!Object.keys(patch).length) return fallbackItem;
-
-  const merged = { ...fallbackItem };
-  Object.entries(patch).forEach(([key, value]) => {
-    merged[key] = value;
-  });
-  return merged;
+  const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
+  return applyLocalePatch(fallbackItem, patch);
 }
 
 export function mergeTeamMemberTexts(lang, memberId, overrides, fallbackMember) {
   const patch = overrides?.locales?.[lang]?.team?.members?.[memberId];
-  if (!patch) return fallbackMember;
-  return { ...fallbackMember, ...patch };
+  return applyLocalePatch(fallbackMember, patch);
 }

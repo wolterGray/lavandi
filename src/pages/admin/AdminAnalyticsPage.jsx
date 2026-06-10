@@ -8,7 +8,7 @@ import {
   AdminToggle,
   adminInputClass,
 } from "../../admin/adminUi";
-import { useAdminDraft, useAdminPersist } from "../../admin/adminHelpers";
+import { useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { useContent } from "../../context/ContentProvider";
 import { DEFAULT_GA_ID } from "../../utils/analytics";
 
@@ -16,6 +16,7 @@ export default function AdminAnalyticsPage() {
   const { siteSettings } = useContent();
   const { contentSaving, saveError, runSave, saveMerged } = useAdminPersist();
   const { draft, setDraft, dirty, reset } = useAdminDraft(siteSettings ?? {});
+  useRegisterAdminDirty(dirty);
 
   const handleSave = async () => {
     const ok = await runSave(() =>

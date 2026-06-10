@@ -97,11 +97,41 @@
     "title": "Experience you can trust",
     "description": "Years of care, thousands of guests, and a reputation built one visit at a time.",
     "items": [
-      { "id": "clients", "value": 3000, "suffix": "+", "prefix": "", "label": "Happy clients" },
-      { "id": "experience", "value": 10, "suffix": "+", "prefix": "", "label": "Years of experience" },
-      { "id": "reviews", "value": 110, "suffix": "+", "prefix": "", "label": "Positive reviews" },
-      { "id": "rating", "value": 5, "suffix": ".0", "prefix": "", "label": "Average rating" },
-      { "id": "rituals", "value": 8, "suffix": "", "prefix": "", "label": "Massage rituals" }
+      {
+        "id": "clients",
+        "value": 3000,
+        "suffix": "+",
+        "prefix": "",
+        "label": "Happy clients"
+      },
+      {
+        "id": "experience",
+        "value": 10,
+        "suffix": "+",
+        "prefix": "",
+        "label": "Years of experience"
+      },
+      {
+        "id": "reviews",
+        "value": 110,
+        "suffix": "+",
+        "prefix": "",
+        "label": "Positive reviews"
+      },
+      {
+        "id": "rating",
+        "value": 5,
+        "suffix": ".0",
+        "prefix": "",
+        "label": "Average rating"
+      },
+      {
+        "id": "rituals",
+        "value": 8,
+        "suffix": "",
+        "prefix": "",
+        "label": "Massage rituals"
+      }
     ]
   },
   "signature": {
@@ -149,65 +179,11 @@
       "home": "Home ritual"
     },
     "products": {
-      "rose-body-oil": {
-        "name": "Rose Body Oil",
-        "brand": "NUAR Rituals",
-        "tagline": "Warm rose & jojoba for silky post-massage glow"
-      },
-      "arnica-massage-oil": {
-        "name": "Arnica Massage Oil",
-        "brand": "NUAR Rituals",
-        "tagline": "Deep-tissue blend for tired muscles"
-      },
-      "lavender-relax-oil": {
-        "name": "Lavender Relax Oil",
-        "brand": "NUAR Rituals",
-        "tagline": "Evening unwind with calm herbal notes"
-      },
-      "magnesium-balm": {
-        "name": "Magnesium Recovery Balm",
-        "brand": "NUAR Rituals",
-        "tagline": "Targeted relief after intensive sessions"
-      },
-      "shea-foot-balm": {
-        "name": "Shea Foot Balm",
-        "brand": "NUAR Rituals",
-        "tagline": "Rich repair for dry, tired feet"
-      },
-      "velvet-body-cream": {
-        "name": "Velvet Body Cream",
-        "brand": "NUAR Rituals",
-        "tagline": "Silky daily nourishment without heaviness"
-      },
-      "citrus-hand-cream": {
-        "name": "Citrus Hand Cream",
-        "brand": "NUAR Rituals",
-        "tagline": "Light, fast-absorbing everyday care"
-      },
-      "coffee-body-scrub": {
-        "name": "Coffee Body Scrub",
-        "brand": "NUAR Rituals",
-        "tagline": "Invigorating polish with a warm aroma"
-      },
-      "salt-glow-scrub": {
-        "name": "Mineral Salt Glow",
-        "brand": "NUAR Rituals",
-        "tagline": "Gentle exfoliation for renewed skin"
-      },
-      "eucalyptus-mist": {
-        "name": "Eucalyptus Room Mist",
-        "brand": "NUAR Rituals",
-        "tagline": "Spa-at-home freshness in one spritz"
-      },
-      "cedar-candle": {
-        "name": "Cedarwood Candle",
-        "brand": "NUAR Rituals",
-        "tagline": "Slow-burn ambience for evening rituals"
-      },
-      "dry-brush": {
-        "name": "Body Dry Brush",
-        "brand": "NUAR Rituals",
-        "tagline": "Circulation boost before self-care"
+      "45996": {
+        "name": "COLLISTAR Crio‑Gel",
+        "description": "Охлаждающий антицеллюлитный гель, который помогает уменьшить отёчность, улучшить микроциркуляцию и повысить упругость кожи. Благодаря криоэффекту дарит ощущение свежести и лёгкости, способствует уменьшению видимости целлюлита и делает кожу более гладкой и подтянутой. Идеально подходит в качестве дополнения к антицеллюлитным и лимфодренажным процедурам.",
+        "volume": "400 ml",
+        "composition": "Ingredients: Aqua, Alcohol Denat., Menthol, C15-19 Alkane, Menthyl Lactate, Sodium Acrylate/Sodium Acryloyldimethyl Taurate Copolymer, Caffeine, Parfum, Polyacrylate Crosspolymer-6, Polyglyceryl-6 Laurate, Schinus Terebinthifolius Seed Extract, Polyglycerin-6, Sodium Hydroxide, Methyl Diisopropyl Propionamide, Sorbitan Oleate, Citrus Aurantium Dulcis Peel Extract, Cinnamomum Zeylanicum Bark Extract, Sorbitan Isostearate, Aesculus Hippocastanum Seed Extract, Shikimic Acid, Cupressus Sempervirens Leaf Oil, T-Butyl Alcohol, Coffea Arabica Seed Extract, Lecithin, Ci 28440, Ci 19140, Potassium Sorbate, Sodium Benzoate, Citric Acid, Ci 42090, Pinene, Benzyl Salicylate, Citronellol, Geraniol, Hexyl Cinnamal, Limonene, Linalool, Citrus Aurantium Peel Oil, Geranyl Acetate, Linalyl Acetate, Terpineol, Vanillin."
       }
     }
   },
@@ -343,12 +319,22 @@
     },
     "members": {
       "olha": {
-        "bio": "Olha is a Top Master with years of experience in therapeutic and relaxing massage. Guests praise her intuitive touch and ability to find exactly where the body holds tension.",
-        "specialties": ["Relaxing massage", "Signature massage", "Sports massage", "Face & head"]
+        "bio": "Olha to Top Master z wieloletnim doświadczeniem w masażu terapeutycznym i relaksacyjnym. Goście chwalą jej intuicyjny dotyk i umiejętność znajdowania miejsc, w których ciało trzyma napięcie.",
+        "specialties": [
+          "Masaż relaksacyjny",
+          "Masaż autorski",
+          "Masaż sportowy",
+          "Masaż twarzy i głowy"
+        ]
       },
       "max": {
-        "bio": "Max specializes in sports and restorative massage. He works precisely on overloaded muscles, helping athletes and active professionals recover faster and move with ease.",
-        "specialties": ["Sports massage", "Classic massage", "Children's massage", "Deep tissue"]
+        "bio": "Max specjalizuje się w masażu sportowym i regeneracyjnym. Precyzyjnie pracuje na przeciążonych mięśniach, pomagając sportowcom i aktywnym osobom szybciej wracać do formy.",
+        "specialties": [
+          "Masaż sportowy",
+          "Masaż klasyczny",
+          "Masaż dla dzieci",
+          "Głębokie tkanki"
+        ]
       }
     }
   },

@@ -1,18 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 import { localeDefaults } from "../../admin/siteContent";
-import { LangTabs, useAdminPersist } from "../../admin/adminHelpers";
+import { getAdminSectionKey } from "../../admin/adminNav";
+import { getSectionMeta } from "../../admin/adminSectionMeta";
+import { filterAdminList, LangTabs, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import AdminImageField from "../../admin/AdminImageField";
-import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
+import { AdminField, AdminListSearch, AdminPageHeader, AdminPanel, AdminSaveBar, AdminSearchEmpty, AdminStickyCardHeader, AdminViewSiteButton, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
 
 export default function AdminServicesPage() {
   const { services, overrides, isSupabaseEnabled } = useContent();
+  const sectionSavedAt = getSectionMeta(overrides, getAdminSectionKey("/admin/services"));
   const { contentSaving, saveError, runSave, saveMerged, patchLocaleBlock } = useAdminPersist();
   const [activeLang, setActiveLang] = useState("pl");
   const [imgDraft, setImgDraft] = useState({});
   const [textDraft, setTextDraft] = useState({});
   const [dirty, setDirty] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  useRegisterAdminDirty(dirty);
 
   const defaultTexts = useMemo(() => {
     const items = {};
@@ -74,6 +79,7 @@ export default function AdminServicesPage() {
       <AdminPageHeader
         title={adminRu.nav.services}
         description="Фото и тексты услуг. Цены и длительности задаются в CRM и обновляются на сайте автоматически."
+        sectionSavedAt={sectionSavedAt}
       />
 
       {!isSupabaseEnabled && (
@@ -83,9 +89,20 @@ export default function AdminServicesPage() {
       )}
 
       <LangTabs activeLang={activeLang} onChange={setActiveLang} />
+      <AdminListSearch value={searchQuery} onChange={setSearchQuery} />
+
+      {filterAdminList(services, searchQuery, (service) => {
+          const texts = textDraft[service.slug] ?? {};
+          return `${service.slug} ${texts.title ?? ""} ${texts.desc ?? ""}`;
+        }).length === 0 && searchQuery ? (
+        <AdminSearchEmpty />
+      ) : null}
 
       <div className="space-y-4">
-        {services.map((service) => {
+        {filterAdminList(services, searchQuery, (service) => {
+          const texts = textDraft[service.slug] ?? {};
+          return `${service.slug} ${texts.title ?? ""} ${texts.desc ?? ""}`;
+        }).map((service) => {
           const texts = textDraft[service.slug] ?? {};
           const priceLabel = service.price?.length
             ? service.price.map((p, i) => `${service.time?.[i] ?? "?"} мин — ${p} zł`).join(", ")
@@ -93,11 +110,15 @@ export default function AdminServicesPage() {
 
           return (
             <AdminPanel key={service.slug}>
+              <AdminStickyCardHeader>
+                <p className="font-display text-lg text-milk">{texts.title || service.slug}</p>
+                <AdminViewSiteButton href={`/uslugi/${service.slug}`} />
+              </AdminStickyCardHeader>
               <div className="grid flex-1 gap-4 sm:grid-cols-2">
                 <AdminField label={adminRu.common.slug}>
                   <input value={service.slug} readOnly className={adminInputClass("opacity-60")} />
                 </AdminField>
-                <AdminField label="Цены из CRM (только просмотр)">
+                <AdminField label="Цены из CRM (только просмотр)" help={adminRu.help.crmPrices}>
                   <input value={priceLabel} readOnly className={adminInputClass("opacity-60")} />
                 </AdminField>
                 <div className="sm:col-span-2">

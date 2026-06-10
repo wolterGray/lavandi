@@ -8,7 +8,9 @@ import {
   createNewsItem,
   moveListItem,
   useAdminDraft,
+  useAdminConfirm,
   useAdminPersist,
+  useRegisterAdminDirty,
 } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import AdminImageField from "../../admin/AdminImageField";
@@ -44,6 +46,8 @@ export default function AdminHomePage() {
   const { draft: newsDraft, setDraft: setNewsDraft, dirty: newsDirty, reset: resetNews } = useAdminDraft(newsSource);
 
   const dirty = activeTab === "hero" ? heroDirty : newsDirty;
+  const requestConfirm = useAdminConfirm();
+  useRegisterAdminDirty(heroDirty || newsDirty);
   const heroCount = heroDraft.items?.length ?? 0;
   const newsCount = newsDraft.items?.length ?? 0;
 
@@ -62,7 +66,14 @@ export default function AdminHomePage() {
     }));
   };
 
-  const removeSlide = (index) => {
+  const removeSlide = async (index) => {
+    const ok = await requestConfirm({
+      title: adminRu.common.confirmDeleteTitle,
+      message: adminRu.common.confirmDeleteMessage,
+      variant: "danger",
+      confirmLabel: adminRu.common.delete,
+    });
+    if (!ok) return;
     setHeroDraft((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }));
   };
 
@@ -85,7 +96,14 @@ export default function AdminHomePage() {
     }));
   };
 
-  const removeNewsItem = (index) => {
+  const removeNewsItem = async (index) => {
+    const ok = await requestConfirm({
+      title: adminRu.common.confirmDeleteTitle,
+      message: adminRu.common.confirmDeleteMessage,
+      variant: "danger",
+      confirmLabel: adminRu.common.delete,
+    });
+    if (!ok) return;
     setNewsDraft((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }));
   };
 

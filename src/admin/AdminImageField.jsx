@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
+import AdminMediaPicker from "./AdminMediaPicker";
 import { adminRu } from "./adminStrings";
 import { deleteSiteImageByRef, isImageRef, saveSiteImageToDatabase } from "./siteImages";
 import { AdminButton, AdminField } from "./adminUi";
@@ -15,6 +16,8 @@ export default function AdminImageField({
   const fileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
   const previewSrc = useImageSrc(value);
 
   const handleRemove = async () => {
@@ -33,13 +36,10 @@ export default function AdminImageField({
     }
   };
 
-  const handleUpload = async (event) => {
-    const file = event.target.files?.[0];
+  const uploadFile = async (file) => {
     if (!file) return;
-
     setUploading(true);
     setError("");
-
     try {
       const imageRef = await saveSiteImageToDatabase(file, folder, value);
       onChange(imageRef);
@@ -47,13 +47,35 @@ export default function AdminImageField({
       setError(uploadError.message ?? adminRu.media.uploadFailed);
     } finally {
       setUploading(false);
-      event.target.value = "";
     }
+  };
+
+  const handleUpload = async (event) => {
+    const file = event.target.files?.[0];
+    await uploadFile(file);
+    event.target.value = "";
+  };
+
+  const handleDrop = async (event) => {
+    event.preventDefault();
+    setDragOver(false);
+    const file = event.dataTransfer.files?.[0];
+    await uploadFile(file);
   };
 
   return (
     <AdminField label={label}>
-      <div className="flex flex-wrap items-start gap-3">
+      <div
+        className={`flex flex-wrap items-start gap-3 rounded-card border border-dashed p-3 transition ${
+          dragOver ? "border-gold/50 bg-gold/5" : "border-border/40"
+        }`}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragOver(true);
+        }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+      >
         {previewSrc ? (
           <div className={previewClassName}>
             <img src={previewSrc} alt="" className="max-h-full w-full object-contain object-center" />
@@ -85,6 +107,9 @@ export default function AdminImageField({
             >
               {uploading ? adminRu.media.uploading : adminRu.media.upload}
             </AdminButton>
+            <AdminButton variant="ghost" type="button" disabled={uploading} onClick={() => setPickerOpen(true)}>
+              {adminRu.media.pickFromLibrary}
+            </AdminButton>
             {allowRemove && (value || previewSrc) ? (
               <AdminButton variant="danger" type="button" disabled={uploading} onClick={handleRemove}>
                 {adminRu.media.removeImage}
@@ -94,6 +119,12 @@ export default function AdminImageField({
           {error && <p className="text-xs text-red-300">{error}</p>}
         </div>
       </div>
+      <AdminMediaPicker
+        open={pickerOpen}
+        folder={folder}
+        onSelect={onChange}
+        onClose={() => setPickerOpen(false)}
+      />
     </AdminField>
   );
 }

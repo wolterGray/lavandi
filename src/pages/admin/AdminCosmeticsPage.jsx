@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
-import { LANG_CODES, localeDefaults } from "../../admin/siteContent";
+import { getAdminSectionKey } from "../../admin/adminNav";
+import { getSectionMeta } from "../../admin/adminSectionMeta";
+import { publishCosmeticsLocalesFromRussian } from "../../admin/publishCmsFromRu";
+import { CMS_AUTHOR_LANG, localeDefaults } from "../../admin/siteContent";
 import {
   LangTabs,
   deriveCosmeticInitials,
+  filterAdminList,
   useAdminPersist,
+  useRegisterAdminDirty,
 } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import {
@@ -24,8 +29,13 @@ import {
   AdminField,
   AdminPageHeader,
   AdminPanel,
+  AdminEmptyState,
+  AdminListSearch,
   AdminSaveBar,
+  AdminSearchEmpty,
+  AdminStickyCardHeader,
   AdminStatusToast,
+  AdminViewSiteButton,
   adminInputClass,
 } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
@@ -56,13 +66,16 @@ function buildDefaultTexts(cosmetics, activeLang, overrides) {
 
 export default function AdminCosmeticsPage() {
   const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
-  const { contentSaving, saveError, runSave, saveMerged, patchLocaleBlock } = useAdminPersist();
-  const [activeLang, setActiveLang] = useState("pl");
+  const { contentSaving, saveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
+  const [activeLang, setActiveLang] = useState(CMS_AUTHOR_LANG);
+  const [translating, setTranslating] = useState(false);
   const [draft, setDraft] = useState(cosmetics);
   const [textDraft, setTextDraft] = useState({});
   const [featuredDraft, setFeaturedDraft] = useState(featuredCosmeticIds);
   const [retiredDraft, setRetiredDraft] = useState(cosmeticRetiredIds);
   const [dirty, setDirty] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  useRegisterAdminDirty(dirty);
   const [idPickerOpen, setIdPickerOpen] = useState(false);
   const [selectedRetiredId, setSelectedRetiredId] = useState("");
   const [featuredLimitHint, setFeaturedLimitHint] = useState("");
@@ -71,7 +84,12 @@ export default function AdminCosmeticsPage() {
   const [confirm, setConfirm] = useState(null);
   const cardRefs = useRef({});
 
-  const defaultTexts = useMemo(
+  const ruTexts = useMemo(
+    () => buildDefaultTexts(cosmetics, CMS_AUTHOR_LANG, overrides),
+    [cosmetics, overrides.locales]
+  );
+
+  const previewTexts = useMemo(
     () => buildDefaultTexts(cosmetics, activeLang, overrides),
     [cosmetics, activeLang, overrides.locales]
   );
@@ -80,12 +98,12 @@ export default function AdminCosmeticsPage() {
 
   useEffect(() => {
     setDraft(cosmetics);
-    setTextDraft(defaultTexts);
+    setTextDraft(ruTexts);
     setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setDirty(false);
     setHighlightId("");
-  }, [cosmetics, defaultTexts, featuredCosmeticIds, cosmeticRetiredIds]);
+  }, [cosmetics, ruTexts, featuredCosmeticIds, cosmeticRetiredIds]);
 
   useEffect(() => {
     if (!idPickerOpen) return;
@@ -262,27 +280,36 @@ export default function AdminCosmeticsPage() {
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       };
     });
+    const ruProducts = sanitizeCosmeticsProductsDraft(textDraft);
 
-    const ok = await runSave(() =>
-      saveMerged((current) => {
+    setTranslating(true);
+    showStatus(adminRu.cosmetics.statusTranslating, "info");
+
+    const ok = await runSave(async () =>
+      saveMerged(async (current) => {
         let next = {
           ...current,
           cosmetics: enriched,
           featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
           cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
         };
-        const products = sanitizeCosmeticsProductsDraft(textDraft);
-        LANG_CODES.forEach((lang) => {
-          next = patchLocaleBlock(next, lang, "cosmetics", { products });
-        });
-        return next;
-      })
+        return publishCosmeticsLocalesFromRussian(next, ruProducts);
+      }, "cosmetics")
     );
+
+    setTranslating(false);
     if (ok) {
       setDirty(false);
       showStatus(adminRu.cosmetics.statusSaved, "success");
     }
   };
+
+  const isAuthoring = activeLang === CMS_AUTHOR_LANG;
+  const filteredDraft = filterAdminList(draft, searchQuery, (item) => {
+    const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+    return `${item.id} ${texts.name ?? ""} ${item.category ?? ""}`;
+  });
+  const sectionSavedAt = getSectionMeta(overrides, getAdminSectionKey("/admin/cosmetics"));
 
   return (
     <>
@@ -301,6 +328,7 @@ export default function AdminCosmeticsPage() {
       <AdminPageHeader
         title={adminRu.nav.cosmetics}
         description={adminRu.cosmetics.description}
+        sectionSavedAt={sectionSavedAt}
         actions={
           <AdminButton onClick={requestAddProduct}>
             <Plus className="mr-1 h-3.5 w-3.5" /> {adminRu.cosmetics.addProduct}
@@ -309,6 +337,9 @@ export default function AdminCosmeticsPage() {
       />
 
       <LangTabs activeLang={activeLang} onChange={setActiveLang} />
+      <p className="mb-4 text-sm text-stone">
+        {isAuthoring ? adminRu.cosmetics.authoringHint : adminRu.cosmetics.previewHint}
+      </p>
 
       {idPickerOpen ? (
         <AdminPanel className="mb-4 border-gold/30">
@@ -345,9 +376,17 @@ export default function AdminCosmeticsPage() {
 
       {featuredLimitHint ? <p className="mb-4 text-sm text-gold">{featuredLimitHint}</p> : null}
 
+      <AdminListSearch value={searchQuery} onChange={setSearchQuery} />
+
+      {draft.length === 0 ? (
+        <AdminEmptyState />
+      ) : filteredDraft.length === 0 ? (
+        <AdminSearchEmpty />
+      ) : (
       <div className="space-y-4">
-        {draft.map((item, index) => {
-          const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+        {filteredDraft.map((item) => {
+          const index = draft.findIndex((entry) => entry.id === item.id);
+          const texts = (isAuthoring ? textDraft : previewTexts)[item.id] ?? EMPTY_PRODUCT_TEXT;
           const isFeatured = featuredDraft.includes(item.id);
           const isHighlighted = highlightId === item.id;
           return (
@@ -358,7 +397,7 @@ export default function AdminCosmeticsPage() {
               }}
               className={isHighlighted ? "border-gold/50 ring-1 ring-gold/30" : ""}
             >
-              <div className="mb-4 flex items-center justify-between gap-3">
+              <AdminStickyCardHeader>
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-display text-lg text-milk">
@@ -374,14 +413,17 @@ export default function AdminCosmeticsPage() {
                     {adminRu.cosmetics.productId}: {item.id}
                   </p>
                 </div>
-                <AdminButton
-                  variant="danger"
-                  onClick={() => requestRemoveItem(index)}
-                  aria-label={adminRu.common.delete}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </AdminButton>
-              </div>
+                <div className="flex items-center gap-2">
+                  <AdminViewSiteButton href={`/katalog/${item.id}`} />
+                  <AdminButton
+                    variant="danger"
+                    onClick={() => requestRemoveItem(index)}
+                    aria-label={adminRu.common.delete}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </AdminButton>
+                </div>
+              </AdminStickyCardHeader>
 
               <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
                 {adminRu.cosmetics.cardSection}
@@ -397,7 +439,7 @@ export default function AdminCosmeticsPage() {
                   />
                 </div>
 
-                <AdminField label={adminRu.cosmetics.transparentPhoto}>
+                <AdminField label={adminRu.cosmetics.transparentPhoto} help={adminRu.help.transparentPhoto}>
                   <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
                     <input
                       type="checkbox"
@@ -431,7 +473,7 @@ export default function AdminCosmeticsPage() {
                   </select>
                 </AdminField>
 
-                <AdminField label={adminRu.cosmetics.featured}>
+                <AdminField label={adminRu.cosmetics.featured} help={adminRu.help.featuredCosmetics}>
                   <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
                     <input
                       type="checkbox"
@@ -454,25 +496,28 @@ export default function AdminCosmeticsPage() {
                   <AdminField label={adminRu.cosmetics.name}>
                     <input
                       value={texts.name ?? ""}
-                      onChange={(e) => updateText(item.id, { name: e.target.value })}
-                      className={adminInputClass()}
+                      readOnly={!isAuthoring}
+                      onChange={(e) => isAuthoring && updateText(item.id, { name: e.target.value })}
+                      className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
                     />
                   </AdminField>
                   <AdminField label={adminRu.cosmetics.volume}>
                     <input
                       value={texts.volume ?? ""}
-                      onChange={(e) => updateText(item.id, { volume: e.target.value })}
+                      readOnly={!isAuthoring}
+                      onChange={(e) => isAuthoring && updateText(item.id, { volume: e.target.value })}
                       placeholder="50 ml"
-                      className={adminInputClass()}
+                      className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
                     />
                   </AdminField>
                   <div className="sm:col-span-2">
                     <AdminField label={adminRu.cosmetics.productDescription}>
                       <textarea
                         value={texts.description ?? ""}
-                        onChange={(e) => updateText(item.id, { description: e.target.value })}
+                        readOnly={!isAuthoring}
+                        onChange={(e) => isAuthoring && updateText(item.id, { description: e.target.value })}
                         rows={3}
-                        className={adminInputClass("resize-y")}
+                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
                       />
                     </AdminField>
                   </div>
@@ -480,9 +525,10 @@ export default function AdminCosmeticsPage() {
                     <AdminField label={adminRu.cosmetics.composition}>
                       <textarea
                         value={texts.composition ?? ""}
-                        onChange={(e) => updateText(item.id, { composition: e.target.value })}
+                        readOnly={!isAuthoring}
+                        onChange={(e) => isAuthoring && updateText(item.id, { composition: e.target.value })}
                         rows={3}
-                        className={adminInputClass("resize-y")}
+                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
                       />
                     </AdminField>
                   </div>
@@ -492,6 +538,7 @@ export default function AdminCosmeticsPage() {
           );
         })}
       </div>
+      )}
 
       {saveError ? (
         <p className="mt-4 text-sm text-red-300" role="alert">
@@ -500,7 +547,7 @@ export default function AdminCosmeticsPage() {
       ) : null}
       <AdminSaveBar
         dirty={dirty}
-        saving={contentSaving}
+        saving={contentSaving || translating}
         onSave={handleSave}
         hint={status?.message && !dirty ? status.message : undefined}
         onDiscard={() => {

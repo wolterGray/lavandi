@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocaleDefaults } from "../../admin/siteContent";
-import { LangTabs, useAdminDraft, useAdminPersist } from "../../admin/adminHelpers";
+import { LangTabs, useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
@@ -17,6 +17,7 @@ export default function AdminContactPage() {
 
   const { draft: contactDraft, setDraft: setContactDraft, dirty: contactDirty, reset: resetContact } = useAdminDraft(contact);
   const { draft: visitDraft, setDraft: setVisitDraft, dirty: visitDirty, reset: resetVisit } = useAdminDraft(localeSource);
+  useRegisterAdminDirty(contactDirty || visitDirty);
 
   const patchContact = (key, value) => setContactDraft((prev) => ({ ...prev, [key]: value }));
   const patchVisit = (key, value) => setVisitDraft((prev) => ({ ...prev, [key]: value }));

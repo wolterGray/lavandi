@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { getLocaleDefaults } from "../../admin/siteContent";
-import { LangTabs, useAdminDraft, useAdminPersist } from "../../admin/adminHelpers";
+import { LangTabs, useAdminConfirm, useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import { AdminButton, AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
@@ -17,6 +17,8 @@ export default function AdminTrustPage() {
   );
 
   const { draft, setDraft, dirty, reset } = useAdminDraft(source);
+  const requestConfirm = useAdminConfirm();
+  useRegisterAdminDirty(dirty);
 
   const patchMeta = (key, value) => setDraft((prev) => ({ ...prev, [key]: value }));
   const updateItem = (index, patch) => {
@@ -56,7 +58,19 @@ export default function AdminTrustPage() {
           <AdminPanel key={index}>
             <div className="mb-3 flex justify-between">
               <p className="text-xs font-bold uppercase tracking-[0.12em] text-muted">{adminRu.common.card} {index + 1}</p>
-              <AdminButton variant="danger" onClick={() => setDraft((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }))}>
+              <AdminButton
+                variant="danger"
+                onClick={async () => {
+                  const ok = await requestConfirm({
+                    title: adminRu.common.confirmDeleteTitle,
+                    message: adminRu.common.confirmDeleteMessage,
+                    variant: "danger",
+                    confirmLabel: adminRu.common.delete,
+                  });
+                  if (!ok) return;
+                  setDraft((prev) => ({ ...prev, items: prev.items.filter((_, i) => i !== index) }));
+                }}
+              >
                 <Trash2 className="h-4 w-4" />
               </AdminButton>
             </div>

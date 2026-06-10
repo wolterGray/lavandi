@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocaleDefaults } from "../../admin/siteContent";
-import { LangTabs, useAdminDraft, useAdminPersist } from "../../admin/adminHelpers";
+import { LangTabs, useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
@@ -16,6 +16,7 @@ export default function AdminStatsPage() {
   );
 
   const { draft, setDraft, dirty, reset } = useAdminDraft(source);
+  useRegisterAdminDirty(dirty);
 
   const patchMeta = (key, value) => setDraft((prev) => ({ ...prev, [key]: value }));
   const updateItem = (index, patch) => {

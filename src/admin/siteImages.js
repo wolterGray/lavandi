@@ -95,6 +95,36 @@ export async function cleanupOrphanedSiteImages(overrides = {}) {
   return { removed: orphanIds.length };
 }
 
+export async function fetchSiteImagesCatalog({ folder, limit = 60 } = {}) {
+  if (!isSiteImagesConfigured() || !supabase) return [];
+
+  let query = supabase
+    .from("site_images")
+    .select("id, folder, mime_type, size_bytes, updated_at")
+    .order("updated_at", { ascending: false })
+    .limit(limit);
+
+  if (folder) {
+    query = query.eq("folder", sanitizeFolder(folder));
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+
+  const rows = data ?? [];
+  const imageMap = await fetchSiteImagesMap(rows.map((row) => row.id));
+
+  return rows.map((row) => ({
+    id: row.id,
+    folder: row.folder,
+    mimeType: row.mime_type,
+    sizeBytes: row.size_bytes ?? 0,
+    updatedAt: row.updated_at,
+    ref: toImageRef(row.id),
+    dataUrl: imageMap[row.id] ?? null,
+  }));
+}
+
 export async function fetchSiteImagesStorageUsage() {
   if (!isSiteImagesConfigured() || !supabase) return { bytes: 0, count: 0 };
 

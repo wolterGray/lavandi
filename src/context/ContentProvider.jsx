@@ -293,6 +293,7 @@ export function ContentProvider({ children }) {
       getProductTexts,
       getTeamMemberContent,
       hasOverrides: Object.keys(overrides).length > 0,
+      sectionMeta: overrides._adminMeta?.sections ?? {},
     }),
     [
       resolvedContent,

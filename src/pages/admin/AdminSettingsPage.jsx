@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ADMIN_LOCALE, adminRu } from "../../admin/adminStrings";
+import { useAdminConfirm } from "../../admin/adminHelpers";
 import { AdminButton, AdminPageHeader, AdminPanel, AdminSaveBar } from "../../admin/adminUi";
 import { cleanupOrphanedSiteImages, fetchSiteImagesStorageUsage } from "../../admin/siteImages";
 import { useContent } from "../../context/ContentProvider";
@@ -25,6 +26,7 @@ export default function AdminSettingsPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [storage, setStorage] = useState({ bytes: 0, count: 0 });
+  const requestConfirm = useAdminConfirm();
 
   const refreshStorage = useCallback(async () => {
     if (!isSupabaseEnabled) return;
@@ -92,7 +94,13 @@ export default function AdminSettingsPage() {
   };
 
   const handlePublishFull = async () => {
-    if (!window.confirm(adminRu.sync.publishConfirm)) return;
+    const ok = await requestConfirm({
+      title: adminRu.sync.publishFull,
+      message: adminRu.sync.publishConfirm,
+      variant: "danger",
+      confirmLabel: adminRu.common.confirm,
+    });
+    if (!ok) return;
 
     setBusy(true);
     setError("");
@@ -109,7 +117,13 @@ export default function AdminSettingsPage() {
   };
 
   const handleReset = async () => {
-    if (!window.confirm("Удалить все переопределения контента?")) return;
+    const ok = await requestConfirm({
+      title: "Сбросить контент?",
+      message: "Удалить все переопределения контента?",
+      variant: "danger",
+      confirmLabel: adminRu.common.confirm,
+    });
+    if (!ok) return;
 
     setBusy(true);
     setError("");

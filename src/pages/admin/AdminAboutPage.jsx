@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { getLocaleDefaults } from "../../admin/siteContent";
-import { LangTabs, useAdminDraft, useAdminPersist } from "../../admin/adminHelpers";
+import { LangTabs, useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import AdminImageField from "../../admin/AdminImageField";
 import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
@@ -18,6 +18,7 @@ export default function AdminAboutPage() {
 
   const { draft, setDraft, dirty, reset } = useAdminDraft(source);
   const { draft: imageDraft, setDraft: setImageDraft, dirty: imageDirty, reset: resetImage } = useAdminDraft(aboutImage);
+  useRegisterAdminDirty(dirty || imageDirty);
 
   const patch = (key, value) => setDraft((prev) => ({ ...prev, [key]: value }));
 
