@@ -1,6 +1,7 @@
 import servicesDefault from "../data/services.json";
 import galleryDefault from "../data/gallery.json";
 import cosmeticsDefault from "../data/cosmetics.json";
+import { DEFAULT_FEATURED_COSMETIC_IDS } from "../components/CosmeticsSection/cosmeticsShared";
 import { siteDefaults } from "../admin/siteContent";
 
 export const CONTENT_STORAGE_KEY = "nuar_content_overrides";
@@ -27,6 +28,8 @@ export function mergeContent(overrides = loadOverrides()) {
     services: overrides.services ?? servicesDefault,
     gallery: overrides.gallery ?? galleryDefault,
     cosmetics: overrides.cosmetics ?? cosmeticsDefault,
+    featuredCosmeticIds: overrides.featuredCosmeticIds ?? DEFAULT_FEATURED_COSMETIC_IDS,
+    cosmeticRetiredIds: overrides.cosmeticRetiredIds ?? [],
     faq: overrides.faq ?? null,
     reviews: overrides.reviews ?? siteDefaults.reviews,
     team: overrides.team ?? siteDefaults.team,

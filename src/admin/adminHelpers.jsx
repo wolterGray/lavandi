@@ -15,9 +15,7 @@ export function moveListItem(list, index, direction) {
   return copy;
 }
 
-export function createCosmeticId() {
-  return `cosmetic-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-}
+export { generateCosmeticNumericId as createCosmeticId } from "../components/CosmeticsSection/cosmeticsShared";
 
 export function deriveCosmeticInitials(name = "") {
   const words = name.trim().split(/\s+/).filter(Boolean);

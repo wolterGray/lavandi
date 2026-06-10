@@ -489,7 +489,7 @@
     "from": "from",
     "brutto": "gross",
     "home": "Home",
-    "backHome": "← Back to home"
+    "backHome": "Home"
   },
   "notFound": {
     "label": "404",
@@ -504,7 +504,7 @@
     "navLabel": "Catalog page navigation"
   },
   "cosmeticsProductPage": {
-    "backToCatalog": "← Back to catalog",
+    "backToCatalog": "Catalog",
     "navLabel": "Product page navigation",
     "productId": "Product ID",
     "meta": {

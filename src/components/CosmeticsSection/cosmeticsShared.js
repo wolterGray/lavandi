@@ -11,11 +11,12 @@ export const PLACEHOLDER_GRADIENTS = [
 
 export const CATEGORY_KEYS = ["all", "oils", "balms", "creams", "scrubs", "aroma", "home"];
 
-export const FEATURED_PRODUCT_IDS = [
+export const MAX_FEATURED_COSMETICS = 3;
+
+export const DEFAULT_FEATURED_COSMETIC_IDS = [
   "rose-body-oil",
   "magnesium-balm",
   "velvet-body-cream",
-  "eucalyptus-mist",
 ];
 
 export const COSMETICS_ROUTE = "/katalog";
@@ -77,7 +78,26 @@ export function getLocalizedProducts(t, products = cosmeticsBase) {
   }));
 }
 
-export function getFeaturedProducts(t, products = cosmeticsBase) {
+export function generateCosmeticNumericId(existingIds = [], retiredIds = []) {
+  const taken = new Set([...existingIds, ...retiredIds].map(String));
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const id = String(Math.floor(10000 + Math.random() * 90000));
+    if (!taken.has(id)) return id;
+  }
+  return String(Date.now() % 1000000);
+}
+
+export function normalizeFeaturedCosmeticIds(ids = [], products = cosmeticsBase) {
+  const productIds = new Set(products.map((item) => item.id));
+  const unique = [];
+  ids.forEach((id) => {
+    if (productIds.has(id) && !unique.includes(id)) unique.push(id);
+  });
+  return unique.slice(0, MAX_FEATURED_COSMETICS);
+}
+
+export function getFeaturedProducts(t, products = cosmeticsBase, featuredIds = DEFAULT_FEATURED_COSMETIC_IDS) {
   const localized = getLocalizedProducts(t, products);
-  return FEATURED_PRODUCT_IDS.map((id) => localized.find((product) => product.id === id)).filter(Boolean);
+  const ordered = normalizeFeaturedCosmeticIds(featuredIds, products);
+  return ordered.map((id) => localized.find((product) => product.id === id)).filter(Boolean);
 }

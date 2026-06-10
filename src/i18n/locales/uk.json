@@ -489,7 +489,7 @@
     "from": "від",
     "brutto": "брутто",
     "home": "Головна",
-    "backHome": "← На головну"
+    "backHome": "Головна"
   },
   "notFound": {
     "label": "404",
@@ -504,7 +504,7 @@
     "navLabel": "Навігація сторінки каталогу"
   },
   "cosmeticsProductPage": {
-    "backToCatalog": "← Назад до каталогу",
+    "backToCatalog": "Каталог",
     "navLabel": "Навігація сторінки продукту",
     "productId": "ID продукту",
     "meta": {

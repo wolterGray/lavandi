@@ -489,7 +489,7 @@
     "from": "od",
     "brutto": "brutto",
     "home": "Strona główna",
-    "backHome": "← Wróć na stronę główną"
+    "backHome": "Strona główna"
   },
   "notFound": {
     "label": "404",
@@ -504,7 +504,7 @@
     "navLabel": "Nawigacja strony katalogu"
   },
   "cosmeticsProductPage": {
-    "backToCatalog": "← Wróć do katalogu",
+    "backToCatalog": "Katalog",
     "navLabel": "Nawigacja strony produktu",
     "productId": "ID produktu",
     "meta": {

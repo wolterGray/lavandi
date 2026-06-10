@@ -10,15 +10,15 @@ import { buildLocalizedProduct, COSMETICS_ROUTE, getFeaturedProducts } from "./c
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts } = useContent();
+  const { cosmetics, featuredCosmeticIds, getProductTexts } = useContent();
 
   const featuredProducts = useMemo(() => {
-    const featured = getFeaturedProducts(t, cosmetics);
+    const featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
     return featured.map((product) => {
       const base = cosmetics.find((item) => item.id === product.id);
       return base ? buildLocalizedProduct(base, t, lang, getProductTexts) : product;
     });
-  }, [t, lang, cosmetics, getProductTexts]);
+  }, [t, lang, cosmetics, featuredCosmeticIds, getProductTexts]);
 
   return (
     <section id="cosmetics" className="section-padding bg-surface">
@@ -37,7 +37,7 @@ export default function CosmeticsSection() {
           </ScrollAnimationWrapper>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {featuredProducts.map((product, index) => (
             <CosmeticProductCard
               key={product.id}

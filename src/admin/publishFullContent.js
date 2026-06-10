@@ -44,6 +44,8 @@ export function buildFullPublishedOverrides(currentOverrides = {}) {
     services: merged.services,
     gallery: merged.gallery,
     cosmetics: merged.cosmetics,
+    featuredCosmeticIds: merged.featuredCosmeticIds,
+    cosmeticRetiredIds: merged.cosmeticRetiredIds,
     reviews: merged.reviews,
     team: merged.team,
     contact: merged.contact,

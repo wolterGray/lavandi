@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { ChevronLeft } from "lucide-react";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import Container from "../ui/Container";
@@ -8,12 +9,12 @@ import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { isImageRef } from "../admin/siteImages";
 import { EMAIL, SITE_URL } from "../constants/theme";
-import { useImageSrc } from "../hooks/useImageSrc";
+import CosmeticProductImage from "../components/CosmeticsSection/CosmeticProductImage";
 import {
   buildCosmeticInquiryMailto,
   COSMETICS_ROUTE,
-  PLACEHOLDER_GRADIENTS,
 } from "../components/CosmeticsSection/cosmeticsShared";
+import { useImageSrc } from "../hooks/useImageSrc";
 
 function resolveOgImage(image) {
   if (!image || isImageRef(image) || image.startsWith("data:")) {
@@ -23,29 +24,9 @@ function resolveOgImage(image) {
   return `${SITE_URL}${image}`;
 }
 
-function PageNav() {
-  const { t } = useTranslation();
-  const linkClass = "cursor-pointer text-sm text-stone transition hover:text-gold";
-
-  return (
-    <nav className="flex flex-wrap items-center gap-x-3 gap-y-1" aria-label={t("cosmeticsProductPage.navLabel")}>
-      <Link to={COSMETICS_ROUTE} className={linkClass}>
-        {t("cosmeticsProductPage.backToCatalog")}
-      </Link>
-      <span className="text-muted" aria-hidden="true">
-        ·
-      </span>
-      <Link to="/" className={linkClass}>
-        {t("common.backHome")}
-      </Link>
-    </nav>
-  );
-}
-
 export default function CosmeticProductPage({ product }) {
   const { t, lang } = useTranslation();
   const imageSrc = useImageSrc(product.img);
-  const gradient = PLACEHOLDER_GRADIENTS[product.accent % PLACEHOLDER_GRADIENTS.length];
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
   const categoryLabel = t(`cosmetics.categories.${product.category}`);
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });
@@ -88,22 +69,23 @@ export default function CosmeticProductPage({ product }) {
       <Header navItems={navItems} linkToHome />
 
       <Container className="pb-20 pt-28 lg:pt-36">
-        <PageNav />
+        <Link
+          to={COSMETICS_ROUTE}
+          className="inline-flex items-center gap-1.5 text-sm text-stone transition hover:text-gold"
+        >
+          <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+          {t("cosmeticsProductPage.backToCatalog")}
+        </Link>
 
-        <div className="mt-10 grid gap-12 lg:grid-cols-2">
+        <div className="mt-8 grid gap-12 lg:grid-cols-2">
           <ScrollAnimationWrapper direction="left">
             <div className="card-gradient-border overflow-hidden rounded-card shadow-spa">
-              <div className={`relative aspect-[4/5] ${imageSrc ? "bg-void" : gradient}`}>
-                {imageSrc ? (
-                  <img src={imageSrc} alt={product.name} className="h-full w-full object-cover" />
-                ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <span className="font-display text-6xl font-semibold tracking-[0.08em] text-milk/25">
-                      {product.initials}
-                    </span>
-                  </div>
-                )}
-              </div>
+              <CosmeticProductImage
+                product={product}
+                className="aspect-[4/5]"
+                imageClassName="h-full w-full object-contain object-center p-6"
+                initialsClassName="font-display text-6xl font-semibold tracking-[0.08em] text-milk/25"
+              />
             </div>
           </ScrollAnimationWrapper>
 
@@ -138,24 +120,14 @@ export default function CosmeticProductPage({ product }) {
                 {t("cosmetics.availableAtStudio")}
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8">
                 <Button href={buildCosmeticInquiryMailto(EMAIL, t, product)} size="lg">
                   {t("cosmetics.interestedCta")}
                 </Button>
-                <Link
-                  to={COSMETICS_ROUTE}
-                  className="inline-flex min-h-[52px] items-center justify-center rounded-pill border border-border/20 px-8 text-xs font-bold uppercase tracking-[0.12em] text-milk transition hover:border-gold hover:text-gold"
-                >
-                  {t("cosmeticsProductPage.backToCatalog")}
-                </Link>
               </div>
             </div>
           </ScrollAnimationWrapper>
         </div>
-
-        <ScrollAnimationWrapper className="mt-16 border-t border-border/10 pt-8">
-          <PageNav />
-        </ScrollAnimationWrapper>
       </Container>
 
       <Footer navItems={navItems} linkToHome />

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
+import { ChevronLeft } from "lucide-react";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import CosmeticsCatalog from "../components/CosmeticsSection/CosmeticsCatalog";
@@ -10,17 +11,6 @@ import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { EMAIL, SITE_URL } from "../constants/theme";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
-
-function PageNav() {
-  const { t } = useTranslation();
-  const linkClass = "cursor-pointer text-sm text-stone transition hover:text-gold";
-
-  return (
-    <nav className="flex flex-wrap items-center gap-x-3 gap-y-1" aria-label={t("cosmeticsPage.navLabel")}>
-      <Link to="/" className={linkClass}>{t("common.backHome")}</Link>
-    </nav>
-  );
-}
 
 export default function CosmeticsPage() {
   const { t, lang } = useTranslation();
@@ -53,9 +43,15 @@ export default function CosmeticsPage() {
 
       <section className="bg-surface pb-20 pt-28 lg:pt-36">
         <Container>
-          <PageNav />
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 text-sm text-stone transition hover:text-gold"
+          >
+            <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+            {t("common.backHome")}
+          </Link>
 
-          <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
+          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
             <ScrollAnimationWrapper>
               <div>
                 <SectionTitle label={t("cosmetics.label")}>{t("cosmetics.title")}</SectionTitle>
@@ -83,9 +79,6 @@ export default function CosmeticsPage() {
             </Link>
           </ScrollAnimationWrapper>
 
-          <ScrollAnimationWrapper className="mt-10 border-t border-border/10 pt-8">
-            <PageNav />
-          </ScrollAnimationWrapper>
         </Container>
       </section>
 
