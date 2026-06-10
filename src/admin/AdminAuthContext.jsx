@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { consumeCrmSsoHash } from "./adminSso";
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
@@ -38,11 +45,13 @@ export function AdminAuthProvider({ children }) {
   const [authLoading, setAuthLoading] = useState(isSupabaseConfigured);
   const [userEmail, setUserEmail] = useState(null);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
       setAuthLoading(false);
       return undefined;
     }
+
+    let active = true;
 
     (async () => {
       try {
@@ -50,6 +59,8 @@ export function AdminAuthProvider({ children }) {
       } catch {
         // Ignore invalid CRM handoff tokens and fall back to normal auth.
       }
+
+      if (!active) return;
 
       const { data } = await supabase.auth.getSession();
       setIsAuthenticated(Boolean(data.session));
@@ -60,11 +71,16 @@ export function AdminAuthProvider({ children }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!active) return;
       setIsAuthenticated(Boolean(session));
       setUserEmail(session?.user?.email ?? null);
+      setAuthLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const login = useCallback(async ({ email, password }) => {

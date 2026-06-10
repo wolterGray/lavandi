@@ -51,6 +51,11 @@ export default function AdminLoginPage() {
         <p className="mt-3 text-sm text-stone">
           {isSupabaseAuth ? adminRu.auth.supabaseHint : adminRu.auth.localHint}
         </p>
+        {isSupabaseAuth && (
+          <p className="mt-2 text-xs text-muted">
+            {adminRu.auth.crmSsoHint}
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {isSupabaseAuth && (

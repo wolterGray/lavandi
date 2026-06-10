@@ -12,7 +12,8 @@ export const supabase = isSupabaseConfigured
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: true,
+        // CRM SSO tokens are applied manually in adminSso.js
+        detectSessionInUrl: false,
       },
     })
   : null;
