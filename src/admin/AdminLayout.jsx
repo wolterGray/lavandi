@@ -31,7 +31,7 @@ function readCollapsedGroups() {
 function AdminLayoutInner() {
   const { logout, userEmail } = useAdminAuth();
   const { hasOverrides, isSupabaseEnabled, contentLoading, contentSaving, syncError, lastSyncedAt } = useContent();
-  const { isAnyDirty, setCommandOpen } = useAdminShell();
+  const { isAnyDirty, setCommandOpen, confirmLeaveIfDirty } = useAdminShell();
   const navigate = useNavigate();
   const [collapsedGroups, setCollapsedGroups] = useState(readCollapsedGroups);
 
@@ -45,7 +45,13 @@ function AdminLayoutInner() {
     );
   };
 
+  const handleNavClick = (event) => {
+    if (confirmLeaveIfDirty()) return;
+    event.preventDefault();
+  };
+
   const handleLogout = () => {
+    if (!confirmLeaveIfDirty()) return;
     logout();
     navigate("/admin/login", { replace: true });
   };
@@ -114,6 +120,7 @@ function AdminLayoutInner() {
                       key={to}
                       to={to}
                       end={end}
+                      onClick={handleNavClick}
                       className={({ isActive }) =>
                         `flex shrink-0 items-center gap-2 rounded-card px-3 py-2.5 text-sm transition ${
                           isActive

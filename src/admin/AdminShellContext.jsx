@@ -1,5 +1,4 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { useBlocker } from "react-router-dom";
 import { AdminConfirmDialog, AdminStatusToast } from "./adminUi";
 import AdminCommandPalette from "./AdminCommandPalette";
 import { adminRu } from "./adminStrings";
@@ -41,14 +40,10 @@ export function AdminShellProvider({ children }) {
     });
   }, []);
 
-  const blocker = useBlocker(isAnyDirty);
-
-  useEffect(() => {
-    if (blocker.state !== "blocked") return;
-    const leave = window.confirm(adminRu.common.leaveUnsaved);
-    if (leave) blocker.proceed();
-    else blocker.reset();
-  }, [blocker]);
+  const confirmLeaveIfDirty = useCallback(() => {
+    if (!isAnyDirty) return true;
+    return window.confirm(adminRu.common.leaveUnsaved);
+  }, [isAnyDirty]);
 
   useEffect(() => {
     const onBeforeUnload = (event) => {
@@ -84,8 +79,9 @@ export function AdminShellProvider({ children }) {
       requestConfirm,
       setCommandOpen,
       isAnyDirty,
+      confirmLeaveIfDirty,
     }),
-    [showToast, registerDirty, requestConfirm, isAnyDirty]
+    [showToast, registerDirty, requestConfirm, isAnyDirty, confirmLeaveIfDirty]
   );
 
   return (

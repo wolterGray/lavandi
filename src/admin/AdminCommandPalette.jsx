@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import { flattenAdminNav } from "./adminNav";
+import { useAdminShell } from "./AdminShellContext";
 import { adminRu } from "./adminStrings";
 import { AdminPanel } from "./adminUi";
 
@@ -11,6 +12,7 @@ function normalizeQuery(value) {
 
 export default function AdminCommandPalette({ open, onClose }) {
   const navigate = useNavigate();
+  const { confirmLeaveIfDirty } = useAdminShell();
   const inputRef = useRef(null);
   const [query, setQuery] = useState("");
 
@@ -46,6 +48,7 @@ export default function AdminCommandPalette({ open, onClose }) {
   if (!open) return null;
 
   const go = (to) => {
+    if (!confirmLeaveIfDirty()) return;
     navigate(to);
     onClose();
   };
