@@ -4,15 +4,21 @@
 
 @layer base {
   :root {
-    --color-void: #050505;
-    --color-graphite: #0f0f0f;
-    --color-anthracite: #171717;
-    --color-milk: #f5f0e8;
-    --color-stone: #a8a096;
-    --color-muted: #6b6560;
-    --color-gold: #c4a962;
-    --color-champagne: #e8dfd0;
-    --border-subtle: rgba(255, 255, 255, 0.06);
+    --color-bg: #08060c;
+    --color-surface: #0c0a10;
+    --color-card: #100e14;
+    --color-border: #1a1520;
+    --color-text: #e5dfd8;
+    --color-secondary: #9a8880;
+    --color-gold: #b8956b;
+    --color-footer: #07050a;
+    --hero-fade-height: clamp(11rem, 38vh, 20rem);
+  }
+
+  @media (min-width: 768px) {
+    :root {
+      --hero-fade-height: clamp(12rem, 40vh, 22rem);
+    }
   }
 
   html {
@@ -23,7 +29,6 @@
     html {
       scroll-behavior: auto;
     }
-
     *,
     *::before,
     *::after {
@@ -35,11 +40,16 @@
 
   body {
     @apply overflow-x-hidden bg-void font-sans text-stone antialiased;
+    background-image:
+      radial-gradient(ellipse 110% 70% at 50% -15%, rgba(154, 132, 88, 0.03) 0%, transparent 52%),
+      radial-gradient(ellipse 90% 55% at 50% 105%, rgba(8, 6, 12, 0.55) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 45% at 0% 60%, rgba(120, 90, 70, 0.025) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 45% at 100% 60%, rgba(120, 90, 70, 0.025) 0%, transparent 55%);
   }
 
   ::selection {
-    background: rgba(196, 169, 98, 0.25);
-    color: var(--color-milk);
+    background: rgba(184, 149, 107, 0.18);
+    color: var(--color-text);
   }
 }
 
@@ -49,23 +59,121 @@
   }
 
   .hairline {
-    @apply h-px w-full bg-white/[0.06];
+    @apply h-px w-full;
+    background-color: rgb(26 21 32 / 0.45);
   }
 
   .text-balance {
     text-wrap: balance;
   }
 
+  .section-label {
+    @apply font-display text-label font-semibold uppercase tracking-[0.2em] text-gold;
+  }
+
+  .section-heading {
+    @apply font-display font-semibold text-display-sm text-milk md:text-display-md;
+  }
+
+  .bg-cream {
+    background-color: var(--color-bg);
+  }
+
+  .bg-surface {
+    background-color: var(--color-surface);
+    background-image:
+      radial-gradient(ellipse 100% 55% at 50% 0%, rgba(154, 132, 88, 0.025) 0%, transparent 58%),
+      radial-gradient(ellipse 80% 40% at 50% 100%, rgba(12, 10, 16, 0.45) 0%, transparent 60%);
+  }
+
+  .spa-card {
+    @apply overflow-hidden rounded-card bg-card shadow-spa transition duration-700 ease-luxury;
+    border: 1px solid rgb(26 21 32 / 0.55);
+  }
+
+  .spa-card:hover {
+    @apply -translate-y-0.5 shadow-spa-hover;
+    border-color: rgb(184 149 107 / 0.18);
+  }
+
+  .spa-divider {
+    @apply mx-auto mt-4 h-px w-12 bg-gold;
+  }
+
+  .hero-section-fade {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    height: calc(var(--hero-fade-height) + 4px);
+    background-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgb(12 10 16 / 0.18) 6%,
+      rgb(12 10 16 / 0.42) 18%,
+      rgb(12 10 16 / 0.68) 32%,
+      rgb(12 10 16 / 0.88) 48%,
+      rgb(12 10 16 / 0.97) 62%,
+      var(--color-surface) 78%,
+      var(--color-surface) 100%
+    );
+  }
+
+  .section-after-hero {
+    --hero-overlap: var(--hero-fade-height);
+    margin-top: calc(-1 * var(--hero-overlap));
+    padding-top: calc(var(--hero-overlap) + 4.5rem);
+    background-color: transparent;
+    background-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent var(--hero-overlap),
+      var(--color-surface) var(--hero-overlap),
+      var(--color-surface) 100%
+    );
+    isolation: isolate;
+  }
+
+  .section-after-hero::after {
+    content: "";
+    position: absolute;
+    inset: var(--hero-overlap) 0 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(
+      ellipse 100% 55% at 50% 0%,
+      rgba(154, 132, 88, 0.025) 0%,
+      transparent 58%
+    );
+  }
+
+  .section-after-hero > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  @media (min-width: 768px) {
+    .section-after-hero {
+      padding-top: calc(var(--hero-overlap) + 6.5rem);
+    }
+  }
+
   .hero-pagination .swiper-pagination-bullet {
-    @apply h-1.5 w-6 rounded-full bg-white/20 opacity-100 transition;
+    @apply h-2 w-2 rounded-full opacity-100 transition;
+    background-color: rgb(229 223 216 / 0.4);
   }
 
   .hero-pagination .swiper-pagination-bullet-active {
-    @apply w-10 bg-gold;
+    @apply scale-125 bg-gold;
   }
 
   .studio-map .leaflet-container {
-    background: #0f0f0f;
+    background: #0c0a10;
     font-family: inherit;
+  }
+
+  .logo-gold {
+    filter: brightness(0) saturate(100%) invert(72%) sepia(22%) saturate(520%) hue-rotate(5deg) brightness(88%) contrast(88%);
   }
 }

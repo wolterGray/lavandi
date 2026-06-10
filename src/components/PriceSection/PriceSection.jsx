@@ -21,11 +21,13 @@ function PriceSection({ services = [] }) {
   };
 
   return (
-    <section id="prices" className="section-padding border-t border-white/[0.06]">
+    <section id="prices" className="section-padding bg-cream">
       <Container>
         <ScrollAnimationWrapper>
           <SectionTitle label={t("pricing.label")} description={t("pricing.description")}>{t("pricing.title")}</SectionTitle>
-          <div className="mb-10 flex flex-wrap gap-6 border-b border-white/[0.06]">
+          <div className="spa-divider" />
+
+          <div className="mb-8 flex flex-wrap justify-center gap-4">
             {times.map((time) => {
               const active = selectedTime === time;
               return (
@@ -35,8 +37,8 @@ function PriceSection({ services = [] }) {
                   onClick={() => setSelectedTime(time)}
                   aria-pressed={active}
                   className={[
-                    "pb-3 text-xs uppercase tracking-[0.18em] transition",
-                    active ? "border-b border-gold text-milk" : "border-b border-transparent text-muted hover:text-stone",
+                    "rounded-pill px-5 py-2 text-xs font-bold uppercase tracking-[0.12em] transition",
+                    active ? "bg-gold text-white" : "bg-card text-stone hover:text-gold",
                   ].join(" ")}
                 >
                   {time} {t("common.min")}
@@ -44,29 +46,37 @@ function PriceSection({ services = [] }) {
               );
             })}
           </div>
-          {filtered.length === 0 ? (
+        </ScrollAnimationWrapper>
+
+        {filtered.length === 0 ? (
+          <ScrollAnimationWrapper>
             <p className="text-center text-sm text-muted">{t("pricing.empty")}</p>
-          ) : (
-            <ul className="divide-y divide-white/[0.06]">
-              {filtered.map((service) => {
+          </ScrollAnimationWrapper>
+        ) : (
+          <div className="card-gradient-border mx-auto max-w-3xl overflow-hidden rounded-card bg-surface shadow-spa">
+            <ul className="divide-y divide-spa-brown/10">
+              {filtered.map((service, index) => {
                 const timeIdx = service.time.indexOf(+selectedTime);
                 const price = service.price?.[timeIdx];
                 const discount = service.discount ?? 0;
                 const finalPrice = getDiscountedPrice(price, discount);
                 return (
-                  <li key={service.slug} className="flex items-center justify-between gap-6 py-5 sm:py-6">
-                    <h3 className="font-display text-lg text-milk sm:text-xl">{service.title}</h3>
-                    <div className="shrink-0 text-right">
-                      {discount > 0 && <span className="block text-xs text-muted line-through">{price} {t("common.pln")}</span>}
-                      <span className="text-lg tabular-nums text-champagne sm:text-xl">{finalPrice} {t("common.pln")}</span>
-                      {discount > 0 && <span className="ml-2 text-[10px] uppercase tracking-wider text-gold">{t("pricing.discount", { percent: discount })}</span>}
-                    </div>
+                  <li key={service.slug}>
+                    <ScrollAnimationWrapper delay={index * 0.06} className="flex items-center justify-between gap-6 px-6 py-5 sm:px-8 sm:py-6">
+                      <h3 className="font-display text-lg text-milk sm:text-xl">{service.title}</h3>
+                      <div className="shrink-0 text-right">
+                        {discount > 0 && <span className="block text-xs text-muted line-through">{price} {t("common.pln")}</span>}
+                        <span className="text-lg font-bold tabular-nums text-gold sm:text-xl">{finalPrice} {t("common.pln")}</span>
+                      </div>
+                    </ScrollAnimationWrapper>
                   </li>
                 );
               })}
             </ul>
-          )}
-          <p className="mt-10 text-center text-xs text-muted">{t("pricing.footer")}</p>
+          </div>
+        )}
+        <ScrollAnimationWrapper delay={0.1}>
+          <p className="mt-8 text-center text-xs text-muted">{t("pricing.footer")}</p>
         </ScrollAnimationWrapper>
       </Container>
     </section>

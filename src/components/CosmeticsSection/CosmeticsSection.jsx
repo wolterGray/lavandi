@@ -1,0 +1,54 @@
+import { useMemo } from "react";
+import { Link as RouterLink } from "react-router-dom";
+import Container from "../../ui/Container";
+import SectionTitle from "../../ui/SectionTitle";
+import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
+import CosmeticProductCard from "./CosmeticProductCard";
+import { useTranslation } from "../../i18n/LanguageProvider";
+import { COSMETICS_ROUTE, getFeaturedProducts } from "./cosmeticsShared";
+
+export default function CosmeticsSection() {
+  const { t } = useTranslation();
+
+  const featuredProducts = useMemo(() => getFeaturedProducts(t), [t]);
+
+  return (
+    <section id="cosmetics" className="section-padding bg-surface">
+      <Container>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
+          <ScrollAnimationWrapper>
+            <div>
+              <SectionTitle label={t("cosmetics.label")}>{t("cosmetics.title")}</SectionTitle>
+              <div className="spa-divider !mx-0" />
+            </div>
+          </ScrollAnimationWrapper>
+          <ScrollAnimationWrapper delay={0.08}>
+            <p className="max-w-lg text-base leading-relaxed text-stone lg:pb-2">
+              {t("cosmetics.description")}
+            </p>
+          </ScrollAnimationWrapper>
+        </div>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
+          {featuredProducts.map((product, index) => (
+            <CosmeticProductCard
+              key={product.id}
+              product={product}
+              index={index}
+              categoryLabel={t(`cosmetics.categories.${product.category}`)}
+            />
+          ))}
+        </div>
+
+        <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">
+          <RouterLink
+            to={COSMETICS_ROUTE}
+            className="inline-flex min-h-[52px] items-center justify-center rounded-pill border border-gold/40 bg-gold/10 px-9 font-display text-xs font-bold uppercase tracking-[0.22em] text-gold transition duration-300 ease-luxury hover:border-gold hover:bg-gold hover:text-void"
+          >
+            {t("cosmetics.viewAll")}
+          </RouterLink>
+        </ScrollAnimationWrapper>
+      </Container>
+    </section>
+  );
+}

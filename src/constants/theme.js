@@ -1,12 +1,18 @@
 export const COLORS = {
-  void: "#050505",
-  graphite: "#0F0F0F",
-  anthracite: "#171717",
-  milk: "#F5F0E8",
-  stone: "#A8A096",
-  muted: "#6B6560",
-  gold: "#C4A962",
-  champagne: "#E8DFD0",
+  bg: "#08060C",
+  surface: "#0C0A10",
+  card: "#100E14",
+  border: "#1A1520",
+  text: "#E5DFD8",
+  secondary: "#9A8880",
+  void: "#08060C",
+  milk: "#E5DFD8",
+  stone: "#9A8880",
+  muted: "#706468",
+  gold: "#B8956B",
+  goldDark: "#967048",
+  accent: "#B8956B",
+  footer: "#07050A",
 };
 
 /** @deprecated use COLORS.gold */
@@ -21,6 +27,11 @@ export const SITE_URL = "https://nuarr.pl";
 export const SOCIAL = {
   facebook: "https://www.facebook.com/nuarmassage/",
   instagram: "https://www.instagram.com/nuar_massage/",
+};
+
+export const INSTAGRAM = {
+  handle: "nuar_massage",
+  url: SOCIAL.instagram,
 };
 
 export const SIGNATURE_SLUGS = [

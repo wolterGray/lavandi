@@ -15,13 +15,11 @@ export default function SectionTitle({
         : "items-center text-center";
 
   return (
-    <div className={`mb-10 flex flex-col gap-3 md:mb-14 ${alignClass} ${className}`}>
+    <div className={`mb-8 flex flex-col gap-3 md:mb-10 ${alignClass} ${className}`}>
       {label && <SectionLabel>{label}</SectionLabel>}
-      <h2 className="font-display text-display-sm md:text-display-md text-milk text-balance font-medium">
-        {children}
-      </h2>
+      <h2 className="section-heading text-balance">{children}</h2>
       {description && (
-        <p className="max-w-xl text-base leading-relaxed text-stone md:text-[17px] md:leading-7">
+        <p className="max-w-prose text-base leading-[1.75] text-stone md:text-[17px] md:leading-8">
           {description}
         </p>
       )}

@@ -21,14 +21,12 @@ const studioIcon = L.icon({
 
 function MapResize({ active }) {
   const map = useMap();
-
   useEffect(() => {
     const refresh = () => map.invalidateSize();
     refresh();
     const timer = window.setTimeout(refresh, active ? 50 : 250);
     return () => window.clearTimeout(timer);
   }, [active, map]);
-
   return null;
 }
 
@@ -37,10 +35,7 @@ export default function StudioMap({ openLabel }) {
   const position = [STUDIO.lat, STUDIO.lng];
 
   return (
-    <div
-      ref={ref}
-      className="relative overflow-hidden rounded-2xl border border-white/[0.06] bg-graphite"
-    >
+    <div ref={ref} className="relative overflow-hidden rounded-card border border-gold/40 shadow-spa ring-1 ring-gold/10">
       <MapContainer
         center={position}
         zoom={16}
@@ -51,19 +46,11 @@ export default function StudioMap({ openLabel }) {
         attributionControl={false}
         className="studio-map z-0 h-[320px] w-full sm:h-[360px]"
       >
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
         <Marker position={position} icon={studioIcon} />
         <MapResize active={inView} />
       </MapContainer>
-
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[400] h-16 bg-gradient-to-t from-void/80 to-transparent" />
-
-      <a
-        href={STUDIO.mapsLink}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="absolute bottom-4 right-4 z-[500] rounded-full border border-white/15 bg-void/90 px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-milk backdrop-blur-sm transition hover:border-gold/30 hover:text-champagne"
-      >
+      <a href={STUDIO.mapsLink} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 z-[500] rounded-pill bg-gold px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-gold-dark">
         {openLabel}
       </a>
     </div>

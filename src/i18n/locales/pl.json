@@ -4,9 +4,14 @@
     "description": "NUAR: masaże premium w centrum Warszawy. Zarezerwuj online i poczuj różnicę od pierwszej wizyty."
   },
   "nav": {
+    "home": "Strona główna",
     "rituals": "Rytuały",
+    "experiences": "Doświadczenia",
+    "services": "Usługi",
+    "price": "Cennik",
     "about": "O nas",
     "reviews": "Opinie",
+    "cosmetics": "Kosmetyka",
     "contact": "Kontakt",
     "book": "Rezerwuj",
     "bookVisit": "Zarezerwuj wizytę",
@@ -16,12 +21,20 @@
   },
   "hero": {
     "eyebrow": "NUAR · Warszawa",
+    "welcome": "Witamy w NUAR",
+    "tagline": "Wellness zaczyna się od wewnątrz",
     "title": "Przestrzeń, w której ciało odzyskuje równowagę",
-    "subtitle": "Masaż premium w centrum miasta. Troska, spokój i doświadczeni specjaliści, którym możesz zaufać.",
+    "subtitle": "Masaż premium w centrum Warszawy — spokojnie, prywatnie i pod okiem doświadczonych terapeutów.",
     "cta": "Zarezerwuj wizytę",
-    "ctaSecondary": "Poznaj rytuały →",
+    "ctaSecondary": "Zobacz masaże",
     "scroll": "Scroll",
+    "scrollExplore": "Przewiń, aby odkryć",
     "imageAlt": "Atmosfera studia masażu NUAR w Warszawie"
+  },
+  "intro": {
+    "text": "Z eksperckim podejściem NUAR spotyka Cię tam, gdzie jesteś na swojej drodze do wellness — czy szukasz głębokiego relaksu, regeneracji sportowej, czy masażu dopasowanego do Twojego ciała.",
+    "location": "Odkryj nasze odrestaurowane sanktuarium w centrum Warszawy.",
+    "studioLocation": "Warszawa, Polska"
   },
   "announcements": {
     "items": [
@@ -44,9 +57,36 @@
   },
   "about": {
     "label": "Filozofia",
-    "title": "Cisza. Spokój. Oddech.",
-    "text": "Tworzymy przestrzeń, w której możesz zatrzymać się na chwilę. Każdy masaż to nie tylko technika — to doświadczenie, które przywraca równowagę ciała i umysłu.",
+    "title": "Spokojna przestrzeń regeneracji",
+    "text": "NUAR to prywatne studio masażu, gdzie technika spotyka się z obecnością. Każda sesja jest dopasowana do Twojego ciała — bez pośpiechu, z pełną uwagą.",
     "location": "ul. Świętojerska 5/7 · Warszawa"
+  },
+  "trust": {
+    "label": "Dlaczego NUAR",
+    "title": "Troska w każdym szczególe",
+    "description": "Masaż premium w sercu Warszawy — z atmosferą spokoju i standardem, na jaki zasługujesz.",
+    "items": [
+      {
+        "title": "Masaże premium w centrum Warszawy",
+        "text": "Kameralne studio kilka minut od metra Ratusz Arsenał — stworzone do głębokiego odpoczynku i regeneracji."
+      },
+      {
+        "title": "Indywidualne podejście",
+        "text": "Każda wizyta zaczyna się od krótkiej konsultacji. Terapeuta dopasowuje technikę i intensywność do Ciebie."
+      },
+      {
+        "title": "Profesjonalni mistrzowie",
+        "text": "Doświadczeni specjaliści, którym możesz powierzyć swoje ciało — precyzyjni, uważni i intuicyjni."
+      },
+      {
+        "title": "Spokojna, prywatna atmosfera",
+        "text": "Ciche wnętrza, miękkie światło i spokojne tempo — abyś mógł całkowicie się wyłączyć."
+      },
+      {
+        "title": "Wygodna rezerwacja online",
+        "text": "Wybierz rytuał, terapeutę i termin w Booksy — potwierdzenie w kilka sekund."
+      }
+    ]
   },
   "stats": {
     "label": "NUAR w liczbach",
@@ -67,12 +107,215 @@
   },
   "services": {
     "label": "Menu",
+    "searchLabel": "Szukam",
     "title": "Wszystkie usługi",
     "description": "Pełna oferta rytuałów masażu — od regeneracji sportowej po głęboki relaks.",
     "from": "Od",
-    "details": "Szczegóły →",
+    "book": "Zarezerwuj wizytę",
+    "details": "Szczegóły",
+    "fullMenu": "Pełna oferta",
     "prev": "Poprzednia usługa",
     "next": "Następna usługa"
+  },
+  "cosmetics": {
+    "label": "Sklep",
+    "title": "Katalog kosmetyków",
+    "description": "Starannie dobrane produkty do pielęgnacji ciała i wellness — olejki, balsamy, peelingi i rytuały domowe dostępne w studio.",
+    "filterLabel": "Filtruj produkty według kategorii",
+    "availableAtStudio": "Dostępne w studio",
+    "cta": "Zapytaj o produkty",
+    "ctaSecondary": "Kontakt",
+    "viewAll": "Przejdź do katalogu",
+    "emailSubject": "Zapytanie o katalog kosmetyków",
+    "categories": {
+      "all": "Wszystkie",
+      "oils": "Olejki do ciała",
+      "balms": "Balsamy",
+      "creams": "Kremy",
+      "scrubs": "Peelingi",
+      "aroma": "Aromaterapia",
+      "home": "Rytuał domowy"
+    },
+    "products": {
+      "rose-body-oil": {
+        "name": "Olejek różany do ciała",
+        "brand": "NUAR Rituals",
+        "tagline": "Ciepła róża i jojoba dla jedwabistej skóry po masażu"
+      },
+      "arnica-massage-oil": {
+        "name": "Olejek arnikowy do masażu",
+        "brand": "NUAR Rituals",
+        "tagline": "Mieszanka deep tissue dla zmęczonych mięśni"
+      },
+      "lavender-relax-oil": {
+        "name": "Olejek lawendowy relaks",
+        "brand": "NUAR Rituals",
+        "tagline": "Wieczorny relaks z kojącymi nutami ziół"
+      },
+      "magnesium-balm": {
+        "name": "Balsam magnezowy regenerujący",
+        "brand": "NUAR Rituals",
+        "tagline": "Ukierunkowana ulga po intensywnych sesjach"
+      },
+      "shea-foot-balm": {
+        "name": "Balsam do stóp z masłem shea",
+        "brand": "NUAR Rituals",
+        "tagline": "Bogata regeneracja dla suchych, zmęczonych stóp"
+      },
+      "velvet-body-cream": {
+        "name": "Aksamitny krem do ciała",
+        "brand": "NUAR Rituals",
+        "tagline": "Jedwabiste codzienne odżywienie bez ciężkości"
+      },
+      "citrus-hand-cream": {
+        "name": "Cytrusowy krem do rąk",
+        "brand": "NUAR Rituals",
+        "tagline": "Lekka, szybko wchłaniająca się pielęgnacja"
+      },
+      "coffee-body-scrub": {
+        "name": "Kawowy peeling do ciała",
+        "brand": "NUAR Rituals",
+        "tagline": "Pobudzający peeling z ciepłym aromatem"
+      },
+      "salt-glow-scrub": {
+        "name": "Mineralny peeling salt glow",
+        "brand": "NUAR Rituals",
+        "tagline": "Delikatna eksfoliacja dla odnowionej skóry"
+      },
+      "eucalyptus-mist": {
+        "name": "Mgiełka eukaliptusowa",
+        "brand": "NUAR Rituals",
+        "tagline": "Świeżość spa w domu jednym psiknięciem"
+      },
+      "cedar-candle": {
+        "name": "Świeca cedrowa",
+        "brand": "NUAR Rituals",
+        "tagline": "Powolne spalanie dla wieczornych rytuałów"
+      },
+      "dry-brush": {
+        "name": "Szczotka do masażu na sucho",
+        "brand": "NUAR Rituals",
+        "tagline": "Stymulacja krążenia przed pielęgnacją"
+      }
+    }
+  },
+  "editorial": {
+    "items": [
+      {
+        "eyebrow": "Oferta sezonowa",
+        "title": "Wellness nad wodą",
+        "text": "Do -18% na wybrane rytuały w tym sezonie. Zarezerwuj termin online i wejdź w spokojniejszy rytm.",
+        "img": "/massage/3.webp",
+        "link": "booksy",
+        "cta": "Rezerwuj w Booksy →"
+      },
+      {
+        "eyebrow": "Nasze sanktuarium",
+        "title": "Przestrzeń na nowo",
+        "text": "NUAR to spokojne studio w sercu Warszawy — gdzie regeneracyjny masaż, eksperckie ręce i cisza spotykają się w jednym.",
+        "img": "/massage/1.webp",
+        "link": "about",
+        "cta": "Poznaj NUAR →"
+      },
+      {
+        "eyebrow": "Eksperci",
+        "title": "Opieka pod przewodnictwem specjalistów",
+        "text": "Poznaj Olhę i Maxa — specjalistów, którym powierzasz swoje ciało, z doświadczeniem, intuicją i indywidualnym podejściem.",
+        "img": "/massage/2.webp",
+        "link": "team",
+        "cta": "Poznaj zespół →"
+      }
+    ]
+  },
+  "gallery": {
+    "label": "Galeria",
+    "title": "Atmosfera studia",
+    "description": "Spokój, światło i troska w sercu Warszawy.",
+    "close": "Zamknij",
+    "items": {
+      "studio": "Wnętrze studia NUAR",
+      "ambience": "Atmosfera relaksu w studio",
+      "ritual": "Rytuał masażu w NUAR",
+      "space": "Przestrzeń regeneracji NUAR",
+      "classic": "Masaż klasyczny",
+      "relax": "Masaż relaksacyjny",
+      "signature": "Masaż autorski NUAR",
+      "sport": "Masaż sportowy",
+      "care": "Zabieg pielęgnacyjny w studio"
+    }
+  },
+  "film": {
+    "label": "Obejrzyj film",
+    "title": "NUAR: Sanktuarium w Warszawie",
+    "caption": "Wejdź do naszego studia — spokój, światło i regeneracja.",
+    "play": "Odtwórz film"
+  },
+  "wellness": {
+    "label": "Doświadczenia wellness",
+    "title": "Powrót do holistycznego uzdrawiania",
+    "description": "Zabiegi inspirowane naturalnym rytmem ciała — dla wyjątkowego doświadczenia w centrum Warszawy.",
+    "items": [
+      {
+        "id": "treatments",
+        "title": "Zabiegi",
+        "text": "Nasze masaże regeneracyjne równoważą ciało i umysł. Od klasycznego i sportowego po autorskie rytuały — każda sesja jest dopasowana po krótkiej konsultacji.",
+        "cta": "Zarezerwuj zabieg →"
+      },
+      {
+        "id": "rituals",
+        "title": "Rytuały sygnaturowe",
+        "text": "Trzy doświadczenia, które najlepiej oddają filozofię NUAR — indywidualną troskę, spokój i głęboką regenerację.",
+        "cta": "Poznaj rytuały →"
+      },
+      {
+        "id": "recovery",
+        "title": "Regeneracja",
+        "text": "Masaż sportowy i limfatyczny wspierają regenerację po wysiłku. Zmniejszają napięcia i pomagają ciału znów poruszać się swobodnie.",
+        "cta": "Zarezerwuj regenerację →"
+      },
+      {
+        "id": "visit",
+        "title": "Twoja wizyta",
+        "text": "Wybierz rytuał, zarezerwuj online w Booksy i przyjdź na ul. Świętojerską 5/7 — kilka minut od metra Ratusz Arsenał.",
+        "cta": "Zaplanuj wizytę →"
+      }
+    ]
+  },
+  "journal": {
+    "label": "Odkrywaj",
+    "title": "Dziennik wellness",
+    "items": [
+      {
+        "category": "Wellness holistyczny",
+        "title": "Jaki masaż wybrać?",
+        "excerpt": "Jeśli nie wiesz — polecamy relaksacyjny lub autorski. Terapeuta dopasuje technikę po krótkiej konsultacji."
+      },
+      {
+        "category": "Regeneracja",
+        "title": "Masaż sportowy dla aktywnych",
+        "excerpt": "Intensywny masaż wspierający regenerację po wysiłku — redukuje napięcia mięśni i pomaga zapobiegać kontuzjom."
+      },
+      {
+        "category": "Pierwsza wizyta",
+        "title": "Czego się spodziewać w NUAR",
+        "excerpt": "Spokojne studio, krótka konsultacja i sesja dopasowana do Twoich potrzeb — od momentu przyjścia."
+      },
+      {
+        "category": "Lokalizacja",
+        "title": "Jak nas znaleźć w Warszawie",
+        "excerpt": "Centrum Warszawy, ul. Świętojerska 5/7 — kilka minut pieszo od metra Ratusz Arsenał."
+      },
+      {
+        "category": "Rezerwacja",
+        "title": "Jak zarezerwować wizytę",
+        "excerpt": "Najszybciej przez Booksy — wybierz usługę, terapeutę i dogodny termin. Możesz też zadzwonić."
+      },
+      {
+        "category": "Rodzina",
+        "title": "Masaż dla dzieci",
+        "excerpt": "Delikatny, bezpieczny masaż dla dzieci 5–18 lat — wspierający aktywnych młodych sportowców."
+      }
+    ]
   },
   "team": {
     "label": "Zespół",
@@ -146,7 +389,7 @@
   },
   "faq": {
     "label": "FAQ",
-    "title": "Pytania gości",
+    "title": "Często zadawane pytania",
     "description": "Odpowiedzi na najczęstsze pytania przed pierwszą wizytą.",
     "items": [
       {
@@ -188,6 +431,10 @@
   "footer": {
     "description": "Premium studio masażu w sercu Warszawy. Harmonia, regeneracja i indywidualna troska.",
     "booksy": "5.0 · Booksy",
+    "elevate": "Podnieś codzienność",
+    "hashtag": "#NUAR",
+    "instagramText": "Wellness zaczyna się od wewnątrz. Obserwuj nasze studio w Warszawie — chwile spokoju, troski i regeneracji.",
+    "followInstagram": "Obserwuj nas na Instagramie",
     "menu": "Menu",
     "navLabel": "Nawigacja stopki",
     "contact": "Kontakt",
@@ -196,6 +443,10 @@
     "copyright": "Wszelkie prawa zastrzeżone.",
     "instagram": "Instagram",
     "follow": "Obserwuj",
+    "igPosts": "postów",
+    "igFollowers": "obserwujących",
+    "igFollowing": "obserwowanych",
+    "igMessage": "Wiadomość",
     "newsletter": "Newsletter",
     "newsletterTitle": "Bądź na bieżąco z promocjami",
     "emailPlaceholder": "Twój email",
@@ -232,6 +483,13 @@
     "label": "404",
     "title": "Strona nie istnieje",
     "description": "Wróć na stronę główną i zarezerwuj wizytę w NUAR."
+  },
+  "cosmeticsPage": {
+    "meta": {
+      "title": "Katalog kosmetyków — NUAR Warszawa | Pielęgnacja ciała",
+      "description": "Przeglądaj starannie dobraną kolekcję NUAR — olejki, balsamy, peelingi, aromaterapia i rytuały domowe dostępne w naszym studio w Warszawie."
+    },
+    "navLabel": "Nawigacja strony katalogu"
   },
   "servicePage": {
     "location": "NUAR · Warszawa",

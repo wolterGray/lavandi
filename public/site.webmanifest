@@ -3,8 +3,8 @@
   "short_name": "NUAR",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#0D0510",
+  "background_color": "#08060C",
+  "theme_color": "#08060C",
   "icons": [
     {
       "src": "/favicon-192x192.png",

@@ -1,0 +1,14 @@
+[
+  { "id": "rose-body-oil", "category": "oils", "initials": "RO", "accent": 0 },
+  { "id": "arnica-massage-oil", "category": "oils", "initials": "AO", "accent": 1 },
+  { "id": "lavender-relax-oil", "category": "oils", "initials": "LO", "accent": 2 },
+  { "id": "magnesium-balm", "category": "balms", "initials": "MB", "accent": 3 },
+  { "id": "shea-foot-balm", "category": "balms", "initials": "FB", "accent": 4 },
+  { "id": "velvet-body-cream", "category": "creams", "initials": "VC", "accent": 5 },
+  { "id": "citrus-hand-cream", "category": "creams", "initials": "HC", "accent": 0 },
+  { "id": "coffee-body-scrub", "category": "scrubs", "initials": "CS", "accent": 1 },
+  { "id": "salt-glow-scrub", "category": "scrubs", "initials": "SG", "accent": 2 },
+  { "id": "eucalyptus-mist", "category": "aroma", "initials": "EM", "accent": 3 },
+  { "id": "cedar-candle", "category": "aroma", "initials": "CC", "accent": 4 },
+  { "id": "dry-brush", "category": "home", "initials": "DB", "accent": 5 }
+]

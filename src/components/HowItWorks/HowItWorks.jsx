@@ -46,7 +46,7 @@ export default function HowItWorks() {
                 />
               )}
               <span
-                className="font-cinzel text-3xl font-semibold tracking-widest"
+                className="font-display text-3xl font-semibold tracking-widest"
                 style={{ color: GOLD }}
               >
                 {step.number}

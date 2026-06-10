@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { FaComments, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -25,53 +25,54 @@ export default function ReviewsSection({ reviews = [] }) {
   if (!reviews.length) return null;
 
   return (
-    <section id="opinie" className="section-padding overflow-x-hidden border-t border-white/[0.06]">
+    <section id="opinie" className="section-padding overflow-x-hidden bg-cream">
       <Container>
         <ScrollAnimationWrapper>
           <SectionTitle label={t("reviews.label")} description={t("reviews.description")}>
             {t("reviews.title")}
           </SectionTitle>
+          <div className="spa-divider" />
 
-          <div className="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-stone">
-            <span className="inline-flex items-center gap-1.5 text-milk">
+          <div className="mb-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm text-stone">
+            <span className="inline-flex items-center gap-1.5 font-bold text-milk">
               <FaStar className="h-4 w-4 text-gold" aria-hidden="true" />
               {t("reviews.rating")}
             </span>
             <span className="text-muted">·</span>
             <span>{t("reviews.count", { count: reviews.length })}</span>
           </div>
+        </ScrollAnimationWrapper>
 
-          {featured && (
-            <blockquote className="max-w-3xl break-words border-l border-gold/40 pl-6 sm:pl-8">
-              <p className="break-words font-display text-2xl italic leading-relaxed text-milk sm:text-3xl sm:leading-snug">
+        {featured && (
+          <ScrollAnimationWrapper delay={0.08}>
+            <blockquote className="mx-auto max-w-3xl text-center">
+              <p className="font-display text-2xl italic leading-relaxed text-milk sm:text-3xl">
                 «{featured.text}»
               </p>
-              <footer className="mt-6 text-sm text-stone">— {featured.name}</footer>
+              <footer className="mt-5 text-sm font-bold uppercase tracking-[0.1em] text-gold">— {featured.name}</footer>
             </blockquote>
-          )}
+          </ScrollAnimationWrapper>
+        )}
 
-          <div className="mt-12 grid min-w-0 gap-5 md:grid-cols-3 md:gap-6">
-            {picks.map((review) => (
-              <figure
-                key={`${review.name}-${review.text.slice(0, 24)}`}
-                className="min-w-0 overflow-hidden rounded-2xl border border-white/[0.06] bg-graphite p-5 sm:p-6"
-              >
-                <FaComments className="mb-3 h-4 w-4 text-gold/60" aria-hidden="true" />
+        <div className="mt-12 grid min-w-0 gap-5 md:grid-cols-3">
+          {picks.map((review, index) => (
+            <ScrollAnimationWrapper key={`${review.name}-${review.text.slice(0, 24)}`} delay={index * 0.08}>
+              <figure className="spa-card min-w-0 p-6">
                 <blockquote className="break-words text-sm leading-relaxed text-stone line-clamp-5">
                   «{review.text}»
                 </blockquote>
-                <figcaption className="mt-4 text-xs uppercase tracking-[0.14em] text-muted">
+                <figcaption className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-gold">
                   {review.name}
                 </figcaption>
               </figure>
-            ))}
-          </div>
+            </ScrollAnimationWrapper>
+          ))}
+        </div>
 
-          <div className="mt-10 text-center">
-            <Button href={BOOKSY_URL} variant="secondary" size="sm">
-              {t("reviews.seeAllOnBooksy", { count: reviews.length })}
-            </Button>
-          </div>
+        <ScrollAnimationWrapper delay={0.2} className="mt-10 text-center">
+          <Button href={BOOKSY_URL} variant="secondary" size="sm">
+            {t("reviews.seeAllOnBooksy", { count: reviews.length })}
+          </Button>
         </ScrollAnimationWrapper>
       </Container>
     </section>

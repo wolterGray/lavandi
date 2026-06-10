@@ -26,7 +26,7 @@ function Slider({ homeBanner }) {
                   initial={{ opacity: 0, y: -40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8 }}
-                  className="text-5xl hyphens-auto sm:text-7xl font-[Cormorant_Garamond] tracking-widest font-bold uppercase mb-6"
+                  className="mb-6 hyphens-auto font-display text-5xl font-bold uppercase tracking-widest sm:text-7xl"
                 >
                   {title}
                 </motion.h2>

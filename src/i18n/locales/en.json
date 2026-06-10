@@ -4,9 +4,14 @@
     "description": "NUAR: premium massages in central Warsaw. Book online and feel the difference from your very first visit."
   },
   "nav": {
+    "home": "Home",
     "rituals": "Rituals",
-    "about": "About",
+    "experiences": "Experiences",
+    "services": "Services",
+    "price": "Price",
+    "about": "About us",
     "reviews": "Reviews",
+    "cosmetics": "Cosmetics",
     "contact": "Contact",
     "book": "Book",
     "bookVisit": "Book a visit",
@@ -16,12 +21,20 @@
   },
   "hero": {
     "eyebrow": "NUAR · Warsaw",
-    "title": "A space where your body finds balance again",
-    "subtitle": "Premium massage in the heart of the city. Care, calm, and specialists you can trust with your body.",
+    "welcome": "Welcome to NUAR",
+    "tagline": "Wellness begins within",
+    "title": "Where your body finds balance again",
+    "subtitle": "Premium massage in central Warsaw — calm, private, and led by experienced therapists.",
     "cta": "Book a visit",
-    "ctaSecondary": "Explore rituals →",
+    "ctaSecondary": "View massages",
     "scroll": "Scroll",
+    "scrollExplore": "Scroll to explore",
     "imageAlt": "NUAR massage studio atmosphere in Warsaw"
+  },
+  "intro": {
+    "text": "With an expert-led approach, NUAR meets you wherever you are on your wellness journey — whether you seek deep relaxation, sports recovery, or a restorative massage tailored to your body.",
+    "location": "Explore our restorative sanctuary in central Warsaw.",
+    "studioLocation": "Warsaw, Poland"
   },
   "announcements": {
     "items": [
@@ -44,9 +57,36 @@
   },
   "about": {
     "label": "Philosophy",
-    "title": "Silence. Calm. Breath.",
-    "text": "We create a space where you can pause for a moment. Every massage is not only technique — it is an experience that restores balance to body and mind.",
+    "title": "A calm space for restoration",
+    "text": "NUAR is a private massage studio where technique meets presence. Each session is tailored to your body — unhurried, attentive, and designed to restore balance.",
     "location": "ul. Świętojerska 5/7 · Warsaw"
+  },
+  "trust": {
+    "label": "Why NUAR",
+    "title": "Thoughtful care, every visit",
+    "description": "Premium massage in the heart of Warsaw — with the calm atmosphere and professional standards you expect.",
+    "items": [
+      {
+        "title": "Premium massages in central Warsaw",
+        "text": "A discreet studio minutes from Ratusz Arsenał — designed for deep rest and recovery."
+      },
+      {
+        "title": "Individual approach",
+        "text": "Every session begins with a brief consultation. Your therapist adapts pressure and technique to you."
+      },
+      {
+        "title": "Professional therapists",
+        "text": "Experienced masters you can trust with your body — intuitive, precise, and attentive."
+      },
+      {
+        "title": "Private, calm atmosphere",
+        "text": "Quiet rooms, soft light, and unhurried pace — so you can fully switch off."
+      },
+      {
+        "title": "Easy online booking",
+        "text": "Choose your ritual, therapist, and time on Booksy — confirmation in seconds."
+      }
+    ]
   },
   "stats": {
     "label": "NUAR in numbers",
@@ -67,12 +107,215 @@
   },
   "services": {
     "label": "Menu",
+    "searchLabel": "I'm searching for",
     "title": "All services",
     "description": "Our full menu of massage rituals — from sports recovery to deep relaxation.",
     "from": "From",
-    "details": "Details →",
+    "book": "Book a visit",
+    "details": "Details",
+    "fullMenu": "Full menu",
     "prev": "Previous service",
     "next": "Next service"
+  },
+  "cosmetics": {
+    "label": "Shop",
+    "title": "Cosmetics catalog",
+    "description": "Curated body care and wellness products selected by our therapists — oils, balms, scrubs, and home rituals available for purchase at the studio.",
+    "filterLabel": "Filter products by category",
+    "availableAtStudio": "Available at studio",
+    "cta": "Ask about products",
+    "ctaSecondary": "Contact us",
+    "viewAll": "View full catalog",
+    "emailSubject": "Cosmetics catalog inquiry",
+    "categories": {
+      "all": "All",
+      "oils": "Body oils",
+      "balms": "Balms",
+      "creams": "Creams",
+      "scrubs": "Scrubs",
+      "aroma": "Aromatherapy",
+      "home": "Home ritual"
+    },
+    "products": {
+      "rose-body-oil": {
+        "name": "Rose Body Oil",
+        "brand": "NUAR Rituals",
+        "tagline": "Warm rose & jojoba for silky post-massage glow"
+      },
+      "arnica-massage-oil": {
+        "name": "Arnica Massage Oil",
+        "brand": "NUAR Rituals",
+        "tagline": "Deep-tissue blend for tired muscles"
+      },
+      "lavender-relax-oil": {
+        "name": "Lavender Relax Oil",
+        "brand": "NUAR Rituals",
+        "tagline": "Evening unwind with calm herbal notes"
+      },
+      "magnesium-balm": {
+        "name": "Magnesium Recovery Balm",
+        "brand": "NUAR Rituals",
+        "tagline": "Targeted relief after intensive sessions"
+      },
+      "shea-foot-balm": {
+        "name": "Shea Foot Balm",
+        "brand": "NUAR Rituals",
+        "tagline": "Rich repair for dry, tired feet"
+      },
+      "velvet-body-cream": {
+        "name": "Velvet Body Cream",
+        "brand": "NUAR Rituals",
+        "tagline": "Silky daily nourishment without heaviness"
+      },
+      "citrus-hand-cream": {
+        "name": "Citrus Hand Cream",
+        "brand": "NUAR Rituals",
+        "tagline": "Light, fast-absorbing everyday care"
+      },
+      "coffee-body-scrub": {
+        "name": "Coffee Body Scrub",
+        "brand": "NUAR Rituals",
+        "tagline": "Invigorating polish with a warm aroma"
+      },
+      "salt-glow-scrub": {
+        "name": "Mineral Salt Glow",
+        "brand": "NUAR Rituals",
+        "tagline": "Gentle exfoliation for renewed skin"
+      },
+      "eucalyptus-mist": {
+        "name": "Eucalyptus Room Mist",
+        "brand": "NUAR Rituals",
+        "tagline": "Spa-at-home freshness in one spritz"
+      },
+      "cedar-candle": {
+        "name": "Cedarwood Candle",
+        "brand": "NUAR Rituals",
+        "tagline": "Slow-burn ambience for evening rituals"
+      },
+      "dry-brush": {
+        "name": "Body Dry Brush",
+        "brand": "NUAR Rituals",
+        "tagline": "Circulation boost before self-care"
+      }
+    }
+  },
+  "editorial": {
+    "items": [
+      {
+        "eyebrow": "Seasonal offer",
+        "title": "Wellness by the Water",
+        "text": "Up to 18% off selected rituals this season. Book your time online and step into a quieter rhythm.",
+        "img": "/massage/3.webp",
+        "link": "booksy",
+        "cta": "Book on Booksy →"
+      },
+      {
+        "eyebrow": "Our sanctuary",
+        "title": "A Space Reimagined",
+        "text": "NUAR is a calm studio in the heart of Warsaw — where restorative massage, expert hands, and stillness come together.",
+        "img": "/massage/1.webp",
+        "link": "about",
+        "cta": "Discover NUAR →"
+      },
+      {
+        "eyebrow": "Expert practitioners",
+        "title": "Expert-led Care",
+        "text": "Meet Olha and Max — specialists you entrust your body to, with experience, intuition, and a personal approach.",
+        "img": "/massage/2.webp",
+        "link": "team",
+        "cta": "Meet the team →"
+      }
+    ]
+  },
+  "gallery": {
+    "label": "Gallery",
+    "title": "Studio atmosphere",
+    "description": "Calm, light, and care in the heart of Warsaw.",
+    "close": "Close",
+    "items": {
+      "studio": "NUAR studio interior",
+      "ambience": "Relaxing studio atmosphere",
+      "ritual": "Massage ritual at NUAR",
+      "space": "NUAR restoration space",
+      "classic": "Classic massage",
+      "relax": "Relaxing massage",
+      "signature": "NUAR signature massage",
+      "sport": "Sports massage",
+      "care": "Care treatment at the studio"
+    }
+  },
+  "film": {
+    "label": "Watch our film",
+    "title": "NUAR: A Sanctuary in Warsaw",
+    "caption": "Step inside our studio — calm, light, and restorative.",
+    "play": "Play film"
+  },
+  "wellness": {
+    "label": "Wellness experiences",
+    "title": "Return to holistic healing",
+    "description": "Treatments that draw inspiration from the body’s natural rhythm — for a completely unique experience in central Warsaw.",
+    "items": [
+      {
+        "id": "treatments",
+        "title": "Treatments",
+        "text": "Our restorative massages balance body and mind. From classic and sports massage to signature rituals — each session is tailored to you after a brief consultation.",
+        "cta": "Book a treatment →"
+      },
+      {
+        "id": "rituals",
+        "title": "Signature rituals",
+        "text": "Three experiences that best reflect the NUAR philosophy — individual care, calm, and deep restoration for body and mind.",
+        "cta": "Explore rituals →"
+      },
+      {
+        "id": "recovery",
+        "title": "Recovery",
+        "text": "Sports massage and lymphatic drainage support recovery after exertion. Reduce tension, improve flexibility, and help your body move with ease again.",
+        "cta": "Book recovery →"
+      },
+      {
+        "id": "visit",
+        "title": "Your visit",
+        "text": "Choose a ritual, book online on Booksy, and arrive at ul. Świętojerska 5/7 — a few minutes from Ratusz Arsenał metro.",
+        "cta": "Plan your visit →"
+      }
+    ]
+  },
+  "journal": {
+    "label": "Discover",
+    "title": "Wellness journal",
+    "items": [
+      {
+        "category": "Holistic wellness",
+        "title": "Which massage should I choose?",
+        "excerpt": "If unsure, we recommend a relaxing or signature massage — your therapist will adapt the technique after a brief consultation."
+      },
+      {
+        "category": "Recovery",
+        "title": "Sports massage for active bodies",
+        "excerpt": "Intensive massage supporting recovery after exertion — reducing muscle tension and helping prevent injury."
+      },
+      {
+        "category": "First visit",
+        "title": "What to expect at NUAR",
+        "excerpt": "A calm studio, a brief consultation, and a session tailored to your needs — from the moment you arrive."
+      },
+      {
+        "category": "Location",
+        "title": "Finding us in Warsaw",
+        "excerpt": "Central Warsaw at ul. Świętojerska 5/7 — a few minutes' walk from Ratusz Arsenał metro."
+      },
+      {
+        "category": "Booking",
+        "title": "How to book a visit",
+        "excerpt": "Fastest via Booksy — choose a service, therapist, and convenient time. You can also call us directly."
+      },
+      {
+        "category": "Family",
+        "title": "Massage for children",
+        "excerpt": "Gentle, safe massage for children aged 5–18 — supportive for active young athletes."
+      }
+    ]
   },
   "team": {
     "label": "Team",
@@ -146,7 +389,7 @@
   },
   "faq": {
     "label": "FAQ",
-    "title": "Guest questions",
+    "title": "Frequently asked questions",
     "description": "Answers to the most common questions before your first visit.",
     "items": [
       {
@@ -188,6 +431,10 @@
   "footer": {
     "description": "Premium massage studio in the heart of Warsaw. Harmony, restoration, and individual care.",
     "booksy": "5.0 · Booksy",
+    "elevate": "Elevate the everyday",
+    "hashtag": "#NUAR",
+    "instagramText": "Wellness begins within. Follow our studio in Warsaw for moments of calm, care, and restoration.",
+    "followInstagram": "Follow us on Instagram",
     "menu": "Menu",
     "navLabel": "Footer navigation",
     "contact": "Contact",
@@ -196,6 +443,10 @@
     "copyright": "All rights reserved.",
     "instagram": "Instagram",
     "follow": "Follow",
+    "igPosts": "posts",
+    "igFollowers": "followers",
+    "igFollowing": "following",
+    "igMessage": "Message",
     "newsletter": "Newsletter",
     "newsletterTitle": "Stay updated on promotions",
     "emailPlaceholder": "Your email",
@@ -232,6 +483,13 @@
     "label": "404",
     "title": "Page not found",
     "description": "Return to the homepage and book your visit at NUAR."
+  },
+  "cosmeticsPage": {
+    "meta": {
+      "title": "Cosmetics Catalog — NUAR Warsaw | Body Care & Wellness",
+      "description": "Browse NUAR's curated body care collection — oils, balms, scrubs, aromatherapy, and home rituals available at our Warsaw studio."
+    },
+    "navLabel": "Catalog page navigation"
   },
   "servicePage": {
     "location": "NUAR · Warsaw",
