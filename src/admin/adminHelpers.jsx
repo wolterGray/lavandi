@@ -142,7 +142,7 @@ function readDraftRecovery(storageKey) {
 export function useAdminDraft(source, { recover = true } = {}) {
   const { pathname } = useLocation();
   const storageKey = `${DRAFT_PREFIX}${pathname}`;
-  const [draft, setDraft] = useState(source);
+  const [draft, setDraft] = useState(source ?? null);
   const [dirty, setDirty] = useState(false);
   const [recoveryOffer, setRecoveryOffer] = useState(null);
   const [recoveryChecked, setRecoveryChecked] = useState(false);

@@ -3,7 +3,7 @@ import { Copy, Plus, Trash2 } from "lucide-react";
 import { getAdminSectionKey } from "../../admin/adminNav";
 import { getSectionMeta } from "../../admin/adminSectionMeta";
 import { publishTeamLocalesFromRussian } from "../../admin/publishCmsFromRu";
-import { CMS_AUTHOR_LANG, getLocaleDefaults } from "../../admin/siteContent";
+import { CMS_AUTHOR_LANG, EMPTY_TEAM_LOCALE, getAdminLocaleFallback } from "../../admin/siteContent";
 import {
   cloneAtIndex,
   filterAdminList,
@@ -42,12 +42,15 @@ export default function AdminTeamPage() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const ruLocaleSource = useMemo(
-    () => getLocaleSection(CMS_AUTHOR_LANG, "team", getLocaleDefaults(CMS_AUTHOR_LANG, "team")),
+    () =>
+      getLocaleSection(CMS_AUTHOR_LANG, "team", getAdminLocaleFallback(CMS_AUTHOR_LANG, "team")) ??
+      EMPTY_TEAM_LOCALE,
     [getLocaleSection, overrides.locales]
   );
 
   const previewLocale = useMemo(
-    () => getLocaleSection(activeLang, "team", getLocaleDefaults(activeLang, "team")),
+    () =>
+      getLocaleSection(activeLang, "team", getAdminLocaleFallback(activeLang, "team")) ?? EMPTY_TEAM_LOCALE,
     [activeLang, getLocaleSection, overrides.locales]
   );
 
@@ -130,7 +133,7 @@ export default function AdminTeamPage() {
   };
 
   const isAuthoring = activeLang === CMS_AUTHOR_LANG;
-  const displayLocale = isAuthoring ? localeDraft : previewLocale;
+  const displayLocale = (isAuthoring ? localeDraft : previewLocale) ?? EMPTY_TEAM_LOCALE;
   const filteredTeam = filterAdminList(teamDraft, searchQuery, (member) => {
     const localeMember = displayLocale.members?.[member.id] ?? {};
     return `${member.name} ${member.id} ${localeMember.bio ?? ""}`;

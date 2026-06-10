@@ -22,7 +22,8 @@ export default function AdminCommandPalette({ open, onClose }) {
     const q = normalizeQuery(query);
     if (!q) return items;
     return items.filter((item) => {
-      const haystack = `${item.label} ${item.group} ${item.keywords ?? ""}`.toLowerCase();
+      if (!item?.to || !item?.label) return false;
+      const haystack = `${item.label} ${item.group ?? ""} ${item.keywords ?? ""}`.toLowerCase();
       return haystack.includes(q);
     });
   }, [items, query]);
@@ -79,7 +80,8 @@ export default function AdminCommandPalette({ open, onClose }) {
             <li className="px-4 py-6 text-center text-sm text-muted">{adminRu.common.commandEmpty}</li>
           ) : (
             filtered.map((item) => {
-              const Icon = item.icon;
+              if (!item?.to || !item?.label) return null;
+              const Icon = item.icon ?? Search;
               return (
                 <li key={item.to}>
                   <button

@@ -31,6 +31,20 @@ export function getLocaleDefaults(lang, block) {
   return localeDefaults[lang]?.[block];
 }
 
+export const EMPTY_TEAM_LOCALE = {
+  label: "",
+  title: "",
+  description: "",
+  members: {},
+};
+
+export function getAdminLocaleFallback(lang, block) {
+  const defaults = getLocaleDefaults(lang, block);
+  if (defaults) return defaults;
+  if (lang === CMS_AUTHOR_LANG && block === "team") return EMPTY_TEAM_LOCALE;
+  return defaults;
+}
+
 export function mergeLocaleBlock(lang, block, overrides, fallback) {
   const base = fallback ?? getLocaleDefaults(lang, block);
   const patch = overrides?.locales?.[lang]?.[block];
