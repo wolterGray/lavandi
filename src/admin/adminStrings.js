@@ -155,6 +155,8 @@ export const adminRu = {
   },
   media: {
     upload: "Загрузить в базу",
+    removeImage: "Удалить фото",
+    removeFailed: "Не удалось удалить изображение из базы.",
     uploading: "Загрузка…",
     uploadFailed: "Не удалось загрузить изображение.",
     storageNotConfigured: "Таблица site_images не настроена. Запустите миграцию 003_site_images.sql.",

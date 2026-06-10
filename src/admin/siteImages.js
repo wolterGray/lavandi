@@ -249,6 +249,13 @@ export function resolveContentImages(content, imageMap = {}) {
     }));
   }
 
+  if (Array.isArray(resolved.cosmetics)) {
+    resolved.cosmetics = resolved.cosmetics.map((product) => ({
+      ...product,
+      img: resolveImageValue(product.img, imageMap),
+    }));
+  }
+
   if (resolved.locales && typeof resolved.locales === "object") {
     Object.values(resolved.locales).forEach((locale) => {
       const items = locale?.announcements?.items;

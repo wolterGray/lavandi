@@ -4,6 +4,8 @@ import { localeDefaults } from "../../admin/siteContent";
 import { LangTabs, useAdminPersist } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import { CATEGORY_KEYS } from "../../components/CosmeticsSection/cosmeticsShared";
+import AdminImageField from "../../admin/AdminImageField";
+import { deleteSiteImageByRef, isImageRef } from "../../admin/siteImages";
 import { AdminButton, AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
 
@@ -50,8 +52,18 @@ export default function AdminCosmeticsPage() {
     setDirty(true);
   };
 
-  const removeItem = (index) => {
-    const id = draft[index]?.id;
+  const removeItem = async (index) => {
+    const item = draft[index];
+    const id = item?.id;
+
+    if (item?.img && isImageRef(item.img)) {
+      try {
+        await deleteSiteImageByRef(item.img);
+      } catch {
+        // product row is still removed from catalog even if DB delete fails
+      }
+    }
+
     setDraft((prev) => prev.filter((_, i) => i !== index));
     if (id) {
       setTextDraft((prev) => {
@@ -77,7 +89,7 @@ export default function AdminCosmeticsPage() {
     <>
       <AdminPageHeader
         title={adminRu.nav.cosmetics}
-        description="Каталог продуктов — структурные данные и тексты на выбранном языке сайта."
+        description="Каталог продуктов: фото, категория, тексты на выбранном языке. Без фото — цветной плейсхолдер с инициалами."
         actions={<AdminButton onClick={addItem}><Plus className="mr-1 h-3.5 w-3.5" /> Добавить продукт</AdminButton>}
       />
 
@@ -94,7 +106,16 @@ export default function AdminCosmeticsPage() {
                   <Trash2 className="h-4 w-4" />
                 </AdminButton>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="sm:col-span-2">
+                  <AdminImageField
+                    folder="cosmetics"
+                    label={adminRu.common.imageUrl}
+                    value={item.img}
+                    previewClassName="mt-3 h-32 w-32 rounded-card object-cover ring-1 ring-border/50"
+                    onChange={(img) => updateItem(index, { img: img || undefined })}
+                  />
+                </div>
                 <AdminField label="ID"><input value={item.id} onChange={(e) => updateItem(index, { id: e.target.value })} className={adminInputClass()} /></AdminField>
                 <AdminField label={adminRu.common.category}>
                   <select value={item.category} onChange={(e) => updateItem(index, { category: e.target.value })} className={adminInputClass()}>

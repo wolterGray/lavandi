@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
 import { adminRu } from "./adminStrings";
-import { isImageRef, saveSiteImageToDatabase } from "./siteImages";
+import { deleteSiteImageByRef, isImageRef, saveSiteImageToDatabase } from "./siteImages";
 import { AdminButton, AdminField } from "./adminUi";
 
 export default function AdminImageField({
@@ -10,11 +10,28 @@ export default function AdminImageField({
   onChange,
   folder = "uploads",
   previewClassName = "mt-3 h-24 w-24 rounded-card object-cover ring-1 ring-border/50",
+  allowRemove = true,
 }) {
   const fileRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const previewSrc = useImageSrc(value);
+
+  const handleRemove = async () => {
+    setError("");
+    setUploading(true);
+
+    try {
+      if (isImageRef(value)) {
+        await deleteSiteImageByRef(value);
+      }
+      onChange("");
+    } catch (removeError) {
+      setError(removeError.message ?? adminRu.media.removeFailed);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleUpload = async (event) => {
     const file = event.target.files?.[0];
@@ -55,14 +72,21 @@ export default function AdminImageField({
             className="hidden"
             onChange={handleUpload}
           />
-          <AdminButton
-            variant="ghost"
-            type="button"
-            disabled={uploading}
-            onClick={() => fileRef.current?.click()}
-          >
-            {uploading ? adminRu.media.uploading : adminRu.media.upload}
-          </AdminButton>
+          <div className="flex flex-wrap gap-2">
+            <AdminButton
+              variant="ghost"
+              type="button"
+              disabled={uploading}
+              onClick={() => fileRef.current?.click()}
+            >
+              {uploading ? adminRu.media.uploading : adminRu.media.upload}
+            </AdminButton>
+            {allowRemove && (value || previewSrc) ? (
+              <AdminButton variant="danger" type="button" disabled={uploading} onClick={handleRemove}>
+                {adminRu.media.removeImage}
+              </AdminButton>
+            ) : null}
+          </div>
           {error && <p className="text-xs text-red-300">{error}</p>}
         </div>
       </div>
