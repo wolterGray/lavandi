@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run generate-seo && vite build",
     "generate-seo": "node scripts/generateSeoFiles.cjs",
     "lint": "eslint .",
     "preview": "vite preview",

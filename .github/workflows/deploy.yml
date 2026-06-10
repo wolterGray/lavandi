@@ -26,7 +26,6 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
-      - run: npm run generate-seo
       - run: npm run build
 
       - uses: actions/upload-artifact@v4

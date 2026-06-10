@@ -4,10 +4,14 @@ import viteImagemin from "vite-plugin-imagemin";
 import { copyFileSync } from "fs";
 import { resolve } from "path";
 
+const enableImagemin =
+  process.env.VERCEL !== "1" && process.env.SKIP_IMAGEMIN !== "1";
+
 export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     command === "build" &&
+      enableImagemin &&
       viteImagemin({
         gifsicle: { optimizationLevel: 7 },
         optipng: { optimizationLevel: 7 },

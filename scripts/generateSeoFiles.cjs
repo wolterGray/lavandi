@@ -5,16 +5,26 @@ const generateRobotstxt = require("generate-robotstxt");
 
 const baseUrl = "https://nuarr.pl";
 
-function loadServices() {
-  const filePath = path.resolve(__dirname, "../src/data/services.json");
+function loadJson(relativePath) {
+  const filePath = path.resolve(__dirname, relativePath);
   return JSON.parse(readFileSync(filePath, "utf8"));
+}
+
+function loadServices() {
+  return loadJson("../src/data/services.json");
+}
+
+function loadCosmetics() {
+  return loadJson("../src/data/cosmetics.json");
 }
 
 async function generateSitemap() {
   const services = loadServices();
+  const cosmetics = loadCosmetics();
 
   const links = [
     { url: "/", changefreq: "weekly", priority: 1.0 },
+    { url: "/katalog", changefreq: "weekly", priority: 0.9 },
     {
       url: "/polityka-prywatnosci.html",
       changefreq: "yearly",
@@ -25,15 +35,17 @@ async function generateSitemap() {
       changefreq: "monthly",
       priority: 0.8,
     })),
+    ...cosmetics.map((product) => ({
+      url: `/katalog/${product.id}`,
+      changefreq: "monthly",
+      priority: 0.7,
+    })),
   ];
 
   const sitemapStream = new SitemapStream({ hostname: baseUrl });
-
-  const xml = await streamToPromise(
-    links
-      .reduce((stream, link) => stream.write(link) && stream, sitemapStream)
-      .end()
-  );
+  links.forEach((link) => sitemapStream.write(link));
+  sitemapStream.end();
+  const xml = await streamToPromise(sitemapStream);
 
   const sitemapPath = path.resolve(__dirname, "../public/sitemap.xml");
   writeFileSync(sitemapPath, xml.toString());
