@@ -90,7 +90,7 @@ export const adminRu = {
     generateNewId: "Сгенерировать новый",
     cancelAdd: "Отмена",
     name: "Название",
-    description: "Описание",
+    productDescription: "Описание",
     volume: "Объём",
     composition: "Состав",
     categories: {

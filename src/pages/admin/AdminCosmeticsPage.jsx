@@ -3,7 +3,6 @@ import { Plus, Trash2 } from "lucide-react";
 import { localeDefaults } from "../../admin/siteContent";
 import {
   LangTabs,
-  createCosmeticId,
   deriveCosmeticInitials,
   useAdminPersist,
 } from "../../admin/adminHelpers";
@@ -329,7 +328,7 @@ export default function AdminCosmeticsPage() {
                     />
                   </AdminField>
                   <div className="sm:col-span-2">
-                    <AdminField label={adminRu.cosmetics.description}>
+                    <AdminField label={adminRu.cosmetics.productDescription}>
                       <textarea
                         value={texts.description ?? ""}
                         onChange={(e) => updateText(item.id, { description: e.target.value })}

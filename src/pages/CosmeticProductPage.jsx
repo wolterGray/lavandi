@@ -82,8 +82,8 @@ export default function CosmeticProductPage({ product }) {
             <div className="card-gradient-border overflow-hidden rounded-card shadow-spa">
               <CosmeticProductImage
                 product={product}
-                className="aspect-[4/5]"
-                imageClassName="h-full w-full object-contain object-center p-6"
+                className="min-h-[320px] aspect-square sm:min-h-[420px]"
+                imageClassName="max-h-[min(100%,520px)] max-w-full object-contain object-center"
                 initialsClassName="font-display text-6xl font-semibold tracking-[0.08em] text-milk/25"
               />
             </div>

@@ -16,22 +16,17 @@ export default function CosmeticProductCard({ product, index, categoryLabel }) {
         aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
         className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
       >
-        <div className="relative">
-          <CosmeticProductImage product={product} className="aspect-[4/5]" />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void/90 via-void/15 to-transparent" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">{categoryLabel}</p>
-            <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{product.name}</h3>
-            {product.volume ? (
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.1em] text-milk/75">
-                {product.volume}
-              </p>
-            ) : null}
-          </div>
-        </div>
+        <CosmeticProductImage product={product} className="aspect-square" />
         <div className="flex flex-1 flex-col p-5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">{categoryLabel}</p>
+          <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{product.name}</h3>
+          {product.volume ? (
+            <p className="mt-1 text-xs font-semibold uppercase tracking-[0.1em] text-stone/80">
+              {product.volume}
+            </p>
+          ) : null}
           {product.description ? (
-            <p className="line-clamp-3 text-sm leading-relaxed text-stone">{product.description}</p>
+            <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-stone">{product.description}</p>
           ) : null}
           <p className="mt-auto flex items-center gap-1.5 pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-gold transition group-hover:text-gold-dark">
             {t("cosmetics.viewProduct")}
