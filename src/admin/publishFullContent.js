@@ -1,6 +1,3 @@
-import en from "../i18n/locales/en.json";
-import pl from "../i18n/locales/pl.json";
-import uk from "../i18n/locales/uk.json";
 import { mergeContent } from "./contentStore";
 import { LANG_CODES, localeDefaults } from "./siteContent";
 
