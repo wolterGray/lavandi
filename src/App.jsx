@@ -4,6 +4,7 @@ import { useTranslation } from "./i18n/LanguageProvider";
 import LandingPage from "./pages/LandingPage";
 import ServicePage from "./pages/ServicePage";
 import CosmeticsPage from "./pages/CosmeticsPage";
+import CosmeticProductPage from "./pages/CosmeticProductPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SplashScreen from "./ui/SplashScreen";
 import AdminLayout from "./admin/AdminLayout";
@@ -24,6 +25,7 @@ import AdminContactPage from "./pages/admin/AdminContactPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
 import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import { useContent } from "./context/ContentProvider";
+import { findLocalizedProduct } from "./components/CosmeticsSection/cosmeticsShared";
 import { usePageAnalytics } from "./hooks/usePageAnalytics";
 
 function ScrollToTop() {
@@ -42,6 +44,15 @@ function ServiceRoute() {
   const service = localizedServices.find((s) => s.slug === slug);
   if (!service) return <NotFoundPage />;
   return <ServicePage service={service} />;
+}
+
+function CosmeticProductRoute() {
+  const { id } = useParams();
+  const { t, lang } = useTranslation();
+  const { cosmetics, getProductTexts } = useContent();
+  const product = findLocalizedProduct(cosmetics, id, t, lang, getProductTexts);
+  if (!product) return <NotFoundPage />;
+  return <CosmeticProductPage product={product} />;
 }
 
 function PublicSiteWithAnalytics() {
@@ -69,6 +80,7 @@ function PublicSite() {
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/katalog" element={<CosmeticsPage />} />
+          <Route path="/katalog/:id" element={<CosmeticProductRoute />} />
           <Route path="/uslugi/:slug" element={<ServiceRoute />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />

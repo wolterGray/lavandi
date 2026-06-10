@@ -27,6 +27,7 @@ import {
   fetchSiteImagesMap,
   resolveContentImages,
 } from "../admin/siteImages";
+import { normalizeCosmeticCopy } from "../components/CosmeticsSection/cosmeticsShared";
 import { isSupabaseConfigured } from "../lib/supabase";
 
 const ContentContext = createContext(null);
@@ -238,12 +239,15 @@ export function ContentProvider({ children }) {
 
   const getProductTexts = useCallback(
     (lang, productId, t) => {
-      const fallback = {
+      const fallback = normalizeCosmeticCopy({
         name: t(`cosmetics.products.${productId}.name`),
-        brand: t(`cosmetics.products.${productId}.brand`),
+        description: t(`cosmetics.products.${productId}.description`),
+        volume: t(`cosmetics.products.${productId}.volume`),
+        composition: t(`cosmetics.products.${productId}.composition`),
         tagline: t(`cosmetics.products.${productId}.tagline`),
-      };
-      return mergeProductTexts(lang, productId, overrides, fallback);
+        brand: t(`cosmetics.products.${productId}.brand`),
+      });
+      return normalizeCosmeticCopy(mergeProductTexts(lang, productId, overrides, fallback));
     },
     [overrides]
   );

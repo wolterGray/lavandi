@@ -127,6 +127,14 @@
     "description": "Відібрані засоби для догляду за тілом і wellness — олії, бальзами, скраби та домашні ритуали, доступні в студії.",
     "filterLabel": "Фільтрувати продукти за категорією",
     "availableAtStudio": "Доступно в студії",
+    "compositionLabel": "Склад",
+    "searchLabel": "Пошук продукту",
+    "searchPlaceholder": "Назва або ID продукту",
+    "noResults": "Немає продуктів за цим запитом",
+    "viewProduct": "Переглянути продукт",
+    "interestedCta": "Цікавить продукт",
+    "interestedEmailSubject": "Запит: {{name}}",
+    "interestedEmailBody": "Добрий день,\n\nМене цікавить продукт: {{name}} (ID: {{id}}).\n\nБудь ласка, зв'яжіться зі мною.\n",
     "cta": "Запитати про продукти",
     "ctaSecondary": "Контакти",
     "viewAll": "Перейти в каталог",
@@ -494,6 +502,15 @@
       "description": "Перегляньте відібрану колекцію NUAR — олії, бальзами, скраби, ароматерапія та домашні ритуали, доступні в нашій студії у Варшаві."
     },
     "navLabel": "Навігація сторінки каталогу"
+  },
+  "cosmeticsProductPage": {
+    "backToCatalog": "← Назад до каталогу",
+    "navLabel": "Навігація сторінки продукту",
+    "productId": "ID продукту",
+    "meta": {
+      "title": "{{name}} — Каталог NUAR",
+      "descriptionFallback": "{{name}} — продукт доступний у студії NUAR у Варшаві."
+    }
   },
   "servicePage": {
     "location": "NUAR · Варшава",

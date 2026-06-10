@@ -1,17 +1,23 @@
+import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useImageSrc } from "../../hooks/useImageSrc";
-import { PLACEHOLDER_GRADIENTS } from "./cosmeticsShared";
+import { getCosmeticProductUrl, PLACEHOLDER_GRADIENTS } from "./cosmeticsShared";
 
 export default function CosmeticProductCard({ product, index, categoryLabel }) {
   const { t } = useTranslation();
-  const copy = t(`cosmetics.products.${product.id}`) ?? {};
   const gradient = PLACEHOLDER_GRADIENTS[product.accent % PLACEHOLDER_GRADIENTS.length];
   const imageSrc = useImageSrc(product.img);
+  const productUrl = getCosmeticProductUrl(product.id);
 
   return (
     <ScrollAnimationWrapper delay={index * 0.05}>
-      <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover">
+      <Link
+        to={productUrl}
+        aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
+        className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
+      >
         <div className={`relative aspect-[4/5] overflow-hidden ${imageSrc ? "bg-void" : gradient}`}>
           {imageSrc ? (
             <img
@@ -29,17 +35,24 @@ export default function CosmeticProductCard({ product, index, categoryLabel }) {
           <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/20 to-transparent" />
           <div className="absolute inset-x-0 bottom-0 p-5">
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">{categoryLabel}</p>
-            <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{copy.name}</h3>
+            <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{product.name}</h3>
+            {product.volume ? (
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.1em] text-milk/75">
+                {product.volume}
+              </p>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-1 flex-col p-5">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">{copy.brand}</p>
-          <p className="mt-2 text-sm leading-relaxed text-stone">{copy.tagline}</p>
-          <p className="mt-auto pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-stone/80">
-            {t("cosmetics.availableAtStudio")}
+          {product.description ? (
+            <p className="line-clamp-3 text-sm leading-relaxed text-stone">{product.description}</p>
+          ) : null}
+          <p className="mt-auto flex items-center gap-1.5 pt-4 text-[10px] font-bold uppercase tracking-[0.12em] text-gold transition group-hover:text-gold-dark">
+            {t("cosmetics.viewProduct")}
+            <ArrowUpRight className="h-3.5 w-3.5 transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </p>
         </div>
-      </article>
+      </Link>
     </ScrollAnimationWrapper>
   );
 }

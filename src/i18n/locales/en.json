@@ -127,6 +127,14 @@
     "description": "Curated body care and wellness products selected by our therapists — oils, balms, scrubs, and home rituals available for purchase at the studio.",
     "filterLabel": "Filter products by category",
     "availableAtStudio": "Available at studio",
+    "compositionLabel": "Ingredients",
+    "searchLabel": "Search products",
+    "searchPlaceholder": "Product name or ID",
+    "noResults": "No products match your search",
+    "viewProduct": "View product",
+    "interestedCta": "I'm interested",
+    "interestedEmailSubject": "Inquiry: {{name}}",
+    "interestedEmailBody": "Hello,\n\nI am interested in: {{name}} (ID: {{id}}).\n\nPlease contact me.\n",
     "cta": "Ask about products",
     "ctaSecondary": "Contact us",
     "viewAll": "View full catalog",
@@ -494,6 +502,15 @@
       "description": "Browse NUAR's curated body care collection — oils, balms, scrubs, aromatherapy, and home rituals available at our Warsaw studio."
     },
     "navLabel": "Catalog page navigation"
+  },
+  "cosmeticsProductPage": {
+    "backToCatalog": "← Back to catalog",
+    "navLabel": "Product page navigation",
+    "productId": "Product ID",
+    "meta": {
+      "title": "{{name}} — NUAR Catalog",
+      "descriptionFallback": "{{name}} — available at NUAR studio in Warsaw."
+    }
   },
   "servicePage": {
     "location": "NUAR · Warsaw",

@@ -20,12 +20,60 @@ export const FEATURED_PRODUCT_IDS = [
 
 export const COSMETICS_ROUTE = "/katalog";
 
+export function getCosmeticProductUrl(id) {
+  return `${COSMETICS_ROUTE}/${id}`;
+}
+
+export function buildLocalizedProduct(product, t, lang, getProductTexts) {
+  const [localized] = getLocalizedProducts(t, [product]);
+  return { ...localized, ...getProductTexts(lang, product.id, t) };
+}
+
+export function buildLocalizedProducts(products, t, lang, getProductTexts) {
+  return products.map((product) => buildLocalizedProduct(product, t, lang, getProductTexts));
+}
+
+export function findLocalizedProduct(products, productId, t, lang, getProductTexts) {
+  const product = products.find((item) => item.id === productId);
+  if (!product) return null;
+  return buildLocalizedProduct(product, t, lang, getProductTexts);
+}
+
+export function matchesProductSearch(product, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    product.id.toLowerCase().includes(q) ||
+    String(product.name ?? "").toLowerCase().includes(q)
+  );
+}
+
+export function buildCosmeticInquiryMailto(email, t, product) {
+  const subject = t("cosmetics.interestedEmailSubject", { name: product.name });
+  const body = t("cosmetics.interestedEmailBody", { name: product.name, id: product.id });
+  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+export function normalizeCosmeticCopy(source = {}) {
+  return {
+    name: source.name ?? "",
+    description: source.description ?? source.tagline ?? "",
+    volume: source.volume ?? "",
+    composition: source.composition ?? source.brand ?? "",
+  };
+}
+
 export function getLocalizedProducts(t, products = cosmeticsBase) {
   return products.map((product) => ({
     ...product,
-    name: t(`cosmetics.products.${product.id}.name`),
-    brand: t(`cosmetics.products.${product.id}.brand`),
-    tagline: t(`cosmetics.products.${product.id}.tagline`),
+    ...normalizeCosmeticCopy({
+      name: t(`cosmetics.products.${product.id}.name`),
+      description: t(`cosmetics.products.${product.id}.description`),
+      volume: t(`cosmetics.products.${product.id}.volume`),
+      composition: t(`cosmetics.products.${product.id}.composition`),
+      tagline: t(`cosmetics.products.${product.id}.tagline`),
+      brand: t(`cosmetics.products.${product.id}.brand`),
+    }),
   }));
 }
 

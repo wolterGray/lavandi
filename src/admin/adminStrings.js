@@ -69,6 +69,16 @@ export const adminRu = {
     link: "Ссылка",
     date: "Дата",
   },
+  cosmetics: {
+    description: "Каталог: фото, категория, название, описание, объём и состав на выбранном языке.",
+    addProduct: "Добавить продукт",
+    newProduct: "Новый продукт",
+    autoId: "ID",
+    name: "Название",
+    description: "Описание",
+    volume: "Объём",
+    composition: "Состав",
+  },
   home: {
     description: "Hero-слайды и блок новостей на главной странице (до 5 каждого).",
     heroTab: "Hero-слайды",

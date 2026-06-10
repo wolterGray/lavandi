@@ -6,20 +6,19 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import CosmeticProductCard from "./CosmeticProductCard";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
-import { COSMETICS_ROUTE, getFeaturedProducts } from "./cosmeticsShared";
+import { buildLocalizedProduct, COSMETICS_ROUTE, getFeaturedProducts } from "./cosmeticsShared";
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
   const { cosmetics, getProductTexts } = useContent();
 
-  const featuredProducts = useMemo(
-    () =>
-      getFeaturedProducts(t, cosmetics).map((product) => ({
-        ...product,
-        ...getProductTexts(lang, product.id, t),
-      })),
-    [t, lang, cosmetics, getProductTexts]
-  );
+  const featuredProducts = useMemo(() => {
+    const featured = getFeaturedProducts(t, cosmetics);
+    return featured.map((product) => {
+      const base = cosmetics.find((item) => item.id === product.id);
+      return base ? buildLocalizedProduct(base, t, lang, getProductTexts) : product;
+    });
+  }, [t, lang, cosmetics, getProductTexts]);
 
   return (
     <section id="cosmetics" className="section-padding bg-surface">

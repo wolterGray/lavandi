@@ -127,6 +127,14 @@
     "description": "Starannie dobrane produkty do pielęgnacji ciała i wellness — olejki, balsamy, peelingi i rytuały domowe dostępne w studio.",
     "filterLabel": "Filtruj produkty według kategorii",
     "availableAtStudio": "Dostępne w studio",
+    "compositionLabel": "Skład",
+    "searchLabel": "Szukaj produktu",
+    "searchPlaceholder": "Nazwa lub ID produktu",
+    "noResults": "Brak produktów dla tego wyszukiwania",
+    "viewProduct": "Zobacz produkt",
+    "interestedCta": "Zapytaj o produkt",
+    "interestedEmailSubject": "Zapytanie: {{name}}",
+    "interestedEmailBody": "Dzień dobry,\n\nInteresuje mnie produkt: {{name}} (ID: {{id}}).\n\nProszę o kontakt.\n",
     "cta": "Zapytaj o produkty",
     "ctaSecondary": "Kontakt",
     "viewAll": "Przejdź do katalogu",
@@ -494,6 +502,15 @@
       "description": "Przeglądaj starannie dobraną kolekcję NUAR — olejki, balsamy, peelingi, aromaterapia i rytuały domowe dostępne w naszym studio w Warszawie."
     },
     "navLabel": "Nawigacja strony katalogu"
+  },
+  "cosmeticsProductPage": {
+    "backToCatalog": "← Wróć do katalogu",
+    "navLabel": "Nawigacja strony produktu",
+    "productId": "ID produktu",
+    "meta": {
+      "title": "{{name}} — Katalog NUAR",
+      "descriptionFallback": "{{name}} — produkt dostępny w studio NUAR w Warszawie."
+    }
   },
   "servicePage": {
     "location": "NUAR · Warszawa",
