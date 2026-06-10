@@ -22,6 +22,9 @@ import AdminFaqPage from "./pages/admin/AdminFaqPage";
 import AdminCosmeticsPage from "./pages/admin/AdminCosmeticsPage";
 import AdminContactPage from "./pages/admin/AdminContactPage";
 import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
+import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
+import { useContent } from "./context/ContentProvider";
+import { usePageAnalytics } from "./hooks/usePageAnalytics";
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -39,6 +42,12 @@ function ServiceRoute() {
   const service = localizedServices.find((s) => s.slug === slug);
   if (!service) return <NotFoundPage />;
   return <ServicePage service={service} />;
+}
+
+function PublicSiteWithAnalytics() {
+  const { siteSettings } = useContent();
+  usePageAnalytics(siteSettings);
+  return <PublicSite />;
 }
 
 function PublicSite() {
@@ -95,13 +104,14 @@ export default function App() {
           <Route path="faq" element={<AdminFaqPage />} />
           <Route path="cosmetics" element={<AdminCosmeticsPage />} />
           <Route path="contact" element={<AdminContactPage />} />
+          <Route path="analytics" element={<AdminAnalyticsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
         </Route>
         <Route
           path="/*"
           element={
             <main id="main-content">
-              <PublicSite />
+              <PublicSiteWithAnalytics />
             </main>
           }
         />

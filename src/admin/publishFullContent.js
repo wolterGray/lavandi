@@ -3,6 +3,7 @@ import { LANG_CODES, localeDefaults } from "./siteContent";
 
 const CMS_LOCALE_BLOCKS = [
   "announcements",
+  "homeNews",
   "about",
   "trust",
   "stats",
@@ -47,6 +48,7 @@ export function buildFullPublishedOverrides(currentOverrides = {}) {
     team: merged.team,
     contact: merged.contact,
     aboutImage: merged.aboutImage,
+    siteSettings: merged.siteSettings,
     faq: merged.faq ?? buildDefaultFaq(),
     locales: merged.locales ?? buildDefaultLocales(),
   };

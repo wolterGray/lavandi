@@ -55,6 +55,10 @@
       }
     ]
   },
+  "homeNews": {
+    "sectionLabel": "Aktualności",
+    "items": []
+  },
   "about": {
     "label": "Filozofia",
     "title": "Spokojna przestrzeń regeneracji",

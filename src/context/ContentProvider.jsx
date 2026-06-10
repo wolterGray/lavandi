@@ -197,6 +197,20 @@ export function ContentProvider({ children }) {
     [getLocaleSection]
   );
 
+  const getHomeNews = useCallback(
+    (lang, fallback = { sectionLabel: "", items: [] }) => {
+      const block = getLocaleSection(lang, "homeNews", fallback);
+      const items = (block.items ?? [])
+        .filter((item) => item?.active !== false && item?.title?.trim())
+        .slice(0, 5);
+      return {
+        sectionLabel: block.sectionLabel ?? fallback.sectionLabel ?? "",
+        items,
+      };
+    },
+    [getLocaleSection]
+  );
+
   const getAboutContent = useCallback(
     (lang, fallback) => ({
       ...(fallback ?? getLocaleDefaults(lang, "about")),
@@ -264,6 +278,7 @@ export function ContentProvider({ children }) {
       getFaqItems,
       getLocaleSection,
       getHeroSlides,
+      getHomeNews,
       getAboutContent,
       getServiceTexts,
       getProductTexts,
@@ -288,6 +303,7 @@ export function ContentProvider({ children }) {
       getFaqItems,
       getLocaleSection,
       getHeroSlides,
+      getHomeNews,
       getAboutContent,
       getServiceTexts,
       getProductTexts,

@@ -33,6 +33,11 @@ export function mergeContent(overrides = loadOverrides()) {
     contact: { ...siteDefaults.contact, ...overrides.contact },
     aboutImage: overrides.aboutImage ?? siteDefaults.aboutImage,
     locales: overrides.locales ?? null,
+    siteSettings: {
+      googleAnalyticsId: import.meta.env.VITE_GA_ID || "G-NYM3P4FJJE",
+      analyticsEnabled: true,
+      ...overrides.siteSettings,
+    },
   };
 }
 

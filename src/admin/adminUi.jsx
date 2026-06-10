@@ -1,5 +1,48 @@
 import { adminRu } from "./adminStrings";
 
+export function AdminTabs({ tabs, activeId, onChange }) {
+  return (
+    <div className="mb-6 flex flex-wrap gap-2 border-b border-border/40 pb-4">
+      {tabs.map((tab) => (
+        <button
+          key={tab.id}
+          type="button"
+          onClick={() => onChange(tab.id)}
+          className={`rounded-pill border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition ${
+            activeId === tab.id
+              ? "border-gold/40 bg-gold/10 text-gold"
+              : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
+          }`}
+        >
+          {tab.label}
+          {typeof tab.count === "number" && (
+            <span className="ml-2 text-[10px] text-muted">{tab.count}</span>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+export function AdminToggle({ checked, onChange, label }) {
+  return (
+    <label className="flex cursor-pointer items-center gap-3">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        onClick={() => onChange(!checked)}
+        className={`relative h-6 w-11 rounded-pill transition ${checked ? "bg-gold/80" : "bg-border/80"}`}
+      >
+        <span
+          className={`absolute top-0.5 h-5 w-5 rounded-full bg-milk shadow transition ${checked ? "left-[22px]" : "left-0.5"}`}
+        />
+      </button>
+      {label && <span className="text-sm text-stone">{label}</span>}
+    </label>
+  );
+}
+
 export function AdminPageHeader({ title, description, actions }) {
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">

@@ -4,17 +4,18 @@ import { adminRu } from "../../admin/adminStrings";
 import { useContent } from "../../context/ContentProvider";
 
 const LINKS = [
-  { to: "/admin/home", title: "Главная", desc: "Слайды hero — фото и тексты" },
+  { to: "/admin/home", title: "Главная", desc: "Hero-слайды и новости (до 5)" },
   { to: "/admin/services", title: "Услуги", desc: "Фото и тексты (цены — в CRM)" },
   { to: "/admin/cosmetics", title: "Косметика", desc: "Каталог продуктов и тексты" },
+  { to: "/admin/gallery", title: "Галерея", desc: "Атмосфера студии — фотографии" },
+  { to: "/admin/reviews", title: "Отзывы", desc: "Отзывы гостей" },
   { to: "/admin/about", title: "Философия", desc: "Секция «О нас» — текст и фото" },
-  { to: "/admin/trust", title: "Доверие", desc: "Пять карточек «Опыт, которому можно доверять»" },
+  { to: "/admin/trust", title: "Доверие", desc: "Пять карточек доверия" },
   { to: "/admin/stats", title: "Статистика", desc: "Цифры NUAR в числах" },
   { to: "/admin/team", title: "Команда", desc: "Персонал — фото, роли, биографии" },
-  { to: "/admin/reviews", title: "Отзывы", desc: "Отзывы гостей" },
-  { to: "/admin/gallery", title: "Галерея", desc: "Атмосфера студии — фотографии" },
   { to: "/admin/faq", title: "FAQ", desc: "Часто задаваемые вопросы" },
-  { to: "/admin/contact", title: "Контакты", desc: "Адрес, телефон, карта, как добраться" },
+  { to: "/admin/contact", title: "Контакты", desc: "Адрес, телефон, карта" },
+  { to: "/admin/analytics", title: "Аналитика", desc: "Google Analytics 4" },
   { to: "/admin/settings", title: "Настройки", desc: "Экспорт / импорт JSON" },
 ];
 

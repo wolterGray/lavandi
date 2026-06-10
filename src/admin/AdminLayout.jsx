@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import {
+  BarChart3,
   ExternalLink,
   HelpCircle,
   Home,
@@ -18,20 +19,36 @@ import { useAdminAuth } from "./AdminAuthContext";
 import { ADMIN_LOCALE, adminRu } from "./adminStrings";
 import { useContent } from "../context/ContentProvider";
 
-const NAV = [
-  { to: "/admin", end: true, label: adminRu.nav.panel, icon: LayoutDashboard },
-  { to: "/admin/home", label: adminRu.nav.home, icon: Home },
-  { to: "/admin/services", label: adminRu.nav.services, icon: Sparkles },
-  { to: "/admin/cosmetics", label: adminRu.nav.cosmetics, icon: Package },
-  { to: "/admin/about", label: adminRu.nav.about, icon: Star },
-  { to: "/admin/trust", label: adminRu.nav.trust, icon: Star },
-  { to: "/admin/stats", label: adminRu.nav.stats, icon: Star },
-  { to: "/admin/team", label: adminRu.nav.team, icon: Users },
-  { to: "/admin/reviews", label: adminRu.nav.reviews, icon: MessageSquare },
-  { to: "/admin/gallery", label: adminRu.nav.gallery, icon: Images },
-  { to: "/admin/faq", label: adminRu.nav.faq, icon: HelpCircle },
-  { to: "/admin/contact", label: adminRu.nav.contact, icon: MapPin },
-  { to: "/admin/settings", label: adminRu.nav.settings, icon: Settings },
+const NAV_GROUPS = [
+  {
+    label: adminRu.nav.groupContent,
+    items: [
+      { to: "/admin", end: true, label: adminRu.nav.panel, icon: LayoutDashboard },
+      { to: "/admin/home", label: adminRu.nav.home, icon: Home },
+      { to: "/admin/services", label: adminRu.nav.services, icon: Sparkles },
+      { to: "/admin/cosmetics", label: adminRu.nav.cosmetics, icon: Package },
+      { to: "/admin/gallery", label: adminRu.nav.gallery, icon: Images },
+      { to: "/admin/reviews", label: adminRu.nav.reviews, icon: MessageSquare },
+    ],
+  },
+  {
+    label: adminRu.nav.groupSite,
+    items: [
+      { to: "/admin/about", label: adminRu.nav.about, icon: Star },
+      { to: "/admin/trust", label: adminRu.nav.trust, icon: Star },
+      { to: "/admin/stats", label: adminRu.nav.stats, icon: Star },
+      { to: "/admin/team", label: adminRu.nav.team, icon: Users },
+      { to: "/admin/faq", label: adminRu.nav.faq, icon: HelpCircle },
+      { to: "/admin/contact", label: adminRu.nav.contact, icon: MapPin },
+    ],
+  },
+  {
+    label: adminRu.nav.groupSystem,
+    items: [
+      { to: "/admin/analytics", label: adminRu.nav.analytics, icon: BarChart3 },
+      { to: "/admin/settings", label: adminRu.nav.settings, icon: Settings },
+    ],
+  },
 ];
 
 function formatSyncTime(value) {
@@ -56,7 +73,7 @@ export default function AdminLayout() {
   return (
     <div className="min-h-screen bg-void text-milk">
       <div className="flex min-h-screen flex-col lg:flex-row">
-        <aside className="border-b border-border/60 bg-surface lg:w-64 lg:border-b-0 lg:border-r">
+        <aside className="border-b border-border/60 bg-surface lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between px-5 py-5 lg:block">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">NUAR</p>
@@ -81,49 +98,69 @@ export default function AdminLayout() {
               )}
             </div>
             {isSupabaseEnabled && userEmail && (
-              <p className="mt-2 hidden text-xs text-muted lg:block">{userEmail}</p>
+              <p className="mt-2 hidden truncate text-xs text-muted lg:block">{userEmail}</p>
             )}
           </div>
 
-          <nav className="flex max-h-[50vh] gap-1 overflow-x-auto overflow-y-auto px-3 pb-3 lg:max-h-none lg:flex-col lg:px-3 lg:pb-6">
-            {NAV.map(({ to, end, label, icon: Icon }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `flex shrink-0 items-center gap-2 rounded-card px-3 py-2.5 text-sm transition ${
-                    isActive
-                      ? "bg-card text-gold ring-1 ring-gold/20"
-                      : "text-stone hover:bg-card/60 hover:text-milk"
-                  }`
-                }
-              >
-                <Icon className="h-4 w-4 shrink-0" aria-hidden />
-                {label}
-              </NavLink>
+          <nav className="flex max-h-[50vh] flex-col gap-4 overflow-x-auto overflow-y-auto px-3 pb-3 lg:max-h-[calc(100vh-12rem)] lg:px-3 lg:pb-6">
+            {NAV_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-muted">
+                  {group.label}
+                </p>
+                <div className="flex gap-1 lg:flex-col">
+                  {group.items.map(({ to, end, label, icon: Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      end={end}
+                      className={({ isActive }) =>
+                        `flex shrink-0 items-center gap-2 rounded-card px-3 py-2.5 text-sm transition ${
+                          isActive
+                            ? "bg-card text-gold ring-1 ring-gold/20"
+                            : "text-stone hover:bg-card/60 hover:text-milk"
+                        }`
+                      }
+                    >
+                      <Icon className="h-4 w-4 shrink-0" aria-hidden />
+                      {label}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
             ))}
           </nav>
 
           <div className="hidden border-t border-border/40 px-3 py-4 lg:block">
-            <a href="/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk"
+            >
               <ExternalLink className="h-4 w-4" aria-hidden />
               {adminRu.nav.viewSite}
             </a>
-            <button type="button" onClick={handleLogout} className="mt-1 flex w-full items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="mt-1 flex w-full items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk"
+            >
               <LogOut className="h-4 w-4" aria-hidden />
               {adminRu.nav.logout}
             </button>
           </div>
         </aside>
 
-        <main className="flex-1 px-5 py-6 sm:px-8 lg:py-8">
+        <main className="min-w-0 flex-1 px-5 py-6 sm:px-8 lg:py-8">
           {isSupabaseEnabled && (
             <div className="mb-6 rounded-card border border-border/50 bg-card/60 px-4 py-3 text-sm text-stone">
               {contentLoading ? (
                 <p>{adminRu.common.loadingContent}</p>
               ) : syncError ? (
-                <p className="text-red-300">{adminRu.common.syncError}: {syncError}</p>
+                <p className="text-red-300">
+                  {adminRu.common.syncError}: {syncError}
+                </p>
               ) : (
                 <p>
                   {adminRu.common.contentSynced}

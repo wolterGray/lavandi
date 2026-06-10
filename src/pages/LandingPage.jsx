@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useTranslation } from "../i18n/LanguageProvider";
 import Header from "../components/Header/Header";
 import Home from "../components/Home/Home";
+import HomeNewsSection from "../components/Home/HomeNewsSection";
 import AboutSection from "../components/AboutSection/AboutSection";
 import TrustSection from "../components/TrustSection/TrustSection";
 import StatsSection from "../components/StatsSection/StatsSection";
@@ -48,6 +49,7 @@ export default function LandingPage() {
       <HelmetSEO />
       <Header navItems={navItems} />
       <Home />
+      <HomeNewsSection />
       <MassageServices services={localizedServices} />
       <PriceSection services={localizedServices} />
       <CosmeticsSection />

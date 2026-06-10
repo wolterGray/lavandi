@@ -4,6 +4,29 @@ import { useContent } from "../context/ContentProvider";
 import { adminRu } from "./adminStrings";
 import { LANG_CODES, LANG_LABELS } from "./siteContent";
 
+export const MAX_HERO_SLIDES = 5;
+export const MAX_HOME_NEWS = 5;
+
+export function moveListItem(list, index, direction) {
+  const nextIndex = index + direction;
+  if (nextIndex < 0 || nextIndex >= list.length) return list;
+  const copy = [...list];
+  [copy[index], copy[nextIndex]] = [copy[nextIndex], copy[index]];
+  return copy;
+}
+
+export function createNewsItem() {
+  return {
+    id: `news-${Date.now()}`,
+    title: "",
+    body: "",
+    link: "",
+    linkLabel: "",
+    date: new Date().toISOString().slice(0, 10),
+    active: true,
+  };
+}
+
 export function useAdminPersist() {
   const { contentSaving, overrides, saveOverridesBundle, updateSection, updateLocaleBlock } = useContent();
   const [saveError, setSaveError] = useState("");

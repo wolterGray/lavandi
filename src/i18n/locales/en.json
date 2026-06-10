@@ -55,6 +55,10 @@
       }
     ]
   },
+  "homeNews": {
+    "sectionLabel": "News",
+    "items": []
+  },
   "about": {
     "label": "Philosophy",
     "title": "A calm space for restoration",
