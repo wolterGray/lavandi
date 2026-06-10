@@ -5,12 +5,14 @@ import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import Button from "../../ui/Button";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { BOOKSY_URL } from "../../constants/theme";
 
 const PICK_INDICES = [4, 22, 14];
 
-export default function ReviewsSection({ reviews = [] }) {
+export default function ReviewsSection() {
   const { t } = useTranslation();
+  const { reviews } = useContent();
 
   const featured = useMemo(
     () => reviews.find((r) => r.text.length > 80) ?? reviews[0],

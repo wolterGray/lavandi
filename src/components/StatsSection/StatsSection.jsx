@@ -4,18 +4,21 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import CountUp, { useStatsInView } from "../../hooks/useCountUp";
 import { StatIcon } from "../../constants/icons.jsx";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 
 export default function StatsSection() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const { getLocaleSection } = useContent();
+  const stats = getLocaleSection(lang, "stats", t("stats"));
+  const items = stats.items ?? [];
   const [ref, inView] = useStatsInView();
-  const items = t("stats.items") ?? [];
 
   return (
     <section id="stats" className="section-padding bg-surface">
       <Container>
         <ScrollAnimationWrapper>
-          <SectionTitle label={t("stats.label")} description={t("stats.description")}>
-            {t("stats.title")}
+          <SectionTitle label={stats.label} description={stats.description}>
+            {stats.title}
           </SectionTitle>
           <div className="spa-divider" />
         </ScrollAnimationWrapper>

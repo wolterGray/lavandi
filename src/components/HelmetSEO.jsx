@@ -1,11 +1,14 @@
 import { Helmet } from "react-helmet";
 import { useTranslation } from "../i18n/LanguageProvider";
+import { useContent } from "../context/ContentProvider";
 import { SITE_URL } from "../constants/theme";
 
 const OG_LOCALE = { en: "en_US", pl: "pl_PL", uk: "uk_UA" };
 
-export default function HelmetSEO({ reviewCount = 0 }) {
+export default function HelmetSEO() {
   const { t, lang } = useTranslation();
+  const { contact, reviews } = useContent();
+  const reviewCount = reviews.length;
   const title = t("meta.title");
   const description = t("meta.description");
 
@@ -17,12 +20,12 @@ export default function HelmetSEO({ reviewCount = 0 }) {
     description,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "ul. Świętojerska 5/7",
-      addressLocality: "Warszawa",
-      postalCode: "00-236",
+      streetAddress: contact.street,
+      addressLocality: contact.city.replace(/^\d+-\d+\s*/, "") || "Warszawa",
+      postalCode: contact.city.match(/\d+-\d+/)?.[0] ?? "00-236",
       addressCountry: "PL",
     },
-    telephone: "+48 452 402 006",
+    telephone: contact.phoneDisplay,
     url: SITE_URL,
     sameAs: [
       "https://www.facebook.com/nuarmassage",

@@ -4,6 +4,7 @@ import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { SCROLL_REVEAL_EASE } from "../../ui/ScrollAnimationWrapper";
 
 function FaqItem({ question, answer, isOpen, onToggle }) {
@@ -47,8 +48,9 @@ function FaqItem({ question, answer, isOpen, onToggle }) {
 }
 
 export default function FaqSection() {
-  const { t } = useTranslation();
-  const faqItems = t("faq.items") ?? [];
+  const { t, lang } = useTranslation();
+  const { getFaqItems } = useContent();
+  const faqItems = getFaqItems(lang, t("faq.items") ?? []);
   const [openIndex, setOpenIndex] = useState(0);
 
   return (

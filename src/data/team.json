@@ -1,0 +1,14 @@
+[
+  {
+    "id": "olha",
+    "name": "Olha",
+    "img": "/team/1.png",
+    "role": "topMaster"
+  },
+  {
+    "id": "max",
+    "name": "Max",
+    "img": "/team/3.png",
+    "role": "master"
+  }
+]

@@ -5,12 +5,21 @@ import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import CosmeticProductCard from "./CosmeticProductCard";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { COSMETICS_ROUTE, getFeaturedProducts } from "./cosmeticsShared";
 
 export default function CosmeticsSection() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const { cosmetics, getProductTexts } = useContent();
 
-  const featuredProducts = useMemo(() => getFeaturedProducts(t), [t]);
+  const featuredProducts = useMemo(
+    () =>
+      getFeaturedProducts(t, cosmetics).map((product) => ({
+        ...product,
+        ...getProductTexts(lang, product.id, t),
+      })),
+    [t, lang, cosmetics, getProductTexts]
+  );
 
   return (
     <section id="cosmetics" className="section-padding bg-surface">

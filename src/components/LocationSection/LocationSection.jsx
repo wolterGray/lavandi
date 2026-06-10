@@ -3,19 +3,21 @@ import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import Button from "../../ui/Button";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { VisitStepIcon } from "../../constants/icons.jsx";
 import StudioMap from "./StudioMap";
-import { BOOKSY_URL, PHONE, PHONE_DISPLAY, STUDIO } from "../../constants/theme";
 
 export default function LocationSection() {
-  const { t } = useTranslation();
-  const steps = t("visit.steps") ?? [];
+  const { t, lang } = useTranslation();
+  const { contact, getLocaleSection } = useContent();
+  const visit = getLocaleSection(lang, "visit", t("visit"));
+  const steps = visit.steps ?? [];
 
   return (
     <section id="visit" className="section-padding bg-surface">
       <Container>
         <ScrollAnimationWrapper>
-          <SectionTitle label={t("visit.label")} description={t("visit.description")}>{t("visit.title")}</SectionTitle>
+          <SectionTitle label={visit.label} description={visit.description}>{visit.title}</SectionTitle>
           <div className="spa-divider" />
         </ScrollAnimationWrapper>
 
@@ -40,19 +42,24 @@ export default function LocationSection() {
           <ScrollAnimationWrapper direction="left">
             <div className="space-y-4 text-sm leading-relaxed text-stone">
               <address className="not-italic">
-                <p className="font-display text-lg text-milk">ul. Świętojerska 5/7</p>
-                <p>00-236 Warszawa</p>
+                <p className="font-display text-lg text-milk">{contact.street}</p>
+                <p>{contact.city}</p>
               </address>
-              <p>{t("visit.metro")}</p>
+              <p>{visit.metro}</p>
               <div className="flex flex-col gap-2 pt-1">
-                <a href={`tel:${PHONE}`} className="font-bold text-gold transition hover:text-gold-dark">{PHONE_DISPLAY}</a>
-                <a href={STUDIO.mapsLink} target="_blank" rel="noopener noreferrer" className="font-bold text-gold transition hover:text-gold-dark">{t("visit.maps")}</a>
+                <a href={`tel:${contact.phone}`} className="font-bold text-gold transition hover:text-gold-dark">{contact.phoneDisplay}</a>
+                <a href={contact.mapsLink} target="_blank" rel="noopener noreferrer" className="font-bold text-gold transition hover:text-gold-dark">{visit.maps}</a>
               </div>
-              <Button href={BOOKSY_URL} size="sm" className="mt-4">{t("visit.book")}</Button>
+              <Button href={contact.booksyUrl} size="sm" className="mt-4">{visit.book}</Button>
             </div>
           </ScrollAnimationWrapper>
           <ScrollAnimationWrapper direction="right" delay={0.1}>
-            <StudioMap openLabel={t("visit.openMaps")} />
+            <StudioMap
+              lat={contact.lat}
+              lng={contact.lng}
+              mapsLink={contact.mapsLink}
+              openLabel={visit.openMaps}
+            />
           </ScrollAnimationWrapper>
         </div>
       </Container>

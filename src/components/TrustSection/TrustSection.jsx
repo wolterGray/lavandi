@@ -2,10 +2,13 @@ import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 
 export default function TrustSection() {
-  const { t } = useTranslation();
-  const items = t("trust.items") ?? [];
+  const { t, lang } = useTranslation();
+  const { getLocaleSection } = useContent();
+  const trust = getLocaleSection(lang, "trust", t("trust"));
+  const items = trust.items ?? [];
 
   if (!items.length) return null;
 
@@ -13,8 +16,8 @@ export default function TrustSection() {
     <section id="trust" className="section-padding bg-cream">
       <Container>
         <ScrollAnimationWrapper>
-          <SectionTitle label={t("trust.label")} description={t("trust.description")}>
-            {t("trust.title")}
+          <SectionTitle label={trust.label} description={trust.description}>
+            {trust.title}
           </SectionTitle>
           <div className="spa-divider" />
         </ScrollAnimationWrapper>

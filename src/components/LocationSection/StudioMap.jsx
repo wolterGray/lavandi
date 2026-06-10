@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import { useInView } from "react-intersection-observer";
-import { STUDIO } from "../../constants/theme";
 import "leaflet/dist/leaflet.css";
 
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -30,9 +29,9 @@ function MapResize({ active }) {
   return null;
 }
 
-export default function StudioMap({ openLabel }) {
+export default function StudioMap({ lat, lng, mapsLink, openLabel }) {
   const [ref, inView] = useInView({ triggerOnce: true, rootMargin: "-5% 0px" });
-  const position = [STUDIO.lat, STUDIO.lng];
+  const position = [lat, lng];
 
   return (
     <div ref={ref} className="relative overflow-hidden rounded-card border border-gold/40 shadow-spa ring-1 ring-gold/10">
@@ -50,7 +49,7 @@ export default function StudioMap({ openLabel }) {
         <Marker position={position} icon={studioIcon} />
         <MapResize active={inView} />
       </MapContainer>
-      <a href={STUDIO.mapsLink} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 z-[500] rounded-pill bg-gold px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-gold-dark">
+      <a href={mapsLink} target="_blank" rel="noopener noreferrer" className="absolute bottom-4 right-4 z-[500] rounded-pill bg-gold px-4 py-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white transition hover:bg-gold-dark">
         {openLabel}
       </a>
     </div>

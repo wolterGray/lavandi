@@ -6,7 +6,16 @@ import Container from "../ui/Container";
 import Button from "../ui/Button";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
+import { isImageRef } from "../admin/siteImages";
 import { BOOKSY_URL, SITE_URL } from "../constants/theme";
+
+function resolveOgImage(image) {
+  if (!image || isImageRef(image) || image.startsWith("data:")) {
+    return `${SITE_URL}/og-image.jpg`;
+  }
+  if (image.startsWith("http")) return image;
+  return `${SITE_URL}${image}`;
+}
 import { getDiscountedPrice } from "../utils/serviceUtils";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
 
@@ -47,7 +56,7 @@ export default function ServicePage({ service }) {
         <meta property="og:title" content={service.seoTitle} />
         <meta property="og:description" content={service.seoDescription} />
         <meta property="og:url" content={pageUrl} />
-        <meta property="og:image" content={`${SITE_URL}${service.img}`} />
+        <meta property="og:image" content={resolveOgImage(service.img)} />
         <script type="application/ld+json">
           {JSON.stringify({
             "@context": "https://schema.org",
@@ -56,7 +65,7 @@ export default function ServicePage({ service }) {
             description: service.desc,
             provider: { "@type": "LocalBusiness", name: "NUAR", url: SITE_URL },
             areaServed: "Warszawa",
-            image: `${SITE_URL}${service.img}`,
+            image: resolveOgImage(service.img),
           })}
         </script>
       </Helmet>

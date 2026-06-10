@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import Button from "../../ui/Button";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { BOOKSY_URL } from "../../constants/theme";
 
 import "swiper/css";
@@ -11,9 +12,10 @@ import "swiper/css/effect-fade";
 import "swiper/css/pagination";
 
 export default function HeroCarousel() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const { getHeroSlides } = useContent();
   const paginationRef = useRef(null);
-  const slides = t("announcements.items") ?? [];
+  const slides = getHeroSlides(lang, t("announcements.items") ?? []);
 
   if (!slides.length) {
     return null;

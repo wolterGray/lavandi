@@ -2,7 +2,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import en from "./locales/en.json";
 import pl from "./locales/pl.json";
 import uk from "./locales/uk.json";
-import servicesBase from "../data/services.json";
+import servicesDefault from "../data/services.json";
+import { useContent } from "../context/ContentProvider";
 
 const STORAGE_KEY = "nuar_lang";
 export const LANGUAGES = [
@@ -27,6 +28,7 @@ function interpolate(str, vars = {}) {
 }
 
 export function LanguageProvider({ children }) {
+  const { services: servicesBase, getServiceTexts } = useContent();
   const [lang, setLangState] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     return LANGUAGES.some((l) => l.code === saved) ? saved : "en";
@@ -55,12 +57,9 @@ export function LanguageProvider({ children }) {
     () =>
       servicesBase.map((service) => ({
         ...service,
-        title: t(`servicesItems.${service.slug}.title`),
-        desc: t(`servicesItems.${service.slug}.desc`),
-        seoTitle: t(`servicesItems.${service.slug}.seoTitle`),
-        seoDescription: t(`servicesItems.${service.slug}.seoDescription`),
+        ...getServiceTexts(lang, service.slug, t),
       })),
-    [t]
+    [t, lang, servicesBase, getServiceTexts]
   );
 
   const value = useMemo(
@@ -80,7 +79,7 @@ export function useTranslation() {
 }
 
 export function getLocalizedService(slug, lang = "en") {
-  const base = servicesBase.find((s) => s.slug === slug);
+  const base = servicesDefault.find((s) => s.slug === slug);
   if (!base) return null;
   const msg = messages[lang] ?? messages.en;
   const item = msg.servicesItems?.[slug];

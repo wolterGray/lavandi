@@ -7,12 +7,14 @@ import Button from "../../ui/Button";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL, EMAIL, PHONE, PHONE_DISPLAY, SOCIAL, STUDIO } from "../../constants/theme";
+import { BOOKSY_URL, EMAIL, SOCIAL } from "../../constants/theme";
+import { useContent } from "../../context/ContentProvider";
 
 const ENDPOINT = import.meta.env.VITE_NEWSLETTER_ENDPOINT;
 
 export default function Footer({ navItems = [], linkToHome = false }) {
   const { t } = useTranslation();
+  const { contact } = useContent();
 
   return (
     <footer className="bg-spa-footer text-white/80">
@@ -22,7 +24,7 @@ export default function Footer({ navItems = [], linkToHome = false }) {
             <div>
               <div className="w-28"><LogoNuar /></div>
               <p className="mt-4 max-w-xs text-sm leading-relaxed">{t("footer.description")}</p>
-              <a href={BOOKSY_URL} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-xs font-bold uppercase tracking-[0.12em] text-gold transition hover:text-white">
+              <a href={contact.booksyUrl || BOOKSY_URL} target="_blank" rel="noopener noreferrer" className="mt-4 inline-block text-xs font-bold uppercase tracking-[0.12em] text-gold transition hover:text-white">
                 {t("footer.booksy")}
               </a>
             </div>
@@ -49,9 +51,9 @@ export default function Footer({ navItems = [], linkToHome = false }) {
             <address className="not-italic">
               <h3 className="text-xs font-bold uppercase tracking-[0.14em] text-gold">{t("footer.contact")}</h3>
               <ul className="mt-4 space-y-3 text-sm">
-                <li><a href={STUDIO.mapsLink} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">ul. Świętojerska 5/7, Warszawa</a></li>
-                <li><a href={`tel:${PHONE}`} className="transition hover:text-white">{PHONE_DISPLAY}</a></li>
-                <li><a href={`mailto:${EMAIL}`} className="transition hover:text-white">{EMAIL}</a></li>
+                <li><a href={contact.mapsLink} target="_blank" rel="noopener noreferrer" className="transition hover:text-white">{contact.street}, {contact.city}</a></li>
+                <li><a href={`tel:${contact.phone}`} className="transition hover:text-white">{contact.phoneDisplay}</a></li>
+                <li><a href={`mailto:${contact.email}`} className="transition hover:text-white">{contact.email}</a></li>
               </ul>
             </address>
           </ScrollAnimationWrapper>

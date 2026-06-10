@@ -20,8 +20,8 @@ export const FEATURED_PRODUCT_IDS = [
 
 export const COSMETICS_ROUTE = "/katalog";
 
-export function getLocalizedProducts(t) {
-  return cosmeticsBase.map((product) => ({
+export function getLocalizedProducts(t, products = cosmeticsBase) {
+  return products.map((product) => ({
     ...product,
     name: t(`cosmetics.products.${product.id}.name`),
     brand: t(`cosmetics.products.${product.id}.brand`),
@@ -29,7 +29,7 @@ export function getLocalizedProducts(t) {
   }));
 }
 
-export function getFeaturedProducts(t) {
-  const products = getLocalizedProducts(t);
-  return FEATURED_PRODUCT_IDS.map((id) => products.find((product) => product.id === id)).filter(Boolean);
+export function getFeaturedProducts(t, products = cosmeticsBase) {
+  const localized = getLocalizedProducts(t, products);
+  return FEATURED_PRODUCT_IDS.map((id) => localized.find((product) => product.id === id)).filter(Boolean);
 }

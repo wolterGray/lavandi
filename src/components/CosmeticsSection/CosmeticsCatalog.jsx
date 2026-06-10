@@ -2,13 +2,22 @@ import { useMemo, useState } from "react";
 import CosmeticProductCard from "./CosmeticProductCard";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import { useContent } from "../../context/ContentProvider";
 import { CATEGORY_KEYS, getLocalizedProducts } from "./cosmeticsShared";
 
 export default function CosmeticsCatalog() {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
+  const { cosmetics, getProductTexts } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const products = useMemo(() => getLocalizedProducts(t), [t]);
+  const products = useMemo(
+    () =>
+      getLocalizedProducts(t, cosmetics).map((product) => ({
+        ...product,
+        ...getProductTexts(lang, product.id, t),
+      })),
+    [t, lang, cosmetics, getProductTexts]
+  );
 
   const filteredProducts = useMemo(
     () =>

@@ -21,7 +21,6 @@ import HelmetSEO from "../components/HelmetSEO";
 import CallWidget from "../ui/CallWidget";
 import ConsentBanner from "../ui/ConsentBanner";
 import StickyCta from "../ui/StickyCta";
-import reviews from "../data/reviews.json";
 
 export default function LandingPage() {
   const location = useLocation();
@@ -46,7 +45,7 @@ export default function LandingPage() {
 
   return (
     <>
-      <HelmetSEO reviewCount={reviews.length} />
+      <HelmetSEO />
       <Header navItems={navItems} />
       <Home />
       <MassageServices services={localizedServices} />
@@ -56,7 +55,7 @@ export default function LandingPage() {
       <TrustSection />
       <StatsSection />
       <TeamSections />
-      <ReviewsSection reviews={reviews} />
+      <ReviewsSection />
       <GallerySection />
       <LocationSection />
       <FaqSection />

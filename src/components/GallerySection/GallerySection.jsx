@@ -2,10 +2,11 @@ import { useCallback, useEffect, useState } from "react";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import galleryImages from "../../data/gallery.json";
+import { useContent } from "../../context/ContentProvider";
 
 export default function GallerySection() {
   const { t } = useTranslation();
+  const { gallery: galleryImages } = useContent();
   const [activeIndex, setActiveIndex] = useState(null);
 
   const closeLightbox = useCallback(() => setActiveIndex(null), []);
