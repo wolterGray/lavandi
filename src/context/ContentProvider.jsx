@@ -22,6 +22,7 @@ import {
 import { adminRu } from "../admin/adminStrings";
 import { buildFullPublishedOverrides } from "../admin/publishFullContent";
 import {
+  cleanupOrphanedSiteImages,
   collectImageRefsFromOverrides,
   fetchSiteImagesMap,
   resolveContentImages,
@@ -116,6 +117,7 @@ export function ContentProvider({ children }) {
     setContentSaving(true);
     try {
       const updatedAt = await saveSiteContentToSupabase(next);
+      await cleanupOrphanedSiteImages(next);
       setLastSyncedAt(updatedAt);
       setSyncError(null);
     } catch (error) {
@@ -150,6 +152,7 @@ export function ContentProvider({ children }) {
     setContentSaving(true);
     try {
       await clearSiteContentInSupabase();
+      await cleanupOrphanedSiteImages({});
       setLastSyncedAt(new Date().toISOString());
       setSyncError(null);
     } catch (error) {

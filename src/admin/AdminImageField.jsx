@@ -24,7 +24,7 @@ export default function AdminImageField({
     setError("");
 
     try {
-      const imageRef = await saveSiteImageToDatabase(file, folder);
+      const imageRef = await saveSiteImageToDatabase(file, folder, value);
       onChange(imageRef);
     } catch (uploadError) {
       setError(uploadError.message ?? adminRu.media.uploadFailed);

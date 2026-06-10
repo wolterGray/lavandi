@@ -1,7 +1,12 @@
-import { useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ADMIN_LOCALE, adminRu } from "../../admin/adminStrings";
 import { AdminButton, AdminPageHeader, AdminPanel, AdminSaveBar } from "../../admin/adminUi";
+import { cleanupOrphanedSiteImages, fetchSiteImagesStorageUsage } from "../../admin/siteImages";
 import { useContent } from "../../context/ContentProvider";
+
+function formatMb(bytes) {
+  return (bytes / (1024 * 1024)).toFixed(1);
+}
 
 export default function AdminSettingsPage() {
   const {
@@ -13,11 +18,42 @@ export default function AdminSettingsPage() {
     isSupabaseEnabled,
     lastSyncedAt,
     syncError,
+    overrides,
   } = useContent();
   const fileRef = useRef(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [storage, setStorage] = useState({ bytes: 0, count: 0 });
+
+  const refreshStorage = useCallback(async () => {
+    if (!isSupabaseEnabled) return;
+    try {
+      setStorage(await fetchSiteImagesStorageUsage());
+    } catch {
+      // ignore storage meter errors in settings UI
+    }
+  }, [isSupabaseEnabled]);
+
+  useEffect(() => {
+    refreshStorage();
+  }, [refreshStorage, lastSyncedAt]);
+
+  const handleCleanupStorage = async () => {
+    setBusy(true);
+    setError("");
+    setMessage("");
+
+    try {
+      const result = await cleanupOrphanedSiteImages(overrides);
+      await refreshStorage();
+      setMessage(adminRu.media.cleanupDone(result.removed));
+    } catch (cleanupError) {
+      setError(cleanupError.message ?? adminRu.media.cleanupFailed);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const handleExport = () => {
     const blob = new Blob([exportContent()], { type: "application/json" });
@@ -117,6 +153,17 @@ export default function AdminSettingsPage() {
               Контент: <code className="text-gold">001_site_content.sql</code>.
               Изображения в базе: <code className="text-gold">003_site_images.sql</code>.
             </p>
+            <p className="mt-3 text-sm text-stone">
+              {adminRu.media.storageUsage(formatMb(storage.bytes), storage.count)}
+            </p>
+            <p className="mt-1 text-xs text-muted">
+              При замене фото старое удаляется из базы. При сохранении контента — чистятся неиспользуемые файлы.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <AdminButton variant="ghost" onClick={handleCleanupStorage} disabled={busy}>
+                {adminRu.media.cleanupOrphans}
+              </AdminButton>
+            </div>
             <AdminButton className="mt-4" onClick={handlePublishFull} disabled={busy}>
               {busy ? adminRu.sync.publishing : adminRu.sync.publishFull}
             </AdminButton>

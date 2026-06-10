@@ -59,7 +59,56 @@ export function isSiteImagesConfigured() {
   return isSupabaseConfigured && Boolean(supabase);
 }
 
-export async function saveSiteImageToDatabase(file, folder = "uploads") {
+function toImageId(value) {
+  if (!value || typeof value !== "string") return null;
+  return parseImageRef(value) ?? value;
+}
+
+export async function deleteSiteImagesByIds(ids = []) {
+  const uniqueIds = [...new Set(ids.map(toImageId).filter(Boolean))];
+  if (!uniqueIds.length || !isSiteImagesConfigured() || !supabase) return 0;
+
+  const { error } = await supabase.from("site_images").delete().in("id", uniqueIds);
+  if (error) throw error;
+  return uniqueIds.length;
+}
+
+export async function deleteSiteImageByRef(imageRef) {
+  const id = parseImageRef(imageRef);
+  if (!id) return false;
+  await deleteSiteImagesByIds([id]);
+  return true;
+}
+
+/** Remove DB rows not referenced anywhere in current CMS overrides. */
+export async function cleanupOrphanedSiteImages(overrides = {}) {
+  if (!isSiteImagesConfigured() || !supabase) return { removed: 0 };
+
+  const referenced = new Set(collectImageRefsFromOverrides(overrides));
+  const { data, error } = await supabase.from("site_images").select("id");
+  if (error) throw error;
+
+  const orphanIds = (data ?? []).map((row) => row.id).filter((id) => !referenced.has(id));
+  if (!orphanIds.length) return { removed: 0 };
+
+  await deleteSiteImagesByIds(orphanIds);
+  return { removed: orphanIds.length };
+}
+
+export async function fetchSiteImagesStorageUsage() {
+  if (!isSiteImagesConfigured() || !supabase) return { bytes: 0, count: 0 };
+
+  const { data, error } = await supabase.from("site_images").select("size_bytes");
+  if (error) throw error;
+
+  const rows = data ?? [];
+  return {
+    count: rows.length,
+    bytes: rows.reduce((sum, row) => sum + (row.size_bytes ?? 0), 0),
+  };
+}
+
+export async function saveSiteImageToDatabase(file, folder = "uploads", replaceRef = null) {
   if (!isSiteImagesConfigured() || !supabase) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
@@ -86,7 +135,14 @@ export async function saveSiteImageToDatabase(file, folder = "uploads") {
   });
 
   if (error) throw error;
-  return toImageRef(id);
+
+  const newRef = toImageRef(id);
+  const oldId = parseImageRef(replaceRef);
+  if (oldId && oldId !== id) {
+    await deleteSiteImagesByIds([oldId]);
+  }
+
+  return newRef;
 }
 
 export async function fetchSiteImageRecord(id) {

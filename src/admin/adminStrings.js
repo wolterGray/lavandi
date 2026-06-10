@@ -165,5 +165,12 @@ export const adminRu = {
     noImage: "Изображение не выбрано.",
     storageHint:
       "Изображения хранятся в таблице site_images. Запустите SQL из supabase/migrations/003_site_images.sql.",
+    replacedDeleted: "Старое фото удалено из базы.",
+    storageUsage: (usedMb, count, limitMb = 50) =>
+      `Хранилище: ${usedMb} МБ / ~${limitMb} МБ · ${count} файлов`,
+    cleanupOrphans: "Очистить неиспользуемые фото",
+    cleanupDone: (count) =>
+      count > 0 ? `Удалено неиспользуемых фото: ${count}.` : "Неиспользуемых фото не найдено.",
+    cleanupFailed: "Не удалось очистить хранилище.",
   },
 };
