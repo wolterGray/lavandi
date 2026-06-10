@@ -5,7 +5,7 @@ import { adminRu } from "../../admin/adminStrings";
 import { AdminButton, AdminField, AdminPanel, adminInputClass } from "../../admin/adminUi";
 
 export default function AdminLoginPage() {
-  const { isAuthenticated, authLoading, isSupabaseAuth, login } = useAdminAuth();
+  const { isAuthenticated, authLoading, isSupabaseAuth, ssoError, login } = useAdminAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState("");
@@ -56,6 +56,8 @@ export default function AdminLoginPage() {
             {adminRu.auth.crmSsoHint}
           </p>
         )}
+
+        {ssoError && <p className="mt-4 text-sm text-red-300">{ssoError}</p>}
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {isSupabaseAuth && (

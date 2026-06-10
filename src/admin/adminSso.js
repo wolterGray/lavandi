@@ -1,5 +1,13 @@
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 
+export function hasCrmSsoHash() {
+  const rawHash = window.location.hash.replace(/^#/, "");
+  if (!rawHash) return false;
+
+  const params = new URLSearchParams(rawHash);
+  return Boolean(params.get("access_token") && params.get("refresh_token"));
+}
+
 export async function consumeCrmSsoHash() {
   if (!isSupabaseConfigured || !supabase) return false;
 

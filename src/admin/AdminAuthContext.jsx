@@ -6,7 +6,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import { consumeCrmSsoHash } from "./adminSso";
+import { consumeCrmSsoHash, hasCrmSsoHash } from "./adminSso";
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
 
@@ -44,6 +44,9 @@ export function AdminAuthProvider({ children }) {
   );
   const [authLoading, setAuthLoading] = useState(isSupabaseConfigured);
   const [userEmail, setUserEmail] = useState(null);
+  const [ssoError, setSsoError] = useState(() =>
+    !isSupabaseConfigured && hasCrmSsoHash() ? adminRu.auth.supabaseNotConfigured : null
+  );
 
   useLayoutEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
@@ -56,8 +59,11 @@ export function AdminAuthProvider({ children }) {
     (async () => {
       try {
         await consumeCrmSsoHash();
-      } catch {
-        // Ignore invalid CRM handoff tokens and fall back to normal auth.
+        setSsoError(null);
+      } catch (error) {
+        if (hasCrmSsoHash()) {
+          setSsoError(error?.message ?? adminRu.auth.ssoFailed);
+        }
       }
 
       if (!active) return;
@@ -122,10 +128,11 @@ export function AdminAuthProvider({ children }) {
       authLoading,
       userEmail,
       isSupabaseAuth: isSupabaseConfigured,
+      ssoError,
       login,
       logout,
     }),
-    [isAuthenticated, authLoading, userEmail, login, logout]
+    [isAuthenticated, authLoading, userEmail, ssoError, login, logout]
   );
 
   return <AdminAuthContext.Provider value={value}>{children}</AdminAuthContext.Provider>;

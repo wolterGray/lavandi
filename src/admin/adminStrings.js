@@ -97,6 +97,9 @@ export const adminRu = {
     password: "Пароль",
     emailRequired: "Укажите email и пароль Supabase.",
     wrongPassword: "Неверный пароль.",
+    supabaseNotConfigured:
+      "Вход из CRM не сработал: на сайте не подключён Supabase. Пересоберите деплой с VITE_SUPABASE_URL и ключом.",
+    ssoFailed: "Не удалось принять сессию из CRM. Откройте админку снова из раздела «Сайт» в CRM.",
   },
   crm: {
     noServices: "В CRM нет услуг для синхронизации.",
