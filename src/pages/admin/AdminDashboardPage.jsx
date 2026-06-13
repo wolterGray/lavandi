@@ -10,7 +10,7 @@ import { ADMIN_SECTION_KEYS } from "../../admin/adminNav";
 const LINKS = [
   { to: "/admin/home", title: "Главная", desc: "Hero-слайды и новости (до 5)" },
   { to: "/admin/services", title: "Услуги", desc: "Фото и тексты (цены — в CRM)" },
-  { to: "/admin/cosmetics", title: "Косметика", desc: "Каталог продуктов и тексты" },
+  { to: "/admin/cosmetics", title: "Каталог", desc: "Товары каталога и тексты" },
   { to: "/admin/gallery", title: "Галерея", desc: "Атмосфера студии — фотографии" },
   { to: "/admin/reviews", title: "Отзывы", desc: "Отзывы гостей" },
   { to: "/admin/about", title: "Философия", desc: "Секция «О нас» — текст и фото" },

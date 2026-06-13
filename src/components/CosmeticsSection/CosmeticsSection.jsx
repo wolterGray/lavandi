@@ -21,7 +21,7 @@ export default function CosmeticsSection() {
   }, [t, lang, cosmetics, featuredCosmeticIds, getProductTexts]);
 
   return (
-    <section id="cosmetics" className="section-padding bg-surface">
+    <section id="catalog" className="section-padding bg-surface">
       <Container>
         <div className="grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
           <ScrollAnimationWrapper>
@@ -37,13 +37,14 @@ export default function CosmeticsSection() {
           </ScrollAnimationWrapper>
         </div>
 
-        <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+        <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
           {featuredProducts.map((product, index) => (
             <CosmeticProductCard
               key={product.id}
               product={product}
               index={index}
               categoryLabel={t(`cosmetics.categories.${product.category}`)}
+              variant="featured"
             />
           ))}
         </div>

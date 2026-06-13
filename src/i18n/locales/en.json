@@ -11,7 +11,7 @@
     "price": "Price",
     "about": "About us",
     "reviews": "Reviews",
-    "cosmetics": "Cosmetics",
+    "cosmetics": "Catalog",
     "contact": "Contact",
     "book": "Book",
     "bookVisit": "Book a visit",
@@ -153,8 +153,8 @@
   },
   "cosmetics": {
     "label": "Shop",
-    "title": "Cosmetics catalog",
-    "description": "Curated body care and wellness products selected by our therapists — oils, balms, scrubs, and home rituals available for purchase at the studio.",
+    "title": "Product catalog",
+    "description": "Curated wellness products — body care, oils, candles, aromatherapy, incense, and home rituals available at the studio.",
     "filterLabel": "Filter products by category",
     "availableAtStudio": "Available at studio",
     "compositionLabel": "Ingredients",
@@ -168,7 +168,7 @@
     "cta": "Ask about products",
     "ctaSecondary": "Contact us",
     "viewAll": "View full catalog",
-    "emailSubject": "Cosmetics catalog inquiry",
+    "emailSubject": "Product catalog inquiry",
     "categories": {
       "all": "All",
       "oils": "Body oils",
@@ -176,6 +176,8 @@
       "creams": "Creams",
       "scrubs": "Scrubs",
       "aroma": "Aromatherapy",
+      "candles": "Candles",
+      "incense": "Incense sticks",
       "home": "Home ritual"
     },
     "products": {
@@ -524,8 +526,8 @@
   },
   "cosmeticsPage": {
     "meta": {
-      "title": "Cosmetics Catalog — NUAR Warsaw | Body Care & Wellness",
-      "description": "Browse NUAR's curated body care collection — oils, balms, scrubs, aromatherapy, and home rituals available at our Warsaw studio."
+      "title": "Product Catalog — NUAR Warsaw | Wellness & Aromatherapy",
+      "description": "Browse the NUAR catalog — body care, oils, candles, incense, aromatherapy, and home rituals available at our Warsaw studio."
     },
     "navLabel": "Catalog page navigation"
   },

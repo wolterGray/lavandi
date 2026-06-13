@@ -21,7 +21,7 @@ export const ADMIN_NAV_GROUPS = [
       { to: "/admin", end: true, label: adminRu.nav.panel, icon: LayoutDashboard, keywords: "dashboard панель главная" },
       { to: "/admin/home", label: adminRu.nav.home, icon: Home, keywords: "hero слайды новости главная" },
       { to: "/admin/services", label: adminRu.nav.services, icon: Sparkles, keywords: "услуги spa массаж" },
-      { to: "/admin/cosmetics", label: adminRu.nav.cosmetics, icon: Package, keywords: "косметика каталог товары" },
+      { to: "/admin/cosmetics", label: adminRu.nav.cosmetics, icon: Package, keywords: "каталог товары свечи ароматерапия" },
       { to: "/admin/gallery", label: adminRu.nav.gallery, icon: Images, keywords: "галерея фото" },
       { to: "/admin/reviews", label: adminRu.nav.reviews, icon: MessageSquare, keywords: "отзывы гости" },
     ],

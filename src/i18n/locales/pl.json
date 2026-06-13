@@ -11,7 +11,7 @@
     "price": "Cennik",
     "about": "O nas",
     "reviews": "Opinie",
-    "cosmetics": "Kosmetyka",
+    "cosmetics": "Katalog",
     "contact": "Kontakt",
     "book": "Rezerwuj",
     "bookVisit": "Zarezerwuj wizytę",
@@ -153,8 +153,8 @@
   },
   "cosmetics": {
     "label": "Sklep",
-    "title": "Katalog kosmetyków",
-    "description": "Starannie dobrane produkty do pielęgnacji ciała i wellness — olejki, balsamy, peelingi i rytuały domowe dostępne w studio.",
+    "title": "Katalog produktów",
+    "description": "Starannie dobrane produkty wellness — kosmetyki, olejki, świece, aromaterapia, kadzidła i rytuały domowe dostępne w studio.",
     "filterLabel": "Filtruj produkty według kategorii",
     "availableAtStudio": "Dostępne w studio",
     "compositionLabel": "Skład",
@@ -168,7 +168,7 @@
     "cta": "Zapytaj o produkty",
     "ctaSecondary": "Kontakt",
     "viewAll": "Przejdź do katalogu",
-    "emailSubject": "Zapytanie o katalog kosmetyków",
+    "emailSubject": "Zapytanie o katalog produktów",
     "categories": {
       "all": "Wszystkie",
       "oils": "Olejki do ciała",
@@ -176,6 +176,8 @@
       "creams": "Kremy",
       "scrubs": "Peelingi",
       "aroma": "Aromaterapia",
+      "candles": "Świece",
+      "incense": "Kadzidła",
       "home": "Rytuał domowy"
     },
     "products": {
@@ -524,8 +526,8 @@
   },
   "cosmeticsPage": {
     "meta": {
-      "title": "Katalog kosmetyków — NUAR Warszawa | Pielęgnacja ciała",
-      "description": "Przeglądaj starannie dobraną kolekcję NUAR — olejki, balsamy, peelingi, aromaterapia i rytuały domowe dostępne w naszym studio w Warszawie."
+      "title": "Katalog produktów — NUAR Warszawa | Wellness & aromaterapia",
+      "description": "Przeglądaj katalog NUAR — kosmetyki, olejki, świece, kadzidła, aromaterapia i rytuały domowe dostępne w naszym studio w Warszawie."
     },
     "navLabel": "Nawigacja strony katalogu"
   },

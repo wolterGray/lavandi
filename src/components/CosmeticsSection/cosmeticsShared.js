@@ -24,7 +24,7 @@ export const PLACEHOLDER_GRADIENTS = [
   "bg-[radial-gradient(ellipse_at_65%_60%,rgba(154,132,88,0.16)_0%,transparent_52%),radial-gradient(ellipse_at_10%_30%,rgba(16,14,20,0.7)_0%,transparent_55%)]",
 ];
 
-export const CATEGORY_KEYS = ["all", "oils", "balms", "creams", "scrubs", "aroma", "home"];
+export const CATEGORY_KEYS = ["all", "oils", "balms", "creams", "scrubs", "aroma", "candles", "incense", "home"];
 
 export const MAX_FEATURED_COSMETICS = 3;
 
