@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ZoomIn } from "lucide-react";
 import { useImageSrc } from "../../hooks/useImageSrc";
 import {
@@ -8,6 +9,8 @@ import {
 
 const ZOOM_FACTOR = 2.4;
 const LENS_SIZE = 112;
+const ZOOM_WINDOW_SIZE = 220;
+const CURSOR_GAP = 20;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -30,7 +33,25 @@ function getContainMetrics(container, img) {
   };
 }
 
-/** Rossmann-style hover zoom — product detail page only. */
+function getZoomWindowPosition(clientX, clientY) {
+  const viewportPadding = 12;
+  let left = clientX + CURSOR_GAP;
+  let top = clientY + CURSOR_GAP;
+
+  if (left + ZOOM_WINDOW_SIZE > window.innerWidth - viewportPadding) {
+    left = clientX - ZOOM_WINDOW_SIZE - CURSOR_GAP;
+  }
+  if (top + ZOOM_WINDOW_SIZE > window.innerHeight - viewportPadding) {
+    top = clientY - ZOOM_WINDOW_SIZE - CURSOR_GAP;
+  }
+
+  return {
+    left: clamp(left, viewportPadding, window.innerWidth - ZOOM_WINDOW_SIZE - viewportPadding),
+    top: clamp(top, viewportPadding, window.innerHeight - ZOOM_WINDOW_SIZE - viewportPadding),
+  };
+}
+
+/** Rossmann-style hover zoom — floating pane follows the cursor. */
 export default function CosmeticProductImageMagnifier({
   product,
   className = "",
@@ -44,6 +65,7 @@ export default function CosmeticProductImageMagnifier({
   const [canMagnify, setCanMagnify] = useState(false);
   const [active, setActive] = useState(false);
   const [lens, setLens] = useState({ x: 0, y: 0 });
+  const [zoomWindow, setZoomWindow] = useState({ left: 0, top: 0 });
   const [zoomBackground, setZoomBackground] = useState({
     size: "100% 100%",
     position: "50% 50%",
@@ -113,6 +135,7 @@ export default function CosmeticProductImageMagnifier({
 
       setActive(true);
       setLens({ x: lensX, y: lensY });
+      setZoomWindow(getZoomWindowPosition(event.clientX, event.clientY));
       setZoomBackground({
         size: `${metrics.displayWidth * ZOOM_FACTOR}px ${metrics.displayHeight * ZOOM_FACTOR}px`,
         position: `${(relativeX / metrics.displayWidth) * 100}% ${(relativeY / metrics.displayHeight) * 100}%`,
@@ -121,70 +144,81 @@ export default function CosmeticProductImageMagnifier({
     [canMagnify, imageLoaded, refreshMetrics],
   );
 
+  const zoomPortal =
+    canMagnify && active && imageSrc
+      ? createPortal(
+          <div
+            aria-hidden="true"
+            className="pointer-events-none fixed z-[120] overflow-hidden rounded-full border-2 border-gold/50 bg-card shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
+            style={{
+              width: ZOOM_WINDOW_SIZE,
+              height: ZOOM_WINDOW_SIZE,
+              left: zoomWindow.left,
+              top: zoomWindow.top,
+              backgroundImage: `url(${imageSrc})`,
+              backgroundRepeat: "no-repeat",
+              backgroundSize: zoomBackground.size,
+              backgroundPosition: zoomBackground.position,
+            }}
+          />,
+          document.body,
+        )
+      : null;
+
   return (
-    <div className={`relative ${className}`}>
-      <div
-        ref={containerRef}
-        className={`relative flex min-h-0 items-center justify-center overflow-hidden p-3 sm:p-4 ${surfaceClass} ${
-          canMagnify && imageSrc ? "cursor-crosshair" : ""
-        }`}
-        onMouseMove={handlePointerMove}
-        onMouseLeave={() => setActive(false)}
-      >
-        {imageSrc ? (
-          <>
-            <img
-              ref={imgRef}
-              src={imageSrc}
-              alt=""
-              className={imageClassName}
-              loading="eager"
-              decoding="async"
-              draggable={false}
-              onLoad={() => setImageLoaded(true)}
-            />
-            {canMagnify && imageLoaded ? (
-              <>
-                <div
-                  aria-hidden="true"
-                  className={`pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-gold/25 bg-void/55 text-gold transition-opacity duration-200 ${
-                    active ? "opacity-0" : "opacity-100"
-                  }`}
-                >
-                  <ZoomIn className="h-4 w-4" strokeWidth={2} />
-                </div>
-                {active ? (
+    <>
+      <div className={`relative ${className}`}>
+        <div
+          ref={containerRef}
+          className={`relative flex min-h-0 items-center justify-center overflow-hidden p-3 sm:p-4 ${surfaceClass} ${
+            canMagnify && imageSrc && active ? "cursor-none" : canMagnify && imageSrc ? "cursor-crosshair" : ""
+          }`}
+          onMouseMove={handlePointerMove}
+          onMouseLeave={() => setActive(false)}
+        >
+          {imageSrc ? (
+            <>
+              <img
+                ref={imgRef}
+                src={imageSrc}
+                alt=""
+                className={imageClassName}
+                loading="eager"
+                decoding="async"
+                draggable={false}
+                onLoad={() => setImageLoaded(true)}
+              />
+              {canMagnify && imageLoaded ? (
+                <>
                   <div
                     aria-hidden="true"
-                    className="pointer-events-none absolute rounded-full border-2 border-gold/70 bg-gold/10 shadow-[0_0_0_1px_rgba(255,255,255,0.12)_inset]"
-                    style={{
-                      width: LENS_SIZE,
-                      height: LENS_SIZE,
-                      left: lens.x - LENS_SIZE / 2,
-                      top: lens.y - LENS_SIZE / 2,
-                    }}
-                  />
-                ) : null}
-              </>
-            ) : null}
-          </>
-        ) : (
-          <span className={initialsClassName}>{product.initials}</span>
-        )}
+                    className={`pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-gold/25 bg-void/55 text-gold transition-opacity duration-200 ${
+                      active ? "opacity-0" : "opacity-100"
+                    }`}
+                  >
+                    <ZoomIn className="h-4 w-4" strokeWidth={2} />
+                  </div>
+                  {active ? (
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute rounded-full border-2 border-gold/70 bg-gold/10 shadow-[0_0_0_1px_rgba(255,255,255,0.12)_inset]"
+                      style={{
+                        width: LENS_SIZE,
+                        height: LENS_SIZE,
+                        left: lens.x - LENS_SIZE / 2,
+                        top: lens.y - LENS_SIZE / 2,
+                      }}
+                    />
+                  ) : null}
+                </>
+              ) : null}
+            </>
+          ) : (
+            <span className={initialsClassName}>{product.initials}</span>
+          )}
+        </div>
       </div>
-
-      {canMagnify && active && imageSrc ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-[calc(100%+14px)] top-0 z-20 hidden h-full min-h-[280px] w-[min(44vw,380px)] overflow-hidden rounded-card border border-gold/30 bg-card shadow-[0_24px_60px_rgba(0,0,0,0.35)] xl:block"
-          style={{
-            backgroundImage: `url(${imageSrc})`,
-            backgroundRepeat: "no-repeat",
-            backgroundSize: zoomBackground.size,
-            backgroundPosition: zoomBackground.position,
-          }}
-        />
-      ) : null}
-    </div>
+      {zoomPortal}
+    </>
   );
 }
