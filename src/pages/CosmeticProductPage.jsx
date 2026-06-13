@@ -5,11 +5,12 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
+import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { isImageRef } from "../admin/siteImages";
 import { EMAIL, SITE_URL } from "../constants/theme";
-import CosmeticProductImage from "../components/CosmeticsSection/CosmeticProductImage";
+import CosmeticProductImageMagnifier from "../components/CosmeticsSection/CosmeticProductImageMagnifier";
 import {
   buildCosmeticInquiryMailto,
   COSMETICS_ROUTE,
@@ -79,12 +80,10 @@ export default function CosmeticProductPage({ product }) {
 
         <div className="mt-8 grid gap-12 lg:grid-cols-2">
           <ScrollAnimationWrapper direction="left">
-            <div className="card-gradient-border rounded-card shadow-spa">
-              <CosmeticProductImage
+            <div className="card-gradient-border overflow-visible rounded-card shadow-spa">
+              <CosmeticProductImageMagnifier
                 product={product}
                 className="min-h-[360px] w-full sm:min-h-[480px]"
-                imageClassName="max-h-[min(72vh,560px)] h-full w-full object-contain object-center"
-                initialsClassName="font-display text-6xl font-semibold tracking-[0.08em] text-milk/25"
               />
             </div>
           </ScrollAnimationWrapper>
@@ -120,10 +119,13 @@ export default function CosmeticProductPage({ product }) {
                 {t("cosmetics.availableAtStudio")}
               </p>
 
-              <div className="mt-8">
+              <div className="mt-8 flex flex-wrap gap-4">
                 <Button href={buildCosmeticInquiryMailto(EMAIL, t, product)} size="lg">
                   {t("cosmetics.interestedCta")}
                 </Button>
+                <BookVisitButton variant="secondary" size="lg">
+                  {t("cosmetics.ctaSecondary")}
+                </BookVisitButton>
               </div>
             </div>
           </ScrollAnimationWrapper>

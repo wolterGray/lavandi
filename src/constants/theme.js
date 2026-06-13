@@ -19,6 +19,8 @@ export const COLORS = {
 export const GOLD = COLORS.gold;
 
 export const BOOKSY_URL = "https://nuarr.booksy.com/a";
+export const BOOKING_FORM_ID = "booking-form";
+export const BOOKING_FORM_HASH = `#${BOOKING_FORM_ID}`;
 export const PHONE = "+48452402006";
 export const PHONE_DISPLAY = "+48 452 402 006";
 export const EMAIL = "nuar.contact@gmail.com";

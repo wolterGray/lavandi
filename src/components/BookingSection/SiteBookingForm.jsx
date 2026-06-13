@@ -204,7 +204,7 @@ export default function SiteBookingForm() {
 
   if (showSuccess) {
     return (
-      <div className="mx-auto mt-10 max-w-2xl text-left">
+      <div className="mx-auto mt-10 max-w-2xl scroll-mt-28 text-left">
         <SiteBookingSuccess
           t={t}
           onClose={() => {
@@ -216,7 +216,7 @@ export default function SiteBookingForm() {
   }
 
   return (
-    <div className="mx-auto mt-10 max-w-2xl text-left">
+    <div id="booking-form" className="mx-auto mt-10 max-w-2xl scroll-mt-28 text-left">
       <form
         key={formKey}
         className="rounded-card border border-white/15 bg-void/55 p-6 backdrop-blur-sm sm:p-8"

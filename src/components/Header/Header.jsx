@@ -3,11 +3,11 @@ import { Link as RouterLink } from "react-router-dom";
 import { Link } from "react-scroll";
 import { AnimatePresence, motion } from "framer-motion";
 import LogoNuar from "../../ui/LogoNuar";
-import Button from "../../ui/Button";
 import Container from "../../ui/Container";
 import LanguageSwitcher from "../../ui/LanguageSwitcher";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL, PHONE, PHONE_DISPLAY } from "../../constants/theme";
+import BookVisitButton from "../../ui/BookVisitButton";
+import { PHONE, PHONE_DISPLAY } from "../../constants/theme";
 
 function NavLink({ label, path, to, className, onClick, linkToHome, offset = -80 }) {
   const base = `cursor-pointer ${className ?? ""}`;
@@ -88,9 +88,9 @@ export default function Header({ navItems, linkToHome = false }) {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher className="hidden sm:flex" />
-            <Button href={BOOKSY_URL} size="sm" className="hidden md:inline-flex">
+            <BookVisitButton size="sm" className="hidden md:inline-flex">
               {t("nav.book")}
-            </Button>
+            </BookVisitButton>
             <button
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded-pill border border-border/60 text-milk lg:hidden"
@@ -140,9 +140,9 @@ export default function Header({ navItems, linkToHome = false }) {
                 ))}
               </ul>
               <div className="space-y-3 border-t border-border pt-6">
-                <Button href={BOOKSY_URL} className="w-full" onClick={() => setMobileMenuOpen(false)}>
+                <BookVisitButton className="w-full" onClick={() => setMobileMenuOpen(false)}>
                   {t("nav.bookVisit")}
-                </Button>
+                </BookVisitButton>
                 <a href={`tel:${PHONE}`} className="block text-center text-sm text-stone">{PHONE_DISPLAY}</a>
               </div>
             </motion.nav>

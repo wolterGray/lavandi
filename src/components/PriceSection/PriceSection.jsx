@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
+import BookVisitButton from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 
 const times = ["30", "60", "75", "90", "120"];
@@ -75,6 +76,9 @@ function PriceSection({ services = [] }) {
             </ul>
           </div>
         )}
+        <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">
+          <BookVisitButton size="lg">{t("services.book")}</BookVisitButton>
+        </ScrollAnimationWrapper>
         <ScrollAnimationWrapper delay={0.1}>
           <p className="mt-8 text-center text-xs text-muted">{t("pricing.footer")}</p>
         </ScrollAnimationWrapper>

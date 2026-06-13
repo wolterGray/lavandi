@@ -25,6 +25,10 @@
     scroll-behavior: smooth;
   }
 
+  #booking-form {
+    scroll-margin-top: 6.5rem;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;

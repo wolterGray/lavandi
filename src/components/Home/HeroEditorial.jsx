@@ -1,7 +1,6 @@
 import { Link } from "react-scroll";
-import Button from "../../ui/Button";
-import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL } from "../../constants/theme";
+import { useTranslation } from "react-i18next";
+import BookVisitButton from "../../ui/BookVisitButton";
 
 export default function HeroEditorial({ image = "/massage/1.webp" }) {
   const { t } = useTranslation();
@@ -26,7 +25,7 @@ export default function HeroEditorial({ image = "/massage/1.webp" }) {
           <h1 className="mt-4 font-display text-display-md font-bold tracking-[-0.03em] text-milk text-balance sm:text-display-lg lg:max-w-xl">{t("hero.title")}</h1>
           <p className="mt-5 max-w-md text-base leading-relaxed text-stone md:text-[17px] md:leading-7">{t("hero.subtitle")}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <Button href={BOOKSY_URL} size="lg">{t("hero.cta")}</Button>
+            <BookVisitButton size="lg">{t("hero.cta")}</BookVisitButton>
             <Link to="services" smooth duration={600} offset={-80} className="inline-flex min-h-[52px] items-center justify-center px-2 text-sm text-stone transition hover:text-milk">
               {t("hero.ctaSecondary")}
             </Link>

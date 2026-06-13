@@ -82,7 +82,10 @@ function applyLocalePatch(fallbackItem, patch) {
 
 export function mergeProductTexts(lang, productId, overrides, fallbackItem) {
   const patch = overrides?.locales?.[lang]?.cosmetics?.products?.[productId];
-  return applyLocalePatch(fallbackItem, patch);
+  const base = fallbackItem ?? {};
+  if (!patch) return base;
+  // Curated locale JSON wins; CMS fills gaps for new products.
+  return applyLocalePatch(patch, base);
 }
 
 export function mergeTeamMemberTexts(lang, memberId, overrides, fallbackMember) {

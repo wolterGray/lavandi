@@ -2,10 +2,9 @@ import { useRef } from "react";
 import { Link } from "react-scroll";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
-import Button from "../../ui/Button";
+import BookVisitButton from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
-import { BOOKSY_URL } from "../../constants/theme";
 
 import "swiper/css";
 import "swiper/css/effect-fade";
@@ -64,7 +63,7 @@ export default function HeroCarousel() {
                     {slide.news}
                   </p>
                   <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <Button href={BOOKSY_URL} size="lg">{t("hero.cta")}</Button>
+                    <BookVisitButton size="lg">{t("hero.cta")}</BookVisitButton>
                     <Link
                       to="services"
                       smooth

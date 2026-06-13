@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
-import Button from "../../ui/Button";
-import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL } from "../../constants/theme";
+import BookVisitButton from "../../ui/BookVisitButton";
 
 function getFromPrice(service) {
   const idx = service.time.indexOf(60) >= 0 ? service.time.indexOf(60) : 0;
@@ -95,9 +93,9 @@ export default function MassageServices({ services = [] }) {
         </div>
 
         <ScrollAnimationWrapper delay={0.15} className="mt-12 flex justify-center sm:mt-14">
-          <Button href={BOOKSY_URL} size="lg">
+          <BookVisitButton size="lg">
             {t("services.book")}
-          </Button>
+          </BookVisitButton>
         </ScrollAnimationWrapper>
       </Container>
     </section>

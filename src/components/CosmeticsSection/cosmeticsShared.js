@@ -107,15 +107,45 @@ export function buildCosmeticInquiryMailto(email, t, product) {
 
 export const COSMETIC_TEXT_FIELDS = ["name", "description", "volume", "composition"];
 
+export const COSMETIC_VOLUME_UNITS = ["ml", "g"];
+
+export function parseCosmeticVolume(volume) {
+  const raw = String(volume ?? "").trim().replace(/\s+/g, " ");
+  if (!raw) return { amount: "", unit: "ml" };
+
+  const mlMatch = raw.match(/^(\d+(?:[.,]\d+)?)\s*(?:ml|мл)\.?$/iu);
+  if (mlMatch) {
+    return { amount: mlMatch[1].replace(",", "."), unit: "ml" };
+  }
+
+  const gMatch = raw.match(/^(\d+(?:[.,]\d+)?)\s*(?:g|г|gram|grams)\.?$/iu);
+  if (gMatch) {
+    return { amount: gMatch[1].replace(",", "."), unit: "g" };
+  }
+
+  const bare = raw.match(/^(\d+(?:[.,]\d+)?)$/);
+  if (bare) {
+    return { amount: bare[1].replace(",", "."), unit: "g" };
+  }
+
+  return { amount: "", unit: "ml" };
+}
+
 export function formatCosmeticVolume(volume) {
   const raw = String(volume ?? "").trim();
   if (!raw) return "";
-  if (/ml|мл/i.test(raw)) return raw;
-  if (/(\d\s*(g|г)\b|\bgram)/i.test(raw)) return raw;
-  if (/^\d+([.,]\d+)?$/.test(raw)) {
-    return `${raw.replace(",", ".")} g`;
-  }
-  return raw;
+
+  const { amount, unit } =
+    typeof volume === "object" && volume != null
+      ? {
+          amount: String(volume.amount ?? "").trim().replace(",", "."),
+          unit: volume.unit === "g" ? "g" : "ml",
+        }
+      : parseCosmeticVolume(raw);
+
+  if (!amount || !/^\d+(?:\.\d+)?$/.test(amount)) return "";
+
+  return unit === "g" ? `${amount} g` : `${amount} ml`;
 }
 
 export function normalizeCosmeticCopy(source = {}) {

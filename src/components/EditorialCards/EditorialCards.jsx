@@ -1,8 +1,8 @@
 import { Link } from "react-scroll";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
+import { BookVisitLink } from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL } from "../../constants/theme";
 
 export default function EditorialCards() {
   const { t } = useTranslation();
@@ -28,14 +28,9 @@ export default function EditorialCards() {
                 <h3 className="mt-3 font-display text-2xl text-ink">{card.title}</h3>
                 <p className="mt-4 flex-1 text-sm leading-relaxed text-ink-muted">{card.text}</p>
                 {card.link === "booksy" ? (
-                  <a
-                    href={BOOKSY_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="como-link mt-6 inline-block"
-                  >
+                  <BookVisitLink className="como-link mt-6 inline-block">
                     {card.cta}
-                  </a>
+                  </BookVisitLink>
                 ) : (
                   <Link
                     to={card.link}

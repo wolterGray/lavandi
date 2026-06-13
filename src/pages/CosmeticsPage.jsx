@@ -7,6 +7,7 @@ import CosmeticsCatalog from "../components/CosmeticsSection/CosmeticsCatalog";
 import Container from "../ui/Container";
 import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
+import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { EMAIL, SITE_URL } from "../constants/theme";
@@ -71,12 +72,9 @@ export default function CosmeticsPage() {
             <Button href={`mailto:${EMAIL}?subject=${encodeURIComponent(t("cosmetics.emailSubject"))}`} size="lg">
               {t("cosmetics.cta")}
             </Button>
-            <Link
-              to="/#contact"
-              className="inline-flex min-h-[52px] cursor-pointer items-center justify-center rounded-pill border border-border/50 px-6 text-[10px] font-bold uppercase tracking-[0.18em] text-stone transition hover:border-gold/40 hover:text-gold"
-            >
+            <BookVisitButton variant="secondary" size="lg">
               {t("cosmetics.ctaSecondary")}
-            </Link>
+            </BookVisitButton>
           </ScrollAnimationWrapper>
 
         </Container>

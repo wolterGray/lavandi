@@ -126,12 +126,8 @@ async function main() {
       });
 
       activeProductIds.forEach((id) => {
-        const patch = collectNestedPatch(overrides, "cosmetics", "products", id, lang);
-        if (!Object.keys(patch).length) return;
-        locale.cosmetics.products[id] = mergeProductEntry(
-          locale.cosmetics.products[id],
-          patch
-        );
+        if (locale.cosmetics.products[id]) return;
+        locale.cosmetics.products[id] = {};
       });
     }
 

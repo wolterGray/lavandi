@@ -1,8 +1,8 @@
 import { useState } from "react";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
+import { BookVisitLink } from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL } from "../../constants/theme";
 
 export default function WellnessExperiences() {
   const { t } = useTranslation();
@@ -53,9 +53,9 @@ export default function WellnessExperiences() {
             <h3 className="mt-8 font-display text-3xl text-ink">{current?.title}</h3>
             <p className="mt-6 max-w-prose text-base leading-relaxed text-ink-muted">{current?.text}</p>
             {current?.cta && (
-              <a href={BOOKSY_URL} target="_blank" rel="noopener noreferrer" className="como-link mt-8 inline-block">
+              <BookVisitLink className="como-link mt-8 inline-block">
                 {current.cta}
-              </a>
+              </BookVisitLink>
             )}
           </div>
           </ScrollAnimationWrapper>

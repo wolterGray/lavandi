@@ -181,9 +181,13 @@
     "products": {
       "45996": {
         "name": "COLLISTAR Crio‑Gel",
-        "description": "Охлаждающий антицеллюлитный гель, который помогает уменьшить отёчность, улучшить микроциркуляцию и повысить упругость кожи. Благодаря криоэффекту дарит ощущение свежести и лёгкости, способствует уменьшению видимости целлюлита и делает кожу более гладкой и подтянутой. Идеально подходит в качестве дополнения к антицеллюлитным и лимфодренажным процедурам.",
+        "description": "Охолоджувальний антицелюлітний гель, який допомагає зменшити набряклість, покращити мікроциркуляцію та підвищити пружність шкіри. Завдяки кріоефекту дарує відчуття свіжості й легкості, сприяє зменшенню видимості целюліту та робить шкіру більш гладкою й підтягнутою. Ідеально підходить як доповнення до антицелюлітних і лімфодренажних процедур.",
         "volume": "400 ml",
         "composition": "Ingredients: Aqua, Alcohol Denat., Menthol, C15-19 Alkane, Menthyl Lactate, Sodium Acrylate/Sodium Acryloyldimethyl Taurate Copolymer, Caffeine, Parfum, Polyacrylate Crosspolymer-6, Polyglyceryl-6 Laurate, Schinus Terebinthifolius Seed Extract, Polyglycerin-6, Sodium Hydroxide, Methyl Diisopropyl Propionamide, Sorbitan Oleate, Citrus Aurantium Dulcis Peel Extract, Cinnamomum Zeylanicum Bark Extract, Sorbitan Isostearate, Aesculus Hippocastanum Seed Extract, Shikimic Acid, Cupressus Sempervirens Leaf Oil, T-Butyl Alcohol, Coffea Arabica Seed Extract, Lecithin, Ci 28440, Ci 19140, Potassium Sorbate, Sodium Benzoate, Citric Acid, Ci 42090, Pinene, Benzyl Salicylate, Citronellol, Geraniol, Hexyl Cinnamal, Limonene, Linalool, Citrus Aurantium Peel Oil, Geranyl Acetate, Linalyl Acetate, Terpineol, Vanillin."
+      },
+      "47843": {
+        "name": "REFRESHING BODY BANDAGE (РОЗМАРИН И ШАЛФЕЙ)",
+        "description": "Пов'язка, насичена рідиною та багата на активні речовини, має охолоджувальну та знеболювальну дію. Ефірні олії розмарину, шавлії та м'яти забезпечують приємний охолоджувальний ефект, полегшення та легкість. Алое й ромашка сприяють добробуту ніг завдяки заспокійливим властивостям."
       }
     }
   },

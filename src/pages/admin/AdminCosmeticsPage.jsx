@@ -14,11 +14,15 @@ import {
 import { adminRu } from "../../admin/adminStrings";
 import {
   CATEGORY_KEYS,
+  formatCosmeticVolume,
   generateCosmeticNumericId,
   getProductImageSurfaceClass,
   MAX_FEATURED_COSMETICS,
+  normalizeCosmeticCopy,
   normalizeFeaturedCosmeticIds,
+  parseCosmeticVolume,
   PLACEHOLDER_GRADIENTS,
+  sanitizeCosmeticsProductsDraft,
   usesTransparentProductPhoto,
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
@@ -39,10 +43,6 @@ import {
   adminInputClass,
 } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
-import {
-  normalizeCosmeticCopy,
-  sanitizeCosmeticsProductsDraft,
-} from "../../components/CosmeticsSection/cosmeticsShared";
 
 const PRODUCT_CATEGORIES = CATEGORY_KEYS.filter((key) => key !== "all");
 const STATUS_TIMEOUT_MS = 4000;
@@ -502,13 +502,47 @@ export default function AdminCosmeticsPage() {
                     />
                   </AdminField>
                   <AdminField label={adminRu.cosmetics.volume}>
-                    <input
-                      value={texts.volume ?? ""}
-                      readOnly={!isAuthoring}
-                      onChange={(e) => isAuthoring && updateText(item.id, { volume: e.target.value })}
-                      placeholder="400 ml или 200 g"
-                      className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
-                    />
+                    {(() => {
+                      const volumeParts = parseCosmeticVolume(texts.volume ?? "");
+                      const setVolumeParts = (next) => {
+                        if (!isAuthoring) return;
+                        updateText(item.id, {
+                          volume: formatCosmeticVolume(next),
+                        });
+                      };
+
+                      return (
+                        <div className="grid grid-cols-[minmax(0,1fr)_88px] gap-2">
+                          <input
+                            inputMode="decimal"
+                            value={volumeParts.amount}
+                            readOnly={!isAuthoring}
+                            onChange={(e) =>
+                              setVolumeParts({
+                                amount: e.target.value,
+                                unit: volumeParts.unit,
+                              })
+                            }
+                            placeholder="400"
+                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                          />
+                          <select
+                            value={volumeParts.unit}
+                            disabled={!isAuthoring}
+                            onChange={(e) =>
+                              setVolumeParts({
+                                amount: volumeParts.amount,
+                                unit: e.target.value,
+                              })
+                            }
+                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                          >
+                            <option value="ml">ml</option>
+                            <option value="g">g</option>
+                          </select>
+                        </div>
+                      );
+                    })()}
                   </AdminField>
                   <div className="sm:col-span-2">
                     <AdminField label={adminRu.cosmetics.productDescription}>

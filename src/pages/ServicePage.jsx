@@ -3,11 +3,11 @@ import { Helmet } from "react-helmet";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import Container from "../ui/Container";
-import Button from "../ui/Button";
+import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { isImageRef } from "../admin/siteImages";
-import { BOOKSY_URL, SITE_URL } from "../constants/theme";
+import { SITE_URL } from "../constants/theme";
 
 function resolveOgImage(image) {
   if (!image || isImageRef(image) || image.startsWith("data:")) {
@@ -91,7 +91,7 @@ export default function ServicePage({ service }) {
                 <p className="mt-4 text-sm font-bold text-gold">{t("servicePage.discount", { percent: service.discount })}</p>
               )}
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button href={BOOKSY_URL} size="lg">{t("servicePage.book")}</Button>
+                <BookVisitButton size="lg">{t("servicePage.book")}</BookVisitButton>
                 <Link to="/#services" className="inline-flex min-h-[52px] items-center justify-center rounded-pill border border-border/20 px-8 text-xs font-bold uppercase tracking-[0.12em] text-milk transition hover:border-gold hover:text-gold">
                   {t("servicePage.backToServices")}
                 </Link>

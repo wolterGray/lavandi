@@ -1,3 +1,4 @@
+import { formatCosmeticVolume } from "../components/CosmeticsSection/cosmeticsShared";
 import { SITE_LANG_CODES } from "./siteContent";
 
 const MYMEMORY_URL = "https://api.mymemory.translated.net/get";
@@ -7,7 +8,7 @@ const MAX_CHUNK = 420;
 const LANGPAIR = {
   pl: "ru|pl",
   en: "ru|en",
-  uk: "ru|uk",
+  uk: "pl|uk",
 };
 
 let lastRequestAt = 0;
@@ -35,7 +36,36 @@ function chunkText(text) {
   return parts;
 }
 
-async function translateChunk(text, targetLang) {
+function postProcessTranslation(text, lang) {
+  if (!text) return text;
+
+  let result = text
+    .replace(/\s+'\s+/g, "'")
+    .replace(/\s+’\s+/g, "'")
+    .replace(/\s+'\s+/g, "'");
+
+  if (lang === "uk") {
+    result = result
+      .replace(/\bсприяти\b/gi, "сприяють")
+      .replace(/\bгарантування\b/gi, "забезпечують")
+      .replace(/\bвластивостей\b/gi, "властивостям")
+      .replace(/\bбагатий діючими\b/gi, "багата на активні")
+      .replace(/\bмає охолодження\b/gi, "має охолоджувальну")
+      .replace(/\bзавдяки його заспокійливому\b/gi, "завдяки заспокійливим");
+  }
+
+  if (lang === "pl") {
+    result = result
+      .replace(/\bpromowanie\b/gi, "wspierają")
+      .replace(/\bgwarancja odciążenia\b/gi, "gwarantują ulgę")
+      .replace(/\bi działanie przeciwbólowe\b/gi, "i działaniem przeciwbólowym")
+      .replace(/\buspokajającemu\s+właściwości\b/gi, "łagodzącym właściwościom");
+  }
+
+  return result.trim();
+}
+
+async function translateChunk(text, langPair) {
   const trimmed = text?.trim();
   if (!trimmed) return "";
 
@@ -44,10 +74,9 @@ async function translateChunk(text, targetLang) {
   if (wait > 0) await sleep(wait);
   lastRequestAt = Date.now();
 
-  const pair = LANGPAIR[targetLang];
-  if (!pair) return trimmed;
+  if (!langPair) return trimmed;
 
-  const url = `${MYMEMORY_URL}?q=${encodeURIComponent(trimmed)}&langpair=${pair}`;
+  const url = `${MYMEMORY_URL}?q=${encodeURIComponent(trimmed)}&langpair=${langPair}`;
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Перевод недоступен (${response.status})`);
 
@@ -58,23 +87,49 @@ async function translateChunk(text, targetLang) {
   return translated;
 }
 
-export async function translateText(text, targetLang) {
+async function translateViaPair(text, langPair) {
   const chunks = chunkText(String(text ?? ""));
   const parts = [];
   for (const chunk of chunks) {
-    parts.push(await translateChunk(chunk, targetLang));
+    parts.push(await translateChunk(chunk, langPair));
   }
   return parts.join(" ").trim();
 }
 
+async function translateParagraph(text, targetLang) {
+  if (targetLang === "uk") {
+    const polish = await translateViaPair(text, LANGPAIR.pl);
+    return translateViaPair(polish, LANGPAIR.uk);
+  }
+
+  return translateViaPair(text, LANGPAIR[targetLang]);
+}
+
+export async function translateText(text, targetLang) {
+  const source = String(text ?? "");
+  if (!source.trim()) return "";
+
+  const lines = source.split("\n");
+  const translated = [];
+
+  for (const line of lines) {
+    if (!line.trim()) {
+      translated.push("");
+      continue;
+    }
+    translated.push(await translateParagraph(line, targetLang));
+  }
+
+  return postProcessTranslation(translated.join("\n"), targetLang);
+}
+
 export async function translateCosmeticCopy(fields, targetLang) {
-  const volume = fields.volume?.trim();
-  const shouldTranslateVolume = volume && /[а-яА-ЯёЁa-zA-Z]/.test(volume);
+  const volume = formatCosmeticVolume(fields.volume ?? "");
 
   return {
     name: String(fields.name ?? "").trim(),
     description: await translateText(fields.description, targetLang),
-    volume: shouldTranslateVolume ? await translateText(volume, targetLang) : (volume ?? ""),
+    volume,
     composition: await translateText(fields.composition, targetLang),
   };
 }

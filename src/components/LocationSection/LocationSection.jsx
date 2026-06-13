@@ -1,7 +1,7 @@
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
-import Button from "../../ui/Button";
+import BookVisitButton from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
 import { VisitStepIcon } from "../../constants/icons.jsx";
@@ -50,7 +50,7 @@ export default function LocationSection() {
                 <a href={`tel:${contact.phone}`} className="font-bold text-gold transition hover:text-gold-dark">{contact.phoneDisplay}</a>
                 <a href={contact.mapsLink} target="_blank" rel="noopener noreferrer" className="font-bold text-gold transition hover:text-gold-dark">{visit.maps}</a>
               </div>
-              <Button href={contact.booksyUrl} size="sm" className="mt-4">{visit.book}</Button>
+              <BookVisitButton size="sm" className="mt-4">{visit.book}</BookVisitButton>
             </div>
           </ScrollAnimationWrapper>
           <ScrollAnimationWrapper direction="right" delay={0.1}>
