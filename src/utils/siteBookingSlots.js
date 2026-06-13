@@ -5,9 +5,14 @@ const CRM_TO_SITE_MASTER = {
 
 export const formatSiteBookingSlotLabel = (slot, t) => {
   const masterLabel = CRM_TO_SITE_MASTER[slot.master] || slot.master;
+  const priceLabel =
+    slot.finalPrice !== undefined && slot.finalPrice !== null
+      ? t("booking.form.slotPrice", {price: slot.finalPrice})
+      : "";
 
   return t("booking.form.slotOption", {
     master: masterLabel,
+    price: priceLabel,
     time: slot.startTime,
   });
 };

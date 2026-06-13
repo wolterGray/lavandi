@@ -12,25 +12,39 @@ import {
   parseSiteBookingSlotValue,
 } from "../../utils/siteBookingSlots";
 import { BOOKSY_URL } from "../../constants/theme";
+import SiteBookingSuccess from "./SiteBookingSuccess";
 
 const todayInputDate = () => new Date().toISOString().slice(0, 10);
 
 const normalizePhone = (value) => String(value ?? "").replace(/\D/g, "");
 
+const initialFormState = () => ({
+  serviceSlug: "",
+  durationMinutes: "",
+  preferredMaster: "",
+  preferredDate: "",
+  selectedSlot: "",
+});
+
 export default function SiteBookingForm() {
   const { lang, localizedServices, t } = useTranslation();
   const { team } = useContent();
-  const [serviceSlug, setServiceSlug] = useState("");
-  const [durationMinutes, setDurationMinutes] = useState("");
-  const [preferredMaster, setPreferredMaster] = useState("");
-  const [preferredDate, setPreferredDate] = useState("");
-  const [selectedSlot, setSelectedSlot] = useState("");
+  const [formState, setFormState] = useState(initialFormState);
   const [slots, setSlots] = useState([]);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [formKey, setFormKey] = useState(0);
+
+  const {
+    durationMinutes,
+    preferredDate,
+    preferredMaster,
+    selectedSlot,
+    serviceSlug,
+  } = formState;
 
   const selectedService = useMemo(
     () => localizedServices.find((service) => service.slug === serviceSlug) ?? null,
@@ -51,7 +65,7 @@ export default function SiteBookingForm() {
   useEffect(() => {
     if (!preferredDate || !durationMinutes) {
       setSlots([]);
-      setSelectedSlot("");
+      setFormState((current) => ({ ...current, selectedSlot: "" }));
       setSlotsError("");
       return undefined;
     }
@@ -61,13 +75,15 @@ export default function SiteBookingForm() {
     const timer = window.setTimeout(async () => {
       setSlotsLoading(true);
       setSlotsError("");
-      setSelectedSlot("");
+      setFormState((current) => ({ ...current, selectedSlot: "" }));
 
       try {
         const data = await fetchSiteBookingAvailability({
           durationMinutes: Number(durationMinutes),
           preferredDate,
           preferredMaster,
+          serviceName: selectedService?.title ?? "",
+          serviceSlug: selectedService?.slug ?? serviceSlug,
         });
 
         if (cancelled) {
@@ -93,19 +109,39 @@ export default function SiteBookingForm() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [durationMinutes, preferredDate, preferredMaster, t]);
+  }, [durationMinutes, preferredDate, preferredMaster, selectedService, t]);
+
+  const selectedSlotData = useMemo(() => {
+    if (!selectedSlot) {
+      return null;
+    }
+
+    return (
+      slots.find((slot) => buildSiteBookingSlotValue(slot) === selectedSlot) ?? null
+    );
+  }, [selectedSlot, slots]);
+
+  const resetForm = () => {
+    setFormState(initialFormState());
+    setSlots([]);
+    setSlotsError("");
+    setError("");
+    setFormKey((current) => current + 1);
+  };
 
   const handleServiceChange = (nextSlug) => {
-    setServiceSlug(nextSlug);
     const service = localizedServices.find((item) => item.slug === nextSlug);
-    setDurationMinutes(service?.time?.[1] ? String(service.time[1]) : "");
-    setSelectedSlot("");
+    setFormState((current) => ({
+      ...current,
+      serviceSlug: nextSlug,
+      durationMinutes: service?.time?.[1] ? String(service.time[1]) : "",
+      selectedSlot: "",
+    }));
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
-    setSuccess(false);
 
     const formData = new FormData(event.currentTarget);
     const clientName = String(formData.get("clientName") ?? "").trim();
@@ -157,14 +193,8 @@ export default function SiteBookingForm() {
         locale: lang,
       });
 
-      setSuccess(true);
-      event.currentTarget.reset();
-      setServiceSlug("");
-      setDurationMinutes("");
-      setPreferredMaster("");
-      setPreferredDate("");
-      setSelectedSlot("");
-      setSlots([]);
+      resetForm();
+      setShowSuccess(true);
     } catch (submitError) {
       setError(submitError?.message || t("booking.form.errorSubmit"));
     } finally {
@@ -172,9 +202,23 @@ export default function SiteBookingForm() {
     }
   };
 
+  if (showSuccess) {
+    return (
+      <div className="mx-auto mt-10 max-w-2xl text-left">
+        <SiteBookingSuccess
+          t={t}
+          onClose={() => {
+            setShowSuccess(false);
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="mx-auto mt-10 max-w-2xl text-left">
       <form
+        key={formKey}
         className="rounded-card border border-white/15 bg-void/55 p-6 backdrop-blur-sm sm:p-8"
         onSubmit={handleSubmit}
       >
@@ -229,8 +273,11 @@ export default function SiteBookingForm() {
               required
               value={durationMinutes}
               onChange={(event) => {
-                setDurationMinutes(event.target.value);
-                setSelectedSlot("");
+                setFormState((current) => ({
+                  ...current,
+                  durationMinutes: event.target.value,
+                  selectedSlot: "",
+                }));
               }}
             >
               <option value="">{t("booking.form.durationPlaceholder")}</option>
@@ -251,8 +298,11 @@ export default function SiteBookingForm() {
                 className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
                 value={preferredMaster}
                 onChange={(event) => {
-                  setPreferredMaster(event.target.value);
-                  setSelectedSlot("");
+                  setFormState((current) => ({
+                    ...current,
+                    preferredMaster: event.target.value,
+                    selectedSlot: "",
+                  }));
                 }}
               >
                 <option value="">{t("booking.form.masterAny")}</option>
@@ -273,8 +323,11 @@ export default function SiteBookingForm() {
               type="date"
               value={preferredDate}
               onChange={(event) => {
-                setPreferredDate(event.target.value);
-                setSelectedSlot("");
+                setFormState((current) => ({
+                  ...current,
+                  preferredDate: event.target.value,
+                  selectedSlot: "",
+                }));
               }}
             />
           </label>
@@ -285,7 +338,12 @@ export default function SiteBookingForm() {
               disabled={!preferredDate || !durationMinutes || slotsLoading}
               required
               value={selectedSlot}
-              onChange={(event) => setSelectedSlot(event.target.value)}
+              onChange={(event) => {
+                setFormState((current) => ({
+                  ...current,
+                  selectedSlot: event.target.value,
+                }));
+              }}
             >
               <option value="">
                 {slotsLoading
@@ -303,6 +361,57 @@ export default function SiteBookingForm() {
               <small className="text-white/70">{t("booking.form.noSlots")}</small>
             ) : null}
           </label>
+          {selectedSlotData ? (
+            <div className="rounded-lg border border-white/15 bg-void/45 p-4 sm:col-span-2">
+              <p className="mb-3 text-sm font-medium text-white">{t("booking.form.pricingTitle")}</p>
+              <table className="w-full text-sm text-white/85">
+                <tbody>
+                  <tr>
+                    <td className="py-1">{t("booking.form.pricingBase")}</td>
+                    <td className="py-1 text-right tabular-nums">
+                      {selectedSlotData.basePrice} {t("common.pln")}
+                    </td>
+                  </tr>
+                  {selectedSlotData.premiumPercent > 0 ? (
+                    <tr>
+                      <td className="py-1">
+                        {t("booking.form.pricingPremium", {
+                          percent: selectedSlotData.premiumPercent,
+                        })}
+                      </td>
+                      <td className="py-1 text-right tabular-nums">
+                        +{selectedSlotData.premiumAmount} {t("common.pln")}
+                      </td>
+                    </tr>
+                  ) : null}
+                  <tr>
+                    <td className="py-1">{t("booking.form.pricingSubtotal")}</td>
+                    <td className="py-1 text-right tabular-nums">
+                      {selectedSlotData.subtotal} {t("common.pln")}
+                    </td>
+                  </tr>
+                  {selectedSlotData.discountPercent > 0 ? (
+                    <tr>
+                      <td className="py-1">
+                        {t("booking.form.pricingDiscount", {
+                          percent: selectedSlotData.discountPercent,
+                        })}
+                      </td>
+                      <td className="py-1 text-right tabular-nums">
+                        −{selectedSlotData.discountAmount} {t("common.pln")}
+                      </td>
+                    </tr>
+                  ) : null}
+                  <tr className="border-t border-white/15 text-white">
+                    <td className="pt-2 font-medium">{t("booking.form.pricingTotal")}</td>
+                    <td className="pt-2 text-right font-medium tabular-nums">
+                      {selectedSlotData.finalPrice} {t("common.pln")}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          ) : null}
           <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
             <span>{t("booking.form.note")}</span>
             <textarea
@@ -315,9 +424,6 @@ export default function SiteBookingForm() {
         </div>
 
         {error ? <p className="mt-4 text-sm text-red-300">{error}</p> : null}
-        {success ? (
-          <p className="mt-4 text-sm text-emerald-200">{t("booking.form.success")}</p>
-        ) : null}
 
         <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
           <Button disabled={submitting || slotsLoading} size="lg" type="submit">
