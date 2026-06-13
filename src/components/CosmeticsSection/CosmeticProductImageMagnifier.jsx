@@ -7,10 +7,10 @@ import {
   PLACEHOLDER_GRADIENTS,
 } from "./cosmeticsShared";
 
-const ZOOM_FACTOR = 2.4;
-const LENS_SIZE = 112;
-const ZOOM_WINDOW_SIZE = 220;
-const CURSOR_GAP = 20;
+const ZOOM_FACTOR = 2.6;
+const LENS_SIZE = 72;
+const ZOOM_WINDOW_SIZE = 140;
+const CURSOR_GAP = 14;
 
 function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
@@ -149,7 +149,7 @@ export default function CosmeticProductImageMagnifier({
       ? createPortal(
           <div
             aria-hidden="true"
-            className="pointer-events-none fixed z-[120] overflow-hidden rounded-full border-2 border-gold/50 bg-card shadow-[0_16px_48px_rgba(0,0,0,0.45)]"
+            className="pointer-events-none fixed z-[120] overflow-hidden rounded-full border border-gold/50 bg-card shadow-[0_10px_28px_rgba(0,0,0,0.4)]"
             style={{
               width: ZOOM_WINDOW_SIZE,
               height: ZOOM_WINDOW_SIZE,
@@ -192,16 +192,16 @@ export default function CosmeticProductImageMagnifier({
                 <>
                   <div
                     aria-hidden="true"
-                    className={`pointer-events-none absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full border border-gold/25 bg-void/55 text-gold transition-opacity duration-200 ${
+                    className={`pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full border border-gold/25 bg-void/55 text-gold transition-opacity duration-200 ${
                       active ? "opacity-0" : "opacity-100"
                     }`}
                   >
-                    <ZoomIn className="h-4 w-4" strokeWidth={2} />
+                    <ZoomIn className="h-3.5 w-3.5" strokeWidth={2} />
                   </div>
                   {active ? (
                     <div
                       aria-hidden="true"
-                      className="pointer-events-none absolute rounded-full border-2 border-gold/70 bg-gold/10 shadow-[0_0_0_1px_rgba(255,255,255,0.12)_inset]"
+                      className="pointer-events-none absolute rounded-full border border-gold/70 bg-gold/10 shadow-[0_0_0_1px_rgba(255,255,255,0.12)_inset]"
                       style={{
                         width: LENS_SIZE,
                         height: LENS_SIZE,
