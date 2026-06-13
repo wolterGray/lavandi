@@ -437,7 +437,11 @@
       "master": "Preferred therapist",
       "masterAny": "Any therapist",
       "date": "Preferred date",
-      "time": "Preferred time",
+      "time": "Available time",
+      "slotPlaceholder": "Choose an available slot",
+      "slotsLoading": "Checking availability…",
+      "noSlots": "No available slots on this date.",
+      "slotOption": "{{time}} · {{master}}",
       "note": "Notes (optional)",
       "submit": "Send booking request",
       "submitting": "Sending…",
@@ -447,6 +451,8 @@
       "errorService": "Please choose a service.",
       "errorDuration": "Please choose a duration.",
       "errorDateTime": "Please choose a date and time.",
+      "errorSlot": "Please choose an available slot from the list.",
+      "errorSlots": "Could not load available time slots.",
       "errorSubmit": "Could not submit the form. Please try again."
     }
   },

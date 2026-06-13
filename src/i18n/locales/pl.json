@@ -437,7 +437,11 @@
       "master": "Preferowany specjalista",
       "masterAny": "Dowolny specjalista",
       "date": "Preferowana data",
-      "time": "Preferowana godzina",
+      "time": "Dostępny termin",
+      "slotPlaceholder": "Wybierz wolny termin",
+      "slotsLoading": "Sprawdzanie dostępności…",
+      "noSlots": "Brak wolnych terminów w tym dniu.",
+      "slotOption": "{{time}} · {{master}}",
       "note": "Uwagi (opcjonalnie)",
       "submit": "Wyślij prośbę o termin",
       "submitting": "Wysyłanie…",
@@ -447,6 +451,8 @@
       "errorService": "Wybierz usługę.",
       "errorDuration": "Wybierz czas trwania.",
       "errorDateTime": "Wybierz datę i godzinę.",
+      "errorSlot": "Wybierz dostępny termin z listy.",
+      "errorSlots": "Nie udało się sprawdzić dostępności terminów.",
       "errorSubmit": "Nie udało się wysłać formularza. Spróbuj ponownie."
     }
   },

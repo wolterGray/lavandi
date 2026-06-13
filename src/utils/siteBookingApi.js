@@ -1,6 +1,6 @@
 import { isSupabaseConfigured } from "../lib/supabase";
 
-export async function submitSiteBookingRequest(payload) {
+const getSupabaseConfig = () => {
   const url = import.meta.env.VITE_SUPABASE_URL;
   const key =
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
@@ -10,20 +10,45 @@ export async function submitSiteBookingRequest(payload) {
     throw new Error("Supabase is not configured");
   }
 
-  const response = await fetch(`${url}/functions/v1/site-booking-submit`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${key}`,
-    },
-    body: JSON.stringify(payload),
-  });
+  return { key, url };
+};
+
+const buildHeaders = (key) => ({
+  "Content-Type": "application/json",
+  Authorization: `Bearer ${key}`,
+  apikey: key,
+});
+
+const invokeSiteBookingFunction = async (functionName, payload) => {
+  const { key, url } = getSupabaseConfig();
+
+  let response;
+
+  try {
+    response = await fetch(`${url}/functions/v1/${functionName}`, {
+      method: "POST",
+      headers: buildHeaders(key),
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error(
+      "Failed to fetch. Deploy site-booking-submit and site-booking-availability in Supabase.",
+    );
+  }
 
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data?.error || "Submit failed");
+    throw new Error(data?.error || "Request failed");
   }
 
   return data;
+};
+
+export async function fetchSiteBookingAvailability(payload) {
+  return invokeSiteBookingFunction("site-booking-availability", payload);
+}
+
+export async function submitSiteBookingRequest(payload) {
+  return invokeSiteBookingFunction("site-booking-submit", payload);
 }

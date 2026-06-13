@@ -1,8 +1,16 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useContent } from "../../context/ContentProvider";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import Button from "../../ui/Button";
-import { submitSiteBookingRequest } from "../../utils/siteBookingApi";
+import {
+  fetchSiteBookingAvailability,
+  submitSiteBookingRequest,
+} from "../../utils/siteBookingApi";
+import {
+  buildSiteBookingSlotValue,
+  formatSiteBookingSlotLabel,
+  parseSiteBookingSlotValue,
+} from "../../utils/siteBookingSlots";
 import { BOOKSY_URL } from "../../constants/theme";
 
 const todayInputDate = () => new Date().toISOString().slice(0, 10);
@@ -15,6 +23,11 @@ export default function SiteBookingForm() {
   const [serviceSlug, setServiceSlug] = useState("");
   const [durationMinutes, setDurationMinutes] = useState("");
   const [preferredMaster, setPreferredMaster] = useState("");
+  const [preferredDate, setPreferredDate] = useState("");
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [slots, setSlots] = useState([]);
+  const [slotsLoading, setSlotsLoading] = useState(false);
+  const [slotsError, setSlotsError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -35,10 +48,58 @@ export default function SiteBookingForm() {
     }));
   }, [selectedService]);
 
+  useEffect(() => {
+    if (!preferredDate || !durationMinutes) {
+      setSlots([]);
+      setSelectedSlot("");
+      setSlotsError("");
+      return undefined;
+    }
+
+    let cancelled = false;
+
+    const timer = window.setTimeout(async () => {
+      setSlotsLoading(true);
+      setSlotsError("");
+      setSelectedSlot("");
+
+      try {
+        const data = await fetchSiteBookingAvailability({
+          durationMinutes: Number(durationMinutes),
+          preferredDate,
+          preferredMaster,
+        });
+
+        if (cancelled) {
+          return;
+        }
+
+        setSlots(Array.isArray(data.slots) ? data.slots : []);
+      } catch (loadError) {
+        if (cancelled) {
+          return;
+        }
+
+        setSlots([]);
+        setSlotsError(loadError?.message || t("booking.form.errorSlots"));
+      } finally {
+        if (!cancelled) {
+          setSlotsLoading(false);
+        }
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [durationMinutes, preferredDate, preferredMaster, t]);
+
   const handleServiceChange = (nextSlug) => {
     setServiceSlug(nextSlug);
     const service = localizedServices.find((item) => item.slug === nextSlug);
     setDurationMinutes(service?.time?.[1] ? String(service.time[1]) : "");
+    setSelectedSlot("");
   };
 
   const handleSubmit = async (event) => {
@@ -50,9 +111,9 @@ export default function SiteBookingForm() {
     const clientName = String(formData.get("clientName") ?? "").trim();
     const clientPhone = normalizePhone(formData.get("clientPhone"));
     const clientEmail = String(formData.get("clientEmail") ?? "").trim();
-    const preferredDate = String(formData.get("preferredDate") ?? "").trim();
-    const preferredTime = String(formData.get("preferredTime") ?? "").trim();
     const note = String(formData.get("note") ?? "").trim();
+    const { master: slotMaster, startTime: preferredTime } =
+      parseSiteBookingSlotValue(selectedSlot);
 
     if (clientName.length < 2) {
       setError(t("booking.form.errorName"));
@@ -75,7 +136,7 @@ export default function SiteBookingForm() {
     }
 
     if (!preferredDate || !preferredTime) {
-      setError(t("booking.form.errorDateTime"));
+      setError(t("booking.form.errorSlot"));
       return;
     }
 
@@ -88,7 +149,7 @@ export default function SiteBookingForm() {
         clientEmail,
         serviceSlug: selectedService.slug,
         serviceName: selectedService.title,
-        preferredMaster,
+        preferredMaster: preferredMaster || slotMaster,
         preferredDate,
         preferredTime,
         durationMinutes: Number(durationMinutes),
@@ -101,6 +162,9 @@ export default function SiteBookingForm() {
       setServiceSlug("");
       setDurationMinutes("");
       setPreferredMaster("");
+      setPreferredDate("");
+      setSelectedSlot("");
+      setSlots([]);
     } catch (submitError) {
       setError(submitError?.message || t("booking.form.errorSubmit"));
     } finally {
@@ -164,7 +228,10 @@ export default function SiteBookingForm() {
               className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
               required
               value={durationMinutes}
-              onChange={(event) => setDurationMinutes(event.target.value)}
+              onChange={(event) => {
+                setDurationMinutes(event.target.value);
+                setSelectedSlot("");
+              }}
             >
               <option value="">{t("booking.form.durationPlaceholder")}</option>
               {durationOptions.map((option) => (
@@ -183,7 +250,10 @@ export default function SiteBookingForm() {
               <select
                 className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
                 value={preferredMaster}
-                onChange={(event) => setPreferredMaster(event.target.value)}
+                onChange={(event) => {
+                  setPreferredMaster(event.target.value);
+                  setSelectedSlot("");
+                }}
               >
                 <option value="">{t("booking.form.masterAny")}</option>
                 {team.map((member) => (
@@ -199,19 +269,39 @@ export default function SiteBookingForm() {
             <input
               className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
               min={todayInputDate()}
-              name="preferredDate"
               required
               type="date"
+              value={preferredDate}
+              onChange={(event) => {
+                setPreferredDate(event.target.value);
+                setSelectedSlot("");
+              }}
             />
           </label>
           <label className="flex flex-col gap-2 text-sm text-white/85">
             <span>{t("booking.form.time")}</span>
-            <input
+            <select
               className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
-              name="preferredTime"
+              disabled={!preferredDate || !durationMinutes || slotsLoading}
               required
-              type="time"
-            />
+              value={selectedSlot}
+              onChange={(event) => setSelectedSlot(event.target.value)}
+            >
+              <option value="">
+                {slotsLoading
+                  ? t("booking.form.slotsLoading")
+                  : t("booking.form.slotPlaceholder")}
+              </option>
+              {slots.map((slot) => (
+                <option key={buildSiteBookingSlotValue(slot)} value={buildSiteBookingSlotValue(slot)}>
+                  {formatSiteBookingSlotLabel(slot, t)}
+                </option>
+              ))}
+            </select>
+            {slotsError ? <small className="text-red-300">{slotsError}</small> : null}
+            {!slotsLoading && preferredDate && durationMinutes && slots.length === 0 && !slotsError ? (
+              <small className="text-white/70">{t("booking.form.noSlots")}</small>
+            ) : null}
           </label>
           <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
             <span>{t("booking.form.note")}</span>
@@ -230,7 +320,7 @@ export default function SiteBookingForm() {
         ) : null}
 
         <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
-          <Button disabled={submitting} size="lg" type="submit">
+          <Button disabled={submitting || slotsLoading} size="lg" type="submit">
             {submitting ? t("booking.form.submitting") : t("booking.form.submit")}
           </Button>
           <Button href={BOOKSY_URL} size="lg" variant="outlineLight">
