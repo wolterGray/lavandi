@@ -1,8 +1,7 @@
 import Container from "../../ui/Container";
-import Button from "../../ui/Button";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL } from "../../constants/theme";
+import SiteBookingForm from "./SiteBookingForm";
 
 export default function BookingSection() {
   const { t } = useTranslation();
@@ -22,9 +21,7 @@ export default function BookingSection() {
             {t("booking.title")}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">{t("booking.subtitle")}</p>
-          <div className="mt-8 flex justify-center">
-            <Button href={BOOKSY_URL} size="lg">{t("booking.cta")}</Button>
-          </div>
+          <SiteBookingForm />
         </ScrollAnimationWrapper>
       </Container>
     </section>

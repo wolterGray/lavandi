@@ -423,8 +423,32 @@
   "booking": {
     "label": "Rezerwacja",
     "title": "Zatrzymaj się. Oddychaj. Zarezerwuj chwilę tylko dla siebie.",
-    "subtitle": "Do -18% na wybrane rytuały. Terminy dostępne online w Booksy.",
-    "cta": "Zarezerwuj w Booksy"
+    "subtitle": "Wyślij prośbę o termin — potwierdzimy ją telefonicznie. Możesz też zarezerwować od razu w Booksy.",
+    "cta": "Zarezerwuj w Booksy",
+    "form": {
+      "name": "Imię i nazwisko",
+      "phone": "Telefon",
+      "email": "E-mail (opcjonalnie)",
+      "service": "Usługa",
+      "servicePlaceholder": "Wybierz usługę",
+      "duration": "Czas trwania",
+      "durationPlaceholder": "Wybierz czas",
+      "durationOption": "{{minutes}} min · {{price}} zł",
+      "master": "Preferowany specjalista",
+      "masterAny": "Dowolny specjalista",
+      "date": "Preferowana data",
+      "time": "Preferowana godzina",
+      "note": "Uwagi (opcjonalnie)",
+      "submit": "Wyślij prośbę o termin",
+      "submitting": "Wysyłanie…",
+      "success": "Dziękujemy! Odezwiemy się wkrótce, aby potwierdzić termin.",
+      "errorName": "Podaj imię i nazwisko.",
+      "errorPhone": "Podaj poprawny numer telefonu.",
+      "errorService": "Wybierz usługę.",
+      "errorDuration": "Wybierz czas trwania.",
+      "errorDateTime": "Wybierz datę i godzinę.",
+      "errorSubmit": "Nie udało się wysłać formularza. Spróbuj ponownie."
+    }
   },
   "footer": {
     "description": "Premium studio masażu w sercu Warszawy. Harmonia, regeneracja i indywidualna troska.",

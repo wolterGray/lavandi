@@ -423,8 +423,32 @@
   "booking": {
     "label": "Booking",
     "title": "Pause. Breathe. Book a moment just for yourself.",
-    "subtitle": "Up to 18% off selected rituals. Available times online on Booksy.",
-    "cta": "Book on Booksy"
+    "subtitle": "Send a booking request — we will confirm by phone. You can also book instantly on Booksy.",
+    "cta": "Book on Booksy",
+    "form": {
+      "name": "Full name",
+      "phone": "Phone",
+      "email": "Email (optional)",
+      "service": "Service",
+      "servicePlaceholder": "Choose a service",
+      "duration": "Duration",
+      "durationPlaceholder": "Choose duration",
+      "durationOption": "{{minutes}} min · {{price}} PLN",
+      "master": "Preferred therapist",
+      "masterAny": "Any therapist",
+      "date": "Preferred date",
+      "time": "Preferred time",
+      "note": "Notes (optional)",
+      "submit": "Send booking request",
+      "submitting": "Sending…",
+      "success": "Thank you! We will contact you shortly to confirm your appointment.",
+      "errorName": "Please enter your full name.",
+      "errorPhone": "Please enter a valid phone number.",
+      "errorService": "Please choose a service.",
+      "errorDuration": "Please choose a duration.",
+      "errorDateTime": "Please choose a date and time.",
+      "errorSubmit": "Could not submit the form. Please try again."
+    }
   },
   "footer": {
     "description": "Premium massage studio in the heart of Warsaw. Harmony, restoration, and individual care.",
