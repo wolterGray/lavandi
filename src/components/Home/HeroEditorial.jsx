@@ -1,5 +1,5 @@
 import { Link } from "react-scroll";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from "../../i18n/LanguageProvider";
 import BookVisitButton from "../../ui/BookVisitButton";
 
 export default function HeroEditorial({ image = "/massage/1.webp" }) {

@@ -3,6 +3,7 @@ import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import BookVisitButton from "../../ui/BookVisitButton";
+import { useTranslation } from "../../i18n/LanguageProvider";
 
 function getFromPrice(service) {
   const idx = service.time.indexOf(60) >= 0 ? service.time.indexOf(60) : 0;

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import BookVisitButton from "./BookVisitButton";
+import { useTranslation } from "../i18n/LanguageProvider";
 
 export default function StickyCta() {
   const { t } = useTranslation();
