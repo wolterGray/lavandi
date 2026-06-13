@@ -72,7 +72,7 @@ export async function translateCosmeticCopy(fields, targetLang) {
   const shouldTranslateVolume = volume && /[а-яА-ЯёЁa-zA-Z]/.test(volume);
 
   return {
-    name: await translateText(fields.name, targetLang),
+    name: String(fields.name ?? "").trim(),
     description: await translateText(fields.description, targetLang),
     volume: shouldTranslateVolume ? await translateText(volume, targetLang) : (volume ?? ""),
     composition: await translateText(fields.composition, targetLang),

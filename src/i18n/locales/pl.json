@@ -171,14 +171,12 @@
     "emailSubject": "Zapytanie o katalog produktów",
     "categories": {
       "all": "Wszystkie",
-      "oils": "Olejki do ciała",
-      "balms": "Balsamy",
-      "creams": "Kremy",
-      "scrubs": "Peelingi",
-      "aroma": "Aromaterapia",
-      "candles": "Świece",
-      "incense": "Kadzidła",
-      "home": "Rytuał domowy"
+      "candles-aroma": "Świece i aromaty",
+      "pro-cosmetics": "Kosmetyki profesjonalne",
+      "home-spa": "Domowe SPA",
+      "anti-cellulite": "Pielęgnacja antycellulitowa",
+      "gift-certificates": "Bony podarunkowe",
+      "nuar-premium": "Produkty premium NUAR"
     },
     "products": {
       "45996": {

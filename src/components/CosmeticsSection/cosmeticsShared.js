@@ -24,7 +24,42 @@ export const PLACEHOLDER_GRADIENTS = [
   "bg-[radial-gradient(ellipse_at_65%_60%,rgba(154,132,88,0.16)_0%,transparent_52%),radial-gradient(ellipse_at_10%_30%,rgba(16,14,20,0.7)_0%,transparent_55%)]",
 ];
 
-export const CATEGORY_KEYS = ["all", "oils", "balms", "creams", "scrubs", "aroma", "candles", "incense", "home"];
+export const PRODUCT_CATEGORY_KEYS = [
+  "candles-aroma",
+  "pro-cosmetics",
+  "home-spa",
+  "anti-cellulite",
+  "gift-certificates",
+  "nuar-premium",
+];
+
+export const CATEGORY_KEYS = ["all", ...PRODUCT_CATEGORY_KEYS];
+
+/** @deprecated old catalog slugs → new 6 categories */
+export const LEGACY_COSMETIC_CATEGORY_MAP = {
+  oils: "pro-cosmetics",
+  balms: "pro-cosmetics",
+  creams: "pro-cosmetics",
+  scrubs: "anti-cellulite",
+  aroma: "candles-aroma",
+  candles: "candles-aroma",
+  incense: "candles-aroma",
+  home: "home-spa",
+  wraps: "anti-cellulite",
+};
+
+export function normalizeCosmeticCategory(category) {
+  const key = String(category ?? "").trim();
+  if (PRODUCT_CATEGORY_KEYS.includes(key)) return key;
+  return LEGACY_COSMETIC_CATEGORY_MAP[key] ?? "pro-cosmetics";
+}
+
+export function normalizeCosmeticsList(products = cosmeticsBase) {
+  return products.map((product) => ({
+    ...product,
+    category: normalizeCosmeticCategory(product.category),
+  }));
+}
 
 export const MAX_FEATURED_COSMETICS = 3;
 
@@ -76,7 +111,10 @@ export function formatCosmeticVolume(volume) {
   const raw = String(volume ?? "").trim();
   if (!raw) return "";
   if (/ml|мл/i.test(raw)) return raw;
-  if (/^\d+([.,]\d+)?$/.test(raw)) return `${raw} ml`;
+  if (/(\d\s*(g|г)\b|\bgram)/i.test(raw)) return raw;
+  if (/^\d+([.,]\d+)?$/.test(raw)) {
+    return `${raw.replace(",", ".")} g`;
+  }
   return raw;
 }
 

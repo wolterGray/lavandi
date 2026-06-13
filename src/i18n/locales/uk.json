@@ -171,14 +171,12 @@
     "emailSubject": "Запит щодо каталогу товарів",
     "categories": {
       "all": "Усі",
-      "oils": "Олії для тіла",
-      "balms": "Бальзами",
-      "creams": "Креми",
-      "scrubs": "Скраби",
-      "aroma": "Ароматерапія",
-      "candles": "Свічки",
-      "incense": "Ароматичні палички",
-      "home": "Домашній ритуал"
+      "candles-aroma": "Свічки та аромати",
+      "pro-cosmetics": "Професійна косметика",
+      "home-spa": "Домашній SPA",
+      "anti-cellulite": "Антицелюлітний догляд",
+      "gift-certificates": "Подарункові сертифікати",
+      "nuar-premium": "Преміум товари NUAR"
     },
     "products": {
       "45996": {

@@ -14,6 +14,7 @@ import {
 } from "../admin/supabaseContent";
 import {
   getLocaleDefaults,
+  CMS_AUTHOR_LANG,
   localeDefaults,
   mergeLocaleBlock,
   mergeProductTexts,
@@ -28,7 +29,7 @@ import {
   fetchSiteImagesMap,
   resolveContentImages,
 } from "../admin/siteImages";
-import { normalizeCosmeticCopy } from "../components/CosmeticsSection/cosmeticsShared";
+import { normalizeCosmeticCopy, normalizeCosmeticsList } from "../components/CosmeticsSection/cosmeticsShared";
 import { isSupabaseConfigured } from "../lib/supabase";
 
 const ContentContext = createContext(null);
@@ -249,9 +250,18 @@ export function ContentProvider({ children }) {
         tagline: bundle.tagline ?? t(`cosmetics.products.${productId}.tagline`),
         brand: bundle.brand ?? t(`cosmetics.products.${productId}.brand`),
       });
-      return normalizeCosmeticCopy(mergeProductTexts(lang, productId, overrides, fallback));
+      const merged = normalizeCosmeticCopy(
+        mergeProductTexts(lang, productId, overrides, fallback),
+      );
+      const authorName = overrides?.locales?.[CMS_AUTHOR_LANG]?.cosmetics?.products?.[
+        productId
+      ]?.name?.trim();
+      if (authorName) {
+        merged.name = authorName;
+      }
+      return merged;
     },
-    [overrides]
+    [overrides],
   );
 
   const getTeamMemberContent = useCallback(
@@ -271,6 +281,7 @@ export function ContentProvider({ children }) {
   const value = useMemo(
     () => ({
       ...resolvedContent,
+      cosmetics: normalizeCosmeticsList(resolvedContent.cosmetics),
       overrides,
       contentLoading: contentLoading || imagesLoading,
       contentSaving,

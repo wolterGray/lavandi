@@ -171,14 +171,12 @@
     "emailSubject": "Product catalog inquiry",
     "categories": {
       "all": "All",
-      "oils": "Body oils",
-      "balms": "Balms",
-      "creams": "Creams",
-      "scrubs": "Scrubs",
-      "aroma": "Aromatherapy",
-      "candles": "Candles",
-      "incense": "Incense sticks",
-      "home": "Home ritual"
+      "candles-aroma": "Candles & aromatics",
+      "pro-cosmetics": "Professional cosmetics",
+      "home-spa": "Home SPA",
+      "anti-cellulite": "Anti-cellulite care",
+      "gift-certificates": "Gift certificates",
+      "nuar-premium": "NUAR premium products"
     },
     "products": {
       "45996": {

@@ -149,7 +149,7 @@ export default function AdminCosmeticsPage() {
     setDraft((prev) => [
       {
         id,
-        category: "oils",
+        category: "pro-cosmetics",
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
         transparentPhoto: true,
@@ -506,7 +506,7 @@ export default function AdminCosmeticsPage() {
                       value={texts.volume ?? ""}
                       readOnly={!isAuthoring}
                       onChange={(e) => isAuthoring && updateText(item.id, { volume: e.target.value })}
-                      placeholder="50 ml"
+                      placeholder="400 ml или 200 g"
                       className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
                     />
                   </AdminField>
