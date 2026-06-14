@@ -7,6 +7,7 @@ import {
   mergeContent,
   patchLocaleBlock,
   saveOverrides,
+  getProductNameFromOverrides,
 } from "../admin/contentStore";
 import {
   clearSiteContentInSupabase,
@@ -295,13 +296,7 @@ export function ContentProvider({ children }) {
       if (authorName) {
         merged.name = authorName;
       } else if (!merged.name?.trim()) {
-        for (const locale of ["uk", "pl", "en", "ru"]) {
-          const name = overrides?.locales?.[locale]?.cosmetics?.products?.[productId]?.name?.trim();
-          if (name) {
-            merged.name = name;
-            break;
-          }
-        }
+        merged.name = getProductNameFromOverrides(overrides, productId);
       }
       return merged;
     },

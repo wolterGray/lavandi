@@ -2,15 +2,27 @@ import servicesDefault from "../data/services.json";
 import galleryDefault from "../data/gallery.json";
 import cosmeticsDefault from "../data/cosmetics.json";
 import { DEFAULT_FEATURED_COSMETIC_IDS } from "../components/CosmeticsSection/cosmeticsShared";
-import { siteDefaults } from "../admin/siteContent";
+import { siteDefaults, CMS_AUTHOR_LANG } from "../admin/siteContent";
 
 export const CONTENT_STORAGE_KEY = "nuar_content_overrides";
 
 /** Ignore tiny stale drafts in localStorage (e.g. one product after a failed save). */
 export const MIN_USABLE_CATALOG_SIZE = 5;
 
+export function getProductNameFromOverrides(overrides = {}, productId) {
+  for (const lang of [CMS_AUTHOR_LANG, "ru", "pl", "en"]) {
+    const name = overrides?.locales?.[lang]?.cosmetics?.products?.[productId]?.name?.trim();
+    if (name) return name;
+  }
+  return "";
+}
+
 export function hasUsableCachedCatalog(overrides = {}) {
-  return Array.isArray(overrides.cosmetics) && overrides.cosmetics.length >= MIN_USABLE_CATALOG_SIZE;
+  const products = overrides.cosmetics;
+  if (!Array.isArray(products) || products.length < MIN_USABLE_CATALOG_SIZE) return false;
+
+  const namedCount = products.filter((product) => getProductNameFromOverrides(overrides, product.id)).length;
+  return namedCount >= MIN_USABLE_CATALOG_SIZE;
 }
 
 export function loadOverrides() {

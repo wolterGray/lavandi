@@ -8,6 +8,7 @@ import {
 } from "../admin/siteImages";
 
 const EMPTY_STATE = { src: "", ready: true };
+const IMAGE_FETCH_TIMEOUT_MS = 10000;
 
 export function useImageSrc(value) {
   const ctx = useContext(ContentContext);
@@ -48,6 +49,10 @@ export function useImageSrc(value) {
     let cancelled = false;
     setState({ src: "", ready: false });
 
+    const timeoutId = window.setTimeout(() => {
+      if (!cancelled) setState(EMPTY_STATE);
+    }, IMAGE_FETCH_TIMEOUT_MS);
+
     fetchSiteImageRecord(parseImageRef(value))
       .then((record) => {
         if (!cancelled) {
@@ -56,10 +61,14 @@ export function useImageSrc(value) {
       })
       .catch(() => {
         if (!cancelled) setState(EMPTY_STATE);
+      })
+      .finally(() => {
+        window.clearTimeout(timeoutId);
       });
 
     return () => {
       cancelled = true;
+      window.clearTimeout(timeoutId);
     };
   }, [value, cacheVersion, ctx]);
 
