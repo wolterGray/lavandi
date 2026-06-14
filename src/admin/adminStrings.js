@@ -266,6 +266,16 @@ export const adminRu = {
     cleanupDone: (count) =>
       count > 0 ? `Удалено неиспользуемых фото: ${count}.` : "Неиспользуемых фото не найдено.",
     cleanupFailed: "Не удалось очистить хранилище.",
+    optimizeImages: "Оптимизировать фото",
+    optimizingImages: "Оптимизация…",
+    optimizeHint:
+      "Сжимает все фото из CMS в WebP и создаёт лёгкие превью для каталога. Запустите один раз после массовой загрузки.",
+    optimizeDone: (optimized, savedMb, skipped) =>
+      optimized > 0
+        ? `Оптимизировано: ${optimized}. Экономия ~${savedMb} МБ. Пропущено (уже OK): ${skipped}.`
+        : `Все ${skipped} фото уже оптимизированы.`,
+    optimizeFailed: "Не удалось оптимизировать фото.",
+    optimizeProgress: (done, total) => `Оптимизация: ${done} / ${total}`,
     pickFromLibrary: "Из библиотеки",
     libraryTitle: "Библиотека изображений",
     libraryEmpty: "В этой папке пока нет загруженных фото.",

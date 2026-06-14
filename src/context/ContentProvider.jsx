@@ -30,6 +30,7 @@ import {
   collectImageRefsFromOverrides,
   fetchSiteImagesMap,
   getCachedImageDataUrl,
+  IMAGE_VARIANT,
   isImageRef,
   parseImageRef,
   resolveContentImages,
@@ -40,8 +41,9 @@ import { isSupabaseConfigured } from "../lib/supabase";
 const ContentContext = createContext(null);
 
 const CMS_SYNC_TIMEOUT_MS = 6000;
-const IMAGE_PREFETCH_BATCH_SIZE = 16;
-const IMAGE_PREFETCH_BATCH_DELAY_MS = 16;
+const IMAGE_THUMB_BATCH_SIZE = 24;
+const IMAGE_FULL_BATCH_SIZE = 8;
+const IMAGE_PREFETCH_BATCH_DELAY_MS = 12;
 
 export { ContentContext };
 
@@ -95,53 +97,47 @@ export function ContentProvider({ children }) {
   useEffect(() => {
     if (!isSupabaseConfigured) return undefined;
 
-    const seen = new Set();
-    const missing = [];
-
-    const pushMissingId = (value) => {
-      const id = parseImageRef(value);
-      if (!id || seen.has(id) || getCachedImageDataUrl(id)) return;
-      seen.add(id);
-      missing.push(id);
-    };
-
+    const cosmeticIds = new Set();
     normalizeCosmeticsList(content.cosmetics).forEach((product) => {
-      getProductImages(product).forEach(pushMissingId);
+      getProductImages(product).forEach((value) => {
+        const id = parseImageRef(value);
+        if (id) cosmeticIds.add(id);
+      });
     });
 
-    collectImageRefsFromOverrides(overrides).forEach((id) => {
-      if (!seen.has(id) && !getCachedImageDataUrl(id)) {
-        seen.add(id);
-        missing.push(id);
-      }
-    });
+    const thumbMissing = [...cosmeticIds].filter((id) => !getCachedImageDataUrl(id, IMAGE_VARIANT.thumb));
+    const fullMissing = collectImageRefsFromOverrides(overrides).filter(
+      (id) => !cosmeticIds.has(id) && !getCachedImageDataUrl(id, IMAGE_VARIANT.full),
+    );
 
-    if (!missing.length) return undefined;
+    if (!thumbMissing.length && !fullMissing.length) return undefined;
 
     let cancelled = false;
 
-    void (async () => {
-      for (let index = 0; index < missing.length; index += IMAGE_PREFETCH_BATCH_SIZE) {
+    const prefetch = async (ids, variant, batchSize) => {
+      for (let index = 0; index < ids.length; index += batchSize) {
         if (cancelled) return;
-
-        const batch = missing.slice(index, index + IMAGE_PREFETCH_BATCH_SIZE);
+        const batch = ids.slice(index, index + batchSize);
         try {
-          await fetchSiteImagesMap(batch);
+          await fetchSiteImagesMap(batch, { variant });
         } catch {
-          // keep loading remaining batches
+          // continue with next batch
         }
-
         if (!cancelled) {
           setImageCacheVersion((version) => version + 1);
         }
-
-        if (index + IMAGE_PREFETCH_BATCH_SIZE < missing.length && !cancelled) {
+        if (index + batchSize < ids.length && !cancelled) {
           await new Promise((resolve) => {
             window.setTimeout(resolve, IMAGE_PREFETCH_BATCH_DELAY_MS);
           });
         }
       }
-    })();
+    };
+
+    void Promise.all([
+      prefetch(thumbMissing, IMAGE_VARIANT.thumb, IMAGE_THUMB_BATCH_SIZE),
+      prefetch(fullMissing, IMAGE_VARIANT.full, IMAGE_FULL_BATCH_SIZE),
+    ]);
 
     return () => {
       cancelled = true;
@@ -318,12 +314,12 @@ export function ContentProvider({ children }) {
   );
 
   const getImageDataUrl = useCallback(
-    (value) => {
+    (value, variant = IMAGE_VARIANT.full) => {
       if (!value || typeof value !== "string") return value ?? "";
       if (!isImageRef(value)) return value;
       const id = parseImageRef(value);
       if (!id) return "";
-      return getCachedImageDataUrl(id) ?? "";
+      return getCachedImageDataUrl(id, variant) ?? "";
     },
     [],
   );

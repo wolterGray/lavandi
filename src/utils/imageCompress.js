@@ -1,8 +1,8 @@
 const SKIP_TYPES = new Set(["image/svg+xml", "image/gif"]);
 
 const FOLDER_PRESETS = {
-  cosmetics: { maxWidth: 960, maxHeight: 960, quality: 0.8 },
-  uploads: { maxWidth: 1200, maxHeight: 1200, quality: 0.82 },
+  cosmetics: { maxWidth: 960, maxHeight: 960, quality: 0.8, thumb: 480, thumbQuality: 0.72 },
+  uploads: { maxWidth: 1200, maxHeight: 1200, quality: 0.82, thumb: 560, thumbQuality: 0.74 },
 };
 
 function getPreset(folder = "uploads") {
@@ -28,69 +28,164 @@ function loadImageElement(file) {
   });
 }
 
-/**
- * Resize and re-encode uploads as WebP before storing in site_images.
- * Skips vector/animated formats and files that are already small enough.
- */
-export async function compressImageForUpload(file, folder = "uploads") {
-  if (!file || SKIP_TYPES.has(file.type)) return file;
-
-  const preset = getPreset(folder);
-  const { maxWidth, maxHeight, quality } = preset;
-
-  if (file.type === "image/webp" && file.size <= 350_000) return file;
-
-  let source = null;
-  let width = 0;
-  let height = 0;
-
-  try {
-    if (typeof createImageBitmap === "function") {
-      const bitmap = await createImageBitmap(file);
-      width = bitmap.width;
-      height = bitmap.height;
-      source = bitmap;
-    } else {
-      const image = await loadImageElement(file);
-      width = image.naturalWidth;
-      height = image.naturalHeight;
-      source = image;
-    }
-  } catch {
-    return file;
+async function loadImageSource(file) {
+  if (typeof createImageBitmap === "function") {
+    const bitmap = await createImageBitmap(file);
+    return {
+      draw(ctx, width, height) {
+        ctx.drawImage(bitmap, 0, 0, width, height);
+      },
+      close() {
+        bitmap.close?.();
+      },
+      width: bitmap.width,
+      height: bitmap.height,
+    };
   }
 
-  const scale = Math.min(1, maxWidth / width, maxHeight / height);
-  const targetWidth = Math.max(1, Math.round(width * scale));
-  const targetHeight = Math.max(1, Math.round(height * scale));
+  const image = await loadImageElement(file);
+  return {
+    draw(ctx, width, height) {
+      ctx.drawImage(image, 0, 0, width, height);
+    },
+    close() {},
+    width: image.naturalWidth,
+    height: image.naturalHeight,
+  };
+}
 
-  if (scale >= 1 && file.type === "image/webp" && file.size <= 700_000) {
-    source.close?.();
-    return file;
-  }
+async function renderWebpBlob(source, maxWidth, maxHeight, quality) {
+  const scale = Math.min(1, maxWidth / source.width, maxHeight / source.height);
+  const targetWidth = Math.max(1, Math.round(source.width * scale));
+  const targetHeight = Math.max(1, Math.round(source.height * scale));
 
   const canvas = document.createElement("canvas");
   canvas.width = targetWidth;
   canvas.height = targetHeight;
   const context = canvas.getContext("2d");
   if (!context) {
-    source.close?.();
+    source.close();
+    return null;
+  }
+
+  source.draw(context, targetWidth, targetHeight);
+  source.close();
+
+  return new Promise((resolve) => {
+    canvas.toBlob(resolve, "image/webp", quality);
+  });
+}
+
+async function renderWebpFile(file, folder, { thumb = false } = {}) {
+  if (!file || SKIP_TYPES.has(file.type)) return file;
+
+  const preset = getPreset(folder);
+  const maxWidth = thumb ? preset.thumb : preset.maxWidth;
+  const maxHeight = thumb ? preset.thumb : preset.maxHeight;
+  const quality = thumb ? preset.thumbQuality : preset.quality;
+
+  let source;
+  try {
+    source = await loadImageSource(file);
+  } catch {
     return file;
   }
 
-  context.drawImage(source, 0, 0, targetWidth, targetHeight);
-  source.close?.();
-
-  const blob = await new Promise((resolve) => {
-    canvas.toBlob(resolve, "image/webp", quality);
-  });
-
+  const blob = await renderWebpBlob(source, maxWidth, maxHeight, quality);
   if (!blob) return file;
-  if (blob.size >= file.size && file.type === "image/webp") return file;
+  if (!thumb && blob.size >= file.size && file.type === "image/webp") return file;
 
+  const suffix = thumb ? "-thumb" : "";
   const baseName = file.name.replace(/\.[^.]+$/, "") || "image";
-  return new File([blob], `${baseName}.webp`, {
+  return new File([blob], `${baseName}${suffix}.webp`, {
     type: "image/webp",
     lastModified: Date.now(),
   });
+}
+
+export async function compressImageForUpload(file, folder = "uploads") {
+  if (!file || SKIP_TYPES.has(file.type)) return file;
+
+  if (file.type === "image/webp" && file.size <= 350_000) {
+    return file;
+  }
+
+  return renderWebpFile(file, folder, { thumb: false });
+}
+
+export async function compressImageThumbForUpload(file, folder = "uploads") {
+  if (!file || SKIP_TYPES.has(file.type)) return null;
+  return renderWebpFile(file, folder, { thumb: true });
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      if (typeof result !== "string") {
+        reject(new Error("Read failed"));
+        return;
+      }
+      const base64 = result.split(",")[1];
+      if (!base64) {
+        reject(new Error("Read failed"));
+        return;
+      }
+      resolve(base64);
+    };
+    reader.onerror = () => reject(reader.error ?? new Error("Read failed"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function base64ToFile(dataBase64, mimeType, name = "image") {
+  const binary = atob(dataBase64);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return new File([bytes], name, { type: mimeType });
+}
+
+/**
+ * Re-encode a stored site_images row (full + catalog thumb).
+ */
+export async function recompressStoredImageRow(row) {
+  if (!row?.data_base64 || SKIP_TYPES.has(row.mime_type)) {
+    return { changed: false, row };
+  }
+
+  const folder = row.folder ?? "uploads";
+  const beforeBytes = (row.size_bytes ?? 0) + (row.thumb_size_bytes ?? 0);
+  const sourceFile = base64ToFile(row.data_base64, row.mime_type, row.id);
+
+  const fullFile = await compressImageForUpload(sourceFile, folder);
+  const thumbFile = await compressImageThumbForUpload(fullFile, folder);
+
+  const data_base64 = await fileToBase64(fullFile);
+  const thumb_base64 = thumbFile ? await fileToBase64(thumbFile) : null;
+
+  const next = {
+    mime_type: fullFile.type,
+    data_base64,
+    size_bytes: fullFile.size,
+    thumb_mime_type: thumbFile?.type ?? null,
+    thumb_base64,
+    thumb_size_bytes: thumbFile?.size ?? null,
+  };
+
+  const afterBytes = next.size_bytes + (next.thumb_size_bytes ?? 0);
+  const changed =
+    row.mime_type !== next.mime_type ||
+    !row.thumb_base64 ||
+    row.data_base64 !== next.data_base64 ||
+    row.thumb_base64 !== next.thumb_base64 ||
+    (row.size_bytes ?? 0) > next.size_bytes + 20_000;
+
+  return {
+    changed,
+    savedBytes: Math.max(0, beforeBytes - afterBytes),
+    ...next,
+  };
 }

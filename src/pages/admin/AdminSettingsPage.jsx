@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ADMIN_LOCALE, adminRu } from "../../admin/adminStrings";
 import { useAdminConfirm } from "../../admin/adminHelpers";
 import { AdminButton, AdminPageHeader, AdminPanel, AdminSaveBar } from "../../admin/adminUi";
-import { cleanupOrphanedSiteImages, fetchSiteImagesStorageUsage } from "../../admin/siteImages";
+import { cleanupOrphanedSiteImages, fetchSiteImagesStorageUsage, optimizeReferencedSiteImages } from "../../admin/siteImages";
 import { useContent } from "../../context/ContentProvider";
 
 function formatMb(bytes) {
@@ -26,6 +26,7 @@ export default function AdminSettingsPage() {
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [storage, setStorage] = useState({ bytes: 0, count: 0 });
+  const [optimizeProgress, setOptimizeProgress] = useState(null);
   const requestConfirm = useAdminConfirm();
 
   const refreshStorage = useCallback(async () => {
@@ -54,6 +55,39 @@ export default function AdminSettingsPage() {
       setError(cleanupError.message ?? adminRu.media.cleanupFailed);
     } finally {
       setBusy(false);
+    }
+  };
+
+  const handleOptimizeImages = async () => {
+    const ok = await requestConfirm({
+      title: adminRu.media.optimizeImages,
+      message: adminRu.media.optimizeHint,
+      confirmLabel: adminRu.media.optimizeImages,
+    });
+    if (!ok) return;
+
+    setBusy(true);
+    setError("");
+    setMessage("");
+    setOptimizeProgress({ done: 0, total: 0 });
+
+    try {
+      const result = await optimizeReferencedSiteImages(overrides, {
+        onProgress: (progress) => setOptimizeProgress(progress),
+      });
+      await refreshStorage();
+      setMessage(
+        adminRu.media.optimizeDone(
+          result.optimized,
+          formatMb(result.savedBytes),
+          result.skipped,
+        ),
+      );
+    } catch (optimizeError) {
+      setError(optimizeError.message ?? adminRu.media.optimizeFailed);
+    } finally {
+      setBusy(false);
+      setOptimizeProgress(null);
     }
   };
 
@@ -165,7 +199,8 @@ export default function AdminSettingsPage() {
             {syncError && <p className="mt-2 text-sm text-red-300">{syncError}</p>}
             <p className="mt-3 text-xs text-muted">
               Контент: <code className="text-gold">001_site_content.sql</code>.
-              Изображения в базе: <code className="text-gold">003_site_images.sql</code>.
+              Изображения: <code className="text-gold">003_site_images.sql</code>,
+              превью каталога: <code className="text-gold">004_site_images_thumbs.sql</code>.
             </p>
             <p className="mt-3 text-sm text-stone">
               {adminRu.media.storageUsage(formatMb(storage.bytes), storage.count)}
@@ -177,7 +212,15 @@ export default function AdminSettingsPage() {
               <AdminButton variant="ghost" onClick={handleCleanupStorage} disabled={busy}>
                 {adminRu.media.cleanupOrphans}
               </AdminButton>
+              <AdminButton variant="ghost" onClick={handleOptimizeImages} disabled={busy}>
+                {busy && optimizeProgress
+                  ? adminRu.media.optimizeProgress(optimizeProgress.done, optimizeProgress.total)
+                  : busy
+                    ? adminRu.media.optimizingImages
+                    : adminRu.media.optimizeImages}
+              </AdminButton>
             </div>
+            <p className="mt-2 text-xs text-muted">{adminRu.media.optimizeHint}</p>
             <AdminButton className="mt-4" onClick={handlePublishFull} disabled={busy}>
               {busy ? adminRu.sync.publishing : adminRu.sync.publishFull}
             </AdminButton>

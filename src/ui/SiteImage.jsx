@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
+import { IMAGE_VARIANT } from "../admin/siteImages";
 
 export function ImageSkeleton({ className = "" }) {
   return <div aria-hidden="true" className={`image-skeleton ${className}`} />;
@@ -20,9 +21,10 @@ export default function SiteImage({
   onError,
   fill = false,
   showSkeleton = true,
+  imageVariant = IMAGE_VARIANT.full,
   ...rest
 }) {
-  const { src: resolvedSrc, ready: srcReady } = useImageSrc(src);
+  const { src: resolvedSrc, ready: srcReady } = useImageSrc(src, { variant: imageVariant });
   const [loaded, setLoaded] = useState(false);
   const localImgRef = useRef(null);
 

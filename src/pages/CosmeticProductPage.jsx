@@ -8,7 +8,7 @@ import Button from "../ui/Button";
 import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
-import { isImageRef } from "../admin/siteImages";
+import { isImageRef, IMAGE_VARIANT } from "../admin/siteImages";
 import { EMAIL, SITE_URL } from "../constants/theme";
 import CosmeticProductGallery from "../components/CosmeticsSection/CosmeticProductGallery";
 import {
@@ -29,7 +29,7 @@ function resolveOgImage(image) {
 
 export default function CosmeticProductPage({ product }) {
   const { t, lang } = useTranslation();
-  const { src: imageSrc } = useImageSrc(getProductImages(product)[0]);
+  const { src: imageSrc } = useImageSrc(getProductImages(product)[0], { variant: IMAGE_VARIANT.full });
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
   const categoryLabel = formatProductCategoryLabels(t, product);
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });

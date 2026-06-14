@@ -1,5 +1,5 @@
-import SiteImage from "../../ui/SiteImage";
-import { ImageSkeleton } from "../../ui/SiteImage";
+import SiteImage, { ImageSkeleton } from "../../ui/SiteImage";
+import { IMAGE_VARIANT } from "../../admin/siteImages";
 import { getProductImageSurfaceClass } from "./cosmeticsShared";
 
 export default function CosmeticProductImage({
@@ -7,6 +7,7 @@ export default function CosmeticProductImage({
   className = "",
   compact = false,
   priority = false,
+  imageVariant = IMAGE_VARIANT.thumb,
   imageClassName = "h-full w-full object-contain object-center",
 }) {
   const imageRef = product.img;
@@ -28,6 +29,7 @@ export default function CosmeticProductImage({
         src={imageRef}
         alt=""
         fill
+        imageVariant={imageVariant}
         wrapperClassName="absolute inset-0"
         className={imageClassName}
         loading={priority ? "eager" : "lazy"}

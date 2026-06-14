@@ -3,6 +3,7 @@ import { ContentContext } from "../context/ContentProvider";
 import {
   fetchSiteImageRecord,
   getCachedImageDataUrl,
+  IMAGE_VARIANT,
   isImageRef,
   parseImageRef,
 } from "../admin/siteImages";
@@ -10,12 +11,15 @@ import {
 const EMPTY_STATE = { src: "", ready: true };
 const IMAGE_FETCH_TIMEOUT_MS = 10000;
 
-export function useImageSrc(value) {
+export function useImageSrc(value, { variant = IMAGE_VARIANT.full } = {}) {
   const ctx = useContext(ContentContext);
   const cacheVersion = ctx?.imageCacheVersion ?? 0;
   const prefetched = useMemo(
-    () => ctx?.getImageDataUrl?.(value) ?? getCachedImageDataUrl(parseImageRef(value) ?? "") ?? "",
-    [ctx, value, cacheVersion],
+    () =>
+      ctx?.getImageDataUrl?.(value, variant) ??
+      getCachedImageDataUrl(parseImageRef(value) ?? "", variant) ??
+      "",
+    [ctx, value, variant, cacheVersion],
   );
 
   const [state, setState] = useState(() => {
@@ -37,8 +41,8 @@ export function useImageSrc(value) {
     }
 
     const cached =
-      ctx?.getImageDataUrl?.(value) ??
-      getCachedImageDataUrl(parseImageRef(value) ?? "") ??
+      ctx?.getImageDataUrl?.(value, variant) ??
+      getCachedImageDataUrl(parseImageRef(value) ?? "", variant) ??
       "";
 
     if (cached) {
@@ -53,7 +57,7 @@ export function useImageSrc(value) {
       if (!cancelled) setState(EMPTY_STATE);
     }, IMAGE_FETCH_TIMEOUT_MS);
 
-    fetchSiteImageRecord(parseImageRef(value))
+    fetchSiteImageRecord(parseImageRef(value), { variant })
       .then((record) => {
         if (!cancelled) {
           setState({ src: record?.dataUrl ?? "", ready: true });
@@ -70,12 +74,12 @@ export function useImageSrc(value) {
       cancelled = true;
       window.clearTimeout(timeoutId);
     };
-  }, [value, cacheVersion, ctx]);
+  }, [value, variant, cacheVersion, ctx]);
 
   return state;
 }
 
 /** @deprecated use destructuring from useImageSrc return value */
-export function useImageSrcString(value) {
-  return useImageSrc(value).src;
+export function useImageSrcString(value, options) {
+  return useImageSrc(value, options).src;
 }

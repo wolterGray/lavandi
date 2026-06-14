@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import SiteImage from "../../ui/SiteImage";
+import { IMAGE_VARIANT } from "../../admin/siteImages";
 import CosmeticProductImageMagnifier from "./CosmeticProductImageMagnifier";
 import { getProductImageSurfaceClass, getProductImages } from "./cosmeticsShared";
 
@@ -28,6 +29,7 @@ function GalleryThumbnail({ product, imageRef, active, onSelect, index, total })
             src={imageRef}
             alt=""
             fill
+            imageVariant={IMAGE_VARIANT.thumb}
             wrapperClassName="absolute inset-0"
             className="object-contain object-center"
             loading="lazy"

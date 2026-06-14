@@ -1,8 +1,21 @@
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
-import { compressImageForUpload } from "../utils/imageCompress";
+import {
+  compressImageForUpload,
+  compressImageThumbForUpload,
+  recompressStoredImageRow,
+} from "../utils/imageCompress";
+import {
+  clearCachedImageDataUrl as clearIdbImage,
+  readCachedImageDataUrl,
+  writeCachedImageDataUrl,
+} from "../utils/imageDbCache";
 
 export const IMAGE_REF_PREFIX = "dbimg:";
+export const IMAGE_VARIANT = {
+  full: "full",
+  thumb: "thumb",
+};
 
 const ALLOWED_TYPES = new Set([
   "image/jpeg",
@@ -58,14 +71,47 @@ export function toDataUrl(mimeType, dataBase64) {
 
 const imageMemoryCache = new Map();
 
-export function getCachedImageDataUrl(id) {
-  return id ? imageMemoryCache.get(id) ?? null : null;
+function cacheKey(id, variant = IMAGE_VARIANT.full) {
+  return `${id}:${variant}`;
 }
 
-function cacheImageRow(row) {
-  if (!row?.id || !row?.data_base64) return null;
-  const dataUrl = toDataUrl(row.mime_type, row.data_base64);
-  imageMemoryCache.set(row.id, dataUrl);
+export function getCachedImageDataUrl(id, variant = IMAGE_VARIANT.full) {
+  if (!id) return null;
+  return imageMemoryCache.get(cacheKey(id, variant)) ?? null;
+}
+
+function setCachedImageDataUrl(id, variant, dataUrl) {
+  if (!id || !dataUrl) return;
+  imageMemoryCache.set(cacheKey(id, variant), dataUrl);
+  void writeCachedImageDataUrl(cacheKey(id, variant), dataUrl);
+}
+
+export function clearImageCacheForId(id) {
+  if (!id) return;
+  imageMemoryCache.delete(cacheKey(id, IMAGE_VARIANT.full));
+  imageMemoryCache.delete(cacheKey(id, IMAGE_VARIANT.thumb));
+  void clearIdbImage(cacheKey(id, IMAGE_VARIANT.full));
+  void clearIdbImage(cacheKey(id, IMAGE_VARIANT.thumb));
+}
+
+function rowToDataUrl(row, variant = IMAGE_VARIANT.full) {
+  if (variant === IMAGE_VARIANT.thumb && row?.thumb_base64) {
+    return toDataUrl(row.thumb_mime_type || "image/webp", row.thumb_base64);
+  }
+  if (row?.data_base64) {
+    return toDataUrl(row.mime_type, row.data_base64);
+  }
+  return null;
+}
+
+function cacheImageRow(row, variant = IMAGE_VARIANT.full) {
+  const dataUrl = rowToDataUrl(row, variant);
+  if (!row?.id || !dataUrl) return null;
+  setCachedImageDataUrl(row.id, variant, dataUrl);
+  if (variant === IMAGE_VARIANT.thumb && row.thumb_base64 && row.data_base64) {
+    const fullUrl = rowToDataUrl(row, IMAGE_VARIANT.full);
+    if (fullUrl) setCachedImageDataUrl(row.id, IMAGE_VARIANT.full, fullUrl);
+  }
   return dataUrl;
 }
 
@@ -167,8 +213,10 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
 
   const safeFolder = sanitizeFolder(folder);
   const prepared = await compressImageForUpload(file, safeFolder);
+  const thumb = await compressImageThumbForUpload(prepared, safeFolder);
   const id = `${safeFolder}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
   const dataBase64 = await fileToBase64(prepared);
+  const thumbBase64 = thumb ? await fileToBase64(thumb) : null;
 
   const { error } = await supabase.from("site_images").upsert({
     id,
@@ -176,6 +224,9 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
     mime_type: prepared.type,
     data_base64: dataBase64,
     size_bytes: prepared.size,
+    thumb_mime_type: thumb?.type ?? null,
+    thumb_base64: thumbBase64,
+    thumb_size_bytes: thumb?.size ?? null,
     updated_at: new Date().toISOString(),
   });
 
@@ -190,50 +241,67 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
   return newRef;
 }
 
-export async function fetchSiteImageRecord(id) {
+export async function fetchSiteImageRecord(id, { variant = IMAGE_VARIANT.full } = {}) {
   if (!id) return null;
 
-  const cached = getCachedImageDataUrl(id);
+  const cached = getCachedImageDataUrl(id, variant);
   if (cached) {
     return { id, dataUrl: cached, mimeType: cached.slice(5, cached.indexOf(";")) };
+  }
+
+  const idbCached = await readCachedImageDataUrl(cacheKey(id, variant));
+  if (idbCached) {
+    setCachedImageDataUrl(id, variant, idbCached);
+    return { id, dataUrl: idbCached, mimeType: idbCached.slice(5, idbCached.indexOf(";")) };
   }
 
   if (!isSiteImagesConfigured() || !supabase) return null;
 
   const { data, error } = await supabase
     .from("site_images")
-    .select("id, mime_type, data_base64")
+    .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
     .eq("id", id)
     .maybeSingle();
 
   if (error) throw error;
-  if (!data?.data_base64) return null;
+  if (!data) return null;
 
-  const dataUrl = cacheImageRow(data);
+  const dataUrl = cacheImageRow(data, variant);
   if (!dataUrl) return null;
 
   return {
     id: data.id,
-    mimeType: data.mime_type,
+    mimeType:
+      variant === IMAGE_VARIANT.thumb && data.thumb_base64
+        ? data.thumb_mime_type || "image/webp"
+        : data.mime_type,
     dataUrl,
   };
 }
 
-export async function fetchSiteImagesMap(ids = []) {
+export async function fetchSiteImagesMap(ids = [], { variant = IMAGE_VARIANT.full } = {}) {
   const uniqueIds = [...new Set(ids.filter(Boolean))];
   if (!uniqueIds.length) return {};
 
   const result = {};
   const missing = [];
 
-  uniqueIds.forEach((id) => {
-    const cached = getCachedImageDataUrl(id);
-    if (cached) {
-      result[id] = cached;
-    } else {
+  await Promise.all(
+    uniqueIds.map(async (id) => {
+      const cached = getCachedImageDataUrl(id, variant);
+      if (cached) {
+        result[id] = cached;
+        return;
+      }
+      const idbCached = await readCachedImageDataUrl(cacheKey(id, variant));
+      if (idbCached) {
+        setCachedImageDataUrl(id, variant, idbCached);
+        result[id] = idbCached;
+        return;
+      }
       missing.push(id);
-    }
-  });
+    }),
+  );
 
   if (!missing.length || !isSiteImagesConfigured() || !supabase) {
     return result;
@@ -241,17 +309,80 @@ export async function fetchSiteImagesMap(ids = []) {
 
   const { data, error } = await supabase
     .from("site_images")
-    .select("id, mime_type, data_base64")
+    .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
     .in("id", missing);
 
   if (error) throw error;
 
   (data ?? []).forEach((row) => {
-    const dataUrl = cacheImageRow(row);
+    const dataUrl = cacheImageRow(row, variant);
     if (dataUrl) result[row.id] = dataUrl;
   });
 
   return result;
+}
+
+const OPTIMIZE_FETCH_CHUNK = 4;
+
+export async function optimizeReferencedSiteImages(overrides = {}, { onProgress } = {}) {
+  if (!isSiteImagesConfigured() || !supabase) {
+    throw new Error(adminRu.media.storageNotConfigured);
+  }
+
+  const ids = collectImageRefsFromOverrides(overrides);
+  if (!ids.length) {
+    return { optimized: 0, skipped: 0, savedBytes: 0, total: 0 };
+  }
+
+  let optimized = 0;
+  let skipped = 0;
+  let savedBytes = 0;
+  let done = 0;
+
+  for (let index = 0; index < ids.length; index += OPTIMIZE_FETCH_CHUNK) {
+    const chunk = ids.slice(index, index + OPTIMIZE_FETCH_CHUNK);
+    const { data, error } = await supabase
+      .from("site_images")
+      .select(
+        "id, folder, mime_type, data_base64, size_bytes, thumb_base64, thumb_mime_type, thumb_size_bytes",
+      )
+      .in("id", chunk);
+
+    if (error) throw error;
+
+    for (const row of data ?? []) {
+      const result = await recompressStoredImageRow(row);
+      done += 1;
+
+      if (!result.changed) {
+        skipped += 1;
+        onProgress?.({ done, total: ids.length, optimized, skipped, savedBytes });
+        continue;
+      }
+
+      const { error: updateError } = await supabase
+        .from("site_images")
+        .update({
+          mime_type: result.mime_type,
+          data_base64: result.data_base64,
+          size_bytes: result.size_bytes,
+          thumb_mime_type: result.thumb_mime_type,
+          thumb_base64: result.thumb_base64,
+          thumb_size_bytes: result.thumb_size_bytes,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", row.id);
+
+      if (updateError) throw updateError;
+
+      clearImageCacheForId(row.id);
+      optimized += 1;
+      savedBytes += result.savedBytes ?? 0;
+      onProgress?.({ done, total: ids.length, optimized, skipped, savedBytes });
+    }
+  }
+
+  return { optimized, skipped, savedBytes, total: ids.length };
 }
 
 export function collectImageRefs(value, refs = new Set()) {
@@ -288,7 +419,7 @@ export function resolveImageValue(value, imageMap) {
   if (!value || typeof value !== "string") return value;
   const id = parseImageRef(value);
   if (!id) return value;
-  return imageMap[id] ?? getCachedImageDataUrl(id) ?? value;
+  return imageMap[id] ?? getCachedImageDataUrl(id, IMAGE_VARIANT.full) ?? value;
 }
 
 function resolveCosmeticProductImages(product, imageMap) {

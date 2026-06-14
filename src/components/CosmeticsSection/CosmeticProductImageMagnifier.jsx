@@ -2,6 +2,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { createPortal } from "react-dom";
 import { ZoomIn } from "lucide-react";
 import { useImageSrc } from "../../hooks/useImageSrc";
+import { IMAGE_VARIANT } from "../../admin/siteImages";
 import { ImageSkeleton } from "../../ui/SiteImage";
 import {
   getProductImageSurfaceClass,
@@ -60,7 +61,9 @@ export default function CosmeticProductImageMagnifier({
   imageClassName = "max-h-[min(72vh,560px)] h-full w-full object-contain object-center",
   initialsClassName = "font-display text-6xl font-semibold tracking-[0.08em] text-milk/25",
 }) {
-  const { src: imageSrc, ready: imageSrcReady } = useImageSrc(imageRef ?? product.img);
+  const { src: imageSrc, ready: imageSrcReady } = useImageSrc(imageRef ?? product.img, {
+    variant: IMAGE_VARIANT.full,
+  });
   const containerRef = useRef(null);
   const imgRef = useRef(null);
   const [imageLoaded, setImageLoaded] = useState(false);
