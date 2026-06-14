@@ -10,18 +10,18 @@ export default function CosmeticProductCard({
   index,
   categoryLabel,
   variant = "compact",
+  reveal = true,
 }) {
   const { t } = useTranslation();
   const productUrl = getCosmeticProductUrl(product.id);
   const featured = variant === "featured";
 
-  return (
-    <ScrollAnimationWrapper delay={index * 0.05} className="h-full">
-      <Link
-        to={productUrl}
-        aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
-        className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
-      >
+  const card = (
+    <Link
+      to={productUrl}
+      aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
+      className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
+    >
         <CosmeticProductImage
           compact={!featured}
           product={product}
@@ -76,6 +76,15 @@ export default function CosmeticProductCard({
           </p>
         </div>
       </Link>
+  );
+
+  if (!reveal) {
+    return <div className="h-full">{card}</div>;
+  }
+
+  return (
+    <ScrollAnimationWrapper delay={Math.min(index * 0.05, 0.2)} className="h-full">
+      {card}
     </ScrollAnimationWrapper>
   );
 }

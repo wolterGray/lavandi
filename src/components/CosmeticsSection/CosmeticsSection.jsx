@@ -11,8 +11,7 @@ import { buildLocalizedProduct, COSMETICS_ROUTE, formatProductCategoryLabels, ge
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
-  const { cosmetics, featuredCosmeticIds, getProductTexts, contentLoading, hasOverrides } =
-    useContent();
+  const { cosmetics, featuredCosmeticIds, getProductTexts, contentLoading } = useContent();
 
   const featuredProducts = useMemo(() => {
     const featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
@@ -40,7 +39,7 @@ export default function CosmeticsSection() {
         </div>
 
         <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {contentLoading && !hasOverrides
+          {contentLoading
             ? Array.from({ length: 3 }, (_, index) => (
                 <div
                   key={index}

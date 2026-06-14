@@ -289,60 +289,135 @@ export function resolveImageValue(value, imageMap) {
   return imageMap[id] ?? getCachedImageDataUrl(id) ?? value;
 }
 
+function resolveCosmeticProductImages(product, imageMap) {
+  const images = Array.isArray(product.images)
+    ? product.images.map((ref) => resolveImageValue(ref, imageMap))
+    : product.images;
+  const img = resolveImageValue(product.img, imageMap);
+  const primary = images?.[0] ?? img;
+
+  if (
+    primary === product.img &&
+    images === product.images &&
+    (!Array.isArray(images) || images.every((ref, index) => ref === product.images?.[index]))
+  ) {
+    return product;
+  }
+
+  return {
+    ...product,
+    images: images ?? (primary ? [primary] : []),
+    img: primary,
+  };
+}
+
 export function resolveContentImages(content, imageMap = {}) {
   if (!content) return content;
 
-  const resolved = structuredClone(content);
+  let next = content;
+  let changed = false;
 
-  if (resolved.aboutImage) {
-    resolved.aboutImage = resolveImageValue(resolved.aboutImage, imageMap);
-  }
+  const patchRootField = (field) => {
+    const resolved = resolveImageValue(next[field], imageMap);
+    if (resolved === next[field]) return;
+    if (!changed) {
+      next = { ...next };
+      changed = true;
+    }
+    next[field] = resolved;
+  };
 
-  if (Array.isArray(resolved.services)) {
-    resolved.services = resolved.services.map((service) => ({
-      ...service,
-      img: resolveImageValue(service.img, imageMap),
-    }));
-  }
+  patchRootField("aboutImage");
 
-  if (Array.isArray(resolved.gallery)) {
-    resolved.gallery = resolved.gallery.map((item) => ({
-      ...item,
-      src: resolveImageValue(item.src, imageMap),
-    }));
-  }
-
-  if (Array.isArray(resolved.team)) {
-    resolved.team = resolved.team.map((member) => ({
-      ...member,
-      img: resolveImageValue(member.img, imageMap),
-    }));
-  }
-
-  if (Array.isArray(resolved.cosmetics)) {
-    resolved.cosmetics = resolved.cosmetics.map((product) => {
-      const images = Array.isArray(product.images)
-        ? product.images.map((ref) => resolveImageValue(ref, imageMap))
-        : product.images;
-      const img = resolveImageValue(product.img, imageMap);
-      const primary = images?.[0] ?? img;
-      return {
-        ...product,
-        images: images ?? (primary ? [primary] : []),
-        img: primary,
-      };
+  if (Array.isArray(next.services)) {
+    const services = next.services.map((service) => {
+      const img = resolveImageValue(service.img, imageMap);
+      return img === service.img ? service : { ...service, img };
     });
+    if (services.some((service, index) => service !== next.services[index])) {
+      if (!changed) {
+        next = { ...next };
+        changed = true;
+      }
+      next.services = services;
+    }
   }
 
-  if (resolved.locales && typeof resolved.locales === "object") {
-    Object.values(resolved.locales).forEach((locale) => {
+  if (Array.isArray(next.gallery)) {
+    const gallery = next.gallery.map((item) => {
+      const src = resolveImageValue(item.src, imageMap);
+      return src === item.src ? item : { ...item, src };
+    });
+    if (gallery.some((item, index) => item !== next.gallery[index])) {
+      if (!changed) {
+        next = { ...next };
+        changed = true;
+      }
+      next.gallery = gallery;
+    }
+  }
+
+  if (Array.isArray(next.team)) {
+    const team = next.team.map((member) => {
+      const img = resolveImageValue(member.img, imageMap);
+      return img === member.img ? member : { ...member, img };
+    });
+    if (team.some((member, index) => member !== next.team[index])) {
+      if (!changed) {
+        next = { ...next };
+        changed = true;
+      }
+      next.team = team;
+    }
+  }
+
+  if (Array.isArray(next.cosmetics)) {
+    const cosmetics = next.cosmetics.map((product) =>
+      resolveCosmeticProductImages(product, imageMap),
+    );
+    if (cosmetics.some((product, index) => product !== next.cosmetics[index])) {
+      if (!changed) {
+        next = { ...next };
+        changed = true;
+      }
+      next.cosmetics = cosmetics;
+    }
+  }
+
+  if (next.locales && typeof next.locales === "object") {
+    let localesChanged = false;
+    const locales = { ...next.locales };
+
+    Object.entries(locales).forEach(([lang, locale]) => {
       const items = locale?.announcements?.items;
       if (!Array.isArray(items)) return;
-      items.forEach((slide) => {
-        if (slide?.img) slide.img = resolveImageValue(slide.img, imageMap);
+
+      const nextItems = items.map((slide) => {
+        if (!slide?.img) return slide;
+        const img = resolveImageValue(slide.img, imageMap);
+        return img === slide.img ? slide : { ...slide, img };
       });
+
+      if (nextItems.some((slide, index) => slide !== items[index])) {
+        localesChanged = true;
+        locales[lang] = {
+          ...locale,
+          announcements: {
+            ...locale.announcements,
+            items: nextItems,
+          },
+        };
+      }
     });
+
+    if (localesChanged) {
+      if (!changed) {
+        next = { ...next };
+        changed = true;
+      }
+      next.locales = locales;
+    }
   }
 
-  return resolved;
+  return changed ? next : content;
 }

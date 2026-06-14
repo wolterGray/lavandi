@@ -42,9 +42,7 @@ export { ContentContext };
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);
   const [overrides, setOverrides] = useState(initialOverrides);
-  const [cmsSyncing, setCmsSyncing] = useState(
-    () => isSupabaseConfigured && Object.keys(initialOverrides).length === 0,
-  );
+  const [cmsSyncing, setCmsSyncing] = useState(isSupabaseConfigured);
   const [contentSaving, setContentSaving] = useState(false);
   const [syncError, setSyncError] = useState(null);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
