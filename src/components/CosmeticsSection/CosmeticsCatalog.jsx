@@ -7,7 +7,9 @@ import { useContent } from "../../context/ContentProvider";
 import {
   buildLocalizedProducts,
   CATEGORY_KEYS,
+  formatProductCategoryLabels,
   matchesProductSearch,
+  productMatchesCategory,
 } from "./cosmeticsShared";
 
 export default function CosmeticsCatalog() {
@@ -26,7 +28,7 @@ export default function CosmeticsCatalog() {
       products.filter(
         (product) =>
           matchesProductSearch(product, searchQuery) &&
-          (activeCategory === "all" || product.category === activeCategory)
+          productMatchesCategory(product, activeCategory)
       ),
     [activeCategory, products, searchQuery]
   );
@@ -85,7 +87,7 @@ export default function CosmeticsCatalog() {
               key={product.id}
               product={product}
               index={index}
-              categoryLabel={t(`cosmetics.categories.${product.category}`)}
+              categoryLabel={formatProductCategoryLabels(t, product)}
             />
           ))}
         </div>

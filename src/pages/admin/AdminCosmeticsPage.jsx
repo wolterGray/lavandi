@@ -16,6 +16,7 @@ import {
   CATEGORY_KEYS,
   formatCosmeticVolume,
   generateCosmeticNumericId,
+  getProductCategories,
   getProductImageSurfaceClass,
   MAX_FEATURED_COSMETICS,
   normalizeCosmeticCopy,
@@ -149,6 +150,7 @@ export default function AdminCosmeticsPage() {
     setDraft((prev) => [
       {
         id,
+        categories: ["pro-cosmetics"],
         category: "pro-cosmetics",
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
@@ -210,6 +212,28 @@ export default function AdminCosmeticsPage() {
         setConfirm(null);
       },
     });
+  };
+
+  const toggleCategory = (index, categoryKey) => {
+    setDraft((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const current = getProductCategories(item);
+        const hasCategory = current.includes(categoryKey);
+        if (hasCategory && current.length === 1) return item;
+
+        const next = hasCategory
+          ? current.filter((key) => key !== categoryKey)
+          : [...current, categoryKey];
+
+        return {
+          ...item,
+          categories: next,
+          category: next[0],
+        };
+      })
+    );
+    setDirty(true);
   };
 
   const toggleFeatured = (productId) => {
@@ -274,8 +298,11 @@ export default function AdminCosmeticsPage() {
   const handleSave = async () => {
     const enriched = draft.map((item, index) => {
       const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+      const categories = getProductCategories(item);
       return {
         ...item,
+        categories,
+        category: categories[0],
         initials: deriveCosmeticInitials(texts.name),
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       };
@@ -307,7 +334,7 @@ export default function AdminCosmeticsPage() {
   const isAuthoring = activeLang === CMS_AUTHOR_LANG;
   const filteredDraft = filterAdminList(draft, searchQuery, (item) => {
     const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
-    return `${item.id} ${texts.name ?? ""} ${item.category ?? ""}`;
+    return `${item.id} ${texts.name ?? ""} ${getProductCategories(item).join(" ")}`;
   });
   const sectionSavedAt = getSectionMeta(overrides, getAdminSectionKey("/admin/cosmetics"));
 
@@ -459,19 +486,33 @@ export default function AdminCosmeticsPage() {
                   </label>
                 </AdminField>
 
-                <AdminField label={adminRu.cosmetics.category}>
-                  <select
-                    value={item.category}
-                    onChange={(e) => updateItem(index, { category: e.target.value })}
-                    className={adminInputClass()}
-                  >
-                    {PRODUCT_CATEGORIES.map((key) => (
-                      <option key={key} value={key}>
-                        {adminRu.cosmetics.categories[key] ?? key}
-                      </option>
-                    ))}
-                  </select>
-                </AdminField>
+                <div className="sm:col-span-2">
+                  <AdminField label={adminRu.cosmetics.category} help={adminRu.help.productCategories}>
+                    <div className="flex flex-wrap gap-2 rounded-card border border-border/50 bg-surface p-3">
+                      {PRODUCT_CATEGORIES.map((key) => {
+                        const checked = getProductCategories(item).includes(key);
+                        return (
+                          <label
+                            key={key}
+                            className={`flex cursor-pointer items-center gap-2 rounded-pill border px-3 py-1.5 text-sm transition ${
+                              checked
+                                ? "border-gold/40 bg-gold/10 text-gold"
+                                : "border-border/40 text-stone hover:border-gold/25 hover:text-milk"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={checked}
+                              onChange={() => toggleCategory(index, key)}
+                              className="h-3.5 w-3.5 accent-gold"
+                            />
+                            <span>{adminRu.cosmetics.categories[key] ?? key}</span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </AdminField>
+                </div>
 
                 <AdminField label={adminRu.cosmetics.featured} help={adminRu.help.featuredCosmetics}>
                   <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
@@ -586,7 +627,7 @@ export default function AdminCosmeticsPage() {
         hint={status?.message && !dirty ? status.message : undefined}
         onDiscard={() => {
           setDraft(cosmetics);
-          setTextDraft(defaultTexts);
+          setTextDraft(ruTexts);
           setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
           setRetiredDraft(cosmeticRetiredIds);
           setIdPickerOpen(false);

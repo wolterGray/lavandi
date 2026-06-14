@@ -6,7 +6,7 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import CosmeticProductCard from "./CosmeticProductCard";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
-import { buildLocalizedProduct, COSMETICS_ROUTE, getFeaturedProducts } from "./cosmeticsShared";
+import { buildLocalizedProduct, COSMETICS_ROUTE, formatProductCategoryLabels, getFeaturedProducts } from "./cosmeticsShared";
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
@@ -43,7 +43,7 @@ export default function CosmeticsSection() {
               key={product.id}
               product={product}
               index={index}
-              categoryLabel={t(`cosmetics.categories.${product.category}`)}
+              categoryLabel={formatProductCategoryLabels(t, product)}
               variant="featured"
             />
           ))}

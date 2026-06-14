@@ -13,6 +13,7 @@ import { EMAIL, SITE_URL } from "../constants/theme";
 import CosmeticProductImageMagnifier from "../components/CosmeticsSection/CosmeticProductImageMagnifier";
 import {
   buildCosmeticInquiryMailto,
+  formatProductCategoryLabels,
   COSMETICS_ROUTE,
 } from "../components/CosmeticsSection/cosmeticsShared";
 import { useImageSrc } from "../hooks/useImageSrc";
@@ -29,7 +30,7 @@ export default function CosmeticProductPage({ product }) {
   const { t, lang } = useTranslation();
   const imageSrc = useImageSrc(product.img);
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
-  const categoryLabel = t(`cosmetics.categories.${product.category}`);
+  const categoryLabel = formatProductCategoryLabels(t, product);
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });
   const description =
     product.description?.trim() ||

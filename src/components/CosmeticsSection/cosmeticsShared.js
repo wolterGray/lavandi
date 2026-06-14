@@ -54,11 +54,40 @@ export function normalizeCosmeticCategory(category) {
   return LEGACY_COSMETIC_CATEGORY_MAP[key] ?? "pro-cosmetics";
 }
 
+export function getProductCategories(product) {
+  const raw = Array.isArray(product?.categories)
+    ? product.categories
+    : product?.category != null && String(product.category).trim()
+      ? [product.category]
+      : [];
+
+  const normalized = raw
+    .map(normalizeCosmeticCategory)
+    .filter((key, index, list) => PRODUCT_CATEGORY_KEYS.includes(key) && list.indexOf(key) === index);
+
+  return normalized.length ? normalized : ["pro-cosmetics"];
+}
+
+export function productMatchesCategory(product, categoryKey) {
+  if (categoryKey === "all") return true;
+  return getProductCategories(product).includes(categoryKey);
+}
+
+export function formatProductCategoryLabels(t, product, { joiner = " · " } = {}) {
+  return getProductCategories(product)
+    .map((key) => t(`cosmetics.categories.${key}`))
+    .join(joiner);
+}
+
 export function normalizeCosmeticsList(products = cosmeticsBase) {
-  return products.map((product) => ({
-    ...product,
-    category: normalizeCosmeticCategory(product.category),
-  }));
+  return products.map((product) => {
+    const categories = getProductCategories(product);
+    return {
+      ...product,
+      categories,
+      category: categories[0],
+    };
+  });
 }
 
 export const MAX_FEATURED_COSMETICS = 3;
