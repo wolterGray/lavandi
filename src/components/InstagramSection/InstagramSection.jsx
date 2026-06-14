@@ -1,4 +1,5 @@
 import { FaInstagram } from "react-icons/fa";
+import SiteImage from "../../ui/SiteImage";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import SectionTitle from "../../ui/SectionTitle";
 import { SOCIAL } from "../../constants/theme";
@@ -25,11 +26,12 @@ export default function InstagramSection() {
               className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10"
               aria-label={`${service.title} — zobacz na Instagramie NUAR`}
             >
-              <img
+              <SiteImage
                 src={service.img}
                 alt={service.title}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-105"
                 loading="lazy"
-                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/10 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
                 <span className="text-xs uppercase tracking-[0.18em] text-white/90">

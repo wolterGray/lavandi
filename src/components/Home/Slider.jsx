@@ -1,3 +1,4 @@
+import SiteImage from "../../ui/SiteImage";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { motion } from "framer-motion";
 
@@ -40,10 +41,11 @@ function Slider({ homeBanner }) {
                 </motion.p>
               </div>
 
-              <img
+              <SiteImage
                 src={img}
                 alt={title}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
                 decoding={index === 0 ? "sync" : "async"}

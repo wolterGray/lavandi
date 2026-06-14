@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Link } from "react-scroll";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
+import SiteImage from "../../ui/SiteImage";
 import BookVisitButton from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
@@ -37,10 +38,11 @@ export default function HeroCarousel() {
         {slides.map((slide, index) => (
           <SwiperSlide key={slide.title}>
             <div className="relative h-full w-full overflow-hidden">
-              <img
+              <SiteImage
                 src={slide.img}
                 alt={slide.title}
-                className="absolute inset-0 h-full w-full object-cover"
+                fill
+                className="object-cover"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
               />

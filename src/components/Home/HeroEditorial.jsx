@@ -1,5 +1,6 @@
 import { Link } from "react-scroll";
 import { useTranslation } from "../../i18n/LanguageProvider";
+import SiteImage from "../../ui/SiteImage";
 import BookVisitButton from "../../ui/BookVisitButton";
 
 export default function HeroEditorial({ image = "/massage/1.webp" }) {
@@ -7,10 +8,11 @@ export default function HeroEditorial({ image = "/massage/1.webp" }) {
 
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <img
+      <SiteImage
         src={image}
         alt={t("hero.imageAlt")}
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        className="object-cover"
         loading="eager"
         fetchPriority="high"
         decoding="sync"

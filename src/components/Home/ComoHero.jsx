@@ -1,4 +1,5 @@
 import { Link } from "react-scroll";
+import SiteImage from "../../ui/SiteImage";
 import { useTranslation } from "../../i18n/LanguageProvider";
 
 export default function ComoHero() {
@@ -7,10 +8,11 @@ export default function ComoHero() {
 
   return (
     <section id="home" className="relative h-screen min-h-[640px] w-full overflow-hidden">
-      <img
+      <SiteImage
         src={slide?.img ?? "/massage/1.webp"}
         alt={t("hero.imageAlt")}
-        className="absolute inset-0 h-full w-full object-cover"
+        fill
+        className="object-cover"
         loading="eager"
         fetchPriority="high"
       />

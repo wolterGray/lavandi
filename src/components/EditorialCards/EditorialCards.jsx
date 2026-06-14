@@ -1,4 +1,5 @@
 import { Link } from "react-scroll";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { BookVisitLink } from "../../ui/BookVisitButton";
@@ -15,11 +16,12 @@ export default function EditorialCards() {
           {cards.map((card, index) => (
             <ScrollAnimationWrapper key={card.title} delay={index * 0.1}>
               <article className="group flex flex-col">
-              <div className="aspect-[3/4] overflow-hidden rounded-card border border-gold/40 bg-surface ring-1 ring-gold/10">
-                <img
+              <div className="relative aspect-[3/4] overflow-hidden rounded-card border border-gold/40 bg-surface ring-1 ring-gold/10">
+                <SiteImage
                   src={card.img}
                   alt=""
-                  className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
+                  fill
+                  className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
                   loading={index === 0 ? "eager" : "lazy"}
                 />
               </div>

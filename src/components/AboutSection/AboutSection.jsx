@@ -1,3 +1,4 @@
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -20,8 +21,8 @@ export default function AboutSection() {
             <p className="mt-6 text-sm font-bold uppercase tracking-[0.12em] text-gold">{about.location}</p>
           </ScrollAnimationWrapper>
           <ScrollAnimationWrapper direction="right" delay={0.1} className="min-h-[220px] sm:min-h-[260px] lg:h-full lg:min-h-0">
-            <div className="h-full overflow-hidden rounded-card shadow-spa">
-              <img src={about.image} alt={t("hero.imageAlt")} loading="lazy" className="h-full w-full object-cover object-center" />
+            <div className="h-full min-h-[220px] overflow-hidden rounded-card shadow-spa sm:min-h-[260px] lg:min-h-0">
+              <SiteImage src={about.image} alt={t("hero.imageAlt")} className="h-full w-full object-cover object-center" loading="lazy" />
             </div>
           </ScrollAnimationWrapper>
         </div>

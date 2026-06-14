@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ZoomIn } from "lucide-react";
 import { useImageSrc } from "../../hooks/useImageSrc";
+import { ImageSkeleton } from "../../ui/SiteImage";
 import {
   getProductImageSurfaceClass,
   PLACEHOLDER_GRADIENTS,
@@ -73,9 +74,15 @@ export default function CosmeticProductImageMagnifier({
   });
 
   const gradient = PLACEHOLDER_GRADIENTS[product.accent % PLACEHOLDER_GRADIENTS.length];
-  const surfaceClass = imageSrc
+  const hasImage = Boolean(imageRef ?? product.img);
+  const surfaceClass = hasImage
     ? getProductImageSurfaceClass(product, { hasImage: true })
     : gradient;
+  const pendingImage = hasImage && (!imageSrc || !imageLoaded);
+
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [imageSrc]);
 
   useEffect(() => {
     const media = window.matchMedia("(hover: hover) and (pointer: fine)");
@@ -177,13 +184,16 @@ export default function CosmeticProductImageMagnifier({
           onMouseMove={handlePointerMove}
           onMouseLeave={() => setActive(false)}
         >
+          {pendingImage ? <ImageSkeleton className="absolute inset-0" /> : null}
           {imageSrc ? (
             <>
               <img
                 ref={imgRef}
                 src={imageSrc}
                 alt=""
-                className={imageClassName}
+                className={`${imageClassName} transition-opacity duration-500 ease-luxury ${
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                }`}
                 loading="eager"
                 decoding="async"
                 draggable={false}
@@ -214,9 +224,9 @@ export default function CosmeticProductImageMagnifier({
                 </>
               ) : null}
             </>
-          ) : (
+          ) : !hasImage ? (
             <span className={initialsClassName}>{product.initials}</span>
-          )}
+          ) : null}
         </div>
       </div>
       {zoomPortal}

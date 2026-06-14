@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -29,12 +30,13 @@ export default function SignatureRituals({ services = [] }) {
           {signatureServices.map((service, index) => (
             <ScrollAnimationWrapper key={service.slug} delay={index * 0.1}>
               <Link to={`/uslugi/${service.slug}`} className="group relative block spa-card">
-                <div className="aspect-[4/5] overflow-hidden">
-                  <img
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <SiteImage
                     src={service.img}
                     alt={service.title}
+                    fill
+                    className="object-cover transition duration-700 group-hover:scale-[1.02]"
                     loading={index === 0 ? "eager" : "lazy"}
-                    className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-void via-void/55 to-void/10" />
                   <div className="absolute inset-0 bg-gradient-to-t from-void/95 via-void/35 to-transparent" />

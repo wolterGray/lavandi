@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
@@ -57,11 +58,12 @@ export default function GallerySection() {
                       className={`group relative overflow-hidden bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/50 ${index === 0 ? "col-span-2 row-span-2" : ""}`}
                       aria-label={t(`gallery.items.${image.altKey}`)}
                     >
-                      <img
+                      <SiteImage
                         src={image.src}
                         alt={t(`gallery.items.${image.altKey}`)}
+                        fill
+                        className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.05]"
                         loading={index < 3 ? "eager" : "lazy"}
-                        className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.05]"
                       />
                       <span
                         aria-hidden="true"
@@ -92,9 +94,10 @@ export default function GallerySection() {
           >
             ×
           </button>
-          <img
+          <SiteImage
             src={activeImage.src}
             alt={t(`gallery.items.${activeImage.altKey}`)}
+            wrapperClassName="max-h-[88vh] max-w-[min(920px,100%)]"
             className="max-h-[88vh] max-w-[min(920px,100%)] rounded-card object-contain shadow-spa-hover"
             onClick={(event) => event.stopPropagation()}
           />

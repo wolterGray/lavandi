@@ -1,3 +1,4 @@
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
@@ -8,7 +9,14 @@ export default function BookingSection() {
 
   return (
     <section id="contact" className="relative overflow-hidden">
-      <img src="/booking/booking.jpg" alt="" aria-hidden="true" loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+      <SiteImage
+        src="/booking/booking.jpg"
+        alt=""
+        fill
+        className="object-cover"
+        loading="lazy"
+        aria-hidden="true"
+      />
       <div className="absolute inset-0 bg-[rgba(154,132,88,0.06)]" />
       <div className="absolute inset-0 bg-gradient-to-b from-void/80 via-void/75 to-void/90" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_15%,rgba(8,6,12,0.45)_100%)]" />

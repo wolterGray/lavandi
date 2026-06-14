@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useImageSrc } from "../../hooks/useImageSrc";
+import SiteImage from "../../ui/SiteImage";
 import CosmeticProductImageMagnifier from "./CosmeticProductImageMagnifier";
 import { getProductImageSurfaceClass, getProductImages } from "./cosmeticsShared";
 
 function GalleryThumbnail({ product, imageRef, active, onSelect, index, total }) {
-  const imageSrc = useImageSrc(imageRef);
-  const surfaceClass = imageSrc
+  const surfaceClass = imageRef
     ? getProductImageSurfaceClass(product, { hasImage: true })
     : "bg-surface";
 
@@ -23,9 +22,16 @@ function GalleryThumbnail({ product, imageRef, active, onSelect, index, total })
           : "border-border/40 opacity-75 hover:border-gold/30 hover:opacity-100"
       }`}
     >
-      <span className={`flex h-full w-full items-center justify-center p-1 ${surfaceClass}`}>
-        {imageSrc ? (
-          <img src={imageSrc} alt="" className="h-full w-full object-contain object-center" loading="lazy" />
+      <span className={`relative flex h-full w-full items-center justify-center p-1 ${surfaceClass}`}>
+        {imageRef ? (
+          <SiteImage
+            src={imageRef}
+            alt=""
+            fill
+            wrapperClassName="absolute inset-0"
+            className="object-contain object-center"
+            loading="lazy"
+          />
         ) : (
           <span className="font-display text-xs text-milk/30">{product.initials}</span>
         )}

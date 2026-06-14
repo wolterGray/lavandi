@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -39,11 +40,12 @@ function ServiceCard({ service, index }) {
           className="flex h-full flex-col outline-none focus:outline-none focus-visible:outline-none"
         >
           <div className="relative aspect-[4/5] overflow-hidden">
-            <img
+            <SiteImage
               src={service.img}
               alt={service.title}
+              fill
+              className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.02]"
               loading={index < 3 ? "eager" : "lazy"}
-              className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.02]"
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-card via-card/55 to-transparent" />
             <DiscountBadge discount={service.discount} />

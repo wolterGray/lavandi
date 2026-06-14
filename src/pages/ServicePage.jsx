@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
+import SiteImage from "../ui/SiteImage";
 import Container from "../ui/Container";
 import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
@@ -78,7 +79,12 @@ export default function ServicePage({ service }) {
         <div className="mt-10 grid gap-12 lg:grid-cols-2">
           <ScrollAnimationWrapper direction="left">
             <div className="card-gradient-border overflow-hidden rounded-card shadow-spa">
-              <img src={service.img} alt={service.title} className="aspect-[4/3] w-full object-cover" />
+              <SiteImage
+                src={service.img}
+                alt={service.title}
+                wrapperClassName="aspect-[4/3] w-full"
+                className="aspect-[4/3] w-full object-cover"
+              />
             </div>
           </ScrollAnimationWrapper>
           <ScrollAnimationWrapper direction="right" delay={0.1}>

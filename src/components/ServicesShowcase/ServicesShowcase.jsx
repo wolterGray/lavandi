@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import CarouselControls from "../../ui/CarouselControls";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -51,11 +52,12 @@ export default function ServicesShowcase({ services = [] }) {
             <SwiperSlide key={service.slug}>
               <Link to={`/uslugi/${service.slug}`} className="group block">
                 <article className="overflow-hidden rounded-card border border-gold/40 bg-canvas ring-1 ring-gold/10 transition hover:border-gold/60">
-                  <div className="aspect-[4/3] overflow-hidden">
-                    <img
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <SiteImage
                       src={service.img}
                       alt={service.title}
-                      className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
+                      fill
+                      className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
                       loading="lazy"
                     />
                   </div>

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import SiteImage from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
@@ -28,9 +29,10 @@ export default function FilmSection() {
               className="group relative block w-full"
               aria-label={t("film.play")}
             >
-              <img
+              <SiteImage
                 src="/massage/2.webp"
                 alt=""
+                wrapperClassName="aspect-video w-full"
                 className="aspect-video w-full object-cover opacity-90 transition group-hover:opacity-100"
               />
               <span className="absolute inset-0 flex items-center justify-center bg-void/20 transition group-hover:bg-void/10">
@@ -42,12 +44,8 @@ export default function FilmSection() {
               </span>
             </button>
           ) : (
-            <div className="aspect-video w-full bg-void">
-              <img
-                src="/massage/2.webp"
-                alt=""
-                className="h-full w-full object-cover"
-              />
+            <div className="relative aspect-video w-full overflow-hidden bg-void">
+              <SiteImage src="/massage/2.webp" alt="" fill className="object-cover" />
             </div>
           )}
           <p className="mt-6 text-center text-sm text-stone">{t("film.caption")}</p>
