@@ -6,6 +6,13 @@ import { siteDefaults } from "../admin/siteContent";
 
 export const CONTENT_STORAGE_KEY = "nuar_content_overrides";
 
+/** Ignore tiny stale drafts in localStorage (e.g. one product after a failed save). */
+export const MIN_USABLE_CATALOG_SIZE = 5;
+
+export function hasUsableCachedCatalog(overrides = {}) {
+  return Array.isArray(overrides.cosmetics) && overrides.cosmetics.length >= MIN_USABLE_CATALOG_SIZE;
+}
+
 export function loadOverrides() {
   try {
     const raw = localStorage.getItem(CONTENT_STORAGE_KEY);
@@ -33,7 +40,7 @@ export function mergeContent(overrides = loadOverrides()) {
   return {
     services: overrides.services ?? servicesDefault,
     gallery: overrides.gallery ?? galleryDefault,
-    cosmetics: overrides.cosmetics ?? cosmeticsDefault,
+    cosmetics: hasUsableCachedCatalog(overrides) ? overrides.cosmetics : cosmeticsDefault,
     featuredCosmeticIds: overrides.featuredCosmeticIds ?? DEFAULT_FEATURED_COSMETIC_IDS,
     cosmeticRetiredIds: overrides.cosmeticRetiredIds ?? [],
     faq: overrides.faq ?? null,

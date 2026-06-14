@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
-import { ImageSkeleton } from "../../ui/SiteImage";
 import CosmeticProductCard from "./CosmeticProductCard";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
@@ -15,7 +14,7 @@ import {
 
 export default function CosmeticsCatalog() {
   const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts, contentLoading } = useContent();
+  const { cosmetics, getProductTexts } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const categoryStripRef = useRef(null);
@@ -101,22 +100,7 @@ export default function CosmeticsCatalog() {
         </div>
       </ScrollAnimationWrapper>
 
-      {contentLoading ? (
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
-          {Array.from({ length: 8 }, (_, index) => (
-            <div
-              key={index}
-              className="overflow-hidden rounded-card border border-border/50 bg-card shadow-spa"
-            >
-              <ImageSkeleton className="aspect-square w-full" />
-              <div className="space-y-2 p-3 sm:p-3.5">
-                <ImageSkeleton className="h-2 w-1/3 rounded-full" />
-                <ImageSkeleton className="h-4 w-4/5 rounded-full" />
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : filteredProducts.length === 0 ? (
+      {filteredProducts.length === 0 ? (
         <ScrollAnimationWrapper delay={0.15} className="mt-10 rounded-card border border-border/40 bg-card/60 px-6 py-12 text-center">
           <p className="text-sm text-stone">{t("cosmetics.noResults")}</p>
         </ScrollAnimationWrapper>

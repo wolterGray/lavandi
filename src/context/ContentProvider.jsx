@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import {
   clearOverrides,
   exportContentBundle,
+  hasUsableCachedCatalog,
   loadOverrides,
   mergeContent,
   patchLocaleBlock,
@@ -25,8 +26,6 @@ import { adminRu } from "../admin/adminStrings";
 import { buildFullPublishedOverrides } from "../admin/publishFullContent";
 import {
   cleanupOrphanedSiteImages,
-  collectImageRefsFromOverrides,
-  fetchSiteImagesMap,
   getCachedImageDataUrl,
   isImageRef,
   parseImageRef,
@@ -37,51 +36,32 @@ import { isSupabaseConfigured } from "../lib/supabase";
 
 const ContentContext = createContext(null);
 
+const CMS_SYNC_TIMEOUT_MS = 6000;
+
 export { ContentContext };
 
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);
   const [overrides, setOverrides] = useState(initialOverrides);
-  const [cmsSyncing, setCmsSyncing] = useState(isSupabaseConfigured);
+  const [cmsSyncing, setCmsSyncing] = useState(
+    () => isSupabaseConfigured && !hasUsableCachedCatalog(initialOverrides),
+  );
   const [contentSaving, setContentSaving] = useState(false);
   const [syncError, setSyncError] = useState(null);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
-  const [imageDataUrls, setImageDataUrls] = useState({});
 
   const content = useMemo(() => mergeContent(overrides), [overrides]);
-  const resolvedContent = useMemo(
-    () => resolveContentImages(content, imageDataUrls),
-    [content, imageDataUrls],
-  );
-
-  const mergeImageMap = useCallback((map) => {
-    if (!map || !Object.keys(map).length) return;
-    setImageDataUrls((prev) => {
-      let changed = false;
-      const next = { ...prev };
-      Object.entries(map).forEach(([id, url]) => {
-        if (url && next[id] !== url) {
-          next[id] = url;
-          changed = true;
-        }
-      });
-      return changed ? next : prev;
-    });
-  }, []);
+  const resolvedContent = useMemo(() => resolveContentImages(content, {}), [content]);
 
   useEffect(() => {
     if (!isSupabaseConfigured) return undefined;
 
     let cancelled = false;
-    const cachedIds = collectImageRefsFromOverrides(initialOverrides);
+    const syncTimer = window.setTimeout(() => {
+      if (!cancelled) setCmsSyncing(false);
+    }, CMS_SYNC_TIMEOUT_MS);
 
-    const hydrateImages = cachedIds.length
-      ? fetchSiteImagesMap(cachedIds).then((map) => {
-          if (!cancelled) mergeImageMap(map);
-        })
-      : Promise.resolve();
-
-    const hydrateCms = fetchSiteContentFromSupabase()
+    fetchSiteContentFromSupabase()
       .then((remote) => {
         if (cancelled) return;
         if (remote?.overrides && Object.keys(remote.overrides).length > 0) {
@@ -100,29 +80,11 @@ export function ContentProvider({ children }) {
         if (!cancelled) setCmsSyncing(false);
       });
 
-    void Promise.all([hydrateImages, hydrateCms]);
-
     return () => {
       cancelled = true;
+      window.clearTimeout(syncTimer);
     };
-  }, [initialOverrides, mergeImageMap]);
-
-  useEffect(() => {
-    if (!isSupabaseConfigured) return undefined;
-
-    const ids = collectImageRefsFromOverrides(overrides);
-    const missing = ids.filter((id) => !imageDataUrls[id] && !getCachedImageDataUrl(id));
-    if (!missing.length) return undefined;
-
-    let cancelled = false;
-    fetchSiteImagesMap(missing).then((map) => {
-      if (!cancelled) mergeImageMap(map);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [overrides, imageDataUrls, mergeImageMap]);
+  }, []);
 
   const persistOverrides = useCallback(async (next) => {
     setOverrides(next);
@@ -297,9 +259,9 @@ export function ContentProvider({ children }) {
       if (!isImageRef(value)) return value;
       const id = parseImageRef(value);
       if (!id) return "";
-      return imageDataUrls[id] ?? getCachedImageDataUrl(id) ?? "";
+      return getCachedImageDataUrl(id) ?? "";
     },
-    [imageDataUrls],
+    [],
   );
 
   const value = useMemo(
@@ -307,7 +269,7 @@ export function ContentProvider({ children }) {
       ...resolvedContent,
       cosmetics: normalizeCosmeticsList(resolvedContent.cosmetics),
       overrides,
-      contentLoading: cmsSyncing,
+      contentLoading: cmsSyncing && !hasUsableCachedCatalog(overrides),
       cmsSyncing,
       contentSaving,
       syncError,
