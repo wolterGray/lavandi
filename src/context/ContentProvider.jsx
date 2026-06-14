@@ -40,8 +40,8 @@ import { isSupabaseConfigured } from "../lib/supabase";
 const ContentContext = createContext(null);
 
 const CMS_SYNC_TIMEOUT_MS = 6000;
-const IMAGE_PREFETCH_BATCH_SIZE = 8;
-const IMAGE_PREFETCH_BATCH_DELAY_MS = 40;
+const IMAGE_PREFETCH_BATCH_SIZE = 16;
+const IMAGE_PREFETCH_BATCH_DELAY_MS = 16;
 
 export { ContentContext };
 

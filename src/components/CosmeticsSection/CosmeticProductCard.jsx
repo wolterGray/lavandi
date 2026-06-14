@@ -24,6 +24,7 @@ export default function CosmeticProductCard({
     >
         <CosmeticProductImage
           compact={!featured}
+          priority={index < 12}
           product={product}
           className={`w-full shrink-0 ${featured ? "aspect-[4/5]" : "aspect-square"}`}
         />

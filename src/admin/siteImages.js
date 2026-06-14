@@ -1,5 +1,6 @@
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import { compressImageForUpload } from "../utils/imageCompress";
 
 export const IMAGE_REF_PREFIX = "dbimg:";
 
@@ -165,15 +166,16 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
   }
 
   const safeFolder = sanitizeFolder(folder);
+  const prepared = await compressImageForUpload(file, safeFolder);
   const id = `${safeFolder}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const dataBase64 = await fileToBase64(file);
+  const dataBase64 = await fileToBase64(prepared);
 
   const { error } = await supabase.from("site_images").upsert({
     id,
     folder: safeFolder,
-    mime_type: file.type,
+    mime_type: prepared.type,
     data_base64: dataBase64,
-    size_bytes: file.size,
+    size_bytes: prepared.size,
     updated_at: new Date().toISOString(),
   });
 

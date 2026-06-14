@@ -4,13 +4,14 @@ import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import CosmeticProductCard from "./CosmeticProductCard";
+import CosmeticProductCardSkeleton from "./CosmeticProductCardSkeleton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
 import { buildLocalizedProduct, COSMETICS_ROUTE, formatProductCategoryLabels, getFeaturedProducts } from "./cosmeticsShared";
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
-  const { cosmetics, featuredCosmeticIds, getProductTexts } = useContent();
+  const { cosmetics, featuredCosmeticIds, getProductTexts, contentLoading } = useContent();
 
   const featuredProducts = useMemo(() => {
     const featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
@@ -38,16 +39,20 @@ export default function CosmeticsSection() {
         </div>
 
         <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {featuredProducts.map((product, index) => (
-            <CosmeticProductCard
-              key={product.id}
-              product={product}
-              index={index}
-              categoryLabel={formatProductCategoryLabels(t, product)}
-              variant="featured"
-              reveal={false}
-            />
-          ))}
+          {contentLoading
+            ? Array.from({ length: 3 }, (_, index) => (
+                <CosmeticProductCardSkeleton key={index} variant="featured" />
+              ))
+            : featuredProducts.map((product, index) => (
+                <CosmeticProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  categoryLabel={formatProductCategoryLabels(t, product)}
+                  variant="featured"
+                  reveal={false}
+                />
+              ))}
         </div>
 
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">

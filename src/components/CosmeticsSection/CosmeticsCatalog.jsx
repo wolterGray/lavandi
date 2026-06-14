@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
+import { ImageSkeleton } from "../../ui/SiteImage";
 import CosmeticProductCard from "./CosmeticProductCard";
+import CosmeticProductCardSkeleton from "./CosmeticProductCardSkeleton";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
@@ -12,9 +14,12 @@ import {
   productMatchesCategory,
 } from "./cosmeticsShared";
 
+const CATALOG_GRID_CLASSNAME =
+  "mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]";
+
 export default function CosmeticsCatalog() {
   const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts } = useContent();
+  const { cosmetics, getProductTexts, contentLoading } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const categoryStripRef = useRef(null);
@@ -40,6 +45,30 @@ export default function CosmeticsCatalog() {
       ),
     [activeCategory, products, searchQuery]
   );
+
+  if (contentLoading) {
+    return (
+      <>
+        <ScrollAnimationWrapper delay={0.08} className="mt-10">
+          <div className="relative max-w-xl">
+            <ImageSkeleton className="h-12 w-full rounded-pill" />
+          </div>
+        </ScrollAnimationWrapper>
+        <ScrollAnimationWrapper delay={0.12} className="mt-6">
+          <div className="flex flex-wrap gap-2">
+            {CATEGORY_KEYS.slice(0, 4).map((key) => (
+              <ImageSkeleton key={key} className="h-10 w-24 rounded-pill" />
+            ))}
+          </div>
+        </ScrollAnimationWrapper>
+        <div className={CATALOG_GRID_CLASSNAME}>
+          {Array.from({ length: cosmetics.length }, (_, index) => (
+            <CosmeticProductCardSkeleton key={index} />
+          ))}
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -105,7 +134,7 @@ export default function CosmeticsCatalog() {
           <p className="text-sm text-stone">{t("cosmetics.noResults")}</p>
         </ScrollAnimationWrapper>
       ) : (
-        <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
+        <div className={CATALOG_GRID_CLASSNAME}>
           {filteredProducts.map((product, index) => (
             <CosmeticProductCard
               key={product.id}
