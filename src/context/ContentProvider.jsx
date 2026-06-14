@@ -27,6 +27,9 @@ import {
   cleanupOrphanedSiteImages,
   collectImageRefsFromOverrides,
   fetchSiteImagesMap,
+  getCachedImageDataUrl,
+  isImageRef,
+  parseImageRef,
   resolveContentImages,
 } from "../admin/siteImages";
 import { normalizeCosmeticCopy, normalizeCosmeticsList } from "../components/CosmeticsSection/cosmeticsShared";
@@ -34,14 +37,18 @@ import { isSupabaseConfigured } from "../lib/supabase";
 
 const ContentContext = createContext(null);
 
+export { ContentContext };
+
 export function ContentProvider({ children }) {
-  const [overrides, setOverrides] = useState(() => loadOverrides());
-  const [contentLoading, setContentLoading] = useState(isSupabaseConfigured);
+  const initialOverrides = useMemo(() => loadOverrides(), []);
+  const [overrides, setOverrides] = useState(initialOverrides);
+  const [cmsSyncing, setCmsSyncing] = useState(
+    () => isSupabaseConfigured && Object.keys(initialOverrides).length === 0,
+  );
   const [contentSaving, setContentSaving] = useState(false);
   const [syncError, setSyncError] = useState(null);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
   const [imageDataUrls, setImageDataUrls] = useState({});
-  const [imagesLoading, setImagesLoading] = useState(isSupabaseConfigured);
 
   const content = useMemo(() => mergeContent(overrides), [overrides]);
   const resolvedContent = useMemo(
@@ -49,67 +56,75 @@ export function ContentProvider({ children }) {
     [content, imageDataUrls],
   );
 
+  const mergeImageMap = useCallback((map) => {
+    if (!map || !Object.keys(map).length) return;
+    setImageDataUrls((prev) => {
+      let changed = false;
+      const next = { ...prev };
+      Object.entries(map).forEach(([id, url]) => {
+        if (url && next[id] !== url) {
+          next[id] = url;
+          changed = true;
+        }
+      });
+      return changed ? next : prev;
+    });
+  }, []);
+
   useEffect(() => {
     if (!isSupabaseConfigured) return undefined;
 
     let cancelled = false;
+    const cachedIds = collectImageRefsFromOverrides(initialOverrides);
 
-    (async () => {
-      try {
-        const remote = await fetchSiteContentFromSupabase();
+    const hydrateImages = cachedIds.length
+      ? fetchSiteImagesMap(cachedIds).then((map) => {
+          if (!cancelled) mergeImageMap(map);
+        })
+      : Promise.resolve();
+
+    const hydrateCms = fetchSiteContentFromSupabase()
+      .then((remote) => {
         if (cancelled) return;
-
         if (remote?.overrides && Object.keys(remote.overrides).length > 0) {
           setOverrides(remote.overrides);
           saveOverrides(remote.overrides);
           setLastSyncedAt(remote.updatedAt);
         }
         setSyncError(null);
-      } catch (error) {
+      })
+      .catch((error) => {
         if (!cancelled) {
           setSyncError(error.message ?? adminRu.sync.fetchFailed);
         }
-      } finally {
-        if (!cancelled) setContentLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!isSupabaseConfigured) {
-      setImagesLoading(false);
-      return undefined;
-    }
-
-    const imageIds = collectImageRefsFromOverrides(overrides);
-    if (!imageIds.length) {
-      setImageDataUrls({});
-      setImagesLoading(false);
-      return undefined;
-    }
-
-    let cancelled = false;
-    setImagesLoading(true);
-
-    fetchSiteImagesMap(imageIds)
-      .then((map) => {
-        if (!cancelled) setImageDataUrls(map);
-      })
-      .catch(() => {
-        if (!cancelled) setImageDataUrls({});
       })
       .finally(() => {
-        if (!cancelled) setImagesLoading(false);
+        if (!cancelled) setCmsSyncing(false);
       });
+
+    void Promise.all([hydrateImages, hydrateCms]);
 
     return () => {
       cancelled = true;
     };
-  }, [overrides]);
+  }, [initialOverrides, mergeImageMap]);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return undefined;
+
+    const ids = collectImageRefsFromOverrides(overrides);
+    const missing = ids.filter((id) => !imageDataUrls[id] && !getCachedImageDataUrl(id));
+    if (!missing.length) return undefined;
+
+    let cancelled = false;
+    fetchSiteImagesMap(missing).then((map) => {
+      if (!cancelled) mergeImageMap(map);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [overrides, imageDataUrls, mergeImageMap]);
 
   const persistOverrides = useCallback(async (next) => {
     setOverrides(next);
@@ -278,16 +293,29 @@ export function ContentProvider({ children }) {
     [overrides]
   );
 
+  const getImageDataUrl = useCallback(
+    (value) => {
+      if (!value || typeof value !== "string") return value ?? "";
+      if (!isImageRef(value)) return value;
+      const id = parseImageRef(value);
+      if (!id) return "";
+      return imageDataUrls[id] ?? getCachedImageDataUrl(id) ?? "";
+    },
+    [imageDataUrls],
+  );
+
   const value = useMemo(
     () => ({
       ...resolvedContent,
       cosmetics: normalizeCosmeticsList(resolvedContent.cosmetics),
       overrides,
-      contentLoading: contentLoading || imagesLoading,
+      contentLoading: cmsSyncing,
+      cmsSyncing,
       contentSaving,
       syncError,
       lastSyncedAt,
       isSupabaseEnabled: isSupabaseConfigured,
+      getImageDataUrl,
       saveOverridesBundle,
       updateSection,
       updateLocaleBlock,
@@ -309,11 +337,11 @@ export function ContentProvider({ children }) {
     [
       resolvedContent,
       overrides,
-      contentLoading,
-      imagesLoading,
+      cmsSyncing,
       contentSaving,
       syncError,
       lastSyncedAt,
+      getImageDataUrl,
       saveOverridesBundle,
       updateSection,
       updateLocaleBlock,

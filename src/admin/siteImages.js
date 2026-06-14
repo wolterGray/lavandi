@@ -55,6 +55,19 @@ export function toDataUrl(mimeType, dataBase64) {
   return `data:${mimeType};base64,${dataBase64}`;
 }
 
+const imageMemoryCache = new Map();
+
+export function getCachedImageDataUrl(id) {
+  return id ? imageMemoryCache.get(id) ?? null : null;
+}
+
+function cacheImageRow(row) {
+  if (!row?.id || !row?.data_base64) return null;
+  const dataUrl = toDataUrl(row.mime_type, row.data_base64);
+  imageMemoryCache.set(row.id, dataUrl);
+  return dataUrl;
+}
+
 export function isSiteImagesConfigured() {
   return isSupabaseConfigured && Boolean(supabase);
 }
@@ -176,7 +189,14 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
 }
 
 export async function fetchSiteImageRecord(id) {
-  if (!isSiteImagesConfigured() || !supabase || !id) return null;
+  if (!id) return null;
+
+  const cached = getCachedImageDataUrl(id);
+  if (cached) {
+    return { id, dataUrl: cached, mimeType: cached.slice(5, cached.indexOf(";")) };
+  }
+
+  if (!isSiteImagesConfigured() || !supabase) return null;
 
   const { data, error } = await supabase
     .from("site_images")
@@ -187,29 +207,49 @@ export async function fetchSiteImageRecord(id) {
   if (error) throw error;
   if (!data?.data_base64) return null;
 
+  const dataUrl = cacheImageRow(data);
+  if (!dataUrl) return null;
+
   return {
     id: data.id,
     mimeType: data.mime_type,
-    dataUrl: toDataUrl(data.mime_type, data.data_base64),
+    dataUrl,
   };
 }
 
 export async function fetchSiteImagesMap(ids = []) {
   const uniqueIds = [...new Set(ids.filter(Boolean))];
-  if (!uniqueIds.length || !isSiteImagesConfigured() || !supabase) {
-    return {};
+  if (!uniqueIds.length) return {};
+
+  const result = {};
+  const missing = [];
+
+  uniqueIds.forEach((id) => {
+    const cached = getCachedImageDataUrl(id);
+    if (cached) {
+      result[id] = cached;
+    } else {
+      missing.push(id);
+    }
+  });
+
+  if (!missing.length || !isSiteImagesConfigured() || !supabase) {
+    return result;
   }
 
   const { data, error } = await supabase
     .from("site_images")
     .select("id, mime_type, data_base64")
-    .in("id", uniqueIds);
+    .in("id", missing);
 
   if (error) throw error;
 
-  return Object.fromEntries(
-    (data ?? []).map((row) => [row.id, toDataUrl(row.mime_type, row.data_base64)])
-  );
+  (data ?? []).forEach((row) => {
+    const dataUrl = cacheImageRow(row);
+    if (dataUrl) result[row.id] = dataUrl;
+  });
+
+  return result;
 }
 
 export function collectImageRefs(value, refs = new Set()) {
@@ -242,15 +282,15 @@ export function collectImageRefsFromOverrides(overrides = {}) {
   return [...collectImageRefs(overrides)];
 }
 
-function resolveImageValue(value, imageMap) {
+export function resolveImageValue(value, imageMap) {
   if (!value || typeof value !== "string") return value;
   const id = parseImageRef(value);
   if (!id) return value;
-  return imageMap[id] ?? value;
+  return imageMap[id] ?? getCachedImageDataUrl(id) ?? value;
 }
 
 export function resolveContentImages(content, imageMap = {}) {
-  if (!content || !Object.keys(imageMap).length) return content;
+  if (!content) return content;
 
   const resolved = structuredClone(content);
 

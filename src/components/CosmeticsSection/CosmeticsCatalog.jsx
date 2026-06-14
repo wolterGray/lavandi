@@ -15,7 +15,7 @@ import {
 
 export default function CosmeticsCatalog() {
   const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts, contentLoading } = useContent();
+  const { cosmetics, getProductTexts, contentLoading, hasOverrides } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -77,7 +77,7 @@ export default function CosmeticsCatalog() {
         </div>
       </ScrollAnimationWrapper>
 
-      {contentLoading ? (
+      {contentLoading && !hasOverrides ? (
         <div className="mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
           {Array.from({ length: 8 }, (_, index) => (
             <div

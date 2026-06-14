@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ContentContext } from "../context/ContentProvider";
 import {
   fetchSiteImageRecord,
   isImageRef,
@@ -8,9 +9,13 @@ import {
 const EMPTY_STATE = { src: "", ready: true };
 
 export function useImageSrc(value) {
+  const ctx = useContext(ContentContext);
+  const prefetched = ctx?.getImageDataUrl?.(value) ?? "";
+
   const [state, setState] = useState(() => {
     if (!value) return EMPTY_STATE;
     if (!isImageRef(value)) return { src: value, ready: true };
+    if (prefetched) return { src: prefetched, ready: true };
     return { src: "", ready: false };
   });
 
@@ -22,6 +27,11 @@ export function useImageSrc(value) {
 
     if (!isImageRef(value)) {
       setState({ src: value, ready: true });
+      return undefined;
+    }
+
+    if (prefetched) {
+      setState({ src: prefetched, ready: true });
       return undefined;
     }
 
@@ -41,7 +51,7 @@ export function useImageSrc(value) {
     return () => {
       cancelled = true;
     };
-  }, [value]);
+  }, [value, prefetched]);
 
   return state;
 }
