@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { getAdminSectionKey } from "../../admin/adminNav";
 import { getSectionMeta } from "../../admin/adminSectionMeta";
-import { publishCosmeticsLocalesFromRussian } from "../../admin/publishCmsFromRu";
-import { CMS_AUTHOR_LANG, localeDefaults } from "../../admin/siteContent";
+import { publishCosmeticsLocalesFromDrafts } from "../../admin/publishCmsFromRu";
+import { localeDefaults, SITE_LANG_CODES } from "../../admin/siteContent";
 import {
   LangTabs,
   deriveCosmeticInitials,
@@ -67,13 +67,26 @@ function buildDefaultTexts(cosmetics, activeLang, overrides) {
   return products;
 }
 
+function buildAllLangTexts(cosmetics, overrides) {
+  return Object.fromEntries(
+    SITE_LANG_CODES.map((lang) => [lang, buildDefaultTexts(cosmetics, lang, overrides)]),
+  );
+}
+
+function getProductLabelText(textDraftByLang, productId, activeLang) {
+  return (
+    textDraftByLang.pl?.[productId] ??
+    textDraftByLang[activeLang]?.[productId] ??
+    EMPTY_PRODUCT_TEXT
+  );
+}
+
 export default function AdminCosmeticsPage() {
   const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
   const { contentSaving, saveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
-  const [activeLang, setActiveLang] = useState(CMS_AUTHOR_LANG);
-  const [translating, setTranslating] = useState(false);
+  const [activeLang, setActiveLang] = useState("pl");
   const [draft, setDraft] = useState(cosmetics);
-  const [textDraft, setTextDraft] = useState({});
+  const [textDraftByLang, setTextDraftByLang] = useState(() => buildAllLangTexts(cosmetics, overrides));
   const [featuredDraft, setFeaturedDraft] = useState(featuredCosmeticIds);
   const [retiredDraft, setRetiredDraft] = useState(cosmeticRetiredIds);
   const [dirty, setDirty] = useState(false);
@@ -87,26 +100,21 @@ export default function AdminCosmeticsPage() {
   const [confirm, setConfirm] = useState(null);
   const cardRefs = useRef({});
 
-  const ruTexts = useMemo(
-    () => buildDefaultTexts(cosmetics, CMS_AUTHOR_LANG, overrides),
-    [cosmetics, overrides.locales]
-  );
-
-  const previewTexts = useMemo(
-    () => buildDefaultTexts(cosmetics, activeLang, overrides),
-    [cosmetics, activeLang, overrides.locales]
+  const allLangTexts = useMemo(
+    () => buildAllLangTexts(cosmetics, overrides),
+    [cosmetics, overrides.locales],
   );
 
   const activeIds = useMemo(() => draft.map((item) => item.id), [draft]);
 
   useEffect(() => {
     setDraft(cosmetics);
-    setTextDraft(ruTexts);
+    setTextDraftByLang(allLangTexts);
     setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setDirty(false);
     setHighlightId("");
-  }, [cosmetics, ruTexts, featuredCosmeticIds, cosmeticRetiredIds]);
+  }, [cosmetics, allLangTexts, featuredCosmeticIds, cosmeticRetiredIds]);
 
   useEffect(() => {
     if (!idPickerOpen) return;
@@ -137,9 +145,12 @@ export default function AdminCosmeticsPage() {
   };
 
   const updateText = (productId, patch) => {
-    setTextDraft((prev) => ({
+    setTextDraftByLang((prev) => ({
       ...prev,
-      [productId]: { ...prev[productId], ...patch },
+      [activeLang]: {
+        ...prev[activeLang],
+        [productId]: { ...(prev[activeLang]?.[productId] ?? EMPTY_PRODUCT_TEXT), ...patch },
+      },
     }));
     setDirty(true);
   };
@@ -160,7 +171,13 @@ export default function AdminCosmeticsPage() {
       },
       ...prev,
     ]);
-    setTextDraft((prev) => ({ ...prev, [id]: { ...EMPTY_PRODUCT_TEXT } }));
+    setTextDraftByLang((prev) => {
+      const next = { ...prev };
+      SITE_LANG_CODES.forEach((lang) => {
+        next[lang] = { ...next[lang], [id]: { ...EMPTY_PRODUCT_TEXT } };
+      });
+      return next;
+    });
 
     setFeaturedDraft((prev) => {
       if (prev.includes(id) || prev.length >= MAX_FEATURED_COSMETICS) return prev;
@@ -329,9 +346,13 @@ export default function AdminCosmeticsPage() {
 
     setDraft((prev) => prev.filter((_, i) => i !== index));
     if (id) {
-      setTextDraft((prev) => {
+      setTextDraftByLang((prev) => {
         const next = { ...prev };
-        delete next[id];
+        SITE_LANG_CODES.forEach((lang) => {
+          const langDraft = { ...next[lang] };
+          delete langDraft[id];
+          next[lang] = langDraft;
+        });
         return next;
       });
       setFeaturedDraft((prev) => prev.filter((featuredId) => featuredId !== id));
@@ -344,7 +365,7 @@ export default function AdminCosmeticsPage() {
   const requestRemoveItem = (index) => {
     const item = draft[index];
     if (!item) return;
-    const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+    const texts = getProductLabelText(textDraftByLang, item.id, activeLang);
     const name = texts.name?.trim() || adminRu.cosmetics.newProduct;
     setConfirm({
       type: "delete",
@@ -361,7 +382,7 @@ export default function AdminCosmeticsPage() {
 
   const handleSave = async () => {
     const enriched = draft.map((item, index) => {
-      const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+      const texts = getProductLabelText(textDraftByLang, item.id, activeLang);
       const categories = getProductCategories(item);
       return syncProductImageFields({
         ...item,
@@ -371,34 +392,37 @@ export default function AdminCosmeticsPage() {
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       });
     });
-    const ruProducts = sanitizeCosmeticsProductsDraft(textDraft);
-
-    setTranslating(true);
-    showStatus(adminRu.cosmetics.statusTranslating, "info");
+    const productsByLang = Object.fromEntries(
+      SITE_LANG_CODES.map((lang) => [
+        lang,
+        sanitizeCosmeticsProductsDraft(textDraftByLang[lang] ?? {}),
+      ]),
+    );
 
     const ok = await runSave(async () =>
       saveMerged(async (current) => {
-        let next = {
+        const next = {
           ...current,
           cosmetics: enriched,
           featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
           cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
         };
-        return publishCosmeticsLocalesFromRussian(next, ruProducts);
-      }, "cosmetics")
+        return publishCosmeticsLocalesFromDrafts(next, productsByLang);
+      }, "cosmetics"),
     );
 
-    setTranslating(false);
     if (ok) {
       setDirty(false);
       showStatus(adminRu.cosmetics.statusSaved, "success");
     }
   };
 
-  const isAuthoring = activeLang === CMS_AUTHOR_LANG;
   const filteredDraft = filterAdminList(draft, searchQuery, (item) => {
-    const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
-    return `${item.id} ${texts.name ?? ""} ${getProductCategories(item).join(" ")}`;
+    const searchParts = SITE_LANG_CODES.map((lang) => {
+      const texts = textDraftByLang[lang]?.[item.id] ?? EMPTY_PRODUCT_TEXT;
+      return `${texts.name ?? ""} ${texts.description ?? ""}`;
+    });
+    return `${item.id} ${searchParts.join(" ")} ${getProductCategories(item).join(" ")}`;
   });
   const sectionSavedAt = getSectionMeta(overrides, getAdminSectionKey("/admin/cosmetics"));
 
@@ -427,10 +451,8 @@ export default function AdminCosmeticsPage() {
         }
       />
 
-      <LangTabs activeLang={activeLang} onChange={setActiveLang} />
-      <p className="mb-4 text-sm text-stone">
-        {isAuthoring ? adminRu.cosmetics.authoringHint : adminRu.cosmetics.previewHint}
-      </p>
+      <LangTabs activeLang={activeLang} onChange={setActiveLang} langs={SITE_LANG_CODES} />
+      <p className="mb-4 text-sm text-stone">{adminRu.cosmetics.authoringHint}</p>
 
       {idPickerOpen ? (
         <AdminPanel className="mb-4 border-gold/30">
@@ -477,7 +499,8 @@ export default function AdminCosmeticsPage() {
       <div className="space-y-4">
         {filteredDraft.map((item) => {
           const index = draft.findIndex((entry) => entry.id === item.id);
-          const texts = (isAuthoring ? textDraft : previewTexts)[item.id] ?? EMPTY_PRODUCT_TEXT;
+          const texts = textDraftByLang[activeLang]?.[item.id] ?? EMPTY_PRODUCT_TEXT;
+          const cardLabel = getProductLabelText(textDraftByLang, item.id, activeLang);
           const isFeatured = featuredDraft.includes(item.id);
           const isHighlighted = highlightId === item.id;
           return (
@@ -492,7 +515,7 @@ export default function AdminCosmeticsPage() {
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="font-display text-lg text-milk">
-                      {texts.name?.trim() || adminRu.cosmetics.newProduct}
+                      {cardLabel.name?.trim() || adminRu.cosmetics.newProduct}
                     </p>
                     {isHighlighted ? (
                       <span className="rounded-pill border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
@@ -636,16 +659,14 @@ export default function AdminCosmeticsPage() {
                   <AdminField label={adminRu.cosmetics.name}>
                     <input
                       value={texts.name ?? ""}
-                      readOnly={!isAuthoring}
-                      onChange={(e) => isAuthoring && updateText(item.id, { name: e.target.value })}
-                      className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                      onChange={(e) => updateText(item.id, { name: e.target.value })}
+                      className={adminInputClass()}
                     />
                   </AdminField>
                   <AdminField label={adminRu.cosmetics.volume}>
                     {(() => {
                       const volumeParts = parseCosmeticVolume(texts.volume ?? "");
                       const setVolumeParts = (next) => {
-                        if (!isAuthoring) return;
                         updateText(item.id, {
                           volume: formatCosmeticVolume(next),
                         });
@@ -656,7 +677,6 @@ export default function AdminCosmeticsPage() {
                           <input
                             inputMode="decimal"
                             value={volumeParts.amount}
-                            readOnly={!isAuthoring}
                             onChange={(e) =>
                               setVolumeParts({
                                 amount: e.target.value,
@@ -664,18 +684,17 @@ export default function AdminCosmeticsPage() {
                               })
                             }
                             placeholder="400"
-                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                            className={adminInputClass()}
                           />
                           <select
                             value={volumeParts.unit}
-                            disabled={!isAuthoring}
                             onChange={(e) =>
                               setVolumeParts({
                                 amount: volumeParts.amount,
                                 unit: e.target.value,
                               })
                             }
-                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                            className={adminInputClass()}
                           >
                             <option value="ml">ml</option>
                             <option value="g">g</option>
@@ -688,10 +707,9 @@ export default function AdminCosmeticsPage() {
                     <AdminField label={adminRu.cosmetics.productDescription}>
                       <textarea
                         value={texts.description ?? ""}
-                        readOnly={!isAuthoring}
-                        onChange={(e) => isAuthoring && updateText(item.id, { description: e.target.value })}
+                        onChange={(e) => updateText(item.id, { description: e.target.value })}
                         rows={3}
-                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
+                        className={adminInputClass("resize-y")}
                       />
                     </AdminField>
                   </div>
@@ -699,10 +717,9 @@ export default function AdminCosmeticsPage() {
                     <AdminField label={adminRu.cosmetics.composition}>
                       <textarea
                         value={texts.composition ?? ""}
-                        readOnly={!isAuthoring}
-                        onChange={(e) => isAuthoring && updateText(item.id, { composition: e.target.value })}
+                        onChange={(e) => updateText(item.id, { composition: e.target.value })}
                         rows={3}
-                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
+                        className={adminInputClass("resize-y")}
                       />
                     </AdminField>
                   </div>
@@ -721,12 +738,12 @@ export default function AdminCosmeticsPage() {
       ) : null}
       <AdminSaveBar
         dirty={dirty}
-        saving={contentSaving || translating}
+        saving={contentSaving}
         onSave={handleSave}
         hint={status?.message && !dirty ? status.message : undefined}
         onDiscard={() => {
           setDraft(cosmetics);
-          setTextDraft(ruTexts);
+          setTextDraftByLang(allLangTexts);
           setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
           setRetiredDraft(cosmeticRetiredIds);
           setIdPickerOpen(false);
