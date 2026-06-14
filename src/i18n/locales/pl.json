@@ -178,6 +178,15 @@
       "gift-certificates": "Bony podarunkowe",
       "nuar-premium": "Produkty premium NUAR"
     },
+    "categoriesShort": {
+      "all": "Wszystkie",
+      "candles-aroma": "Świece",
+      "pro-cosmetics": "Profesjonalne",
+      "home-spa": "Domowe SPA",
+      "anti-cellulite": "Antycellulit",
+      "gift-certificates": "Bony",
+      "nuar-premium": "NUAR Premium"
+    },
     "products": {
       "45996": {
         "name": "COLLISTAR Crio‑Gel",

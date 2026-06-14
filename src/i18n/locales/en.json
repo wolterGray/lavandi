@@ -178,6 +178,15 @@
       "gift-certificates": "Gift certificates",
       "nuar-premium": "NUAR premium products"
     },
+    "categoriesShort": {
+      "all": "All",
+      "candles-aroma": "Candles",
+      "pro-cosmetics": "Pro cosmetics",
+      "home-spa": "Home SPA",
+      "anti-cellulite": "Anti-cellulite",
+      "gift-certificates": "Gift cards",
+      "nuar-premium": "NUAR Premium"
+    },
     "products": {
       "45996": {
         "name": "COLLISTAR Crio‑Gel",

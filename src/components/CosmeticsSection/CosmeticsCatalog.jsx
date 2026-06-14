@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { ImageSkeleton } from "../../ui/SiteImage";
 import CosmeticProductCard from "./CosmeticProductCard";
@@ -10,6 +10,7 @@ import {
   buildLocalizedProducts,
   CATEGORY_KEYS,
   formatProductCategoryLabels,
+  getCategoryFilterLabel,
   matchesProductSearch,
   productMatchesCategory,
 } from "./cosmeticsShared";
@@ -17,19 +18,44 @@ import {
 const CATALOG_GRID_CLASSNAME =
   "mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]";
 
+const CATEGORY_GRID_CLASSNAME =
+  "mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 md:flex md:flex-wrap md:gap-2";
+
+function CategoryFilters({ activeCategory, onSelect, t }) {
+  return (
+    <div className={CATEGORY_GRID_CLASSNAME} role="tablist" aria-label={t("cosmetics.filterLabel")}>
+      {CATEGORY_KEYS.map((key) => {
+        const isActive = activeCategory === key;
+        const fullLabel = t(`cosmetics.categories.${key}`);
+
+        return (
+          <button
+            key={key}
+            type="button"
+            role="tab"
+            aria-selected={isActive}
+            title={fullLabel}
+            onClick={() => onSelect(key)}
+            className={`min-h-[44px] rounded-pill border px-3 py-2.5 text-center text-[10px] font-bold uppercase leading-snug tracking-[0.08em] transition duration-300 sm:tracking-[0.1em] md:min-h-0 md:w-auto md:whitespace-nowrap md:px-4 md:py-2 md:tracking-[0.14em] ${
+              isActive
+                ? "border-gold/40 bg-gold/10 text-gold"
+                : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
+            }`}
+          >
+            <span className="md:hidden">{getCategoryFilterLabel(t, key, { short: true })}</span>
+            <span className="hidden md:inline">{fullLabel}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export default function CosmeticsCatalog() {
   const { t, lang } = useTranslation();
   const { cosmetics, getProductTexts, contentLoading } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const categoryStripRef = useRef(null);
-  const categoryButtonRefs = useRef({});
-
-  useEffect(() => {
-    const node = categoryButtonRefs.current[activeCategory];
-    if (!node || !categoryStripRef.current) return;
-    node.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
-  }, [activeCategory]);
 
   const products = useMemo(
     () => buildLocalizedProducts(cosmetics, t, lang, getProductTexts),
@@ -54,13 +80,11 @@ export default function CosmeticsCatalog() {
             <ImageSkeleton className="h-12 w-full rounded-pill" />
           </div>
         </ScrollAnimationWrapper>
-        <ScrollAnimationWrapper delay={0.12} className="mt-6">
-          <div className="flex flex-wrap gap-2">
-            {CATEGORY_KEYS.slice(0, 4).map((key) => (
-              <ImageSkeleton key={key} className="h-10 w-24 rounded-pill" />
-            ))}
-          </div>
-        </ScrollAnimationWrapper>
+        <div className={CATEGORY_GRID_CLASSNAME}>
+          {CATEGORY_KEYS.map((key) => (
+            <ImageSkeleton key={key} className="h-11 rounded-pill" />
+          ))}
+        </div>
         <div className={CATALOG_GRID_CLASSNAME}>
           {Array.from({ length: cosmetics.length }, (_, index) => (
             <CosmeticProductCardSkeleton key={index} />
@@ -89,45 +113,11 @@ export default function CosmeticsCatalog() {
         </label>
       </ScrollAnimationWrapper>
 
-      <ScrollAnimationWrapper delay={0.12} className="relative mt-6">
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-6 bg-gradient-to-r from-surface to-transparent md:hidden"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-6 bg-gradient-to-l from-surface to-transparent md:hidden"
-          aria-hidden="true"
-        />
-        <div
-          ref={categoryStripRef}
-          className="category-scroll-strip -mx-5 flex snap-x snap-mandatory gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
-          role="tablist"
-          aria-label={t("cosmetics.filterLabel")}
-        >
-          {CATEGORY_KEYS.map((key) => {
-            const isActive = activeCategory === key;
-            return (
-              <button
-                key={key}
-                ref={(node) => {
-                  categoryButtonRefs.current[key] = node;
-                }}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveCategory(key)}
-                className={`shrink-0 snap-start whitespace-nowrap rounded-pill border px-3.5 py-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition duration-300 sm:px-4 md:py-2 md:tracking-[0.14em] ${
-                  isActive
-                    ? "border-gold/40 bg-gold/10 text-gold"
-                    : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
-                }`}
-              >
-                {t(`cosmetics.categories.${key}`)}
-              </button>
-            );
-          })}
-        </div>
-      </ScrollAnimationWrapper>
+      <CategoryFilters
+        activeCategory={activeCategory}
+        onSelect={setActiveCategory}
+        t={t}
+      />
 
       {filteredProducts.length === 0 ? (
         <ScrollAnimationWrapper delay={0.15} className="mt-10 rounded-card border border-border/40 bg-card/60 px-6 py-12 text-center">

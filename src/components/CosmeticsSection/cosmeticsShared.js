@@ -73,10 +73,18 @@ export function productMatchesCategory(product, categoryKey) {
   return getProductCategories(product).includes(categoryKey);
 }
 
-export function formatProductCategoryLabels(t, product, { joiner = " · " } = {}) {
+export function formatProductCategoryLabels(t, product, { joiner = " · ", short = false } = {}) {
   return getProductCategories(product)
-    .map((key) => t(`cosmetics.categories.${key}`))
+    .map((key) => getCategoryFilterLabel(t, key, { short }))
     .join(joiner);
+}
+
+export function getCategoryFilterLabel(t, key, { short = false } = {}) {
+  if (short) {
+    const compact = t(`cosmetics.categoriesShort.${key}`);
+    if (typeof compact === "string" && compact.trim()) return compact;
+  }
+  return t(`cosmetics.categories.${key}`);
 }
 
 export function getProductImages(product) {

@@ -35,7 +35,7 @@ export default function CosmeticProductCard({
             className={`font-bold uppercase tracking-[0.14em] text-gold ${
               featured
                 ? "text-[10px] tracking-[0.16em]"
-                : "text-[9px] line-clamp-1"
+                : "text-[9px] leading-snug line-clamp-2 md:line-clamp-1"
             }`}
           >
             {categoryLabel}

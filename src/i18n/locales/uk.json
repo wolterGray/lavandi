@@ -178,6 +178,15 @@
       "gift-certificates": "Подарункові сертифікати",
       "nuar-premium": "Преміум товари NUAR"
     },
+    "categoriesShort": {
+      "all": "Усі",
+      "candles-aroma": "Свічки",
+      "pro-cosmetics": "Проф. косметика",
+      "home-spa": "Home SPA",
+      "anti-cellulite": "Антицелюліт",
+      "gift-certificates": "Сертифікати",
+      "nuar-premium": "NUAR Premium"
+    },
     "products": {
       "45996": {
         "name": "COLLISTAR Crio‑Gel",
