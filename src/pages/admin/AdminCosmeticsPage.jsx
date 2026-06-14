@@ -17,7 +17,9 @@ import {
   formatCosmeticVolume,
   generateCosmeticNumericId,
   getProductCategories,
+  getProductImages,
   getProductImageSurfaceClass,
+  syncProductImageFields,
   MAX_FEATURED_COSMETICS,
   normalizeCosmeticCopy,
   normalizeFeaturedCosmeticIds,
@@ -236,6 +238,66 @@ export default function AdminCosmeticsPage() {
     setDirty(true);
   };
 
+  const updatePrimaryImage = (index, img) => {
+    setDraft((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const rest = getProductImages(item).slice(1).filter((ref) => ref && ref !== img);
+        const images = img ? [img, ...rest] : rest;
+        return syncProductImageFields({ ...item, img: img || undefined, images });
+      }),
+    );
+    setDirty(true);
+  };
+
+  const updateGalleryImage = (index, galleryIndex, img) => {
+    setDraft((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const images = [...getProductImages(item)];
+        images[galleryIndex] = img || undefined;
+        const cleaned = images.filter(Boolean);
+        return syncProductImageFields({ ...item, images: cleaned });
+      }),
+    );
+    setDirty(true);
+  };
+
+  const removeGalleryImage = async (index, galleryIndex) => {
+    const item = draft[index];
+    const images = getProductImages(item);
+    const imageRef = images[galleryIndex];
+
+    if (imageRef && isImageRef(imageRef)) {
+      try {
+        await deleteSiteImageByRef(imageRef);
+      } catch {
+        // gallery row is still removed from draft
+      }
+    }
+
+    const next = images.filter((_, imageIndex) => imageIndex !== galleryIndex);
+    setDraft((prev) =>
+      prev.map((entry, i) =>
+        i === index ? syncProductImageFields({ ...entry, images: next }) : entry,
+      ),
+    );
+    setDirty(true);
+  };
+
+  const addGalleryImage = (index, img) => {
+    if (!img) return;
+
+    setDraft((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const images = [...getProductImages(item), img];
+        return syncProductImageFields({ ...item, images });
+      }),
+    );
+    setDirty(true);
+  };
+
   const toggleFeatured = (productId) => {
     setFeaturedLimitHint("");
     setFeaturedDraft((prev) => {
@@ -255,11 +317,13 @@ export default function AdminCosmeticsPage() {
     const item = draft[index];
     const id = item?.id;
 
-    if (item?.img && isImageRef(item.img)) {
-      try {
-        await deleteSiteImageByRef(item.img);
-      } catch {
-        // product row is still removed from catalog even if DB delete fails
+    for (const imageRef of [...new Set(getProductImages(item))]) {
+      if (imageRef && isImageRef(imageRef)) {
+        try {
+          await deleteSiteImageByRef(imageRef);
+        } catch {
+          // product row is still removed from catalog even if DB delete fails
+        }
       }
     }
 
@@ -299,13 +363,13 @@ export default function AdminCosmeticsPage() {
     const enriched = draft.map((item, index) => {
       const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
       const categories = getProductCategories(item);
-      return {
+      return syncProductImageFields({
         ...item,
         categories,
         category: categories[0],
         initials: deriveCosmeticInitials(texts.name),
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
-      };
+      });
     });
     const ruProducts = sanitizeCosmeticsProductsDraft(textDraft);
 
@@ -462,7 +526,42 @@ export default function AdminCosmeticsPage() {
                     label={adminRu.cosmetics.photo}
                     value={item.img}
                     previewClassName={`mt-3 flex h-48 w-full max-w-sm items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
-                    onChange={(img) => updateItem(index, { img: img || undefined })}
+                    onChange={(img) => updatePrimaryImage(index, img)}
+                  />
+                </div>
+
+                {getProductImages(item).length > 1 ? (
+                  <div className="sm:col-span-2 space-y-3">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+                      {adminRu.cosmetics.galleryPhotos}
+                    </p>
+                    {getProductImages(item).slice(1).map((galleryRef, galleryIndex) => (
+                      <div key={`${item.id}-gallery-${galleryIndex + 1}`} className="flex flex-wrap items-end gap-3">
+                        <div className="min-w-0 flex-1">
+                          <AdminImageField
+                            folder="cosmetics"
+                            label={`${adminRu.cosmetics.galleryPhoto} ${galleryIndex + 2}`}
+                            value={galleryRef}
+                            previewClassName={`mt-3 flex h-32 w-full max-w-xs items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(galleryRef) })}`}
+                            onChange={(img) => updateGalleryImage(index, galleryIndex + 1, img)}
+                          />
+                        </div>
+                        <AdminButton variant="danger" onClick={() => removeGalleryImage(index, galleryIndex + 1)}>
+                          <Trash2 className="h-4 w-4" />
+                        </AdminButton>
+                      </div>
+                    ))}
+                  </div>
+                ) : null}
+
+                <div className="sm:col-span-2">
+                  <AdminImageField
+                    folder="cosmetics"
+                    label={adminRu.cosmetics.addGalleryPhoto}
+                    value=""
+                    previewClassName={`mt-3 flex h-24 w-full max-w-xs items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: false })}`}
+                    onChange={(img) => addGalleryImage(index, img)}
+                    allowRemove={false}
                   />
                 </div>
 

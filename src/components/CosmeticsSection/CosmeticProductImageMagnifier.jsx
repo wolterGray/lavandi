@@ -54,11 +54,12 @@ function getZoomWindowPosition(clientX, clientY) {
 /** Rossmann-style hover zoom — floating pane follows the cursor. */
 export default function CosmeticProductImageMagnifier({
   product,
+  imageRef,
   className = "",
   imageClassName = "max-h-[min(72vh,560px)] h-full w-full object-contain object-center",
   initialsClassName = "font-display text-6xl font-semibold tracking-[0.08em] text-milk/25",
 }) {
-  const imageSrc = useImageSrc(product.img);
+  const imageSrc = useImageSrc(imageRef ?? product.img);
   const containerRef = useRef(null);
   const imgRef = useRef(null);
   const [imageLoaded, setImageLoaded] = useState(false);

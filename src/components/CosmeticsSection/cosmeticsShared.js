@@ -79,14 +79,36 @@ export function formatProductCategoryLabels(t, product, { joiner = " · " } = {}
     .join(joiner);
 }
 
+export function getProductImages(product) {
+  const fromArray = Array.isArray(product?.images)
+    ? product.images.map((value) => String(value ?? "").trim()).filter(Boolean)
+    : [];
+
+  if (fromArray.length) {
+    return fromArray;
+  }
+
+  const primary = String(product?.img ?? "").trim();
+  return primary ? [primary] : [];
+}
+
+export function syncProductImageFields(product) {
+  const images = getProductImages(product);
+  return {
+    ...product,
+    images,
+    img: images[0] ?? undefined,
+  };
+}
+
 export function normalizeCosmeticsList(products = cosmeticsBase) {
   return products.map((product) => {
     const categories = getProductCategories(product);
-    return {
+    return syncProductImageFields({
       ...product,
       categories,
       category: categories[0],
-    };
+    });
   });
 }
 
