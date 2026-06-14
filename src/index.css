@@ -209,4 +209,13 @@
       background-position: -200% 0;
     }
   }
+
+  .category-scroll-strip {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .category-scroll-strip::-webkit-scrollbar {
+    display: none;
+  }
 }

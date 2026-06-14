@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { ImageSkeleton } from "../../ui/SiteImage";
 import CosmeticProductCard from "./CosmeticProductCard";
@@ -18,6 +18,14 @@ export default function CosmeticsCatalog() {
   const { cosmetics, getProductTexts, contentLoading, hasOverrides } = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const categoryStripRef = useRef(null);
+  const categoryButtonRefs = useRef({});
+
+  useEffect(() => {
+    const node = categoryButtonRefs.current[activeCategory];
+    if (!node || !categoryStripRef.current) return;
+    node.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+  }, [activeCategory]);
 
   const products = useMemo(
     () => buildLocalizedProducts(cosmetics, t, lang, getProductTexts),
@@ -53,18 +61,34 @@ export default function CosmeticsCatalog() {
         </label>
       </ScrollAnimationWrapper>
 
-      <ScrollAnimationWrapper delay={0.12} className="mt-6">
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label={t("cosmetics.filterLabel")}>
+      <ScrollAnimationWrapper delay={0.12} className="relative mt-6">
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0 z-[1] w-6 bg-gradient-to-r from-surface to-transparent md:hidden"
+          aria-hidden="true"
+        />
+        <div
+          className="pointer-events-none absolute inset-y-0 right-0 z-[1] w-6 bg-gradient-to-l from-surface to-transparent md:hidden"
+          aria-hidden="true"
+        />
+        <div
+          ref={categoryStripRef}
+          className="category-scroll-strip -mx-5 flex snap-x snap-mandatory gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
+          role="tablist"
+          aria-label={t("cosmetics.filterLabel")}
+        >
           {CATEGORY_KEYS.map((key) => {
             const isActive = activeCategory === key;
             return (
               <button
                 key={key}
+                ref={(node) => {
+                  categoryButtonRefs.current[key] = node;
+                }}
                 type="button"
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(key)}
-                className={`rounded-pill border px-4 py-2 text-[10px] font-bold uppercase tracking-[0.14em] transition duration-300 ${
+                className={`shrink-0 snap-start whitespace-nowrap rounded-pill border px-3.5 py-2.5 text-[10px] font-bold uppercase tracking-[0.12em] transition duration-300 sm:px-4 md:py-2 md:tracking-[0.14em] ${
                   isActive
                     ? "border-gold/40 bg-gold/10 text-gold"
                     : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
