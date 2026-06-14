@@ -23,6 +23,12 @@
 
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar {
+    display: none;
   }
 
   #booking-form {

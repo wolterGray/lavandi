@@ -33,7 +33,7 @@ function ServiceCard({ service, index }) {
 
   return (
     <ScrollAnimationWrapper delay={index * 0.05}>
-      <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover focus-within:border-gold/30">
+      <article className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition-[border-color,box-shadow] duration-500 ease-luxury hover:border-gold/20 hover:shadow-spa-hover focus-within:border-gold/25">
         <Link
           to={`/uslugi/${service.slug}`}
           className="flex h-full flex-col outline-none focus:outline-none focus-visible:outline-none"
@@ -43,9 +43,9 @@ function ServiceCard({ service, index }) {
               src={service.img}
               alt={service.title}
               loading={index < 3 ? "eager" : "lazy"}
-              className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
+              className="h-full w-full object-cover transition duration-700 ease-luxury group-hover:scale-[1.02]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-void/90 via-void/20 to-transparent" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-card via-card/55 to-transparent" />
             <DiscountBadge discount={service.discount} />
             <div className="absolute inset-x-0 bottom-0 p-5">
               <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
@@ -54,7 +54,7 @@ function ServiceCard({ service, index }) {
               <h3 className="mt-2 font-display text-lg text-milk sm:text-xl">{service.title}</h3>
             </div>
           </div>
-          <div className="flex flex-1 flex-col p-5">
+          <div className="flex flex-1 flex-col border-t border-border/30 bg-card p-5">
             <p className="line-clamp-2 text-sm leading-relaxed text-stone">{service.desc}</p>
             <span className="mt-auto inline-flex items-center gap-2 pt-4 text-[10px] font-bold uppercase tracking-[0.16em] text-stone/80 transition-colors duration-300 group-hover:text-gold group-focus-within:text-gold">
               {t("services.details")}

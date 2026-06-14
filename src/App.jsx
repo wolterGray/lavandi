@@ -65,11 +65,20 @@ function PublicSite() {
   const { t } = useTranslation();
   const [splashDone, setSplashDone] = useState(false);
 
+  useEffect(() => {
+    if (splashDone) return undefined;
+    const previousOverflow = document.documentElement.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = previousOverflow;
+    };
+  }, [splashDone]);
+
   return (
     <>
       <SplashScreen onDone={() => setSplashDone(true)} />
 
-      <div className={`min-h-screen overflow-x-hidden bg-cream ${splashDone ? "" : "max-h-screen overflow-hidden"}`}>
+      <div className="min-h-screen overflow-x-hidden bg-cream">
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[2000] focus:rounded-pill focus:bg-gold focus:px-5 focus:py-3 focus:text-sm focus:font-bold focus:text-void"
