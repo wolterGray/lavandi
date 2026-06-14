@@ -1,5 +1,5 @@
 import { formatCosmeticVolume } from "../components/CosmeticsSection/cosmeticsShared";
-import { SITE_LANG_CODES } from "./siteContent";
+import { CMS_AUTHOR_LANG, SITE_LANG_CODES } from "./siteContent";
 
 const MYMEMORY_URL = "https://api.mymemory.translated.net/get";
 const REQUEST_GAP_MS = 700;
@@ -7,9 +7,8 @@ const MAX_CHUNK = 420;
 const MAX_TRANSLATE_ATTEMPTS = 5;
 
 const LANGPAIR = {
-  pl: "ru|pl",
-  en: "ru|en",
-  uk: "pl|uk",
+  pl: "uk|pl",
+  en: "uk|en",
 };
 
 let lastRequestAt = 0;
@@ -121,9 +120,8 @@ async function translateViaPair(text, langPair) {
 }
 
 async function translateParagraph(text, targetLang) {
-  if (targetLang === "uk") {
-    const polish = await translateViaPair(text, LANGPAIR.pl);
-    return translateViaPair(polish, LANGPAIR.uk);
+  if (targetLang === CMS_AUTHOR_LANG) {
+    return String(text ?? "").trim();
   }
 
   return translateViaPair(text, LANGPAIR[targetLang]);
@@ -132,6 +130,7 @@ async function translateParagraph(text, targetLang) {
 export async function translateText(text, targetLang) {
   const source = String(text ?? "");
   if (!source.trim()) return "";
+  if (targetLang === CMS_AUTHOR_LANG) return source.trim();
 
   const lines = source.split("\n");
   const translated = [];
@@ -155,11 +154,24 @@ function cosmeticFieldUnchanged(previousFields = {}, nextFields = {}, field) {
   );
 }
 
+function copyCosmeticFields(fields) {
+  return {
+    name: String(fields.name ?? "").trim(),
+    volume: formatCosmeticVolume(fields.volume ?? ""),
+    description: String(fields.description ?? "").trim(),
+    composition: String(fields.composition ?? "").trim(),
+  };
+}
+
 export async function translateCosmeticCopy(
   fields,
   targetLang,
-  { previousRu = {}, previousTranslated = {} } = {},
+  { previousSource = {}, previousTranslated = {} } = {},
 ) {
+  if (targetLang === CMS_AUTHOR_LANG) {
+    return copyCosmeticFields(fields);
+  }
+
   const volume = formatCosmeticVolume(fields.volume ?? "");
   const result = {
     name: String(fields.name ?? "").trim(),
@@ -169,11 +181,11 @@ export async function translateCosmeticCopy(
   };
 
   for (const field of TRANSLATABLE_COSMETIC_FIELDS) {
-    const ruText = String(fields[field] ?? "").trim();
-    if (!ruText) continue;
+    const sourceText = String(fields[field] ?? "").trim();
+    if (!sourceText) continue;
 
     if (
-      cosmeticFieldUnchanged(previousRu, fields, field) &&
+      cosmeticFieldUnchanged(previousSource, fields, field) &&
       String(previousTranslated[field] ?? "").trim()
     ) {
       result[field] = String(previousTranslated[field]).trim();
@@ -187,20 +199,20 @@ export async function translateCosmeticCopy(
 }
 
 export async function translateCosmeticsProducts(
-  ruProducts,
-  { previousRuProducts = {}, previousTranslations = {} } = {},
+  sourceProducts,
+  { previousSourceProducts = {}, previousTranslations = {} } = {},
 ) {
   const translated = {};
   for (const lang of SITE_LANG_CODES) {
     translated[lang] = {};
   }
 
-  for (const [id, fields] of Object.entries(ruProducts)) {
-    const previousRu = previousRuProducts[id] ?? {};
+  for (const [id, fields] of Object.entries(sourceProducts)) {
+    const previousSource = previousSourceProducts[id] ?? {};
 
     for (const lang of SITE_LANG_CODES) {
       translated[lang][id] = await translateCosmeticCopy(fields, lang, {
-        previousRu,
+        previousSource,
         previousTranslated: previousTranslations[lang]?.[id] ?? {},
       });
     }
@@ -209,11 +221,19 @@ export async function translateCosmeticsProducts(
   return translated;
 }
 
-export async function translateFaqItems(ruItems = []) {
+export async function translateFaqItems(sourceItems = []) {
   const result = {};
   for (const lang of SITE_LANG_CODES) {
     result[lang] = [];
-    for (const item of ruItems) {
+    for (const item of sourceItems) {
+      if (lang === CMS_AUTHOR_LANG) {
+        result[lang].push({
+          question: String(item?.question ?? "").trim(),
+          answer: String(item?.answer ?? "").trim(),
+        });
+        continue;
+      }
+
       result[lang].push({
         question: await translateText(item?.question, lang),
         answer: await translateText(item?.answer, lang),
@@ -223,22 +243,40 @@ export async function translateFaqItems(ruItems = []) {
   return result;
 }
 
-export async function translateTeamLocale(ruLocale) {
+export async function translateTeamLocale(sourceLocale) {
   const result = {};
   for (const lang of SITE_LANG_CODES) {
+    if (lang === CMS_AUTHOR_LANG) {
+      result[lang] = {
+        label: String(sourceLocale?.label ?? "").trim(),
+        title: String(sourceLocale?.title ?? "").trim(),
+        description: String(sourceLocale?.description ?? "").trim(),
+        members: Object.fromEntries(
+          Object.entries(sourceLocale?.members ?? {}).map(([id, member]) => [
+            id,
+            {
+              bio: String(member?.bio ?? "").trim(),
+              specialties: (member?.specialties ?? []).map((item) => String(item ?? "").trim()),
+            },
+          ]),
+        ),
+      };
+      continue;
+    }
+
     const members = {};
-    for (const [id, member] of Object.entries(ruLocale?.members ?? {})) {
+    for (const [id, member] of Object.entries(sourceLocale?.members ?? {})) {
       members[id] = {
         bio: await translateText(member.bio, lang),
         specialties: await Promise.all(
-          (member.specialties ?? []).map((item) => translateText(item, lang))
+          (member.specialties ?? []).map((item) => translateText(item, lang)),
         ),
       };
     }
     result[lang] = {
-      label: await translateText(ruLocale?.label, lang),
-      title: await translateText(ruLocale?.title, lang),
-      description: await translateText(ruLocale?.description, lang),
+      label: await translateText(sourceLocale?.label, lang),
+      title: await translateText(sourceLocale?.title, lang),
+      description: await translateText(sourceLocale?.description, lang),
       members,
     };
   }

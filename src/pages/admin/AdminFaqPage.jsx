@@ -52,9 +52,14 @@ export default function AdminFaqPage() {
   const requestConfirm = useAdminConfirm();
   useRegisterAdminDirty(dirty);
 
-  const ruSource = useMemo(
-    () => overrides.faq?.ru ?? overrides.faq?.pl ?? pl.faq.items ?? [],
-    [overrides.faq]
+  const authorSource = useMemo(
+    () =>
+      overrides.faq?.[CMS_AUTHOR_LANG] ??
+      overrides.faq?.ru ??
+      overrides.faq?.pl ??
+      pl.faq.items ??
+      [],
+    [overrides.faq],
   );
 
   const previewItems = useMemo(() => {
@@ -64,8 +69,8 @@ export default function AdminFaqPage() {
 
   useEffect(() => {
     if (recoveryOffer || dirty) return;
-    setRuDraft(ruSource);
-  }, [ruSource, recoveryOffer, dirty]);
+    setRuDraft(authorSource);
+  }, [authorSource, recoveryOffer, dirty]);
 
   useEffect(() => {
     if (!dirty || recoveryOffer) return;

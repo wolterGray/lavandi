@@ -6,8 +6,8 @@ import teamDefault from "../data/team.json";
 import contactDefault from "../data/contact.json";
 
 export const SITE_LANG_CODES = ["pl", "en", "uk"];
-export const CMS_AUTHOR_LANG = "ru";
-export const ADMIN_LANG_CODES = ["ru", ...SITE_LANG_CODES];
+export const CMS_AUTHOR_LANG = "uk";
+export const ADMIN_LANG_CODES = [CMS_AUTHOR_LANG, ...SITE_LANG_CODES.filter((code) => code !== CMS_AUTHOR_LANG)];
 /** @deprecated use SITE_LANG_CODES on the public site */
 export const LANG_CODES = SITE_LANG_CODES;
 

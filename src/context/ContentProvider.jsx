@@ -253,9 +253,9 @@ export function ContentProvider({ children }) {
       const merged = normalizeCosmeticCopy(
         mergeProductTexts(lang, productId, overrides, fallback),
       );
-      const authorName = overrides?.locales?.[CMS_AUTHOR_LANG]?.cosmetics?.products?.[
-        productId
-      ]?.name?.trim();
+      const authorName =
+        overrides?.locales?.[CMS_AUTHOR_LANG]?.cosmetics?.products?.[productId]?.name?.trim() ||
+        overrides?.locales?.ru?.cosmetics?.products?.[productId]?.name?.trim();
       if (authorName) {
         merged.name = authorName;
       }

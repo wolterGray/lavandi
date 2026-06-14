@@ -7,9 +7,9 @@ import { useContent } from "../context/ContentProvider";
 
 const STORAGE_KEY = "nuar_lang";
 export const LANGUAGES = [
-  { code: "en", label: "EN", icon: "/lang-icon/en.svg" },
-  { code: "pl", label: "PL", icon: "/lang-icon/pl.svg" },
   { code: "uk", label: "UA", icon: "/lang-icon/ua.svg" },
+  { code: "pl", label: "PL", icon: "/lang-icon/pl.svg" },
+  { code: "en", label: "EN", icon: "/lang-icon/en.svg" },
 ];
 
 const messages = { en, pl, uk };
@@ -31,7 +31,7 @@ export function LanguageProvider({ children }) {
   const { services: servicesBase, getServiceTexts } = useContent();
   const [lang, setLangState] = useState(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
-    return LANGUAGES.some((l) => l.code === saved) ? saved : "pl";
+    return LANGUAGES.some((l) => l.code === saved) ? saved : "uk";
   });
 
   const setLang = useCallback((code) => {
