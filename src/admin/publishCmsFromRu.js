@@ -1,10 +1,21 @@
 import { translateCosmeticsProducts, translateFaqItems, translateTeamLocale } from "./autoTranslate";
 import { patchLocaleBlock } from "./contentStore";
 import { buildTeamLocalePayload } from "./localeSync";
-import { CMS_AUTHOR_LANG } from "./siteContent";
+import { CMS_AUTHOR_LANG, SITE_LANG_CODES } from "./siteContent";
 
 export async function publishCosmeticsLocalesFromRussian(overrides, ruProducts) {
-  const translated = await translateCosmeticsProducts(ruProducts);
+  const previousRuProducts = overrides?.locales?.[CMS_AUTHOR_LANG]?.cosmetics?.products ?? {};
+  const previousTranslations = Object.fromEntries(
+    SITE_LANG_CODES.map((lang) => [
+      lang,
+      overrides?.locales?.[lang]?.cosmetics?.products ?? {},
+    ]),
+  );
+
+  const translated = await translateCosmeticsProducts(ruProducts, {
+    previousRuProducts,
+    previousTranslations,
+  });
   let next = patchLocaleBlock(overrides, CMS_AUTHOR_LANG, "cosmetics", {
     products: ruProducts,
   });

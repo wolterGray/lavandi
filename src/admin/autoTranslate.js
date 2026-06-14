@@ -2,8 +2,9 @@ import { formatCosmeticVolume } from "../components/CosmeticsSection/cosmeticsSh
 import { SITE_LANG_CODES } from "./siteContent";
 
 const MYMEMORY_URL = "https://api.mymemory.translated.net/get";
-const REQUEST_GAP_MS = 400;
+const REQUEST_GAP_MS = 700;
 const MAX_CHUNK = 420;
+const MAX_TRANSLATE_ATTEMPTS = 5;
 
 const LANGPAIR = {
   pl: "ru|pl",
@@ -65,7 +66,7 @@ function postProcessTranslation(text, lang) {
   return result.trim();
 }
 
-async function translateChunk(text, langPair) {
+async function translateChunk(text, langPair, attempt = 0) {
   const trimmed = text?.trim();
   if (!trimmed) return "";
 
@@ -78,11 +79,34 @@ async function translateChunk(text, langPair) {
 
   const url = `${MYMEMORY_URL}?q=${encodeURIComponent(trimmed)}&langpair=${langPair}`;
   const response = await fetch(url);
-  if (!response.ok) throw new Error(`Перевод недоступен (${response.status})`);
+
+  if (response.status === 429 && attempt < MAX_TRANSLATE_ATTEMPTS) {
+    await sleep(1200 * (attempt + 1));
+    return translateChunk(text, langPair, attempt + 1);
+  }
+
+  if (!response.ok) {
+    if (response.status === 429) {
+      throw new Error(
+        "Перевод недоступен (429): лимит MyMemory. Подождите минуту и сохраните снова — переводятся только изменённые поля.",
+      );
+    }
+    throw new Error(`Перевод недоступен (${response.status})`);
+  }
 
   const payload = await response.json();
   const translated = payload?.responseData?.translatedText?.trim();
   if (!translated) return trimmed;
+
+  if (/^MYMEMORY WARNING:/i.test(translated)) {
+    if (attempt < MAX_TRANSLATE_ATTEMPTS) {
+      await sleep(1200 * (attempt + 1));
+      return translateChunk(text, langPair, attempt + 1);
+    }
+    throw new Error(
+      "Перевод недоступен: дневной лимит MyMemory. Попробуйте позже или сохраните без изменения текстов.",
+    );
+  }
 
   return translated;
 }
@@ -123,25 +147,65 @@ export async function translateText(text, targetLang) {
   return postProcessTranslation(translated.join("\n"), targetLang);
 }
 
-export async function translateCosmeticCopy(fields, targetLang) {
-  const volume = formatCosmeticVolume(fields.volume ?? "");
+const TRANSLATABLE_COSMETIC_FIELDS = ["description", "composition"];
 
-  return {
-    name: String(fields.name ?? "").trim(),
-    description: await translateText(fields.description, targetLang),
-    volume,
-    composition: await translateText(fields.composition, targetLang),
-  };
+function cosmeticFieldUnchanged(previousFields = {}, nextFields = {}, field) {
+  return (
+    String(previousFields?.[field] ?? "").trim() === String(nextFields?.[field] ?? "").trim()
+  );
 }
 
-export async function translateCosmeticsProducts(ruProducts) {
+export async function translateCosmeticCopy(
+  fields,
+  targetLang,
+  { previousRu = {}, previousTranslated = {} } = {},
+) {
+  const volume = formatCosmeticVolume(fields.volume ?? "");
+  const result = {
+    name: String(fields.name ?? "").trim(),
+    volume,
+    description: "",
+    composition: "",
+  };
+
+  for (const field of TRANSLATABLE_COSMETIC_FIELDS) {
+    const ruText = String(fields[field] ?? "").trim();
+    if (!ruText) continue;
+
+    if (
+      cosmeticFieldUnchanged(previousRu, fields, field) &&
+      String(previousTranslated[field] ?? "").trim()
+    ) {
+      result[field] = String(previousTranslated[field]).trim();
+      continue;
+    }
+
+    result[field] = await translateText(fields[field], targetLang);
+  }
+
+  return result;
+}
+
+export async function translateCosmeticsProducts(
+  ruProducts,
+  { previousRuProducts = {}, previousTranslations = {} } = {},
+) {
   const translated = {};
   for (const lang of SITE_LANG_CODES) {
     translated[lang] = {};
-    for (const [id, fields] of Object.entries(ruProducts)) {
-      translated[lang][id] = await translateCosmeticCopy(fields, lang);
+  }
+
+  for (const [id, fields] of Object.entries(ruProducts)) {
+    const previousRu = previousRuProducts[id] ?? {};
+
+    for (const lang of SITE_LANG_CODES) {
+      translated[lang][id] = await translateCosmeticCopy(fields, lang, {
+        previousRu,
+        previousTranslated: previousTranslations[lang]?.[id] ?? {},
+      });
     }
   }
+
   return translated;
 }
 
