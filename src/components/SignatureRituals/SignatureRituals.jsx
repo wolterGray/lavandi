@@ -35,7 +35,7 @@ export default function SignatureRituals({ services = [] }) {
                     src={service.img}
                     alt={service.title}
                     fill
-                    className="object-cover transition duration-700 group-hover:scale-[1.02]"
+                    className="object-cover group-hover:scale-[1.04]"
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-void via-void/55 to-void/10" />

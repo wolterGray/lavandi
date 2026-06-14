@@ -57,7 +57,7 @@ export default function ServicesShowcase({ services = [] }) {
                       src={service.img}
                       alt={service.title}
                       fill
-                      className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.03]"
+                      className="object-cover group-hover:scale-[1.04]"
                       loading="lazy"
                     />
                   </div>

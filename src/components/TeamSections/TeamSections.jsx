@@ -47,7 +47,7 @@ export default function TeamSections() {
                         src={person.img}
                         alt={person.name}
                         fill
-                        className="object-cover object-top transition duration-700 ease-luxury group-hover:scale-[1.02]"
+                        className="object-cover object-top group-hover:scale-[1.04]"
                         loading="lazy"
                       />
                     </div>

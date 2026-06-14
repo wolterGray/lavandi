@@ -44,7 +44,7 @@ function ServiceCard({ service, index }) {
               src={service.img}
               alt={service.title}
               fill
-              className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.02]"
+              className="object-cover group-hover:scale-[1.04]"
               loading={index < 3 ? "eager" : "lazy"}
             />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-card via-card/55 to-transparent" />

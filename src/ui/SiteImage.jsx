@@ -82,7 +82,7 @@ export default function SiteImage({
           ref={setImageRef}
           src={resolvedSrc}
           alt={alt}
-          className={`${imageClasses} transition-opacity duration-500 ease-luxury ${
+          className={`${imageClasses} transform-gpu transition-[opacity,transform] duration-700 ease-luxury ${
             loaded ? "opacity-100" : "opacity-0"
           }`}
           loading={loading}

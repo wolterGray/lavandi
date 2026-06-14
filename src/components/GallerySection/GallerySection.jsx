@@ -62,7 +62,7 @@ export default function GallerySection() {
                         src={image.src}
                         alt={t(`gallery.items.${image.altKey}`)}
                         fill
-                        className="object-cover transition duration-700 ease-luxury group-hover:scale-[1.05]"
+                        className="object-cover group-hover:scale-[1.05]"
                         loading={index < 3 ? "eager" : "lazy"}
                       />
                       <span

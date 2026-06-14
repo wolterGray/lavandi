@@ -30,7 +30,7 @@ export default function InstagramSection() {
                 src={service.img}
                 alt={service.title}
                 fill
-                className="object-cover transition duration-500 group-hover:scale-105"
+                className="object-cover group-hover:scale-[1.04]"
                 loading="lazy"
               />
               <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/10 to-transparent p-4 opacity-0 transition group-hover:opacity-100">
