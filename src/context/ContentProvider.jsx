@@ -26,17 +26,21 @@ import { adminRu } from "../admin/adminStrings";
 import { buildFullPublishedOverrides } from "../admin/publishFullContent";
 import {
   cleanupOrphanedSiteImages,
+  collectImageRefsFromOverrides,
+  fetchSiteImagesMap,
   getCachedImageDataUrl,
   isImageRef,
   parseImageRef,
   resolveContentImages,
 } from "../admin/siteImages";
-import { normalizeCosmeticCopy, normalizeCosmeticsList } from "../components/CosmeticsSection/cosmeticsShared";
+import { normalizeCosmeticCopy, normalizeCosmeticsList, getProductImages } from "../components/CosmeticsSection/cosmeticsShared";
 import { isSupabaseConfigured } from "../lib/supabase";
 
 const ContentContext = createContext(null);
 
 const CMS_SYNC_TIMEOUT_MS = 6000;
+const IMAGE_PREFETCH_BATCH_SIZE = 8;
+const IMAGE_PREFETCH_BATCH_DELAY_MS = 40;
 
 export { ContentContext };
 
@@ -49,6 +53,7 @@ export function ContentProvider({ children }) {
   const [contentSaving, setContentSaving] = useState(false);
   const [syncError, setSyncError] = useState(null);
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [imageCacheVersion, setImageCacheVersion] = useState(0);
 
   const content = useMemo(() => mergeContent(overrides), [overrides]);
   const resolvedContent = useMemo(() => resolveContentImages(content, {}), [content]);
@@ -85,6 +90,62 @@ export function ContentProvider({ children }) {
       window.clearTimeout(syncTimer);
     };
   }, []);
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return undefined;
+
+    const seen = new Set();
+    const missing = [];
+
+    const pushMissingId = (value) => {
+      const id = parseImageRef(value);
+      if (!id || seen.has(id) || getCachedImageDataUrl(id)) return;
+      seen.add(id);
+      missing.push(id);
+    };
+
+    normalizeCosmeticsList(content.cosmetics).forEach((product) => {
+      getProductImages(product).forEach(pushMissingId);
+    });
+
+    collectImageRefsFromOverrides(overrides).forEach((id) => {
+      if (!seen.has(id) && !getCachedImageDataUrl(id)) {
+        seen.add(id);
+        missing.push(id);
+      }
+    });
+
+    if (!missing.length) return undefined;
+
+    let cancelled = false;
+
+    void (async () => {
+      for (let index = 0; index < missing.length; index += IMAGE_PREFETCH_BATCH_SIZE) {
+        if (cancelled) return;
+
+        const batch = missing.slice(index, index + IMAGE_PREFETCH_BATCH_SIZE);
+        try {
+          await fetchSiteImagesMap(batch);
+        } catch {
+          // keep loading remaining batches
+        }
+
+        if (!cancelled) {
+          setImageCacheVersion((version) => version + 1);
+        }
+
+        if (index + IMAGE_PREFETCH_BATCH_SIZE < missing.length && !cancelled) {
+          await new Promise((resolve) => {
+            window.setTimeout(resolve, IMAGE_PREFETCH_BATCH_DELAY_MS);
+          });
+        }
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [overrides, content.cosmetics]);
 
   const persistOverrides = useCallback(async (next) => {
     setOverrides(next);
@@ -233,6 +294,14 @@ export function ContentProvider({ children }) {
         overrides?.locales?.ru?.cosmetics?.products?.[productId]?.name?.trim();
       if (authorName) {
         merged.name = authorName;
+      } else if (!merged.name?.trim()) {
+        for (const locale of ["uk", "pl", "en", "ru"]) {
+          const name = overrides?.locales?.[locale]?.cosmetics?.products?.[productId]?.name?.trim();
+          if (name) {
+            merged.name = name;
+            break;
+          }
+        }
       }
       return merged;
     },
@@ -275,6 +344,7 @@ export function ContentProvider({ children }) {
       syncError,
       lastSyncedAt,
       isSupabaseEnabled: isSupabaseConfigured,
+      imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
       updateSection,
@@ -301,6 +371,7 @@ export function ContentProvider({ children }) {
       contentSaving,
       syncError,
       lastSyncedAt,
+      imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
       updateSection,

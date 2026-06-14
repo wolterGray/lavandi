@@ -1,4 +1,5 @@
 import SiteImage from "../../ui/SiteImage";
+import { useImageSrc } from "../../hooks/useImageSrc";
 import {
   getProductImageSurfaceClass,
   PLACEHOLDER_GRADIENTS,
@@ -11,9 +12,12 @@ export default function CosmeticProductImage({
   imageClassName = "h-full w-full object-contain object-center",
   initialsClassName,
 }) {
-  const hasImage = Boolean(product.img);
+  const imageRef = product.img;
+  const { src: resolvedSrc, ready } = useImageSrc(imageRef);
+  const hasImageRef = Boolean(imageRef);
+  const showPhoto = hasImageRef && (!ready || Boolean(resolvedSrc));
   const gradient = PLACEHOLDER_GRADIENTS[product.accent % PLACEHOLDER_GRADIENTS.length];
-  const surfaceClass = hasImage
+  const surfaceClass = showPhoto
     ? getProductImageSurfaceClass(product, { hasImage: true })
     : gradient;
   const resolvedInitialsClassName =
@@ -28,9 +32,9 @@ export default function CosmeticProductImage({
         compact ? "p-2 sm:p-2.5" : "p-3 sm:p-4"
       } ${surfaceClass} ${className}`}
     >
-      {hasImage ? (
+      {showPhoto ? (
         <SiteImage
-          src={product.img}
+          src={imageRef}
           alt=""
           fill
           wrapperClassName="absolute inset-0"
@@ -38,7 +42,7 @@ export default function CosmeticProductImage({
           loading="lazy"
         />
       ) : (
-        <span className={resolvedInitialsClassName}>{product.initials}</span>
+        <span className={resolvedInitialsClassName}>{product.initials || "NU"}</span>
       )}
     </div>
   );

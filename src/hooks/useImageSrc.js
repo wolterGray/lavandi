@@ -1,7 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { ContentContext } from "../context/ContentProvider";
 import {
   fetchSiteImageRecord,
+  getCachedImageDataUrl,
   isImageRef,
   parseImageRef,
 } from "../admin/siteImages";
@@ -10,7 +11,11 @@ const EMPTY_STATE = { src: "", ready: true };
 
 export function useImageSrc(value) {
   const ctx = useContext(ContentContext);
-  const prefetched = ctx?.getImageDataUrl?.(value) ?? "";
+  const cacheVersion = ctx?.imageCacheVersion ?? 0;
+  const prefetched = useMemo(
+    () => ctx?.getImageDataUrl?.(value) ?? getCachedImageDataUrl(parseImageRef(value) ?? "") ?? "",
+    [ctx, value, cacheVersion],
+  );
 
   const [state, setState] = useState(() => {
     if (!value) return EMPTY_STATE;
@@ -30,8 +35,13 @@ export function useImageSrc(value) {
       return undefined;
     }
 
-    if (prefetched) {
-      setState({ src: prefetched, ready: true });
+    const cached =
+      ctx?.getImageDataUrl?.(value) ??
+      getCachedImageDataUrl(parseImageRef(value) ?? "") ??
+      "";
+
+    if (cached) {
+      setState({ src: cached, ready: true });
       return undefined;
     }
 
@@ -51,7 +61,7 @@ export function useImageSrc(value) {
     return () => {
       cancelled = true;
     };
-  }, [value, prefetched]);
+  }, [value, cacheVersion, ctx]);
 
   return state;
 }
