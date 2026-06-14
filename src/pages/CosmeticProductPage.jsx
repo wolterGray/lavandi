@@ -29,7 +29,7 @@ function resolveOgImage(image) {
 
 export default function CosmeticProductPage({ product }) {
   const { t, lang } = useTranslation();
-  const imageSrc = useImageSrc(getProductImages(product)[0]);
+  const { src: imageSrc } = useImageSrc(getProductImages(product)[0]);
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
   const categoryLabel = formatProductCategoryLabels(t, product);
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });

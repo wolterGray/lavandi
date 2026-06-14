@@ -18,7 +18,7 @@ export default function AdminImageField({
   const [error, setError] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const previewSrc = useImageSrc(value);
+  const { src: previewSrc } = useImageSrc(value);
 
   const handleRemove = async () => {
     setError("");

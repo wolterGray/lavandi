@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { ImageSkeleton } from "../../ui/SiteImage";
 import Container from "../../ui/Container";
 import SectionTitle from "../../ui/SectionTitle";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -10,7 +11,7 @@ import { buildLocalizedProduct, COSMETICS_ROUTE, formatProductCategoryLabels, ge
 
 export default function CosmeticsSection() {
   const { t, lang } = useTranslation();
-  const { cosmetics, featuredCosmeticIds, getProductTexts } = useContent();
+  const { cosmetics, featuredCosmeticIds, getProductTexts, contentLoading } = useContent();
 
   const featuredProducts = useMemo(() => {
     const featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
@@ -38,15 +39,28 @@ export default function CosmeticsSection() {
         </div>
 
         <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {featuredProducts.map((product, index) => (
-            <CosmeticProductCard
-              key={product.id}
-              product={product}
-              index={index}
-              categoryLabel={formatProductCategoryLabels(t, product)}
-              variant="featured"
-            />
-          ))}
+          {contentLoading
+            ? Array.from({ length: 3 }, (_, index) => (
+                <div
+                  key={index}
+                  className="overflow-hidden rounded-card border border-border/50 bg-card shadow-spa"
+                >
+                  <ImageSkeleton className="aspect-[4/5] w-full" />
+                  <div className="space-y-2 p-4 sm:p-5">
+                    <ImageSkeleton className="h-2 w-1/3 rounded-full" />
+                    <ImageSkeleton className="h-5 w-4/5 rounded-full" />
+                  </div>
+                </div>
+              ))
+            : featuredProducts.map((product, index) => (
+                <CosmeticProductCard
+                  key={product.id}
+                  product={product}
+                  index={index}
+                  categoryLabel={formatProductCategoryLabels(t, product)}
+                  variant="featured"
+                />
+              ))}
         </div>
 
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">

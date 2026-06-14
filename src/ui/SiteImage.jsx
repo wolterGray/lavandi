@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
 
 export function ImageSkeleton({ className = "" }) {
@@ -22,20 +22,39 @@ export default function SiteImage({
   showSkeleton = true,
   ...rest
 }) {
-  const resolvedSrc = useImageSrc(src);
+  const { src: resolvedSrc, ready: srcReady } = useImageSrc(src);
   const [loaded, setLoaded] = useState(false);
-  const pending = showSkeleton && Boolean(src) && (!resolvedSrc || !loaded);
+  const localImgRef = useRef(null);
+
+  const pending =
+    showSkeleton &&
+    Boolean(src) &&
+    (!srcReady || (Boolean(resolvedSrc) && !loaded));
 
   useEffect(() => {
     setLoaded(false);
   }, [resolvedSrc, src]);
 
-  useEffect(() => {
-    const node = imgRef?.current;
+  const markLoadedIfComplete = () => {
+    const node = localImgRef.current;
     if (node?.complete && node.naturalWidth > 0) {
       setLoaded(true);
     }
-  }, [resolvedSrc, imgRef]);
+  };
+
+  useLayoutEffect(() => {
+    markLoadedIfComplete();
+  }, [resolvedSrc]);
+
+  const setImageRef = (node) => {
+    localImgRef.current = node;
+    if (typeof imgRef === "function") {
+      imgRef(node);
+    } else if (imgRef) {
+      imgRef.current = node;
+    }
+    markLoadedIfComplete();
+  };
 
   const wrapperClasses = fill
     ? `absolute inset-0 overflow-hidden ${wrapperClassName}`
@@ -60,7 +79,7 @@ export default function SiteImage({
       {pending ? <ImageSkeleton className={`absolute inset-0 ${skeletonClassName}`} /> : null}
       {resolvedSrc ? (
         <img
-          ref={imgRef}
+          ref={setImageRef}
           src={resolvedSrc}
           alt={alt}
           className={`${imageClasses} transition-opacity duration-500 ease-luxury ${

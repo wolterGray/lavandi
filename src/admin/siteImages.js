@@ -280,10 +280,18 @@ export function resolveContentImages(content, imageMap = {}) {
   }
 
   if (Array.isArray(resolved.cosmetics)) {
-    resolved.cosmetics = resolved.cosmetics.map((product) => ({
-      ...product,
-      img: resolveImageValue(product.img, imageMap),
-    }));
+    resolved.cosmetics = resolved.cosmetics.map((product) => {
+      const images = Array.isArray(product.images)
+        ? product.images.map((ref) => resolveImageValue(ref, imageMap))
+        : product.images;
+      const img = resolveImageValue(product.img, imageMap);
+      const primary = images?.[0] ?? img;
+      return {
+        ...product,
+        images: images ?? (primary ? [primary] : []),
+        img: primary,
+      };
+    });
   }
 
   if (resolved.locales && typeof resolved.locales === "object") {

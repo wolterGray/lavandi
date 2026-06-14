@@ -5,28 +5,37 @@ import {
   parseImageRef,
 } from "../admin/siteImages";
 
+const EMPTY_STATE = { src: "", ready: true };
+
 export function useImageSrc(value) {
-  const [src, setSrc] = useState(() => (isImageRef(value) ? "" : value ?? ""));
+  const [state, setState] = useState(() => {
+    if (!value) return EMPTY_STATE;
+    if (!isImageRef(value)) return { src: value, ready: true };
+    return { src: "", ready: false };
+  });
 
   useEffect(() => {
     if (!value) {
-      setSrc("");
+      setState(EMPTY_STATE);
       return undefined;
     }
 
     if (!isImageRef(value)) {
-      setSrc(value);
+      setState({ src: value, ready: true });
       return undefined;
     }
 
     let cancelled = false;
+    setState({ src: "", ready: false });
 
     fetchSiteImageRecord(parseImageRef(value))
       .then((record) => {
-        if (!cancelled) setSrc(record?.dataUrl ?? "");
+        if (!cancelled) {
+          setState({ src: record?.dataUrl ?? "", ready: true });
+        }
       })
       .catch(() => {
-        if (!cancelled) setSrc("");
+        if (!cancelled) setState(EMPTY_STATE);
       });
 
     return () => {
@@ -34,5 +43,10 @@ export function useImageSrc(value) {
     };
   }, [value]);
 
-  return src;
+  return state;
+}
+
+/** @deprecated use destructuring from useImageSrc return value */
+export function useImageSrcString(value) {
+  return useImageSrc(value).src;
 }
