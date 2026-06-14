@@ -16,7 +16,13 @@ export function loadOverrides() {
 }
 
 export function saveOverrides(overrides) {
-  localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(overrides));
+  try {
+    localStorage.setItem(CONTENT_STORAGE_KEY, JSON.stringify(overrides));
+  } catch (error) {
+    if (error?.name !== "QuotaExceededError") {
+      throw error;
+    }
+  }
 }
 
 export function clearOverrides() {

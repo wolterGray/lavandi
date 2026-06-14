@@ -216,12 +216,66 @@ export function buildAuthorProductsDraft(draft = [], textDraft = {}) {
     COSMETIC_TEXT_FIELDS.forEach((field) => {
       const value = texts?.[field];
       if (typeof value === "string" && value.trim()) {
-        entry[field] = value.trim();
+        entry[field] =
+          field === "volume" ? formatCosmeticVolume(value.trim()) : value.trim();
       }
     });
     products[item.id] = entry;
   });
   return products;
+}
+
+const TRANSLATABLE_COSMETIC_FIELDS = ["description", "composition"];
+
+function cosmeticFieldUnchanged(previousFields = {}, nextFields = {}, field) {
+  return (
+    String(previousFields?.[field] ?? "").trim() === String(nextFields?.[field] ?? "").trim()
+  );
+}
+
+function copyCosmeticFields(fields) {
+  return {
+    name: String(fields.name ?? "").trim(),
+    volume: formatCosmeticVolume(fields.volume ?? ""),
+    description: String(fields.description ?? "").trim(),
+    composition: String(fields.composition ?? "").trim(),
+  };
+}
+
+export function buildCosmeticLocaleFromAuthor(
+  fields,
+  targetLang,
+  { previousSource = {}, previousTranslated = {} } = {},
+) {
+  const normalized = copyCosmeticFields(fields);
+
+  if (targetLang === "uk") {
+    return normalized;
+  }
+
+  const result = {
+    name: normalized.name,
+    volume: normalized.volume,
+    description: "",
+    composition: "",
+  };
+
+  for (const field of TRANSLATABLE_COSMETIC_FIELDS) {
+    const sourceText = normalized[field];
+    if (!sourceText) continue;
+
+    if (
+      cosmeticFieldUnchanged(previousSource, fields, field) &&
+      String(previousTranslated[field] ?? "").trim()
+    ) {
+      result[field] = String(previousTranslated[field]).trim();
+      continue;
+    }
+
+    result[field] = sourceText;
+  }
+
+  return result;
 }
 
 export function sanitizeCosmeticsProductsDraft(products = {}) {

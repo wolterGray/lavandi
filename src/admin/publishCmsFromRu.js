@@ -1,9 +1,10 @@
-import { translateCosmeticsProducts, translateFaqItems, translateTeamLocale } from "./autoTranslate";
+import { translateFaqItems, translateTeamLocale } from "./autoTranslate";
 import { patchLocaleBlock } from "./contentStore";
+import { buildCosmeticLocaleFromAuthor } from "../components/CosmeticsSection/cosmeticsShared";
 import { buildTeamLocalePayload } from "./localeSync";
 import { CMS_AUTHOR_LANG } from "./siteContent";
 
-export async function publishCosmeticsLocalesFromAuthor(overrides, authorProducts) {
+export function publishCosmeticsLocalesFromAuthor(overrides, authorProducts) {
   const previousSourceProducts =
     overrides?.locales?.[CMS_AUTHOR_LANG]?.cosmetics?.products ??
     overrides?.locales?.ru?.cosmetics?.products ??
@@ -19,24 +20,18 @@ export async function publishCosmeticsLocalesFromAuthor(overrides, authorProduct
     products: authorProducts,
   });
 
-  try {
-    const translated = await translateCosmeticsProducts(authorProducts, {
-      previousSourceProducts,
-      previousTranslations,
+  for (const lang of ["pl", "en"]) {
+    const products = {};
+    Object.entries(authorProducts).forEach(([id, fields]) => {
+      products[id] = buildCosmeticLocaleFromAuthor(fields, lang, {
+        previousSource: previousSourceProducts[id] ?? {},
+        previousTranslated: previousTranslations[lang]?.[id] ?? {},
+      });
     });
-
-    Object.entries(translated).forEach(([lang, products]) => {
-      next = patchLocaleBlock(next, lang, "cosmetics", { products });
-    });
-
-    return { next, translationError: null };
-  } catch (error) {
-    return {
-      next,
-      translationError:
-        error instanceof Error ? error : new Error("Не удалось перевести тексты на PL и EN"),
-    };
+    next = patchLocaleBlock(next, lang, "cosmetics", { products });
   }
+
+  return next;
 }
 
 export async function publishTeamLocalesFromAuthor(overrides, teamDraft, authorLocaleDraft) {

@@ -78,7 +78,6 @@ export default function AdminCosmeticsPage() {
   const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
   const { contentSaving, saveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
   const [activeLang, setActiveLang] = useState(CMS_AUTHOR_LANG);
-  const [translating, setTranslating] = useState(false);
   const [draft, setDraft] = useState(cosmetics);
   const [textDraft, setTextDraft] = useState({});
   const [featuredDraft, setFeaturedDraft] = useState(featuredCosmeticIds);
@@ -92,6 +91,14 @@ export default function AdminCosmeticsPage() {
   const [confirm, setConfirm] = useState(null);
   const cardRefs = useRef({});
 
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem("nuar-admin-draft:/admin/cosmetics");
+    } catch {
+      // ignore stale draft from older builds
+    }
+  }, []);
+
   const authorTexts = useMemo(
     () => buildDefaultTexts(cosmetics, CMS_AUTHOR_LANG, overrides),
     [cosmetics, overrides.locales],
@@ -101,8 +108,6 @@ export default function AdminCosmeticsPage() {
     () => buildDefaultTexts(cosmetics, activeLang, overrides),
     [cosmetics, activeLang, overrides.locales],
   );
-
-  const activeIds = useMemo(() => draft.map((item) => item.id), [draft]);
 
   useEffect(() => {
     if (dirty) return;
@@ -174,16 +179,11 @@ export default function AdminCosmeticsPage() {
   };
 
   const requestAddProduct = () => {
-    setConfirm({
-      type: "add",
-      title: adminRu.cosmetics.confirmAddTitle,
-      message: adminRu.cosmetics.confirmAddMessage,
-      onConfirm: () => {
-        const id = generateCosmeticNumericId(activeIds, retiredDraft);
-        addProductToDraft(id);
-        setConfirm(null);
-      },
-    });
+    const id = generateCosmeticNumericId(
+      draft.map((item) => item.id),
+      retiredDraft,
+    );
+    addProductToDraft(id);
   };
 
   const toggleCategory = (index, categoryKey) => {
@@ -343,36 +343,25 @@ export default function AdminCosmeticsPage() {
     });
     const authorProducts = buildAuthorProductsDraft(draft, textDraft);
 
-    setTranslating(true);
-    showStatus(adminRu.cosmetics.statusTranslating, "info");
+    showStatus(adminRu.cosmetics.statusSaving, "info");
 
-    let translationWarning = "";
+    const ok = await runSave(async () =>
+      saveMerged(async (current) => {
+        return publishCosmeticsLocalesFromAuthor(
+          {
+            ...current,
+            cosmetics: enriched,
+            featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
+            cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
+          },
+          authorProducts,
+        );
+      }, "cosmetics"),
+    );
 
-    const ok = await runSave(async () => {
-      const { next, translationError } = await publishCosmeticsLocalesFromAuthor(
-        {
-          ...overrides,
-          cosmetics: enriched,
-          featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
-          cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
-        },
-        authorProducts,
-      );
-
-      if (translationError) {
-        translationWarning = translationError.message || adminRu.cosmetics.statusSavedPartial;
-      }
-
-      await saveMerged(async () => next, "cosmetics");
-    });
-
-    setTranslating(false);
     if (ok) {
       setDirty(false);
-      showStatus(
-        translationWarning ? adminRu.cosmetics.statusSavedPartial : adminRu.cosmetics.statusSaved,
-        translationWarning ? "warning" : "success",
-      );
+      showStatus(adminRu.cosmetics.statusSaved, "success");
     }
   };
 
@@ -679,7 +668,7 @@ export default function AdminCosmeticsPage() {
       ) : null}
       <AdminSaveBar
         dirty={dirty}
-        saving={contentSaving || translating}
+        saving={contentSaving}
         onSave={handleSave}
         hint={status?.message && !dirty ? status.message : undefined}
         onDiscard={handleDiscard}
