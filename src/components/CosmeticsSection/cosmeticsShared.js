@@ -208,6 +208,22 @@ export function normalizeCosmeticCopy(source = {}) {
   };
 }
 
+export function buildAuthorProductsDraft(draft = [], textDraft = {}) {
+  const products = {};
+  draft.forEach((item) => {
+    const texts = textDraft[item.id] ?? {};
+    const entry = {};
+    COSMETIC_TEXT_FIELDS.forEach((field) => {
+      const value = texts?.[field];
+      if (typeof value === "string" && value.trim()) {
+        entry[field] = value.trim();
+      }
+    });
+    products[item.id] = entry;
+  });
+  return products;
+}
+
 export function sanitizeCosmeticsProductsDraft(products = {}) {
   const cleaned = {};
   Object.entries(products).forEach(([id, texts]) => {

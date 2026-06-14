@@ -138,6 +138,8 @@ export const adminRu = {
     statusAdded: "Товар добавлен. Сохраните изменения.",
     statusDeleted: "Товар удалён. Сохраните изменения.",
     statusSaved: "Каталог сохранён на сайте.",
+    statusSavedPartial:
+      "Каталог сохранён на UA. Перевод PL/EN не выполнен — подождите минуту и сохраните снова.",
     newProductBadge: "Новый",
     name: "Название",
     productDescription: "Описание",

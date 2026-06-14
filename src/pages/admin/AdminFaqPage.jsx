@@ -130,7 +130,7 @@ export default function AdminFaqPage() {
   const handleDiscard = () => {
     sessionStorage.removeItem(DRAFT_KEY);
     setRecoveryOffer(null);
-    setRuDraft(ruSource);
+    setRuDraft(authorSource);
     setDirty(false);
   };
 
@@ -147,7 +147,7 @@ export default function AdminFaqPage() {
           onDismiss={() => {
             sessionStorage.removeItem(DRAFT_KEY);
             setRecoveryOffer(null);
-            setRuDraft(ruSource);
+            setRuDraft(authorSource);
             setDirty(false);
           }}
         />

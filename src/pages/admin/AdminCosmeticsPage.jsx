@@ -14,6 +14,7 @@ import {
 import { adminRu } from "../../admin/adminStrings";
 import {
   CATEGORY_KEYS,
+  buildAuthorProductsDraft,
   formatCosmeticVolume,
   generateCosmeticNumericId,
   getProductCategories,
@@ -25,7 +26,6 @@ import {
   normalizeFeaturedCosmeticIds,
   parseCosmeticVolume,
   PLACEHOLDER_GRADIENTS,
-  sanitizeCosmeticsProductsDraft,
   usesTransparentProductPhoto,
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
@@ -33,6 +33,7 @@ import { deleteSiteImageByRef, isImageRef } from "../../admin/siteImages";
 import {
   AdminButton,
   AdminConfirmDialog,
+  AdminDraftRecoveryBanner,
   AdminField,
   AdminPageHeader,
   AdminPanel,
@@ -73,6 +74,22 @@ function buildDefaultTexts(cosmetics, activeLang, overrides) {
 }
 
 const ADMIN_COSMETIC_LANGS = ["uk", "pl", "en"];
+const DRAFT_KEY = "nuar-admin-draft:/admin/cosmetics";
+
+function readDraftRecovery() {
+  try {
+    const raw = sessionStorage.getItem(DRAFT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed?.data || Date.now() - parsed.savedAt > 24 * 60 * 60 * 1000) {
+      sessionStorage.removeItem(DRAFT_KEY);
+      return null;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export default function AdminCosmeticsPage() {
   const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
@@ -92,6 +109,7 @@ export default function AdminCosmeticsPage() {
   const [highlightId, setHighlightId] = useState("");
   const [status, setStatus] = useState(null);
   const [confirm, setConfirm] = useState(null);
+  const [recoveryOffer, setRecoveryOffer] = useState(() => readDraftRecovery());
   const cardRefs = useRef({});
 
   const authorTexts = useMemo(
@@ -107,13 +125,30 @@ export default function AdminCosmeticsPage() {
   const activeIds = useMemo(() => draft.map((item) => item.id), [draft]);
 
   useEffect(() => {
+    if (recoveryOffer || dirty) return;
     setDraft(cosmetics);
     setTextDraft(authorTexts);
     setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setDirty(false);
     setHighlightId("");
-  }, [cosmetics, authorTexts, featuredCosmeticIds, cosmeticRetiredIds]);
+  }, [cosmetics, authorTexts, featuredCosmeticIds, cosmeticRetiredIds, recoveryOffer, dirty]);
+
+  useEffect(() => {
+    if (!dirty || recoveryOffer) return;
+    sessionStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        savedAt: Date.now(),
+        data: {
+          draft,
+          textDraft,
+          featuredDraft,
+          retiredDraft,
+        },
+      }),
+    );
+  }, [draft, textDraft, featuredDraft, retiredDraft, dirty, recoveryOffer]);
 
   useEffect(() => {
     if (!idPickerOpen) return;
@@ -378,28 +413,71 @@ export default function AdminCosmeticsPage() {
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       });
     });
-    const authorProducts = sanitizeCosmeticsProductsDraft(textDraft);
+    const authorProducts = buildAuthorProductsDraft(draft, textDraft);
 
     setTranslating(true);
     showStatus(adminRu.cosmetics.statusTranslating, "info");
 
-    const ok = await runSave(async () =>
-      saveMerged(async (current) => {
-        const next = {
-          ...current,
+    let translationWarning = "";
+
+    const ok = await runSave(async () => {
+      const { next, translationError } = await publishCosmeticsLocalesFromAuthor(
+        {
+          ...overrides,
           cosmetics: enriched,
           featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
           cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
-        };
-        return publishCosmeticsLocalesFromAuthor(next, authorProducts);
-      }, "cosmetics"),
-    );
+        },
+        authorProducts,
+      );
+
+      if (translationError) {
+        translationWarning = translationError.message || adminRu.cosmetics.statusSavedPartial;
+      }
+
+      await saveMerged(async () => next, "cosmetics");
+    });
 
     setTranslating(false);
     if (ok) {
       setDirty(false);
-      showStatus(adminRu.cosmetics.statusSaved, "success");
+      sessionStorage.removeItem(DRAFT_KEY);
+      setRecoveryOffer(null);
+      showStatus(
+        translationWarning ? adminRu.cosmetics.statusSavedPartial : adminRu.cosmetics.statusSaved,
+        translationWarning ? "warning" : "success",
+      );
     }
+  };
+
+  const restoreDraftSnapshot = (snapshot) => {
+    if (!snapshot) return;
+    setDraft(Array.isArray(snapshot.draft) ? snapshot.draft : cosmetics);
+    setTextDraft(snapshot.textDraft ?? authorTexts);
+    setFeaturedDraft(
+      normalizeFeaturedCosmeticIds(snapshot.featuredDraft ?? featuredCosmeticIds, snapshot.draft ?? cosmetics),
+    );
+    setRetiredDraft(Array.isArray(snapshot.retiredDraft) ? snapshot.retiredDraft : cosmeticRetiredIds);
+    setDirty(true);
+    setRecoveryOffer(null);
+  };
+
+  const handleDiscard = () => {
+    sessionStorage.removeItem(DRAFT_KEY);
+    setRecoveryOffer(null);
+    setDraft(cosmetics);
+    setTextDraft(authorTexts);
+    setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
+    setRetiredDraft(cosmeticRetiredIds);
+    setIdPickerOpen(false);
+    setFeaturedLimitHint("");
+    setHighlightId("");
+    setDirty(false);
+  };
+
+  const dismissDraftRecovery = () => {
+    sessionStorage.removeItem(DRAFT_KEY);
+    setRecoveryOffer(null);
   };
 
   const isAuthoring = activeLang === CMS_AUTHOR_LANG;
@@ -422,6 +500,14 @@ export default function AdminCosmeticsPage() {
         onConfirm={confirm?.onConfirm}
         onCancel={() => setConfirm(null)}
       />
+
+      {recoveryOffer ? (
+        <AdminDraftRecoveryBanner
+          savedAt={recoveryOffer.savedAt}
+          onRestore={() => restoreDraftSnapshot(recoveryOffer.data)}
+          onDismiss={dismissDraftRecovery}
+        />
+      ) : null}
 
       <AdminPageHeader
         title={adminRu.nav.cosmetics}
@@ -731,16 +817,7 @@ export default function AdminCosmeticsPage() {
         saving={contentSaving || translating}
         onSave={handleSave}
         hint={status?.message && !dirty ? status.message : undefined}
-        onDiscard={() => {
-          setDraft(cosmetics);
-          setTextDraft(authorTexts);
-          setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
-          setRetiredDraft(cosmeticRetiredIds);
-          setIdPickerOpen(false);
-          setFeaturedLimitHint("");
-          setHighlightId("");
-          setDirty(false);
-        }}
+        onDiscard={handleDiscard}
       />
     </>
   );

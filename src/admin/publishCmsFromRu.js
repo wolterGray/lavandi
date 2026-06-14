@@ -15,20 +15,28 @@ export async function publishCosmeticsLocalesFromAuthor(overrides, authorProduct
     ]),
   );
 
-  const translated = await translateCosmeticsProducts(authorProducts, {
-    previousSourceProducts,
-    previousTranslations,
-  });
-
   let next = patchLocaleBlock(overrides, CMS_AUTHOR_LANG, "cosmetics", {
     products: authorProducts,
   });
 
-  Object.entries(translated).forEach(([lang, products]) => {
-    next = patchLocaleBlock(next, lang, "cosmetics", { products });
-  });
+  try {
+    const translated = await translateCosmeticsProducts(authorProducts, {
+      previousSourceProducts,
+      previousTranslations,
+    });
 
-  return next;
+    Object.entries(translated).forEach(([lang, products]) => {
+      next = patchLocaleBlock(next, lang, "cosmetics", { products });
+    });
+
+    return { next, translationError: null };
+  } catch (error) {
+    return {
+      next,
+      translationError:
+        error instanceof Error ? error : new Error("Не удалось перевести тексты на PL и EN"),
+    };
+  }
 }
 
 export async function publishTeamLocalesFromAuthor(overrides, teamDraft, authorLocaleDraft) {
