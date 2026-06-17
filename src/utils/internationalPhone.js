@@ -1,98 +1,47 @@
-import {
-  getCountries,
-  getCountryCallingCode,
-  parsePhoneNumberFromString,
-} from "libphonenumber-js";
+import { AsYouType, parsePhoneNumberFromString } from "libphonenumber-js";
 
-const PINNED_COUNTRIES = [
-  "PL",
-  "UA",
-  "DE",
-  "GB",
-  "US",
-  "BY",
-  "LT",
-  "CZ",
-  "SK",
-  "NL",
-  "FR",
-  "IT",
-  "ES",
-  "RU",
-];
-
-export function defaultPhoneCountryForLocale(locale) {
+export function defaultPhonePlaceholder(locale = "pl") {
   if (locale === "uk") {
-    return "UA";
+    return "+380 67 123 4567";
   }
 
-  return "PL";
+  return "+48 123 456 789";
 }
 
-export function getPhoneCountryOptions(locale = "pl") {
-  const displayLocale = locale === "uk" ? "uk" : locale;
-  const displayNames = new Intl.DisplayNames([displayLocale], { type: "region" });
-  const countries = getCountries();
+export function formatInternationalPhoneInput(value) {
+  const raw = String(value ?? "");
 
-  const options = countries.map((code) => ({
-    code,
-    callingCode: getCountryCallingCode(code),
-    label: `${displayNames.of(code) ?? code} (+${getCountryCallingCode(code)})`,
-  }));
-
-  const pinnedSet = new Set(PINNED_COUNTRIES);
-  const pinned = PINNED_COUNTRIES.filter((code) => countries.includes(code)).map(
-    (code) => options.find((option) => option.code === code),
-  );
-  const rest = options
-    .filter((option) => !pinnedSet.has(option.code))
-    .sort((left, right) => left.label.localeCompare(right.label, displayLocale));
-
-  return [...pinned, ...rest];
-}
-
-export function validateSiteBookingPhone(country, localNumber) {
-  const raw = String(localNumber ?? "").trim();
-
-  if (!country) {
-    return { ok: false, reason: "no_country" };
+  if (!raw) {
+    return "";
   }
+
+  if (raw === "+") {
+    return "+";
+  }
+
+  const digits = raw.replace(/\D/g, "");
+
+  if (!digits) {
+    return raw.startsWith("+") ? "+" : "";
+  }
+
+  const international = raw.startsWith("+") ? `+${digits}` : `+${digits}`;
+
+  return new AsYouType().input(international);
+}
+
+export function validateInternationalPhoneInput(value) {
+  const raw = String(value ?? "").trim();
 
   if (!raw) {
     return { ok: false, reason: "empty" };
   }
 
-  if (raw.startsWith("+")) {
-    const international = parsePhoneNumberFromString(raw);
-
-    if (international?.isValid()) {
-      return {
-        ok: true,
-        e164: international.number.slice(1),
-        country: international.country,
-        nationalNumber: international.nationalNumber,
-      };
-    }
-
-    return { ok: false, reason: "invalid" };
+  if (!raw.startsWith("+")) {
+    return { ok: false, reason: "missing_plus" };
   }
 
-  const digitsOnly = raw.replace(/\D/g, "");
-
-  if (digitsOnly.length > 10) {
-    const international = parsePhoneNumberFromString(`+${digitsOnly}`);
-
-    if (international?.isValid()) {
-      return {
-        ok: true,
-        e164: international.number.slice(1),
-        country: international.country,
-        nationalNumber: international.nationalNumber,
-      };
-    }
-  }
-
-  const parsed = parsePhoneNumberFromString(raw, country);
+  const parsed = parsePhoneNumberFromString(raw);
 
   if (!parsed?.isValid()) {
     return { ok: false, reason: "invalid" };
@@ -100,29 +49,20 @@ export function validateSiteBookingPhone(country, localNumber) {
 
   return {
     ok: true,
-    e164: parsed.number.slice(1),
+    e164: parsed.number,
     country: parsed.country,
-    nationalNumber: parsed.nationalNumber,
+    formatted: parsed.formatInternational(),
   };
 }
 
-export function parsePastedPhoneNumber(value) {
+export function formatPastedPhoneNumber(value) {
   const raw = String(value ?? "").trim();
 
   if (!raw) {
-    return null;
+    return "";
   }
 
   const candidate = raw.startsWith("+") ? raw : `+${raw.replace(/\D/g, "")}`;
-  const parsed = parsePhoneNumberFromString(candidate);
 
-  if (!parsed?.isValid()) {
-    return null;
-  }
-
-  return {
-    country: parsed.country,
-    nationalNumber: parsed.nationalNumber,
-    e164: parsed.number.slice(1),
-  };
+  return formatInternationalPhoneInput(candidate);
 }

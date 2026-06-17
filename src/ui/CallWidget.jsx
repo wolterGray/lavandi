@@ -8,7 +8,7 @@ export default function CallWidget({ phone = PHONE_DISPLAY }) {
     <a
       href={`tel:${PHONE}`}
       aria-label={t("call.label", { phone })}
-      className="fixed bottom-24 right-5 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-gold text-void shadow-spa transition duration-300 hover:bg-gold-dark md:bottom-8 md:right-8 md:h-14 md:w-14"
+      className="call-widget fixed bottom-[calc(6.5rem+env(safe-area-inset-bottom,0px))] right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-gold text-void shadow-spa transition duration-300 hover:bg-gold-dark md:bottom-8 md:right-8"
     >
       <FaPhoneAlt className="text-sm md:text-base" />
     </a>

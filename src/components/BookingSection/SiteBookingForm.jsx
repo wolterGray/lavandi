@@ -13,11 +13,18 @@ import {
 } from "../../utils/siteBookingSlots";
 import { BOOKSY_URL } from "../../constants/theme";
 import {
-  defaultPhoneCountryForLocale,
-  getPhoneCountryOptions,
-  parsePastedPhoneNumber,
-  validateSiteBookingPhone,
+  defaultPhonePlaceholder,
+  formatInternationalPhoneInput,
+  formatPastedPhoneNumber,
+  validateInternationalPhoneInput,
 } from "../../utils/internationalPhone";
+import {
+  bookingFieldClass,
+  bookingHintClass,
+  bookingLabelClass,
+  bookingOptionalTagClass,
+  bookingTextareaClass,
+} from "./bookingFormStyles";
 import SiteBookingSuccess from "./SiteBookingSuccess";
 
 const todayInputDate = () => new Date().toISOString().slice(0, 10);
@@ -41,13 +48,9 @@ export default function SiteBookingForm() {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [formKey, setFormKey] = useState(0);
-  const [phoneCountry, setPhoneCountry] = useState(() => defaultPhoneCountryForLocale(lang));
-  const [phoneLocal, setPhoneLocal] = useState("");
+  const [phone, setPhone] = useState("");
 
-  const phoneCountryOptions = useMemo(
-    () => getPhoneCountryOptions(lang),
-    [lang],
-  );
+  const phonePlaceholder = useMemo(() => defaultPhonePlaceholder(lang), [lang]);
 
   const {
     durationMinutes,
@@ -120,7 +123,7 @@ export default function SiteBookingForm() {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [durationMinutes, preferredDate, preferredMaster, selectedService, t]);
+  }, [durationMinutes, preferredDate, preferredMaster, selectedService, serviceSlug, t]);
 
   const selectedSlotData = useMemo(() => {
     if (!selectedSlot) {
@@ -134,8 +137,7 @@ export default function SiteBookingForm() {
 
   const resetForm = () => {
     setFormState(initialFormState());
-    setPhoneCountry(defaultPhoneCountryForLocale(lang));
-    setPhoneLocal("");
+    setPhone("");
     setSlots([]);
     setSlotsError("");
     setError("");
@@ -152,6 +154,22 @@ export default function SiteBookingForm() {
     }));
   };
 
+  const handlePhoneChange = (event) => {
+    setPhone(formatInternationalPhoneInput(event.target.value));
+  };
+
+  const handlePhonePaste = (event) => {
+    const pasted = event.clipboardData.getData("text");
+    const formatted = formatPastedPhoneNumber(pasted);
+
+    if (!formatted) {
+      return;
+    }
+
+    event.preventDefault();
+    setPhone(formatted);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
@@ -159,7 +177,7 @@ export default function SiteBookingForm() {
     const formData = new FormData(event.currentTarget);
     const clientName = String(formData.get("clientName") ?? "").trim();
     const clientEmail = String(formData.get("clientEmail") ?? "").trim();
-    const phoneResult = validateSiteBookingPhone(phoneCountry, phoneLocal);
+    const phoneResult = validateInternationalPhoneInput(phone);
     const note = String(formData.get("note") ?? "").trim();
     const { master: slotMaster, startTime: preferredTime } =
       parseSiteBookingSlotValue(selectedSlot);
@@ -170,11 +188,13 @@ export default function SiteBookingForm() {
     }
 
     if (!phoneResult.ok) {
-      setError(
-        phoneResult.reason === "no_country"
-          ? t("booking.form.errorPhoneCountry")
-          : t("booking.form.errorPhone"),
-      );
+      if (phoneResult.reason === "missing_plus") {
+        setError(t("booking.form.errorPhonePlus"));
+      } else if (phoneResult.reason === "empty") {
+        setError(t("booking.form.errorPhoneRequired"));
+      } else {
+        setError(t("booking.form.errorPhone"));
+      }
       return;
     }
 
@@ -223,7 +243,7 @@ export default function SiteBookingForm() {
 
   if (showSuccess) {
     return (
-      <div className="mx-auto mt-10 max-w-2xl scroll-mt-28 text-left">
+      <div className="booking-form-shell mx-auto mt-8 max-w-2xl scroll-mt-28 text-left sm:mt-10">
         <SiteBookingSuccess
           t={t}
           onClose={() => {
@@ -235,79 +255,50 @@ export default function SiteBookingForm() {
   }
 
   return (
-    <div id="booking-form" className="mx-auto mt-10 max-w-2xl scroll-mt-28 text-left">
+    <div
+      id="booking-form"
+      className="booking-form-shell mx-auto mt-8 max-w-2xl scroll-mt-28 text-left sm:mt-10"
+    >
       <form
         key={formKey}
-        className="rounded-card border border-white/15 bg-void/55 p-6 backdrop-blur-sm sm:p-8"
+        className="booking-form rounded-card border border-white/15 bg-void/55 p-5 backdrop-blur-sm sm:p-8"
         onSubmit={handleSubmit}
       >
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4">
+          <label className={`${bookingLabelClass} sm:col-span-2`}>
             <span>{t("booking.form.name")}</span>
             <input
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              autoComplete="name"
+              className={bookingFieldClass}
+              enterKeyHint="next"
               name="clientName"
               required
               type="text"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
+
+          <label className={`${bookingLabelClass} sm:col-span-2`}>
             <span>{t("booking.form.phone")}</span>
-            <div className="grid gap-2 sm:grid-cols-[minmax(0,12rem)_1fr]">
-              <select
-                aria-label={t("booking.form.phoneCountry")}
-                className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
-                required
-                value={phoneCountry}
-                onChange={(event) => setPhoneCountry(event.target.value)}
-              >
-                {phoneCountryOptions.map((option) => (
-                  <option key={option.code} value={option.code}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <input
-                aria-label={t("booking.form.phoneNumber")}
-                className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
-                inputMode="tel"
-                placeholder={t("booking.form.phonePlaceholder")}
-                required
-                type="tel"
-                value={phoneLocal}
-                onChange={(event) => setPhoneLocal(event.target.value)}
-                onPaste={(event) => {
-                  const pasted = event.clipboardData.getData("text");
-                  const parsed = parsePastedPhoneNumber(pasted);
-
-                  if (!parsed) {
-                    return;
-                  }
-
-                  event.preventDefault();
-
-                  if (parsed.country) {
-                    setPhoneCountry(parsed.country);
-                  }
-
-                  setPhoneLocal(parsed.nationalNumber);
-                }}
-              />
-            </div>
-            <small className="text-white/60">{t("booking.form.phoneHint")}</small>
-          </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
-            <span>{t("booking.form.email")}</span>
             <input
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
-              name="clientEmail"
-              type="email"
+              autoComplete="tel"
+              className={bookingFieldClass}
+              enterKeyHint="next"
+              inputMode="tel"
+              name="clientPhone"
+              placeholder={phonePlaceholder}
+              required
+              type="tel"
+              value={phone}
+              onChange={handlePhoneChange}
+              onPaste={handlePhonePaste}
             />
+            <small className={bookingHintClass}>{t("booking.form.phoneHint")}</small>
           </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+
+          <label className={bookingLabelClass}>
             <span>{t("booking.form.service")}</span>
             <select
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              className={bookingFieldClass}
               required
               value={serviceSlug}
               onChange={(event) => handleServiceChange(event.target.value)}
@@ -320,10 +311,11 @@ export default function SiteBookingForm() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+
+          <label className={bookingLabelClass}>
             <span>{t("booking.form.duration")}</span>
             <select
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              className={bookingFieldClass}
               required
               value={durationMinutes}
               onChange={(event) => {
@@ -345,11 +337,15 @@ export default function SiteBookingForm() {
               ))}
             </select>
           </label>
+
           {team.length ? (
-            <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
-              <span>{t("booking.form.master")}</span>
+            <label className={`${bookingLabelClass} sm:col-span-2`}>
+              <span>
+                {t("booking.form.master")}
+                <span className={bookingOptionalTagClass}>{t("booking.form.optional")}</span>
+              </span>
               <select
-                className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+                className={bookingFieldClass}
                 value={preferredMaster}
                 onChange={(event) => {
                   setFormState((current) => ({
@@ -368,10 +364,11 @@ export default function SiteBookingForm() {
               </select>
             </label>
           ) : null}
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+
+          <label className={bookingLabelClass}>
             <span>{t("booking.form.date")}</span>
             <input
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              className={bookingFieldClass}
               min={todayInputDate()}
               required
               type="date"
@@ -385,10 +382,11 @@ export default function SiteBookingForm() {
               }}
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+
+          <label className={bookingLabelClass}>
             <span>{t("booking.form.time")}</span>
             <select
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              className={bookingFieldClass}
               disabled={!preferredDate || !durationMinutes || slotsLoading}
               required
               value={selectedSlot}
@@ -410,55 +408,56 @@ export default function SiteBookingForm() {
                 </option>
               ))}
             </select>
-            {slotsError ? <small className="text-red-300">{slotsError}</small> : null}
+            {slotsError ? <small className="text-sm text-red-300">{slotsError}</small> : null}
             {!slotsLoading && preferredDate && durationMinutes && slots.length === 0 && !slotsError ? (
-              <small className="text-white/70">{t("booking.form.noSlots")}</small>
+              <small className={bookingHintClass}>{t("booking.form.noSlots")}</small>
             ) : null}
           </label>
+
           {selectedSlotData ? (
-            <div className="rounded-lg border border-white/15 bg-void/45 p-4 sm:col-span-2">
+            <div className="rounded-xl border border-white/15 bg-void/45 p-4 sm:col-span-2">
               <p className="mb-3 text-sm font-medium text-white">{t("booking.form.pricingTitle")}</p>
               <table className="w-full text-sm text-white/85">
                 <tbody>
                   <tr>
-                    <td className="py-1">{t("booking.form.pricingBase")}</td>
-                    <td className="py-1 text-right tabular-nums">
+                    <td className="py-1.5">{t("booking.form.pricingBase")}</td>
+                    <td className="py-1.5 text-right tabular-nums">
                       {selectedSlotData.basePrice} {t("common.pln")}
                     </td>
                   </tr>
                   {selectedSlotData.premiumPercent > 0 ? (
                     <tr>
-                      <td className="py-1">
+                      <td className="py-1.5">
                         {t("booking.form.pricingPremium", {
                           percent: selectedSlotData.premiumPercent,
                         })}
                       </td>
-                      <td className="py-1 text-right tabular-nums">
+                      <td className="py-1.5 text-right tabular-nums">
                         +{selectedSlotData.premiumAmount} {t("common.pln")}
                       </td>
                     </tr>
                   ) : null}
                   <tr>
-                    <td className="py-1">{t("booking.form.pricingSubtotal")}</td>
-                    <td className="py-1 text-right tabular-nums">
+                    <td className="py-1.5">{t("booking.form.pricingSubtotal")}</td>
+                    <td className="py-1.5 text-right tabular-nums">
                       {selectedSlotData.subtotal} {t("common.pln")}
                     </td>
                   </tr>
                   {selectedSlotData.discountPercent > 0 ? (
                     <tr>
-                      <td className="py-1">
+                      <td className="py-1.5">
                         {t("booking.form.pricingDiscount", {
                           percent: selectedSlotData.discountPercent,
                         })}
                       </td>
-                      <td className="py-1 text-right tabular-nums">
+                      <td className="py-1.5 text-right tabular-nums">
                         −{selectedSlotData.discountAmount} {t("common.pln")}
                       </td>
                     </tr>
                   ) : null}
                   <tr className="border-t border-white/15 text-white">
-                    <td className="pt-2 font-medium">{t("booking.form.pricingTotal")}</td>
-                    <td className="pt-2 text-right font-medium tabular-nums">
+                    <td className="pt-2.5 font-medium">{t("booking.form.pricingTotal")}</td>
+                    <td className="pt-2.5 text-right font-medium tabular-nums">
                       {selectedSlotData.finalPrice} {t("common.pln")}
                     </td>
                   </tr>
@@ -466,10 +465,30 @@ export default function SiteBookingForm() {
               </table>
             </div>
           ) : null}
-          <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
-            <span>{t("booking.form.note")}</span>
+
+          <label className={`${bookingLabelClass} sm:col-span-2`}>
+            <span>
+              {t("booking.form.email")}
+              <span className={bookingOptionalTagClass}>{t("booking.form.optional")}</span>
+            </span>
+            <input
+              autoComplete="email"
+              className={bookingFieldClass}
+              enterKeyHint="next"
+              inputMode="email"
+              name="clientEmail"
+              type="email"
+            />
+          </label>
+
+          <label className={`${bookingLabelClass} sm:col-span-2`}>
+            <span>
+              {t("booking.form.note")}
+              <span className={bookingOptionalTagClass}>{t("booking.form.optional")}</span>
+            </span>
             <textarea
-              className="min-h-24 rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+              className={bookingTextareaClass}
+              enterKeyHint="done"
               maxLength={500}
               name="note"
               rows={3}
@@ -477,13 +496,27 @@ export default function SiteBookingForm() {
           </label>
         </div>
 
-        {error ? <p className="mt-4 text-sm text-red-300">{error}</p> : null}
+        {error ? (
+          <p className="mt-5 rounded-xl border border-red-400/25 bg-red-950/30 px-4 py-3 text-sm leading-relaxed text-red-200">
+            {error}
+          </p>
+        ) : null}
 
-        <div className="mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
-          <Button disabled={submitting || slotsLoading} size="lg" type="submit">
+        <div className="booking-form-actions mt-6 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center">
+          <Button
+            className="w-full min-h-[56px] sm:min-h-[52px]"
+            disabled={submitting || slotsLoading}
+            size="lg"
+            type="submit"
+          >
             {submitting ? t("booking.form.submitting") : t("booking.form.submit")}
           </Button>
-          <Button href={BOOKSY_URL} size="lg" variant="outlineLight">
+          <Button
+            className="w-full min-h-[52px]"
+            href={BOOKSY_URL}
+            size="lg"
+            variant="outlineLight"
+          >
             {t("booking.cta")}
           </Button>
         </div>
