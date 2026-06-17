@@ -12,11 +12,15 @@ import {
   parseSiteBookingSlotValue,
 } from "../../utils/siteBookingSlots";
 import { BOOKSY_URL } from "../../constants/theme";
+import {
+  defaultPhoneCountryForLocale,
+  getPhoneCountryOptions,
+  parsePastedPhoneNumber,
+  validateSiteBookingPhone,
+} from "../../utils/internationalPhone";
 import SiteBookingSuccess from "./SiteBookingSuccess";
 
 const todayInputDate = () => new Date().toISOString().slice(0, 10);
-
-const normalizePhone = (value) => String(value ?? "").replace(/\D/g, "");
 
 const initialFormState = () => ({
   serviceSlug: "",
@@ -37,6 +41,13 @@ export default function SiteBookingForm() {
   const [error, setError] = useState("");
   const [showSuccess, setShowSuccess] = useState(false);
   const [formKey, setFormKey] = useState(0);
+  const [phoneCountry, setPhoneCountry] = useState(() => defaultPhoneCountryForLocale(lang));
+  const [phoneLocal, setPhoneLocal] = useState("");
+
+  const phoneCountryOptions = useMemo(
+    () => getPhoneCountryOptions(lang),
+    [lang],
+  );
 
   const {
     durationMinutes,
@@ -123,6 +134,8 @@ export default function SiteBookingForm() {
 
   const resetForm = () => {
     setFormState(initialFormState());
+    setPhoneCountry(defaultPhoneCountryForLocale(lang));
+    setPhoneLocal("");
     setSlots([]);
     setSlotsError("");
     setError("");
@@ -145,8 +158,8 @@ export default function SiteBookingForm() {
 
     const formData = new FormData(event.currentTarget);
     const clientName = String(formData.get("clientName") ?? "").trim();
-    const clientPhone = normalizePhone(formData.get("clientPhone"));
     const clientEmail = String(formData.get("clientEmail") ?? "").trim();
+    const phoneResult = validateSiteBookingPhone(phoneCountry, phoneLocal);
     const note = String(formData.get("note") ?? "").trim();
     const { master: slotMaster, startTime: preferredTime } =
       parseSiteBookingSlotValue(selectedSlot);
@@ -156,10 +169,16 @@ export default function SiteBookingForm() {
       return;
     }
 
-    if (clientPhone.length < 9) {
-      setError(t("booking.form.errorPhone"));
+    if (!phoneResult.ok) {
+      setError(
+        phoneResult.reason === "no_country"
+          ? t("booking.form.errorPhoneCountry")
+          : t("booking.form.errorPhone"),
+      );
       return;
     }
+
+    const clientPhone = phoneResult.e164;
 
     if (!selectedService) {
       setError(t("booking.form.errorService"));
@@ -232,15 +251,50 @@ export default function SiteBookingForm() {
               type="text"
             />
           </label>
-          <label className="flex flex-col gap-2 text-sm text-white/85">
+          <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
             <span>{t("booking.form.phone")}</span>
-            <input
-              className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
-              inputMode="tel"
-              name="clientPhone"
-              required
-              type="tel"
-            />
+            <div className="grid gap-2 sm:grid-cols-[minmax(0,12rem)_1fr]">
+              <select
+                aria-label={t("booking.form.phoneCountry")}
+                className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+                required
+                value={phoneCountry}
+                onChange={(event) => setPhoneCountry(event.target.value)}
+              >
+                {phoneCountryOptions.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <input
+                aria-label={t("booking.form.phoneNumber")}
+                className="rounded-lg border border-white/20 bg-void/70 px-3 py-2.5 text-white outline-none transition focus:border-gold/60"
+                inputMode="tel"
+                placeholder={t("booking.form.phonePlaceholder")}
+                required
+                type="tel"
+                value={phoneLocal}
+                onChange={(event) => setPhoneLocal(event.target.value)}
+                onPaste={(event) => {
+                  const pasted = event.clipboardData.getData("text");
+                  const parsed = parsePastedPhoneNumber(pasted);
+
+                  if (!parsed) {
+                    return;
+                  }
+
+                  event.preventDefault();
+
+                  if (parsed.country) {
+                    setPhoneCountry(parsed.country);
+                  }
+
+                  setPhoneLocal(parsed.nationalNumber);
+                }}
+              />
+            </div>
+            <small className="text-white/60">{t("booking.form.phoneHint")}</small>
           </label>
           <label className="flex flex-col gap-2 text-sm text-white/85 sm:col-span-2">
             <span>{t("booking.form.email")}</span>
