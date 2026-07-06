@@ -1,5 +1,5 @@
 /**
- * Pushes curated cosmetic product translations from locale JSON into Supabase CMS.
+ * Pushes curated cosmetic product translations from locale JSON into CRM backend CMS.
  * Run after editing src/i18n/locales/{pl,en,uk}.json product descriptions.
  *
  *   node scripts/publishCosmeticLocalesToSupabase.cjs
@@ -34,32 +34,27 @@ async function main() {
   loadEnvFile(path.join(ROOT, ".env.production"));
   loadEnvFile(path.join(ROOT, ".env.local"));
 
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseKey =
-    process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const backendUrl = String(process.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
+  const backendToken = process.env.CRM_BACKEND_TOKEN || process.env.VITE_CRM_BACKEND_TOKEN;
 
-  if (!supabaseUrl || !supabaseKey) {
-    console.error("Missing VITE_SUPABASE_URL or publishable key");
+  if (!backendUrl || !backendToken) {
+    console.error("Missing VITE_CRM_BACKEND_URL or CRM_BACKEND_TOKEN");
     process.exit(1);
   }
 
   const headers = {
-    apikey: supabaseKey,
-    Authorization: `Bearer ${supabaseKey}`,
+    Authorization: `Bearer ${backendToken}`,
     "Content-Type": "application/json",
-    Prefer: "return=representation",
   };
 
-  const getRes = await fetch(`${supabaseUrl}/rest/v1/site_content?id=eq.main&select=data`, {
-    headers,
-  });
+  const getRes = await fetch(`${backendUrl}/api/public/site-content`);
   if (!getRes.ok) {
     console.error("Fetch failed:", getRes.status, await getRes.text());
     process.exit(1);
   }
 
-  const rows = await getRes.json();
-  const data = rows?.[0]?.data;
+  const payload = await getRes.json();
+  const data = payload?.data?.overrides;
   if (!data) {
     console.error("No site_content row");
     process.exit(1);
@@ -83,10 +78,10 @@ async function main() {
     });
   });
 
-  const patchRes = await fetch(`${supabaseUrl}/rest/v1/site_content?id=eq.main`, {
-    method: "PATCH",
+  const patchRes = await fetch(`${backendUrl}/api/site-content`, {
+    method: "PUT",
     headers,
-    body: JSON.stringify({ data, updated_at: new Date().toISOString() }),
+    body: JSON.stringify({ overrides: data }),
   });
 
   if (!patchRes.ok) {
@@ -94,7 +89,7 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("Published cosmetic locales to Supabase for:", PRODUCT_IDS.join(", "));
+  console.log("Published cosmetic locales to CRM backend for:", PRODUCT_IDS.join(", "));
 }
 
 main().catch((error) => {

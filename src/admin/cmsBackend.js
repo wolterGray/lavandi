@@ -108,6 +108,22 @@ export async function cmsBackendRequest(path, options = {}) {
   return handleBackendResponse(response, options.label || path);
 }
 
+export async function cmsBackendPublicRequest(path, options = {}) {
+  if (!isCmsBackendConfigured) {
+    throw new Error("CRM backend is not configured");
+  }
+
+  const response = await fetch(`${BACKEND_URL}${path}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...(options.headers || {}),
+    },
+  });
+
+  return handleBackendResponse(response, options.label || path);
+}
+
 export async function verifyCmsBackendSession() {
   if (!isCmsBackendConfigured) return null;
   const token = getCmsBackendToken();

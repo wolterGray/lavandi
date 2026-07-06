@@ -68,7 +68,7 @@ function AdminLayoutInner() {
             <div className="mt-2 flex flex-wrap gap-2 lg:mt-3">
               {isSupabaseEnabled ? (
                 <span className="rounded-pill border border-emerald-900/40 bg-emerald-950/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-200">
-                  Supabase
+                  CRM backend
                 </span>
               ) : (
                 hasOverrides && (

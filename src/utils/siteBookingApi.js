@@ -1,54 +1,38 @@
-import { isSupabaseConfigured } from "../lib/supabase";
+const BACKEND_URL = String(import.meta.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
 
-const getSupabaseConfig = () => {
-  const url = import.meta.env.VITE_SUPABASE_URL;
-  const key =
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
-    import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-  if (!isSupabaseConfigured || !url || !key) {
-    throw new Error("Supabase is not configured");
+const ensureBackend = () => {
+  if (!BACKEND_URL) {
+    throw new Error("CRM backend is not configured");
   }
-
-  return { key, url };
 };
 
-const buildHeaders = (key) => ({
-  "Content-Type": "application/json",
-  Authorization: `Bearer ${key}`,
-  apikey: key,
-});
-
-const invokeSiteBookingFunction = async (functionName, payload) => {
-  const { key, url } = getSupabaseConfig();
+const requestPublicBackend = async (path, payload) => {
+  ensureBackend();
 
   let response;
-
   try {
-    response = await fetch(`${url}/functions/v1/${functionName}`, {
+    response = await fetch(`${BACKEND_URL}${path}`, {
       method: "POST",
-      headers: buildHeaders(key),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
   } catch {
-    throw new Error(
-      "Failed to fetch. Deploy site-booking-submit and site-booking-availability in Supabase.",
-    );
+    throw new Error("CRM backend is unavailable.");
   }
 
   const data = await response.json().catch(() => ({}));
 
-  if (!response.ok) {
-    throw new Error(data?.error || "Request failed");
+  if (!response.ok || data?.success === false) {
+    throw new Error(data?.error || data?.message || "Request failed");
   }
 
-  return data;
+  return data?.data ?? data;
 };
 
 export async function fetchSiteBookingAvailability(payload) {
-  return invokeSiteBookingFunction("site-booking-availability", payload);
+  return requestPublicBackend("/api/public/site-booking-availability", payload);
 }
 
 export async function submitSiteBookingRequest(payload) {
-  return invokeSiteBookingFunction("site-booking-submit", payload);
+  return requestPublicBackend("/api/public/site-booking-submit", payload);
 }

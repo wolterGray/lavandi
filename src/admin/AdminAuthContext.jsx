@@ -12,6 +12,7 @@ import { isSupabaseConfigured, supabase } from "../lib/supabase";
 import {
   clearCmsBackendSession,
   getCmsBackendUser,
+  hasCrmBackendSsoHash,
   isCmsBackendConfigured,
   loginCmsBackend,
   verifyCmsBackendSession,
@@ -71,7 +72,7 @@ export function AdminAuthProvider({ children }) {
           setSsoError(null);
         } catch (error) {
           if (!active) return;
-          if (hasCrmSsoHash()) {
+          if (hasCrmBackendSsoHash()) {
             setSsoError(error?.message ?? adminRu.auth.ssoFailed);
           }
           clearCmsBackendSession();

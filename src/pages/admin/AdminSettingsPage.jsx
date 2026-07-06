@@ -116,7 +116,7 @@ export default function AdminSettingsPage() {
       await importContent(text);
       setMessage(
         isSupabaseEnabled
-          ? "Импорт завершён и сохранён в Supabase."
+          ? "Импорт завершён и сохранён в CRM backend."
           : "Импорт завершён. Изменения сохранены локально в этом браузере."
       );
     } catch (importError) {
@@ -167,7 +167,7 @@ export default function AdminSettingsPage() {
       await resetContent();
       setMessage(
         isSupabaseEnabled
-          ? "Восстановлены данные по умолчанию, Supabase очищен."
+          ? "Восстановлены данные по умолчанию, CRM backend очищен."
           : "Восстановлены данные по умолчанию из репозитория."
       );
     } catch (resetError) {
@@ -183,24 +183,22 @@ export default function AdminSettingsPage() {
         title={adminRu.nav.settings}
         description={
           isSupabaseEnabled
-            ? "Контент сайта синхронизируется с Supabase. Экспорт/импорт JSON работает как резервная копия."
-            : "Экспортируйте изменения в JSON или импортируйте предыдущую копию. Без Supabase изменения сохраняются только локально."
+            ? "Контент сайта синхронизируется с CRM backend. Экспорт/импорт JSON работает как резервная копия."
+            : "Экспортируйте изменения в JSON или импортируйте предыдущую копию. Без CRM backend изменения сохраняются только локально."
         }
       />
 
       <div className="grid max-w-2xl gap-4">
         {isSupabaseEnabled && (
           <AdminPanel className="border-emerald-900/30 bg-emerald-950/20">
-            <h3 className="font-display text-xl text-milk">Supabase</h3>
+            <h3 className="font-display text-xl text-milk">CRM backend</h3>
             <p className="mt-2 text-sm text-stone">
-              CMS использует таблицу <code className="text-gold">site_content</code> в вашем проекте Supabase.
+              CMS использует таблицу <code className="text-gold">site_content</code> на CRM backend.
               {lastSyncedAt ? ` Последняя синхронизация: ${new Date(lastSyncedAt).toLocaleString(ADMIN_LOCALE)}.` : ""}
             </p>
             {syncError && <p className="mt-2 text-sm text-red-300">{syncError}</p>}
             <p className="mt-3 text-xs text-muted">
-              Контент: <code className="text-gold">001_site_content.sql</code>.
-              Изображения: <code className="text-gold">003_site_images.sql</code>,
-              превью каталога: <code className="text-gold">004_site_images_thumbs.sql</code>.
+              Контент и изображения создаются backend автоматически при первом запросе.
             </p>
             <p className="mt-3 text-sm text-stone">
               {adminRu.media.storageUsage(formatMb(storage.bytes), storage.count)}
@@ -267,12 +265,11 @@ export default function AdminSettingsPage() {
               Укажите в файле <code className="text-gold">.env</code>:
             </p>
             <pre className="mt-3 overflow-x-auto rounded-card bg-surface p-3 text-xs text-stone">
-{`VITE_SUPABASE_URL=https://xxxx.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJ...
+{`VITE_CRM_BACKEND_URL=https://api.nuarr.pl
 VITE_ADMIN_PASSWORD=nuar2025`}
             </pre>
             <p className="mt-3 text-xs text-muted">
-              Без Supabase панель использует пароль из <code className="text-gold">VITE_ADMIN_PASSWORD</code> (по умолчанию: nuar2025).
+              Без CRM backend панель использует пароль из <code className="text-gold">VITE_ADMIN_PASSWORD</code> (по умолчанию: nuar2025).
             </p>
           </AdminPanel>
         )}

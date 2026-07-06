@@ -36,7 +36,6 @@ import {
   resolveContentImages,
 } from "../admin/siteImages";
 import { normalizeCosmeticCopy, normalizeCosmeticsList, getProductImages } from "../components/CosmeticsSection/cosmeticsShared";
-import { isSupabaseConfigured } from "../lib/supabase";
 import { isCmsBackendConfigured } from "../admin/cmsBackend";
 
 const ContentContext = createContext(null);
@@ -48,7 +47,7 @@ const IMAGE_PREFETCH_BATCH_DELAY_MS = 12;
 
 export { ContentContext };
 
-const isCmsSyncConfigured = isCmsBackendConfigured || isSupabaseConfigured;
+const isCmsSyncConfigured = isCmsBackendConfigured;
 
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);

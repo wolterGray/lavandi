@@ -1,5 +1,5 @@
 /**
- * Merges CMS overrides from Supabase into src/i18n/locales/{pl,en,uk}.json.
+ * Merges CMS overrides from CRM backend into src/i18n/locales/{pl,en,uk}.json.
  * Removes deleted cosmetics products and team members from locale JSON on build.
  */
 const fs = require("fs");
@@ -7,7 +7,6 @@ const path = require("path");
 
 const ROOT = path.resolve(__dirname, "..");
 const LANGS = ["pl", "en", "uk"];
-const SITE_CONTENT_ROW_ID = "main";
 
 function loadEnvFile(filePath) {
   if (!fs.existsSync(filePath)) return;
@@ -79,33 +78,25 @@ function mergeMemberEntry(existing = {}, patch = {}) {
 async function main() {
   loadEnvFile(path.join(ROOT, ".env.production"));
 
-  const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const supabaseKey =
-    process.env.VITE_SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const backendUrl = String(process.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
 
-  if (!supabaseUrl || !supabaseKey) {
-    console.log("sync-locales: skip (Supabase env not set)");
+  if (!backendUrl) {
+    console.log("sync-locales: skip (CRM backend env not set)");
     return;
   }
 
-  const response = await fetch(
-    `${supabaseUrl}/rest/v1/site_content?id=eq.${SITE_CONTENT_ROW_ID}&select=data`,
-    {
-      headers: {
-        apikey: supabaseKey,
-        Authorization: `Bearer ${supabaseKey}`,
-      },
-    }
-  );
+  const response = await fetch(`${backendUrl}/api/public/site-content`);
 
   if (!response.ok) {
     console.warn("sync-locales: fetch failed:", response.status, response.statusText);
     return;
   }
 
-  const rows = await response.json();
+  const payload = await response.json();
   const overrides =
-    rows?.[0]?.data && typeof rows[0].data === "object" ? rows[0].data : null;
+    payload?.data?.overrides && typeof payload.data.overrides === "object"
+      ? payload.data.overrides
+      : null;
   if (!overrides) {
     console.log("sync-locales: no CMS overrides, locale JSON unchanged");
     return;

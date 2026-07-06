@@ -84,7 +84,7 @@ export default function AdminServicesPage() {
 
       {!isSupabaseEnabled && (
         <p className="mb-4 text-sm text-red-300">
-          Supabase не настроен — изменения сохраняются только локально.
+          CRM backend не настроен — изменения сохраняются только локально.
         </p>
       )}
 
