@@ -1,6 +1,13 @@
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import {
+  consumeCrmBackendSsoHash,
+  hasCrmBackendSsoHash,
+  isCmsBackendConfigured,
+} from "./cmsBackend";
 
 export function hasCrmSsoHash() {
+  if (hasCrmBackendSsoHash()) return true;
+
   const rawHash = window.location.hash.replace(/^#/, "");
   if (!rawHash) return false;
 
@@ -9,6 +16,10 @@ export function hasCrmSsoHash() {
 }
 
 export async function consumeCrmSsoHash() {
+  if (isCmsBackendConfigured && consumeCrmBackendSsoHash()) {
+    return true;
+  }
+
   if (!isSupabaseConfigured || !supabase) return false;
 
   const rawHash = window.location.hash.replace(/^#/, "");

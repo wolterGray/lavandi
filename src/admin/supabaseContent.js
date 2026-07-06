@@ -1,4 +1,5 @@
 import { isSupabaseConfigured, SITE_CONTENT_ROW_ID, supabase } from "../lib/supabase";
+import { cmsBackendRequest, hasCmsBackendSession, isCmsBackendConfigured } from "./cmsBackend";
 
 const CMS_FETCH_TIMEOUT_MS = 8000;
 
@@ -12,6 +13,10 @@ function withTimeout(promise, ms, message = "Request timed out") {
 }
 
 export async function fetchSiteContentFromSupabase() {
+  if (isCmsBackendConfigured && hasCmsBackendSession()) {
+    return cmsBackendRequest("/api/site-content", { label: "Fetch site content" });
+  }
+
   if (!isSupabaseConfigured || !supabase) return null;
 
   const { data, error } = await withTimeout(
@@ -33,6 +38,15 @@ export async function fetchSiteContentFromSupabase() {
 }
 
 export async function saveSiteContentToSupabase(overrides) {
+  if (isCmsBackendConfigured && hasCmsBackendSession()) {
+    const data = await cmsBackendRequest("/api/site-content", {
+      method: "PUT",
+      body: JSON.stringify({ overrides }),
+      label: "Save site content",
+    });
+    return data?.updatedAt ?? null;
+  }
+
   if (!isSupabaseConfigured || !supabase) return null;
 
   const { data, error } = await supabase
@@ -50,5 +64,13 @@ export async function saveSiteContentToSupabase(overrides) {
 }
 
 export async function clearSiteContentInSupabase() {
+  if (isCmsBackendConfigured && hasCmsBackendSession()) {
+    const data = await cmsBackendRequest("/api/site-content", {
+      method: "DELETE",
+      label: "Clear site content",
+    });
+    return data?.updatedAt ?? null;
+  }
+
   return saveSiteContentToSupabase({});
 }

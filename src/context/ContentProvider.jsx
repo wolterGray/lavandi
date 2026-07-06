@@ -37,6 +37,7 @@ import {
 } from "../admin/siteImages";
 import { normalizeCosmeticCopy, normalizeCosmeticsList, getProductImages } from "../components/CosmeticsSection/cosmeticsShared";
 import { isSupabaseConfigured } from "../lib/supabase";
+import { isCmsBackendConfigured } from "../admin/cmsBackend";
 
 const ContentContext = createContext(null);
 
@@ -47,11 +48,13 @@ const IMAGE_PREFETCH_BATCH_DELAY_MS = 12;
 
 export { ContentContext };
 
+const isCmsSyncConfigured = isCmsBackendConfigured || isSupabaseConfigured;
+
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);
   const [overrides, setOverrides] = useState(initialOverrides);
   const [cmsSyncing, setCmsSyncing] = useState(
-    () => isSupabaseConfigured && !hasUsableCachedCatalog(initialOverrides),
+    () => isCmsSyncConfigured && !hasUsableCachedCatalog(initialOverrides),
   );
   const [contentSaving, setContentSaving] = useState(false);
   const [syncError, setSyncError] = useState(null);
@@ -62,7 +65,7 @@ export function ContentProvider({ children }) {
   const resolvedContent = useMemo(() => resolveContentImages(content, {}), [content]);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return undefined;
+    if (!isCmsSyncConfigured) return undefined;
 
     let cancelled = false;
     const syncTimer = window.setTimeout(() => {
@@ -95,7 +98,7 @@ export function ContentProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    if (!isSupabaseConfigured) return undefined;
+    if (!isCmsSyncConfigured) return undefined;
 
     const cosmeticIds = new Set();
     normalizeCosmeticsList(content.cosmetics).forEach((product) => {
@@ -148,7 +151,7 @@ export function ContentProvider({ children }) {
     setOverrides(next);
     saveOverrides(next);
 
-    if (!isSupabaseConfigured) return;
+    if (!isCmsSyncConfigured) return;
 
     setContentSaving(true);
     try {
@@ -183,7 +186,7 @@ export function ContentProvider({ children }) {
     clearOverrides();
     setOverrides({});
 
-    if (!isSupabaseConfigured) return;
+    if (!isCmsSyncConfigured) return;
 
     setContentSaving(true);
     try {
@@ -334,7 +337,7 @@ export function ContentProvider({ children }) {
       contentSaving,
       syncError,
       lastSyncedAt,
-      isSupabaseEnabled: isSupabaseConfigured,
+      isSupabaseEnabled: isCmsSyncConfigured,
       imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,

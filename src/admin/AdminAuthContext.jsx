@@ -9,6 +9,13 @@ import {
 import { consumeCrmSsoHash, hasCrmSsoHash } from "./adminSso";
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import {
+  clearCmsBackendSession,
+  getCmsBackendUser,
+  isCmsBackendConfigured,
+  loginCmsBackend,
+  verifyCmsBackendSession,
+} from "./cmsBackend";
 
 const SESSION_KEY = "nuar_admin_session";
 const SESSION_TTL_MS = 8 * 60 * 60 * 1000;
@@ -40,15 +47,46 @@ function clearLegacySession() {
 
 export function AdminAuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(() =>
-    isSupabaseConfigured ? false : readLegacySession()
+    isCmsBackendConfigured || isSupabaseConfigured ? false : readLegacySession()
   );
-  const [authLoading, setAuthLoading] = useState(isSupabaseConfigured);
-  const [userEmail, setUserEmail] = useState(null);
+  const [authLoading, setAuthLoading] = useState(isCmsBackendConfigured || isSupabaseConfigured);
+  const [userEmail, setUserEmail] = useState(() => getCmsBackendUser()?.email ?? null);
   const [ssoError, setSsoError] = useState(() =>
-    !isSupabaseConfigured && hasCrmSsoHash() ? adminRu.auth.supabaseNotConfigured : null
+    !isCmsBackendConfigured && !isSupabaseConfigured && hasCrmSsoHash()
+      ? adminRu.auth.supabaseNotConfigured
+      : null
   );
 
   useLayoutEffect(() => {
+    if (isCmsBackendConfigured) {
+      let active = true;
+
+      (async () => {
+        try {
+          consumeCrmSsoHash();
+          const user = await verifyCmsBackendSession();
+          if (!active) return;
+          setIsAuthenticated(Boolean(user));
+          setUserEmail(user?.email ?? null);
+          setSsoError(null);
+        } catch (error) {
+          if (!active) return;
+          if (hasCrmSsoHash()) {
+            setSsoError(error?.message ?? adminRu.auth.ssoFailed);
+          }
+          clearCmsBackendSession();
+          setIsAuthenticated(false);
+          setUserEmail(null);
+        } finally {
+          if (active) setAuthLoading(false);
+        }
+      })();
+
+      return () => {
+        active = false;
+      };
+    }
+
     if (!isSupabaseConfigured || !supabase) {
       setAuthLoading(false);
       return undefined;
@@ -90,6 +128,21 @@ export function AdminAuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async ({ email, password }) => {
+    if (isCmsBackendConfigured) {
+      if (!email?.trim() || !password) {
+        return { ok: false, error: adminRu.auth.emailRequired };
+      }
+
+      try {
+        const user = await loginCmsBackend({ email: email.trim(), password });
+        setIsAuthenticated(true);
+        setUserEmail(user?.email ?? email.trim());
+        return { ok: true };
+      } catch (error) {
+        return { ok: false, error: error.message ?? adminRu.auth.loginFailed };
+      }
+    }
+
     if (isSupabaseConfigured && supabase) {
       if (!email?.trim() || !password) {
         return { ok: false, error: adminRu.auth.emailRequired };
@@ -115,6 +168,7 @@ export function AdminAuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     clearLegacySession();
+    clearCmsBackendSession();
     if (isSupabaseConfigured && supabase) {
       await supabase.auth.signOut();
     }
@@ -127,7 +181,7 @@ export function AdminAuthProvider({ children }) {
       isAuthenticated,
       authLoading,
       userEmail,
-      isSupabaseAuth: isSupabaseConfigured,
+      isSupabaseAuth: isCmsBackendConfigured || isSupabaseConfigured,
       ssoError,
       login,
       logout,

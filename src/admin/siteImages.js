@@ -1,5 +1,6 @@
 import { adminRu } from "./adminStrings";
 import { isSupabaseConfigured, supabase } from "../lib/supabase";
+import { cmsBackendRequest, hasCmsBackendSession, isCmsBackendConfigured } from "./cmsBackend";
 import {
   compressImageForUpload,
   compressImageThumbForUpload,
@@ -115,8 +116,10 @@ function cacheImageRow(row, variant = IMAGE_VARIANT.full) {
   return dataUrl;
 }
 
+const shouldUseCmsBackend = () => isCmsBackendConfigured && hasCmsBackendSession();
+
 export function isSiteImagesConfigured() {
-  return isSupabaseConfigured && Boolean(supabase);
+  return shouldUseCmsBackend() || (isSupabaseConfigured && Boolean(supabase));
 }
 
 function toImageId(value) {
@@ -126,7 +129,19 @@ function toImageId(value) {
 
 export async function deleteSiteImagesByIds(ids = []) {
   const uniqueIds = [...new Set(ids.map(toImageId).filter(Boolean))];
-  if (!uniqueIds.length || !isSiteImagesConfigured() || !supabase) return 0;
+  if (!uniqueIds.length || !isSiteImagesConfigured()) return 0;
+
+  if (shouldUseCmsBackend()) {
+    const data = await cmsBackendRequest("/api/site-images", {
+      method: "DELETE",
+      body: JSON.stringify({ ids: uniqueIds }),
+      label: "Delete site images",
+    });
+    uniqueIds.forEach(clearImageCacheForId);
+    return data?.removed ?? uniqueIds.length;
+  }
+
+  if (!supabase) return 0;
 
   const { error } = await supabase.from("site_images").delete().in("id", uniqueIds);
   if (error) throw error;
@@ -142,11 +157,21 @@ export async function deleteSiteImageByRef(imageRef) {
 
 /** Remove DB rows not referenced anywhere in current CMS overrides. */
 export async function cleanupOrphanedSiteImages(overrides = {}) {
-  if (!isSiteImagesConfigured() || !supabase) return { removed: 0 };
+  if (!isSiteImagesConfigured()) return { removed: 0 };
 
   const referenced = new Set(collectImageRefsFromOverrides(overrides));
-  const { data, error } = await supabase.from("site_images").select("id");
-  if (error) throw error;
+  let data = [];
+
+  if (shouldUseCmsBackend()) {
+    data = await cmsBackendRequest("/api/site-images/orphans", {
+      label: "Fetch site image ids",
+    });
+  } else {
+    if (!supabase) return { removed: 0 };
+    const response = await supabase.from("site_images").select("id");
+    if (response.error) throw response.error;
+    data = response.data ?? [];
+  }
 
   const orphanIds = (data ?? []).map((row) => row.id).filter((id) => !referenced.has(id));
   if (!orphanIds.length) return { removed: 0 };
@@ -156,22 +181,32 @@ export async function cleanupOrphanedSiteImages(overrides = {}) {
 }
 
 export async function fetchSiteImagesCatalog({ folder, limit = 60 } = {}) {
-  if (!isSiteImagesConfigured() || !supabase) return [];
+  if (!isSiteImagesConfigured()) return [];
 
-  let query = supabase
-    .from("site_images")
-    .select("id, folder, mime_type, size_bytes, updated_at")
-    .order("updated_at", { ascending: false })
-    .limit(limit);
+  let rows = [];
 
-  if (folder) {
-    query = query.eq("folder", sanitizeFolder(folder));
+  if (shouldUseCmsBackend()) {
+    const params = new URLSearchParams({ limit: String(limit) });
+    if (folder) params.set("folder", sanitizeFolder(folder));
+    rows = await cmsBackendRequest(`/api/site-images?${params.toString()}`, {
+      label: "Fetch site images catalog",
+    });
+  } else {
+    if (!supabase) return [];
+    let query = supabase
+      .from("site_images")
+      .select("id, folder, mime_type, size_bytes, updated_at")
+      .order("updated_at", { ascending: false })
+      .limit(limit);
+
+    if (folder) {
+      query = query.eq("folder", sanitizeFolder(folder));
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    rows = data ?? [];
   }
-
-  const { data, error } = await query;
-  if (error) throw error;
-
-  const rows = data ?? [];
   const imageMap = await fetchSiteImagesMap(rows.map((row) => row.id));
 
   return rows.map((row) => ({
@@ -186,7 +221,15 @@ export async function fetchSiteImagesCatalog({ folder, limit = 60 } = {}) {
 }
 
 export async function fetchSiteImagesStorageUsage() {
-  if (!isSiteImagesConfigured() || !supabase) return { bytes: 0, count: 0 };
+  if (!isSiteImagesConfigured()) return { bytes: 0, count: 0 };
+
+  if (shouldUseCmsBackend()) {
+    return cmsBackendRequest("/api/site-images/storage-usage", {
+      label: "Fetch site images storage usage",
+    });
+  }
+
+  if (!supabase) return { bytes: 0, count: 0 };
 
   const { data, error } = await supabase.from("site_images").select("size_bytes");
   if (error) throw error;
@@ -199,7 +242,7 @@ export async function fetchSiteImagesStorageUsage() {
 }
 
 export async function saveSiteImageToDatabase(file, folder = "uploads", replaceRef = null) {
-  if (!isSiteImagesConfigured() || !supabase) {
+  if (!isSiteImagesConfigured()) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
 
@@ -218,7 +261,7 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
   const dataBase64 = await fileToBase64(prepared);
   const thumbBase64 = thumb ? await fileToBase64(thumb) : null;
 
-  const { error } = await supabase.from("site_images").upsert({
+  const payload = {
     id,
     folder: safeFolder,
     mime_type: prepared.type,
@@ -228,9 +271,20 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
     thumb_base64: thumbBase64,
     thumb_size_bytes: thumb?.size ?? null,
     updated_at: new Date().toISOString(),
-  });
+  };
 
-  if (error) throw error;
+  if (shouldUseCmsBackend()) {
+    await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+      label: "Save site image",
+    });
+  } else {
+    if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
+    const { error } = await supabase.from("site_images").upsert(payload);
+
+    if (error) throw error;
+  }
 
   const newRef = toImageRef(id);
   const oldId = parseImageRef(replaceRef);
@@ -255,15 +309,27 @@ export async function fetchSiteImageRecord(id, { variant = IMAGE_VARIANT.full } 
     return { id, dataUrl: idbCached, mimeType: idbCached.slice(5, idbCached.indexOf(";")) };
   }
 
-  if (!isSiteImagesConfigured() || !supabase) return null;
+  if (!isSiteImagesConfigured()) return null;
 
-  const { data, error } = await supabase
-    .from("site_images")
-    .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
-    .eq("id", id)
-    .maybeSingle();
+  let data = null;
 
-  if (error) throw error;
+  if (shouldUseCmsBackend()) {
+    const rows = await cmsBackendRequest(`/api/site-images?ids=${encodeURIComponent(id)}`, {
+      label: "Fetch site image",
+    });
+    data = rows?.[0] ?? null;
+  } else {
+    if (!supabase) return null;
+    const response = await supabase
+      .from("site_images")
+      .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (response.error) throw response.error;
+    data = response.data;
+  }
+
   if (!data) return null;
 
   const dataUrl = cacheImageRow(data, variant);
@@ -303,16 +369,26 @@ export async function fetchSiteImagesMap(ids = [], { variant = IMAGE_VARIANT.ful
     }),
   );
 
-  if (!missing.length || !isSiteImagesConfigured() || !supabase) {
+  if (!missing.length || !isSiteImagesConfigured()) {
     return result;
   }
 
-  const { data, error } = await supabase
-    .from("site_images")
-    .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
-    .in("id", missing);
+  let data = [];
 
-  if (error) throw error;
+  if (shouldUseCmsBackend()) {
+    data = await cmsBackendRequest(`/api/site-images?ids=${encodeURIComponent(missing.join(","))}`, {
+      label: "Fetch site images map",
+    });
+  } else {
+    if (!supabase) return result;
+    const response = await supabase
+      .from("site_images")
+      .select("id, mime_type, data_base64, thumb_mime_type, thumb_base64")
+      .in("id", missing);
+
+    if (response.error) throw response.error;
+    data = response.data ?? [];
+  }
 
   (data ?? []).forEach((row) => {
     const dataUrl = cacheImageRow(row, variant);
@@ -325,7 +401,7 @@ export async function fetchSiteImagesMap(ids = [], { variant = IMAGE_VARIANT.ful
 const OPTIMIZE_FETCH_CHUNK = 4;
 
 export async function optimizeReferencedSiteImages(overrides = {}, { onProgress } = {}) {
-  if (!isSiteImagesConfigured() || !supabase) {
+  if (!isSiteImagesConfigured()) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
 
@@ -341,14 +417,24 @@ export async function optimizeReferencedSiteImages(overrides = {}, { onProgress 
 
   for (let index = 0; index < ids.length; index += OPTIMIZE_FETCH_CHUNK) {
     const chunk = ids.slice(index, index + OPTIMIZE_FETCH_CHUNK);
-    const { data, error } = await supabase
-      .from("site_images")
-      .select(
-        "id, folder, mime_type, data_base64, size_bytes, thumb_base64, thumb_mime_type, thumb_size_bytes",
-      )
-      .in("id", chunk);
+    let data = [];
 
-    if (error) throw error;
+    if (shouldUseCmsBackend()) {
+      data = await cmsBackendRequest(`/api/site-images?ids=${encodeURIComponent(chunk.join(","))}`, {
+        label: "Fetch site images for optimization",
+      });
+    } else {
+      if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
+      const response = await supabase
+        .from("site_images")
+        .select(
+          "id, folder, mime_type, data_base64, size_bytes, thumb_base64, thumb_mime_type, thumb_size_bytes",
+        )
+        .in("id", chunk);
+
+      if (response.error) throw response.error;
+      data = response.data ?? [];
+    }
 
     for (const row of data ?? []) {
       const result = await recompressStoredImageRow(row);
@@ -360,20 +446,31 @@ export async function optimizeReferencedSiteImages(overrides = {}, { onProgress 
         continue;
       }
 
-      const { error: updateError } = await supabase
-        .from("site_images")
-        .update({
-          mime_type: result.mime_type,
-          data_base64: result.data_base64,
-          size_bytes: result.size_bytes,
-          thumb_mime_type: result.thumb_mime_type,
-          thumb_base64: result.thumb_base64,
-          thumb_size_bytes: result.thumb_size_bytes,
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", row.id);
+      const payload = {
+        mime_type: result.mime_type,
+        data_base64: result.data_base64,
+        size_bytes: result.size_bytes,
+        thumb_mime_type: result.thumb_mime_type,
+        thumb_base64: result.thumb_base64,
+        thumb_size_bytes: result.thumb_size_bytes,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (updateError) throw updateError;
+      if (shouldUseCmsBackend()) {
+        await cmsBackendRequest(`/api/site-images/${encodeURIComponent(row.id)}`, {
+          method: "PATCH",
+          body: JSON.stringify(payload),
+          label: "Optimize site image",
+        });
+      } else {
+        if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
+        const { error: updateError } = await supabase
+          .from("site_images")
+          .update(payload)
+          .eq("id", row.id);
+
+        if (updateError) throw updateError;
+      }
 
       clearImageCacheForId(row.id);
       optimized += 1;
