@@ -1,55 +1,35 @@
-import { Link, useLocation } from "react-router-dom";
 import Button from "./Button";
-import { getBookingFormPath, scrollToBookingForm } from "../utils/bookVisitScroll";
+import { useContent } from "../context/ContentProvider";
+import { BOOKSY_URL } from "../constants/theme";
 
 export function BookVisitLink({ onClick, className = "", children, ...props }) {
-  const { pathname } = useLocation();
-  const isHome = pathname === "/";
-
-  if (isHome) {
-    return (
-      <button
-        type="button"
-        className={className}
-        onClick={(event) => {
-          onClick?.(event);
-          scrollToBookingForm();
-        }}
-        {...props}
-      >
-        {children}
-      </button>
-    );
-  }
+  const { contact } = useContent();
+  const url = contact?.booksyUrl || BOOKSY_URL;
 
   return (
-    <Link to={getBookingFormPath()} className={className} onClick={onClick} {...props}>
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={className}
+      onClick={onClick}
+      {...props}
+    >
       {children}
-    </Link>
+    </a>
   );
 }
 
 export default function BookVisitButton({ onClick, ...props }) {
-  const { pathname } = useLocation();
-  const isHome = pathname === "/";
-
-  if (isHome) {
-    return (
-      <Button
-        {...props}
-        onClick={(event) => {
-          onClick?.(event);
-          scrollToBookingForm();
-        }}
-      />
-    );
-  }
+  const { contact } = useContent();
+  const url = contact?.booksyUrl || BOOKSY_URL;
 
   return (
     <Button
       {...props}
-      href={getBookingFormPath()}
+      href={url}
       onClick={onClick}
     />
   );
 }
+
