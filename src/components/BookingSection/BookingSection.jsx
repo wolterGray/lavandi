@@ -8,7 +8,7 @@ export default function BookingSection() {
   const { t } = useTranslation();
 
   return (
-    <section id="contact" className="relative overflow-hidden">
+    <section id="contact" className=" none relative overflow-hidden">
       <SiteImage
         src="/booking/booking.jpg"
         alt=""
@@ -29,7 +29,7 @@ export default function BookingSection() {
             {t("booking.title")}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">{t("booking.subtitle")}</p>
-          <SiteBookingForm />
+          {/* <SiteBookingForm /> */}
         </ScrollAnimationWrapper>
       </Container>
     </section>
