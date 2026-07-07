@@ -187,18 +187,7 @@
       "gift-certificates": "Bony",
       "nuar-premium": "NUAR Premium"
     },
-    "products": {
-      "45996": {
-        "name": "COLLISTAR Crio‑Gel",
-        "description": "Chłodzący antycellulitowy żel, który pomaga zmniejszyć obrzęki, poprawić mikrokrążenie i zwiększyć jędrność skóry. Dzięki efektowi krio zapewnia uczucie świeżości i lekkości, wspomaga redukcję widoczności cellulitu i wygładza skórę. Idealny jako uzupełnienie zabiegów antycellulitowych i limfatycznych.",
-        "volume": "400 ml",
-        "composition": "Ingredients: Aqua, Alcohol Denat., Menthol, C15-19 Alkane, Menthyl Lactate, Sodium Acrylate/Sodium Acryloyldimethyl Taurate Copolymer, Caffeine, Parfum, Polyacrylate Crosspolymer-6, Polyglyceryl-6 Laurate, Schinus Terebinthifolius Seed Extract, Polyglycerin-6, Sodium Hydroxide, Methyl Diisopropyl Propionamide, Sorbitan Oleate, Citrus Aurantium Dulcis Peel Extract, Cinnamomum Zeylanicum Bark Extract, Sorbitan Isostearate, Aesculus Hippocastanum Seed Extract, Shikimic Acid, Cupressus Sempervirens Leaf Oil, T-Butyl Alcohol, Coffea Arabica Seed Extract, Lecithin, Ci 28440, Ci 19140, Potassium Sorbate, Sodium Benzoate, Citric Acid, Ci 42090, Pinene, Benzyl Salicylate, Citronellol, Geraniol, Hexyl Cinnamal, Limonene, Linalool, Citrus Aurantium Peel Oil, Geranyl Acetate, Linalyl Acetate, Terpineol, Vanillin."
-      },
-      "47843": {
-        "name": "REFRESHING BODY BANDAGE (РОЗМАРИН И ШАЛФЕЙ)",
-        "description": "Bandaż nasączony płynem, bogaty w substancje czynne, o działaniu chłodzącym i przeciwbólowym. Olejki eteryczne z rozmarynu, szałwii i mięty zapewniają przyjemne uczucie chłodu, ulgę i lekkość. Aloes i rumianek wspierają dobre samopoczucie nóg dzięki łagodzącym właściwościom."
-      }
-    }
+    "products": {}
   },
   "editorial": {
     "items": [
@@ -330,26 +319,7 @@
       "master": "Master",
       "topMaster": "Top Master"
     },
-    "members": {
-      "olha": {
-        "bio": "Olha to Top Master z wieloletnim doświadczeniem w masażu terapeutycznym i relaksacyjnym. Goście chwalą jej intuicyjny dotyk i umiejętność znajdowania miejsc, w których ciało trzyma napięcie.",
-        "specialties": [
-          "Masaż relaksacyjny",
-          "Masaż autorski",
-          "Masaż sportowy",
-          "Masaż twarzy i głowy"
-        ]
-      },
-      "max": {
-        "bio": "Max specjalizuje się w masażu sportowym i regeneracyjnym. Precyzyjnie pracuje na przeciążonych mięśniach, pomagając sportowcom i aktywnym osobom szybciej wracać do formy.",
-        "specialties": [
-          "Masaż sportowy",
-          "Masaż klasyczny",
-          "Masaż dla dzieci",
-          "Głębokie tkanki"
-        ]
-      }
-    }
+    "members": {}
   },
   "reviews": {
     "label": "Opinie",
