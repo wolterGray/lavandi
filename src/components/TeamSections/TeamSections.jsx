@@ -41,8 +41,8 @@ export default function TeamSections() {
             return (
               <ScrollAnimationWrapper key={person.id} delay={index * 0.1}>
                 <article className="group text-center">
-                  <button type="button" onClick={() => setActiveId(person.id)} className="mx-auto block cursor-pointer" aria-label={t("team.learnMoreAbout", { name: person.name })}>
-                    <div className="relative mx-auto aspect-[3/4] max-w-[260px] overflow-hidden rounded-card ring-1 ring-border/30 transition duration-700 ease-luxury group-hover:ring-gold/25">
+                  <button type="button" onClick={() => setActiveId(person.id)} className="mx-auto block w-full max-w-[260px] cursor-pointer" aria-label={t("team.learnMoreAbout", { name: person.name })}>
+                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-card ring-1 ring-border/30 transition duration-700 ease-luxury group-hover:ring-gold/25">
                       <SiteImage
                         src={person.img}
                         alt={person.name}

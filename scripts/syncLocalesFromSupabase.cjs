@@ -102,49 +102,74 @@ async function main() {
     return;
   }
 
-  const activeProductIds = new Set((overrides.cosmetics ?? []).map((item) => item.id));
-  const activeMemberIds = new Set((overrides.team ?? []).map((item) => item.id));
+  const hasCosmeticsOverride = Array.isArray(overrides.cosmetics);
+  const activeProductIds = hasCosmeticsOverride
+    ? new Set(overrides.cosmetics.map((item) => String(item.id)))
+    : null;
+
+  const hasTeamOverride = Array.isArray(overrides.team);
+  const activeMemberIds = hasTeamOverride
+    ? new Set(overrides.team.map((item) => String(item.id)))
+    : null;
 
   LANGS.forEach((lang) => {
     const localePath = `src/i18n/locales/${lang}.json`;
     const locale = readJson(localePath);
+    let changed = false;
 
-    if (locale.cosmetics?.products) {
+    if (hasCosmeticsOverride && locale.cosmetics?.products) {
       Object.keys(locale.cosmetics.products).forEach((id) => {
         if (!activeProductIds.has(id)) {
           delete locale.cosmetics.products[id];
+          changed = true;
         }
       });
 
       activeProductIds.forEach((id) => {
         if (locale.cosmetics.products[id]) return;
         locale.cosmetics.products[id] = {};
+        changed = true;
       });
     }
 
     if (locale.team) {
       const teamPatch = overrides.locales?.[lang]?.team;
-      if (teamPatch?.label) locale.team.label = teamPatch.label;
-      if (teamPatch?.title) locale.team.title = teamPatch.title;
-      if (teamPatch?.description) locale.team.description = teamPatch.description;
+      if (teamPatch?.label && locale.team.label !== teamPatch.label) {
+        locale.team.label = teamPatch.label;
+        changed = true;
+      }
+      if (teamPatch?.title && locale.team.title !== teamPatch.title) {
+        locale.team.title = teamPatch.title;
+        changed = true;
+      }
+      if (teamPatch?.description && locale.team.description !== teamPatch.description) {
+        locale.team.description = teamPatch.description;
+        changed = true;
+      }
 
-      if (locale.team.members) {
+      if (hasTeamOverride && locale.team.members) {
         Object.keys(locale.team.members).forEach((id) => {
           if (!activeMemberIds.has(id)) {
             delete locale.team.members[id];
+            changed = true;
           }
         });
 
         activeMemberIds.forEach((id) => {
           const patch = collectNestedPatch(overrides, "team", "members", id, lang);
           if (!Object.keys(patch).length) return;
+          const original = JSON.stringify(locale.team.members[id]);
           locale.team.members[id] = mergeMemberEntry(locale.team.members[id], patch);
+          if (JSON.stringify(locale.team.members[id]) !== original) {
+            changed = true;
+          }
         });
       }
     }
-
-    writeJson(localePath, locale);
-    console.log(`sync-locales: updated ${localePath}`);
+    if (changed) {
+      writeJson(localePath, locale);
+      console.log(`sync-locales: updated ${localePath}`);
+    }
   });
 }
 
