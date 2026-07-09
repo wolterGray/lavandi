@@ -188,16 +188,18 @@
       "nuar-premium": "NUAR Premium"
     },
     "products": {
-      "45996": {
-        "name": "COLLISTAR Crio‑Gel",
-        "description": "Cooling anti-cellulite gel that helps reduce swelling, improve microcirculation and enhance skin firmness. The cryo effect delivers a fresh, light sensation, helps reduce the visibility of cellulite and leaves skin smoother and firmer. Ideal as a complement to anti-cellulite and lymphatic drainage treatments.",
-        "volume": "400 ml",
-        "composition": "Ingredients: Aqua, Alcohol Denat., Menthol, C15-19 Alkane, Menthyl Lactate, Sodium Acrylate/Sodium Acryloyldimethyl Taurate Copolymer, Caffeine, Parfum, Polyacrylate Crosspolymer-6, Polyglyceryl-6 Laurate, Schinus Terebinthifolius Seed Extract, Polyglycerin-6, Sodium Hydroxide, Methyl Diisopropyl Propionamide, Sorbitan Oleate, Citrus Aurantium Dulcis Peel Extract, Cinnamomum Zeylanicum Bark Extract, Sorbitan Isostearate, Aesculus Hippocastanum Seed Extract, Shikimic Acid, Cupressus Sempervirens Leaf Oil, T-Butyl Alcohol, Coffea Arabica Seed Extract, Lecithin, Ci 28440, Ci 19140, Potassium Sorbate, Sodium Benzoate, Citric Acid, Ci 42090, Pinene, Benzyl Salicylate, Citronellol, Geraniol, Hexyl Cinnamal, Limonene, Linalool, Citrus Aurantium Peel Oil, Geranyl Acetate, Linalyl Acetate, Terpineol, Vanillin."
-      },
-      "47843": {
-        "name": "REFRESHING BODY BANDAGE (РОЗМАРИН И ШАЛФЕЙ)",
-        "description": "Bandage impregnated with a liquid rich in active ingredients, with a cooling and analgesic effect. Essential oils of rosemary, sage and mint provide a pleasant cooling sensation, relief and lightness. Aloe and chamomile support leg comfort thanks to their soothing properties."
-      }
+      "rose-body-oil": {},
+      "arnica-massage-oil": {},
+      "lavender-relax-oil": {},
+      "magnesium-balm": {},
+      "shea-foot-balm": {},
+      "velvet-body-cream": {},
+      "citrus-hand-cream": {},
+      "coffee-body-scrub": {},
+      "salt-glow-scrub": {},
+      "eucalyptus-mist": {},
+      "cedar-candle": {},
+      "dry-brush": {}
     }
   },
   "editorial": {
