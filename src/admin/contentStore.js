@@ -64,6 +64,7 @@ export function mergeContent(overrides = loadOverrides()) {
     siteSettings: {
       googleAnalyticsId: import.meta.env.VITE_GA_ID || "G-NYM3P4FJJE",
       analyticsEnabled: true,
+      bookingEnabled: true,
       ...overrides.siteSettings,
     },
   };

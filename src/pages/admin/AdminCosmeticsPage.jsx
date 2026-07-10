@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { getAdminSectionKey } from "../../admin/adminNav";
 import { getSectionMeta } from "../../admin/adminSectionMeta";
@@ -329,7 +329,7 @@ export default function AdminCosmeticsPage() {
     });
   };
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     const enriched = draft.map((item, index) => {
       const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
       const categories = getProductCategories(item);
@@ -363,7 +363,17 @@ export default function AdminCosmeticsPage() {
       setDirty(false);
       showStatus(adminRu.cosmetics.statusSaved, "success");
     }
-  };
+  }, [draft, textDraft, featuredDraft, retiredDraft, runSave, saveMerged]);
+
+  useEffect(() => {
+    if (!dirty) return undefined;
+
+    const timer = window.setTimeout(() => {
+      void handleSave();
+    }, 2000);
+
+    return () => window.clearTimeout(timer);
+  }, [dirty, handleSave]);
 
   const handleDiscard = () => {
     setDraft(cosmetics);

@@ -1,4 +1,5 @@
 import { adminRu } from "./adminStrings";
+import { supabase } from "../lib/supabase";
 import {
   cmsBackendPublicRequest,
   cmsBackendRequest,
@@ -7,7 +8,6 @@ import {
 } from "./cmsBackend";
 import {
   compressImageForUpload,
-  compressImageThumbForUpload,
   recompressStoredImageRow,
 } from "../utils/imageCompress";
 import {
@@ -49,26 +49,7 @@ export function toImageRef(id) {
   return `${IMAGE_REF_PREFIX}${id}`;
 }
 
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      if (typeof result !== "string") {
-        reject(new Error(adminRu.media.uploadFailed));
-        return;
-      }
-      const base64 = result.split(",")[1];
-      if (!base64) {
-        reject(new Error(adminRu.media.uploadFailed));
-        return;
-      }
-      resolve(base64);
-    };
-    reader.onerror = () => reject(reader.error ?? new Error(adminRu.media.uploadFailed));
-    reader.readAsDataURL(file);
-  });
-}
+
 
 export function toDataUrl(mimeType, dataBase64) {
   return `data:${mimeType};base64,${dataBase64}`;
@@ -147,6 +128,20 @@ export async function deleteSiteImagesByIds(ids = []) {
 }
 
 export async function deleteSiteImageByRef(imageRef) {
+  if (!imageRef || typeof imageRef !== "string") return false;
+
+  if (imageRef.startsWith("https://") && imageRef.includes("/site-images/")) {
+    try {
+      const bucketPath = imageRef.split("/storage/v1/object/public/site-images/")[1];
+      if (bucketPath && supabase) {
+        const { error } = await supabase.storage.from("site-images").remove([bucketPath]);
+        return !error;
+      }
+    } catch {
+      return false;
+    }
+  }
+
   const id = parseImageRef(imageRef);
   if (!id) return false;
   await deleteSiteImagesByIds([id]);
@@ -209,7 +204,7 @@ export async function fetchSiteImagesStorageUsage() {
 }
 
 export async function saveSiteImageToDatabase(file, folder = "uploads", replaceRef = null) {
-  if (!isSiteImagesConfigured()) {
+  if (!supabase) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
 
@@ -223,38 +218,42 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
 
   const safeFolder = sanitizeFolder(folder);
   const prepared = await compressImageForUpload(file, safeFolder);
-  const thumb = await compressImageThumbForUpload(prepared, safeFolder);
   const id = `${safeFolder}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const dataBase64 = await fileToBase64(prepared);
-  const thumbBase64 = thumb ? await fileToBase64(thumb) : null;
+  const fileName = `${safeFolder}/${id}.webp`;
 
-  const payload = {
-    id,
-    folder: safeFolder,
-    mime_type: prepared.type,
-    data_base64: dataBase64,
-    size_bytes: prepared.size,
-    thumb_mime_type: thumb?.type ?? null,
-    thumb_base64: thumbBase64,
-    thumb_size_bytes: thumb?.size ?? null,
-    updated_at: new Date().toISOString(),
-  };
+  const { error } = await supabase.storage
+    .from("site-images")
+    .upload(fileName, prepared, {
+      contentType: prepared.type,
+      cacheControl: "31536000",
+      upsert: true,
+    });
 
-  if (!shouldUseCmsBackend()) throw new Error(adminRu.media.storageNotConfigured);
-
-  await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
-    method: "PUT",
-    body: JSON.stringify(payload),
-    label: "Save site image",
-  });
-
-  const newRef = toImageRef(id);
-  const oldId = parseImageRef(replaceRef);
-  if (oldId && oldId !== id) {
-    await deleteSiteImagesByIds([oldId]);
+  if (error) {
+    throw new Error(`${adminRu.media.uploadFailed}: ${error.message}`);
   }
 
-  return newRef;
+  const { data: { publicUrl } } = supabase.storage
+    .from("site-images")
+    .getPublicUrl(fileName);
+
+  if (replaceRef && typeof replaceRef === "string" && replaceRef.startsWith("https://")) {
+    try {
+      const bucketPath = replaceRef.split("/storage/v1/object/public/site-images/")[1];
+      if (bucketPath) {
+        await supabase.storage.from("site-images").remove([bucketPath]);
+      }
+    } catch {
+      // ignore errors deleting old image
+    }
+  } else if (replaceRef && isImageRef(replaceRef)) {
+    const oldId = parseImageRef(replaceRef);
+    if (oldId) {
+      await deleteSiteImagesByIds([oldId]);
+    }
+  }
+
+  return publicUrl;
 }
 
 export async function fetchSiteImageRecord(id, { variant = IMAGE_VARIANT.full } = {}) {

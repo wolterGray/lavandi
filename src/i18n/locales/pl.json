@@ -322,8 +322,8 @@
   },
   "team": {
     "label": "Zespół",
-    "title": "Ludzie NUAR",
-    "description": "Specjaliści, którym powierzasz swoje ciało — z doświadczeniem, intuicją i indywidualnym podejściem.",
+    "title": "Nuarowie",
+    "description": "Profesjonaliści, którym ufasz swoim ciałem — z doświadczeniem, intuicją i indywidualnym podejściem.",
     "learnMore": "Dowiedz się więcej",
     "learnMoreAbout": "Dowiedz się więcej o {{name}}",
     "close": "Zamknij",
@@ -334,7 +334,7 @@
     },
     "members": {
       "olha": {
-        "bio": "Olha to Top Master z wieloletnim doświadczeniem w masażu terapeutycznym i relaksacyjnym. Goście chwalą jej intuicyjny dotyk i umiejętność znajdowania miejsc, w których ciało trzyma napięcie.",
+        "bio": "Olha do Top Master z wieloletnim doświadczeniem w masażu terapeutycznym i relaksacyjnym. Goście chwalą jej intuicyjny dotyk i umiejętność znajdowania miejsc, w których ciało trzyma napięcie.",
         "specialties": [
           "Masaż relaksacyjny",
           "Masaż autorski",
@@ -343,7 +343,7 @@
         ]
       },
       "max": {
-        "bio": "Max specjalizuje się w masażu sportowym i regeneracyjnym. Precyzyjnie pracuje na przeciążonych mięśniach, pomagając sportowcom i aktywnym osobom szybciej wracać do formy.",
+        "bio": "Max specializuje się w masażu sportowym i regeneracyjnym. Precyzyjnie pracuje na przeciążonych mięśniach, pomagając sportowcom i aktywnym osobom szybciej wracać do formy.",
         "specialties": [
           "Masaż sportowy",
           "Masaż klasyczny",
@@ -440,6 +440,7 @@
     "title": "Zatrzymaj się. Oddychaj. Zarezerwuj chwilę tylko dla siebie.",
     "subtitle": "Wyślij prośbę o termin — potwierdzimy ją telefonicznie. Możesz też zarezerwować od razu w Booksy.",
     "cta": "Zarezerwuj w Booksy",
+    "disabledMessage": "Rezerwacja online jest tymczasowo niedostępna. Skontaktuj się z nami telefonicznie lub przez Telegram, aby umówić wizytę.",
     "form": {
       "name": "Imię i nazwisko",
       "phone": "Telefon",

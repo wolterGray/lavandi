@@ -1,0 +1,46 @@
+---
+description: Locked NUAR warm aubergine background palette — do not change without explicit user request
+globs: tailwind.config.js, src/constants/theme.js, src/index.css, index.html, public/site.webmanifest
+alwaysApply: false
+---
+
+# NUAR Background Palette — DO NOT CHANGE without explicit user request
+
+This palette was explicitly approved by the user. Future agents must not drift toward grey asphalt, near-black, wine/burgundy, or cool blueberry tones.
+
+## Locked hex values
+
+| Token | Hex |
+|-------|-----|
+| void / cream / mainBg / canvas | `#08060C` |
+| surface / graphite / headerBg / secondaryColor | `#0C0A10` |
+| card / panel | `#100E14` |
+| border | `#1A1520` |
+| footer / spa.footer | `#07050A` |
+| ivory | `#0A080E` |
+| milk / ink | `#E5DFD8` |
+| stone / ink-muted | `#9A8880` |
+| muted / ink-faint | `#706468` |
+
+## Rejected alternatives (do not use)
+
+- Grey asphalt / neutral grey-brown backgrounds
+- Near-black `#040304`
+- Cool blueberry / purple-grey tones
+- Bright wine / burgundy backgrounds
+- Wrong drift values: `#100C0C`, `#161214`, `#201A1C`, `#322A2C`, `#080606`
+
+## Gold accent (separate — can be tuned independently)
+
+- gold / accent: `#B8956B`
+- gold-dark: `#967048`
+
+## Gradients & shadows
+
+- Body/surface gradients: warm plum `rgba(8, 6, 12, …)` + faint gold `rgba(154, 132, 88, …)` only — no neutral grey rgba
+- Box shadows: warm plum `rgba(6, 5, 8, …)`
+- Border translucency: derive from `#1A1520` → `rgb(26 21 32 / …)`
+
+## Source of truth
+
+Keep in sync: `tailwind.config.js`, `src/constants/theme.js`, `src/index.css` (`:root` vars), `index.html` `theme-color`, `public/site.webmanifest` `theme_color` / `background_color`.

@@ -13,6 +13,7 @@ import {
   clearSiteContentInSupabase,
   fetchSiteContentFromSupabase,
   saveSiteContentToSupabase,
+  patchSiteContentInSupabase,
 } from "../admin/supabaseContent";
 import {
   getLocaleDefaults,
@@ -146,7 +147,7 @@ export function ContentProvider({ children }) {
     };
   }, [overrides, content.cosmetics]);
 
-  const persistOverrides = useCallback(async (next) => {
+  const persistOverrides = useCallback(async (next, patch = null) => {
     setOverrides(next);
     saveOverrides(next);
 
@@ -154,7 +155,12 @@ export function ContentProvider({ children }) {
 
     setContentSaving(true);
     try {
-      const updatedAt = await saveSiteContentToSupabase(next);
+      let updatedAt;
+      if (patch) {
+        updatedAt = await patchSiteContentInSupabase(patch);
+      } else {
+        updatedAt = await saveSiteContentToSupabase(next);
+      }
       await cleanupOrphanedSiteImages(next);
       setLastSyncedAt(updatedAt);
       setSyncError(null);
@@ -172,12 +178,22 @@ export function ContentProvider({ children }) {
   );
 
   const updateSection = useCallback(
-    (key, value) => persistOverrides({ ...overrides, [key]: value }),
+    (key, value) => persistOverrides({ ...overrides, [key]: value }, { [key]: value }),
     [overrides, persistOverrides]
   );
 
   const updateLocaleBlock = useCallback(
-    (lang, block, value) => persistOverrides(patchLocaleBlock(overrides, lang, block, value)),
+    (lang, block, value) => {
+      const next = patchLocaleBlock(overrides, lang, block, value);
+      const patch = {
+        locales: {
+          [lang]: {
+            [block]: value,
+          },
+        },
+      };
+      return persistOverrides(next, patch);
+    },
     [overrides, persistOverrides]
   );
 

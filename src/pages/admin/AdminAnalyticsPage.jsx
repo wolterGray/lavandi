@@ -25,6 +25,7 @@ export default function AdminAnalyticsPage() {
         siteSettings: {
           googleAnalyticsId: draft.googleAnalyticsId?.trim() || DEFAULT_GA_ID,
           analyticsEnabled: draft.analyticsEnabled !== false,
+          bookingEnabled: draft.bookingEnabled !== false,
         },
       }))
     );
@@ -50,6 +51,16 @@ export default function AdminAnalyticsPage() {
       />
 
       <div className="grid max-w-2xl gap-4">
+        <AdminPanel>
+          <h3 className="font-display text-lg text-milk mb-3">{adminRu.analytics.bookingTitle}</h3>
+          <AdminToggle
+            checked={draft.bookingEnabled !== false}
+            onChange={(bookingEnabled) => setDraft((prev) => ({ ...prev, bookingEnabled }))}
+            label={adminRu.analytics.bookingEnabled}
+          />
+          <p className="mt-3 text-xs text-muted">{adminRu.analytics.bookingDisabledHint}</p>
+        </AdminPanel>
+
         <AdminPanel>
           <AdminToggle
             checked={draft.analyticsEnabled !== false}

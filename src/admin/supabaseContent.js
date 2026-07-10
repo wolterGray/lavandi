@@ -26,6 +26,19 @@ export async function saveSiteContentToSupabase(overrides) {
   throw new Error("CRM backend session is missing");
 }
 
+export async function patchSiteContentInSupabase(patch) {
+  if (isCmsBackendConfigured && hasCmsBackendSession()) {
+    const data = await cmsBackendRequest("/api/site-content", {
+      method: "PATCH",
+      body: JSON.stringify({ overrides: patch }),
+      label: "Patch site content",
+    });
+    return data?.updatedAt ?? null;
+  }
+
+  throw new Error("CRM backend session is missing");
+}
+
 export async function clearSiteContentInSupabase() {
   if (isCmsBackendConfigured && hasCmsBackendSession()) {
     const data = await cmsBackendRequest("/api/site-content", {

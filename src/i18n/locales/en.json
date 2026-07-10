@@ -322,8 +322,8 @@
   },
   "team": {
     "label": "Team",
-    "title": "The people of NUAR",
-    "description": "Specialists you entrust your body to — with experience, intuition, and a personal approach.",
+    "title": "Nuar people",
+    "description": "Professionals you trust with your body — with experience, intuition and an individual approach.",
     "learnMore": "Learn more",
     "learnMoreAbout": "Learn more about {{name}}",
     "close": "Close",
@@ -440,6 +440,7 @@
     "title": "Pause. Breathe. Book a moment just for yourself.",
     "subtitle": "Send a booking request — we will confirm by phone. You can also book instantly on Booksy.",
     "cta": "Book on Booksy",
+    "disabledMessage": "Online booking is temporarily unavailable. Please contact us via phone or Telegram to book your appointment.",
     "form": {
       "name": "Full name",
       "phone": "Phone",

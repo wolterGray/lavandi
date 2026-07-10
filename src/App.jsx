@@ -7,26 +7,36 @@ import CosmeticsPage from "./pages/CosmeticsPage";
 import CosmeticProductPage from "./pages/CosmeticProductPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SplashScreen from "./ui/SplashScreen";
-import AdminLayout from "./admin/AdminLayout";
+import { lazy, Suspense } from "react";
+
+const AdminLayout = lazy(() => import("./admin/AdminLayout"));
+const AdminLoginPage = lazy(() => import("./pages/admin/AdminLoginPage"));
+const AdminDashboardPage = lazy(() => import("./pages/admin/AdminDashboardPage"));
+const AdminHomePage = lazy(() => import("./pages/admin/AdminHomePage"));
+const AdminServicesPage = lazy(() => import("./pages/admin/AdminServicesPage"));
+const AdminAboutPage = lazy(() => import("./pages/admin/AdminAboutPage"));
+const AdminTrustPage = lazy(() => import("./pages/admin/AdminTrustPage"));
+const AdminStatsPage = lazy(() => import("./pages/admin/AdminStatsPage"));
+const AdminTeamPage = lazy(() => import("./pages/admin/AdminTeamPage"));
+const AdminReviewsPage = lazy(() => import("./pages/admin/AdminReviewsPage"));
+const AdminGalleryPage = lazy(() => import("./pages/admin/AdminGalleryPage"));
+const AdminFaqPage = lazy(() => import("./pages/admin/AdminFaqPage"));
+const AdminCosmeticsPage = lazy(() => import("./pages/admin/AdminCosmeticsPage"));
+const AdminContactPage = lazy(() => import("./pages/admin/AdminContactPage"));
+const AdminSettingsPage = lazy(() => import("./pages/admin/AdminSettingsPage"));
+const AdminAnalyticsPage = lazy(() => import("./pages/admin/AdminAnalyticsPage"));
 import AdminProtected from "./admin/AdminProtected";
-import AdminLoginPage from "./pages/admin/AdminLoginPage";
-import AdminDashboardPage from "./pages/admin/AdminDashboardPage";
-import AdminHomePage from "./pages/admin/AdminHomePage";
-import AdminServicesPage from "./pages/admin/AdminServicesPage";
-import AdminAboutPage from "./pages/admin/AdminAboutPage";
-import AdminTrustPage from "./pages/admin/AdminTrustPage";
-import AdminStatsPage from "./pages/admin/AdminStatsPage";
-import AdminTeamPage from "./pages/admin/AdminTeamPage";
-import AdminReviewsPage from "./pages/admin/AdminReviewsPage";
-import AdminGalleryPage from "./pages/admin/AdminGalleryPage";
-import AdminFaqPage from "./pages/admin/AdminFaqPage";
-import AdminCosmeticsPage from "./pages/admin/AdminCosmeticsPage";
-import AdminContactPage from "./pages/admin/AdminContactPage";
-import AdminSettingsPage from "./pages/admin/AdminSettingsPage";
-import AdminAnalyticsPage from "./pages/admin/AdminAnalyticsPage";
 import { useContent } from "./context/ContentProvider";
 import { findLocalizedProduct } from "./components/CosmeticsSection/cosmeticsShared";
 import { usePageAnalytics } from "./hooks/usePageAnalytics";
+
+function AdminLoader() {
+  return (
+    <div className="flex h-screen w-screen items-center justify-center bg-[#1e1324] text-xs font-bold uppercase tracking-[0.12em] text-[#d6bb7d]">
+      Загрузка панели управления...
+    </div>
+  );
+}
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -103,40 +113,42 @@ export default function App() {
   return (
     <>
       <ScrollToTop />
-      <Routes>
-        <Route path="/admin/login" element={<AdminLoginPage />} />
-        <Route
-          path="/admin"
-          element={
-            <AdminProtected>
-              <AdminLayout />
-            </AdminProtected>
-          }
-        >
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="home" element={<AdminHomePage />} />
-          <Route path="services" element={<AdminServicesPage />} />
-          <Route path="about" element={<AdminAboutPage />} />
-          <Route path="trust" element={<AdminTrustPage />} />
-          <Route path="stats" element={<AdminStatsPage />} />
-          <Route path="team" element={<AdminTeamPage />} />
-          <Route path="reviews" element={<AdminReviewsPage />} />
-          <Route path="gallery" element={<AdminGalleryPage />} />
-          <Route path="faq" element={<AdminFaqPage />} />
-          <Route path="cosmetics" element={<AdminCosmeticsPage />} />
-          <Route path="contact" element={<AdminContactPage />} />
-          <Route path="analytics" element={<AdminAnalyticsPage />} />
-          <Route path="settings" element={<AdminSettingsPage />} />
-        </Route>
-        <Route
-          path="/*"
-          element={
-            <main id="main-content">
-              <PublicSiteWithAnalytics />
-            </main>
-          }
-        />
-      </Routes>
+      <Suspense fallback={<AdminLoader />}>
+        <Routes>
+          <Route path="/admin/login" element={<AdminLoginPage />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminProtected>
+                <AdminLayout />
+              </AdminProtected>
+            }
+          >
+            <Route index element={<AdminDashboardPage />} />
+            <Route path="home" element={<AdminHomePage />} />
+            <Route path="services" element={<AdminServicesPage />} />
+            <Route path="about" element={<AdminAboutPage />} />
+            <Route path="trust" element={<AdminTrustPage />} />
+            <Route path="stats" element={<AdminStatsPage />} />
+            <Route path="team" element={<AdminTeamPage />} />
+            <Route path="reviews" element={<AdminReviewsPage />} />
+            <Route path="gallery" element={<AdminGalleryPage />} />
+            <Route path="faq" element={<AdminFaqPage />} />
+            <Route path="cosmetics" element={<AdminCosmeticsPage />} />
+            <Route path="contact" element={<AdminContactPage />} />
+            <Route path="analytics" element={<AdminAnalyticsPage />} />
+            <Route path="settings" element={<AdminSettingsPage />} />
+          </Route>
+          <Route
+            path="/*"
+            element={
+              <main id="main-content">
+                <PublicSiteWithAnalytics />
+              </main>
+            }
+          />
+        </Routes>
+      </Suspense>
     </>
   );
 }
