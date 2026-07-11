@@ -54,11 +54,11 @@ async function generateSitemap() {
         if (overrides) {
           if (Array.isArray(overrides.services)) {
             services = overrides.services;
-            console.log(`generate-seo: Loaded ${services.length} services from Supabase`);
+            console.log(`generate-seo: Loaded ${services.length} services from CRM backend`);
           }
           if (Array.isArray(overrides.cosmetics)) {
             cosmetics = overrides.cosmetics;
-            console.log(`generate-seo: Loaded ${cosmetics.length} cosmetics from Supabase`);
+            console.log(`generate-seo: Loaded ${cosmetics.length} cosmetics from CRM backend`);
           }
         }
       } else {
