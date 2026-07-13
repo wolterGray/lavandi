@@ -65,17 +65,51 @@ const concepts = [
   },
 ];
 
-const strings = {
-  booking: "Zarezerwuj wizytę",
-  cardInactive: "Karta jest nieaktywna",
-  copied: "Link skopiowany",
-  failed: "Nie udało się otworzyć karty",
-  loading: "Ładowanie karty...",
-  remaining: "Do nagrody pozostało",
-  rewardAvailable: "Nagroda jest dostępna",
-  subtitle: "Karta członkowska",
-  title: "NUAR CLUB",
+const stringsByLanguage = {
+  en: {
+    booking: "Book a visit",
+    cardInactive: "The card is inactive",
+    copied: "Link copied",
+    copyLink: "Copy link",
+    failed: "Could not open the card",
+    loading: "Loading card...",
+    remaining: "Remaining until reward",
+    rewardAvailable: "Reward is available",
+    status: "Status",
+    subtitle: "Membership card",
+    title: "NUAR CLUB",
+    updated: "Last update",
+  },
+  pl: {
+    booking: "Zarezerwuj wizytę",
+    cardInactive: "Karta jest nieaktywna",
+    copied: "Link skopiowany",
+    copyLink: "Kopiuj link",
+    failed: "Nie udało się otworzyć karty",
+    loading: "Ładowanie karty...",
+    remaining: "Do nagrody pozostało",
+    rewardAvailable: "Nagroda jest dostępna",
+    status: "Status",
+    subtitle: "Karta członkowska",
+    title: "NUAR CLUB",
+    updated: "Ostatnia aktualizacja",
+  },
+  ru: {
+    booking: "Записаться",
+    cardInactive: "Карта неактивна",
+    copied: "Ссылка скопирована",
+    copyLink: "Скопировать ссылку",
+    failed: "Не удалось открыть карту",
+    loading: "Загрузка карты...",
+    remaining: "До подарка осталось",
+    rewardAvailable: "Подарок доступен",
+    status: "Статус",
+    subtitle: "Карта лояльности",
+    title: "NUAR CLUB",
+    updated: "Последнее обновление",
+  },
 };
+const defaultStrings = stringsByLanguage.pl;
 
 async function fetchPublicLoyaltyCard(token) {
   const response = await fetch(
@@ -93,7 +127,7 @@ async function fetchPublicLoyaltyCard(token) {
   }
 
   if (!response.ok) {
-    throw new Error(payload?.error || strings.failed);
+    throw new Error(payload?.error || defaultStrings.failed);
   }
 
   return payload?.data ?? null;
@@ -207,6 +241,7 @@ export default function LoyaltyCardPage() {
   const [loading, setLoading] = useState(Boolean(token));
 
   const publicUrl = typeof window === "undefined" ? "" : window.location.href;
+  const strings = stringsByLanguage[card?.cardLanguage] || defaultStrings;
   const selectedConcept = useMemo(() => {
     const tier = String(card?.tier || "").toUpperCase();
     const conceptId =
@@ -227,8 +262,9 @@ export default function LoyaltyCardPage() {
     const value = card?.lastTransactionAt || card?.updatedAt;
     if (!value) return "—";
     const date = new Date(value);
-    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString("pl-PL");
-  }, [card?.lastTransactionAt, card?.updatedAt]);
+    const locale = card?.cardLanguage === "ru" ? "ru-RU" : card?.cardLanguage === "en" ? "en-US" : "pl-PL";
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(locale);
+  }, [card?.cardLanguage, card?.lastTransactionAt, card?.updatedAt]);
 
   useEffect(() => {
     let meta = document.querySelector('meta[name="robots"]');
@@ -245,7 +281,7 @@ export default function LoyaltyCardPage() {
     let cancelled = false;
 
     if (!token) {
-      setError(strings.failed);
+      setError(defaultStrings.failed);
       setLoading(false);
       return undefined;
     }
@@ -260,7 +296,7 @@ export default function LoyaltyCardPage() {
       })
       .catch(() => {
         if (!cancelled) {
-          setError(strings.failed);
+          setError(defaultStrings.failed);
         }
       })
       .finally(() => {
@@ -318,7 +354,7 @@ export default function LoyaltyCardPage() {
             <div className="flex items-center justify-between gap-4">
               <div>
                 <span className="text-xs uppercase tracking-[0.18em] text-[#d6bb7d]/80">
-                  Status
+                  {strings.status}
                 </span>
                 <strong className="mt-1 block text-2xl">
                   {stamps}/{target}
@@ -343,7 +379,7 @@ export default function LoyaltyCardPage() {
                   : `${strings.remaining}: ${remaining}`}
               </strong>
               <span className="mt-1 block text-sm text-[#f8f0df]/58">
-                Ostatnia aktualizacja: {updatedAt}
+                {strings.updated}: {updatedAt}
               </span>
             </div>
 
@@ -363,7 +399,7 @@ export default function LoyaltyCardPage() {
                 onClick={copyLink}
               >
                 <Copy size={15} />
-                {copied ? strings.copied : "Kopiuj link"}
+                {copied ? strings.copied : strings.copyLink}
               </button>
             </div>
           </aside>
