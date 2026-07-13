@@ -123,7 +123,7 @@ function NuarClubCard({ card, target }) {
 
   return (
     <article
-      className={`group relative aspect-[1.36/1] w-full overflow-hidden rounded-lg ${style.background} px-4 pb-7 pt-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:aspect-[1.586/1] sm:p-6`}
+      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)]`}
       style={{ "--card-accent": style.accent }}
     >
       <style>{`
@@ -148,7 +148,7 @@ function NuarClubCard({ card, target }) {
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_78%,color-mix(in_srgb,var(--card-accent)_20%,transparent),transparent_28%),linear-gradient(112deg,transparent_0%,rgba(255,255,255,0.08)_42%,transparent_58%)] blur-[1px] [animation:nuarClubCardSoftWash_9s_ease-in-out_infinite]" />
       <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.24),transparent)] blur-2xl [animation:nuarClubCardSheen_6.8s_ease-in-out_infinite]" />
 
-      <div className="relative z-10 flex h-full flex-col justify-between gap-3 sm:gap-4">
+      <div className="absolute inset-x-4 bottom-5 top-4 z-10 flex flex-col justify-between gap-2 sm:inset-x-6 sm:bottom-6 sm:top-6 sm:gap-4">
         <div className="flex items-start justify-between gap-4">
           <span className={`text-[10px] font-extrabold uppercase tracking-[0.16em] ${style.text} sm:text-[11px]`}>
             {tierLabel}
@@ -158,7 +158,7 @@ function NuarClubCard({ card, target }) {
           </span>
         </div>
 
-        <div className="grid -translate-y-1 justify-items-center gap-2 text-center sm:translate-y-0">
+        <div className="grid -translate-y-1 justify-items-center gap-1.5 text-center sm:translate-y-0 sm:gap-2">
           <small
             className="font-sans text-[8px] font-extrabold uppercase tracking-[0.16em] opacity-70 sm:text-[9px]"
             style={{ color: style.accent }}
@@ -166,7 +166,7 @@ function NuarClubCard({ card, target }) {
             {getLoyaltyLabel(card?.cardLanguage)}
           </small>
           <strong
-            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[30px] font-normal leading-none opacity-90 sm:text-[48px]"
+            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[28px] font-normal leading-none opacity-90 sm:text-[48px]"
             style={{ color: style.accent }}
           >
             {name}
@@ -174,7 +174,7 @@ function NuarClubCard({ card, target }) {
         </div>
 
         <div className="flex items-end justify-between gap-3 sm:gap-4">
-          <div className="grid max-w-[230px] flex-1 grid-cols-6 gap-1.5 sm:max-w-[250px] sm:gap-2">
+          <div className="grid max-w-[210px] flex-1 grid-cols-6 gap-1.5 sm:max-w-[250px] sm:gap-2">
             {Array.from({ length: 6 }).map((_, index) => {
               const isGift = index === 5;
               const filled = index < stamps;
