@@ -5,6 +5,7 @@ import LandingPage from "./pages/LandingPage";
 import ServicePage from "./pages/ServicePage";
 import CosmeticsPage from "./pages/CosmeticsPage";
 import CosmeticProductPage from "./pages/CosmeticProductPage";
+import LoyaltyCardPage from "./pages/LoyaltyCardPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SplashScreen from "./ui/SplashScreen";
 import { lazy, Suspense } from "react";
@@ -100,6 +101,7 @@ function PublicSite() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/katalog" element={<CosmeticsPage />} />
           <Route path="/katalog/:id" element={<CosmeticProductRoute />} />
+          <Route path="/club/:token" element={<LoyaltyCardPage />} />
           <Route path="/uslugi/:slug" element={<ServiceRoute />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
