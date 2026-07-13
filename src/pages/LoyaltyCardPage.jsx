@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Copy, Crown, ExternalLink, Gem, ShieldCheck } from "lucide-react";
+import { Copy, ExternalLink, Gift, ShieldCheck } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 const BACKEND_URL =
@@ -13,57 +13,38 @@ const tierLabels = {
   ROYAL: "NUAR ROYAL",
 };
 
-const tierAccent = {
-  MEMBER: "#c9c2b5",
-  SILVER: "#d9dee8",
-  GOLD: "#d6bb7d",
-  DIAMOND: "#f1f7ff",
-  ROYAL: "#d8b35d",
+const tierCardClasses = {
+  MEMBER: {
+    accent: "#d4bd82",
+    background:
+      "bg-[linear-gradient(112deg,transparent_0%,rgba(255,255,255,0.08)_42%,transparent_54%),radial-gradient(circle_at_82%_18%,rgba(212,189,130,0.2),transparent_28%),linear-gradient(135deg,#090a0b,#303232_48%,#111111_100%)]",
+    text: "text-[#f5f0e6]",
+  },
+  SILVER: {
+    accent: "#dce3ee",
+    background:
+      "bg-[repeating-linear-gradient(105deg,rgba(255,255,255,0.07)_0_1px,transparent_1px_10px),linear-gradient(102deg,rgba(255,255,255,0.08)_0%,transparent_18%,rgba(255,255,255,0.32)_42%,transparent_54%,rgba(255,255,255,0.1)_100%),radial-gradient(circle_at_82%_18%,rgba(220,227,238,0.26),transparent_30%),linear-gradient(135deg,#0c0f12,#8a939c_40%,#333b43_62%,#101317)]",
+    text: "text-[#f6f8fb]",
+  },
+  GOLD: {
+    accent: "#f1ce7b",
+    background:
+      "bg-[repeating-linear-gradient(105deg,rgba(255,228,143,0.08)_0_1px,transparent_1px_11px),linear-gradient(110deg,rgba(255,236,178,0.08)_0%,transparent_20%,rgba(255,225,139,0.34)_43%,transparent_56%,rgba(164,111,36,0.22)_100%),radial-gradient(circle_at_80%_18%,rgba(241,206,123,0.3),transparent_30%),linear-gradient(135deg,#170c04,#9b6f2f_42%,#4a2a0e_64%,#090604)]",
+    text: "text-[#fff5dc]",
+  },
+  DIAMOND: {
+    accent: "#eaf6ff",
+    background:
+      "bg-[radial-gradient(ellipse_at_28%_24%,rgba(255,255,255,0.18),transparent_18%),radial-gradient(ellipse_at_78%_72%,rgba(166,220,255,0.16),transparent_22%),radial-gradient(circle_at_50%_46%,rgba(204,235,255,0.18),transparent_34%),linear-gradient(122deg,transparent_0%,rgba(255,255,255,0.26)_34%,transparent_46%,rgba(166,220,255,0.18)_70%,transparent_100%),linear-gradient(135deg,#02060c,#31485a_45%,#122334_68%,#05070d)]",
+    text: "text-[#f7fbff]",
+  },
+  ROYAL: {
+    accent: "#d7a46d",
+    background:
+      "bg-[radial-gradient(circle_at_50%_46%,rgba(42,32,74,0.6),transparent_34%),radial-gradient(circle_at_76%_12%,rgba(215,164,109,0.08),transparent_28%),radial-gradient(circle_at_12%_88%,rgba(83,35,96,0.2),transparent_34%),repeating-linear-gradient(86deg,rgba(255,255,255,0.018)_0_1px,transparent_1px_4px),linear-gradient(135deg,#070414,#151027_46%,#0b0718_74%,#03020a)]",
+    text: "text-[#f0c18b]",
+  },
 };
-
-const concepts = [
-  {
-    id: "black",
-    label: "A",
-    name: "Premium Black",
-    note: "Matte graphite, thin gold line",
-    className: "from-[#050505] via-[#101113] to-[#1b1b1e]",
-    accent: "#d6bb7d",
-    chip: "from-[#b69855] via-[#f0d894] to-[#8c743d]",
-    pattern: "opacity-[0.18]",
-  },
-  {
-    id: "gold",
-    label: "B",
-    name: "Luxury Gold",
-    note: "Warm metal, private banking mood",
-    className: "from-[#17100d] via-[#2b1d15] to-[#070606]",
-    accent: "#f0d894",
-    chip: "from-[#6d5429] via-[#f6d77d] to-[#ad8337]",
-    pattern: "opacity-[0.28]",
-  },
-  {
-    id: "diamond",
-    label: "C",
-    name: "Diamond Glass",
-    note: "Cool glass, crystal light",
-    className: "from-[#05080d] via-[#101923] to-[#07090f]",
-    accent: "#e8f4ff",
-    chip: "from-[#bfc9d8] via-[#ffffff] to-[#7f91a8]",
-    pattern: "opacity-[0.32]",
-  },
-  {
-    id: "royal",
-    label: "D",
-    name: "Royal Signature",
-    note: "Black card, crown, gold type",
-    className: "from-[#020202] via-[#080706] to-[#171008]",
-    accent: "#d8b35d",
-    chip: "from-[#5f461d] via-[#d8b35d] to-[#fff0a8]",
-    pattern: "opacity-[0.2]",
-    royal: true,
-  },
-];
 
 const stringsByLanguage = {
   en: {
@@ -133,100 +114,84 @@ async function fetchPublicLoyaltyCard(token) {
   return payload?.data ?? null;
 }
 
-const getFallbackCardNumber = (token) => {
-  const source = String(token || "nuar");
-  const numbers = Array.from(source).reduce(
-    (sum, char, index) => sum + char.charCodeAt(0) * (index + 17),
-    0,
-  );
-  const first = String(numbers % 10000).padStart(4, "0");
-  const second = String((numbers * 7 + 2458) % 10000).padStart(4, "0");
-  const third = String((numbers * 13 + 9182) % 10000).padStart(4, "0");
-  return `${first} • ${second} • ${third}`;
+const getGiftLabel = (language) => {
+  if (language === "en") return "gift";
+  if (language === "pl") return "prezent";
+  return "подарок";
 };
 
-function BankChip({ chip }) {
-  return (
-    <div
-      className={`relative h-9 w-12 overflow-hidden rounded-[9px] bg-gradient-to-br ${chip} shadow-[inset_0_0_0_1px_rgba(255,255,255,0.28),0_8px_18px_rgba(0,0,0,0.22)]`}
-    >
-      <span className="absolute left-1/2 top-0 h-full w-px bg-black/20" />
-      <span className="absolute left-0 top-1/2 h-px w-full bg-black/20" />
-      <span className="absolute left-3 top-0 h-full w-px bg-white/18" />
-      <span className="absolute right-3 top-0 h-full w-px bg-white/18" />
-    </div>
-  );
-}
+const getLoyaltyLabel = (language) => {
+  if (language === "en") return "loyalty card";
+  if (language === "pl") return "karta lojalnosciowa";
+  return "карта лояльности";
+};
 
-function PremiumCard({ card, concept, token }) {
+function NuarClubCard({ card, target }) {
   const tier = String(card?.tier || "MEMBER").toUpperCase();
   const tierLabel = tierLabels[tier] || tierLabels.MEMBER;
-  const accent = tierAccent[tier] || concept.accent;
-  const cardNumber = card?.cardNumber || getFallbackCardNumber(token);
+  const style = tierCardClasses[tier] || tierCardClasses.MEMBER;
   const name = card?.displayName || "NUAR Member";
+  const stamps = Math.min(6, Math.max(0, Number(card?.stamps) || 0));
+  const isRewardReady = Boolean(card?.rewardAvailable) && stamps >= target;
+  const giftLabel = getGiftLabel(card?.cardLanguage);
 
   return (
     <article
-      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-[24px] bg-gradient-to-br ${concept.className} p-5 text-white shadow-[0_32px_90px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1 hover:shadow-[0_40px_110px_rgba(0,0,0,0.5)]`}
-      style={{ "--card-accent": accent }}
+      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-5 text-white shadow-[0_32px_90px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1 hover:shadow-[0_40px_110px_rgba(0,0,0,0.5)] sm:p-6`}
+      style={{ "--card-accent": style.accent }}
     >
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(255,255,255,0.2),transparent_28%),radial-gradient(circle_at_88%_18%,rgba(214,187,125,0.16),transparent_30%),linear-gradient(115deg,transparent_0%,rgba(255,255,255,0.12)_45%,transparent_58%)] opacity-60" />
-      <div
-        className={`absolute -right-16 -top-12 h-48 w-48 rounded-full border border-white/20 ${concept.pattern}`}
-      />
-      <div className="absolute bottom-4 right-5 h-24 w-24 rounded-full border border-[color:var(--card-accent)]/40 opacity-20" />
       <div className="absolute inset-y-0 -left-1/2 w-1/2 rotate-12 bg-white/10 blur-2xl transition duration-700 group-hover:left-full" />
 
-      <div className="relative z-10 flex h-full flex-col justify-between">
+      <div className="relative z-10 flex h-full flex-col justify-between gap-4">
         <div className="flex items-start justify-between gap-4">
-          <div>
-            <img
-              src="/logo_nuar.PNG"
-              alt="NUAR"
-              className="h-9 w-auto object-contain opacity-95"
-              loading="eager"
-            />
-            <p
-              className="mt-2 text-[11px] font-semibold uppercase tracking-[0.28em]"
-              style={{ color: accent }}
-            >
-              NUAR CLUB
-            </p>
-          </div>
-          <div className="flex items-center gap-2 text-right">
-            {concept.royal || tier === "ROYAL" ? (
-              <Crown size={18} style={{ color: accent }} />
-            ) : tier === "DIAMOND" ? (
-              <Gem size={18} style={{ color: accent }} />
-            ) : null}
-            <span
-              className="text-[10px] font-bold uppercase tracking-[0.2em]"
-              style={{ color: accent }}
-            >
-              {tierLabel}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center justify-between">
-          <BankChip chip={concept.chip} />
-          <span className="rounded-full border border-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.18em] text-white/58">
-            Member ID
+          <span className={`text-[11px] font-extrabold uppercase tracking-[0.18em] ${style.text}`}>
+            {tierLabel}
+          </span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/62">
+            NUAR CLUB
           </span>
         </div>
 
-        <div>
-          <p className="font-serif text-[28px] italic leading-tight tracking-wide text-white sm:text-[34px]">
+        <div className="grid justify-items-center gap-2 text-center">
+          <small
+            className="font-sans text-[9px] font-extrabold uppercase tracking-[0.18em] opacity-70"
+            style={{ color: style.accent }}
+          >
+            {getLoyaltyLabel(card?.cardLanguage)}
+          </small>
+          <strong
+            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[34px] font-normal leading-none opacity-90 sm:text-[48px]"
+            style={{ color: style.accent }}
+          >
             {name}
-          </p>
-          <div className="mt-4 flex items-end justify-between gap-4">
-            <p className="font-mono text-[15px] tracking-[0.22em] text-white/82 sm:text-[17px]">
-              {cardNumber}
-            </p>
-            <p className="text-right text-[9px] font-semibold uppercase tracking-[0.16em] text-white/42">
-              Not a payment card
-            </p>
+          </strong>
+        </div>
+
+        <div className="flex items-end justify-between gap-4">
+          <div className="grid max-w-[250px] flex-1 grid-cols-6 gap-2">
+            {Array.from({ length: 6 }).map((_, index) => {
+              const isGift = index === 5;
+              const filled = index < stamps;
+              return (
+                <span
+                  className={`grid aspect-square place-items-center rounded-full border text-[10px] ${
+                    filled ? "bg-[color:var(--card-accent)]/20" : ""
+                  } ${isGift && isRewardReady ? "animate-pulse shadow-[0_0_18px_var(--card-accent)]" : ""}`}
+                  key={index}
+                  style={{
+                    borderColor: style.accent,
+                    color: style.accent,
+                  }}
+                  title={isGift ? giftLabel : undefined}
+                >
+                  {isGift ? <Gift size={14} strokeWidth={1.5} /> : ""}
+                </span>
+              );
+            })}
           </div>
+          <span className="text-sm font-black" style={{ color: style.accent }}>
+            {stamps}/6
+          </span>
         </div>
       </div>
     </article>
@@ -242,19 +207,7 @@ export default function LoyaltyCardPage() {
 
   const publicUrl = typeof window === "undefined" ? "" : window.location.href;
   const strings = stringsByLanguage[card?.cardLanguage] || defaultStrings;
-  const selectedConcept = useMemo(() => {
-    const tier = String(card?.tier || "").toUpperCase();
-    const conceptId =
-      tier === "ROYAL"
-        ? "royal"
-        : tier === "DIAMOND"
-          ? "diamond"
-          : tier === "GOLD"
-            ? "gold"
-            : "black";
-    return concepts.find((concept) => concept.id === conceptId) || concepts[0];
-  }, [card?.tier]);
-  const target = Math.max(1, Number(card?.targetStamps) || 5);
+  const target = Math.max(6, Number(card?.targetStamps) || 6);
   const stamps = Math.max(0, Number(card?.stamps) || 0);
   const remaining = Math.max(0, target - stamps);
   const progress = Math.min(100, Math.round((stamps / target) * 100));
@@ -345,7 +298,7 @@ export default function LoyaltyCardPage() {
               </span>
             </div>
           ) : (
-            <PremiumCard card={card} concept={selectedConcept} token={token} />
+            <NuarClubCard card={card} target={target} />
           )}
         </div>
 
