@@ -202,14 +202,23 @@ function PremiumCard({ card, concept, token }) {
 export default function LoyaltyCardPage() {
   const { token = "" } = useParams();
   const [card, setCard] = useState(null);
-  const [conceptId, setConceptId] = useState("black");
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(Boolean(token));
 
   const publicUrl = typeof window === "undefined" ? "" : window.location.href;
-  const selectedConcept =
-    concepts.find((concept) => concept.id === conceptId) || concepts[0];
+  const selectedConcept = useMemo(() => {
+    const tier = String(card?.tier || "").toUpperCase();
+    const conceptId =
+      tier === "ROYAL"
+        ? "royal"
+        : tier === "DIAMOND"
+          ? "diamond"
+          : tier === "GOLD"
+            ? "gold"
+            : "black";
+    return concepts.find((concept) => concept.id === conceptId) || concepts[0];
+  }, [card?.tier]);
   const target = Math.max(1, Number(card?.targetStamps) || 5);
   const stamps = Math.max(0, Number(card?.stamps) || 0);
   const remaining = Math.max(0, target - stamps);
@@ -247,10 +256,6 @@ export default function LoyaltyCardPage() {
       .then((data) => {
         if (!cancelled) {
           setCard(data);
-          const tier = String(data?.tier || "").toUpperCase();
-          if (tier === "ROYAL") setConceptId("royal");
-          if (tier === "DIAMOND") setConceptId("diamond");
-          if (tier === "GOLD") setConceptId("gold");
         }
       })
       .catch(() => {
@@ -304,32 +309,7 @@ export default function LoyaltyCardPage() {
               </span>
             </div>
           ) : (
-            <>
-              <PremiumCard card={card} concept={selectedConcept} token={token} />
-
-              <div className="mt-5 grid gap-3 sm:grid-cols-4">
-                {concepts.map((concept) => (
-                  <button
-                    key={concept.id}
-                    className={`rounded-2xl border p-3 text-left transition ${
-                      concept.id === conceptId
-                        ? "border-[#d6bb7d]/70 bg-[#d6bb7d]/12"
-                        : "border-white/10 bg-white/[0.04] hover:border-white/24"
-                    }`}
-                    type="button"
-                    onClick={() => setConceptId(concept.id)}
-                  >
-                    <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-[#d6bb7d]">
-                      Variant {concept.label}
-                    </span>
-                    <strong className="mt-1 block text-sm">{concept.name}</strong>
-                    <span className="mt-1 block text-xs leading-snug text-[#f8f0df]/54">
-                      {concept.note}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </>
+            <PremiumCard card={card} concept={selectedConcept} token={token} />
           )}
         </div>
 
