@@ -128,16 +128,22 @@ function NuarClubCard({ card, target }) {
     >
       <style>{`
         @keyframes nuarClubCardSheen {
-          0% { transform: translateX(-125%) rotate(15deg); opacity: 0; }
-          16% { opacity: 0.34; }
-          46% { opacity: 0.2; }
-          74% { opacity: 0.32; }
-          100% { transform: translateX(300%) rotate(15deg); opacity: 0; }
+          0% { transform: translateX(-135%) rotate(14deg); opacity: 0; }
+          18% { opacity: 0.36; }
+          52% { opacity: 0.2; }
+          76% { opacity: 0.34; }
+          100% { transform: translateX(330%) rotate(14deg); opacity: 0; }
         }
 
         @keyframes nuarClubCardSoftWash {
-          0%, 100% { transform: translateX(-18%); opacity: 0.1; }
-          50% { transform: translateX(18%); opacity: 0.28; }
+          0%, 100% { transform: translate3d(-14%, -4%, 0) scale(1.02); opacity: 0.18; }
+          45% { transform: translate3d(12%, 5%, 0) scale(1.08); opacity: 0.34; }
+          70% { transform: translate3d(4%, -2%, 0) scale(1.04); opacity: 0.26; }
+        }
+
+        @keyframes nuarClubCardColorFlow {
+          0%, 100% { transform: translateX(-10%) rotate(0deg); opacity: 0.2; }
+          50% { transform: translateX(10%) rotate(2deg); opacity: 0.42; }
         }
 
         @keyframes nuarClubFilledGlow {
@@ -145,8 +151,9 @@ function NuarClubCard({ card, target }) {
           50% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 82%, transparent), inset 0 0 20px color-mix(in srgb, var(--card-accent) 44%, transparent), 0 0 18px color-mix(in srgb, var(--card-accent) 34%, transparent); }
         }
       `}</style>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_78%,color-mix(in_srgb,var(--card-accent)_20%,transparent),transparent_28%),linear-gradient(112deg,transparent_0%,rgba(255,255,255,0.08)_42%,transparent_58%)] blur-[1px] [animation:nuarClubCardSoftWash_9s_ease-in-out_infinite]" />
-      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.24),transparent)] blur-2xl [animation:nuarClubCardSheen_6.8s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_78%,color-mix(in_srgb,var(--card-accent)_24%,transparent),transparent_30%),radial-gradient(circle_at_78%_18%,color-mix(in_srgb,var(--card-accent)_18%,transparent),transparent_24%),linear-gradient(112deg,transparent_0%,color-mix(in_srgb,var(--card-accent)_16%,transparent)_42%,transparent_60%)] blur-[1px] [animation:nuarClubCardSoftWash_8s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute inset-[-18%] bg-[conic-gradient(from_160deg_at_50%_50%,transparent,color-mix(in_srgb,var(--card-accent)_16%,transparent),transparent,color-mix(in_srgb,var(--card-accent)_22%,transparent),transparent)] blur-xl [animation:nuarClubCardColorFlow_11s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--card-accent)_34%,rgba(255,255,255,0.12)),transparent)] blur-2xl [animation:nuarClubCardSheen_6.8s_ease-in-out_infinite]" />
 
       <div className="absolute inset-x-4 bottom-5 top-4 z-10 flex flex-col justify-between gap-2 sm:inset-x-6 sm:bottom-6 sm:top-6 sm:gap-4">
         <div className="flex items-start justify-between gap-4">
@@ -258,15 +265,15 @@ export default function LoyaltyCardPage() {
   }, [token]);
 
   return (
-    <main className="min-h-screen bg-[#120d16] px-4 py-6 text-[#f8f0df] sm:px-6 sm:py-8">
-      <section className="mx-auto grid min-h-[calc(100vh-3rem)] w-full max-w-3xl content-center gap-5 sm:min-h-[calc(100vh-4rem)] sm:gap-6">
+    <main className="h-[100svh] overflow-hidden bg-[#120d16] px-4 py-4 text-[#f8f0df] sm:min-h-screen sm:overflow-auto sm:px-6 sm:py-8">
+      <section className="mx-auto grid h-full w-full max-w-3xl content-center gap-4 sm:min-h-[calc(100vh-4rem)] sm:gap-6">
         <div className="min-w-0">
-          <div className="mb-4 flex items-center gap-3 sm:mb-5">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#d6bb7d]/24 bg-[#d6bb7d]/10 text-[#d6bb7d] sm:h-11 sm:w-11">
-              <ShieldCheck size={19} />
+          <div className="mb-3 flex items-center gap-3 sm:mb-5">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d6bb7d]/24 bg-[#d6bb7d]/10 text-[#d6bb7d] sm:h-11 sm:w-11">
+              <ShieldCheck size={18} />
             </span>
             <div>
-              <h1 className="text-lg font-semibold tracking-[0.12em] text-[#d6bb7d] sm:text-xl">
+              <h1 className="text-base font-semibold tracking-[0.12em] text-[#d6bb7d] sm:text-xl">
                 {strings.title}
               </h1>
               <p className="text-xs text-[#f8f0df]/62 sm:text-sm">{strings.subtitle}</p>
@@ -289,9 +296,9 @@ export default function LoyaltyCardPage() {
           )}
 
           {card ? (
-            <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2">
+            <div className="mt-4 grid gap-2.5 sm:mt-6 sm:grid-cols-2 sm:gap-3">
               <a
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894] sm:min-h-12"
                 href={card.bookingUrl || "https://nuarr.pl"}
                 rel="noreferrer"
                 target="_blank"
@@ -300,7 +307,7 @@ export default function LoyaltyCardPage() {
                 <ExternalLink size={15} />
               </a>
               <a
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 px-5 text-sm font-bold text-[#f8f0df] transition hover:border-[#d6bb7d]/45"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-5 text-sm font-bold text-[#f8f0df] transition hover:border-[#d6bb7d]/45 sm:min-h-12"
                 href={REVIEW_URL}
                 rel="noreferrer"
                 target="_blank"
