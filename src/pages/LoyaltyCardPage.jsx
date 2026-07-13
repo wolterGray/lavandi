@@ -123,10 +123,24 @@ function NuarClubCard({ card, target }) {
 
   return (
     <article
-      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:p-6`}
+      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:p-6`}
       style={{ "--card-accent": style.accent }}
     >
-      <div className="absolute inset-y-0 -left-1/2 w-1/2 rotate-12 bg-white/10 blur-2xl transition duration-700 group-hover:left-full" />
+      <style>{`
+        @keyframes nuarClubCardSheen {
+          0% { transform: translateX(-130%) rotate(16deg); opacity: 0; }
+          18% { opacity: 0.3; }
+          48% { opacity: 0.18; }
+          72% { opacity: 0.28; }
+          100% { transform: translateX(260%) rotate(16deg); opacity: 0; }
+        }
+
+        @keyframes nuarClubFilledGlow {
+          0%, 100% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 48%, transparent), inset 0 0 14px color-mix(in srgb, var(--card-accent) 24%, transparent), 0 0 8px color-mix(in srgb, var(--card-accent) 18%, transparent); }
+          50% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 82%, transparent), inset 0 0 20px color-mix(in srgb, var(--card-accent) 44%, transparent), 0 0 18px color-mix(in srgb, var(--card-accent) 34%, transparent); }
+        }
+      `}</style>
+      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-white/16 blur-2xl [animation:nuarClubCardSheen_7s_ease-in-out_infinite]" />
 
       <div className="relative z-10 flex h-full flex-col justify-between gap-4">
         <div className="flex items-start justify-between gap-4">
@@ -160,9 +174,9 @@ function NuarClubCard({ card, target }) {
               const filled = index < stamps;
               return (
                 <span
-                  className={`grid aspect-square place-items-center rounded-full border text-[10px] ${
-                    filled ? "bg-[color:var(--card-accent)]/20" : ""
-                  } ${isGift && isRewardReady ? "animate-pulse shadow-[0_0_18px_var(--card-accent)]" : ""}`}
+                  className={`relative grid aspect-square place-items-center overflow-hidden rounded-full border text-[10px] ${
+                    filled ? "bg-[radial-gradient(circle_at_34%_28%,rgba(255,255,255,0.55),transparent_23%),linear-gradient(135deg,color-mix(in_srgb,var(--card-accent)_42%,transparent),color-mix(in_srgb,var(--card-accent)_14%,transparent))] [animation:nuarClubFilledGlow_3.8s_ease-in-out_infinite]" : ""
+                  } ${isGift && isRewardReady ? "animate-pulse shadow-[0_0_20px_var(--card-accent)]" : ""}`}
                   key={index}
                   style={{
                     borderColor: style.accent,
