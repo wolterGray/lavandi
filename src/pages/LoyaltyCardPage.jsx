@@ -123,16 +123,21 @@ function NuarClubCard({ card, target }) {
 
   return (
     <article
-      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:p-6`}
+      className={`group relative aspect-[1.36/1] w-full overflow-hidden rounded-lg ${style.background} px-4 pb-7 pt-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:aspect-[1.586/1] sm:p-6`}
       style={{ "--card-accent": style.accent }}
     >
       <style>{`
         @keyframes nuarClubCardSheen {
-          0% { transform: translateX(-130%) rotate(16deg); opacity: 0; }
-          18% { opacity: 0.3; }
-          48% { opacity: 0.18; }
-          72% { opacity: 0.28; }
-          100% { transform: translateX(260%) rotate(16deg); opacity: 0; }
+          0% { transform: translateX(-125%) rotate(15deg); opacity: 0; }
+          16% { opacity: 0.34; }
+          46% { opacity: 0.2; }
+          74% { opacity: 0.32; }
+          100% { transform: translateX(300%) rotate(15deg); opacity: 0; }
+        }
+
+        @keyframes nuarClubCardSoftWash {
+          0%, 100% { transform: translateX(-18%); opacity: 0.1; }
+          50% { transform: translateX(18%); opacity: 0.28; }
         }
 
         @keyframes nuarClubFilledGlow {
@@ -140,9 +145,10 @@ function NuarClubCard({ card, target }) {
           50% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 82%, transparent), inset 0 0 20px color-mix(in srgb, var(--card-accent) 44%, transparent), 0 0 18px color-mix(in srgb, var(--card-accent) 34%, transparent); }
         }
       `}</style>
-      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-white/16 blur-2xl [animation:nuarClubCardSheen_7s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_78%,color-mix(in_srgb,var(--card-accent)_20%,transparent),transparent_28%),linear-gradient(112deg,transparent_0%,rgba(255,255,255,0.08)_42%,transparent_58%)] blur-[1px] [animation:nuarClubCardSoftWash_9s_ease-in-out_infinite]" />
+      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.24),transparent)] blur-2xl [animation:nuarClubCardSheen_6.8s_ease-in-out_infinite]" />
 
-      <div className="relative z-10 flex h-full flex-col justify-between gap-4">
+      <div className="relative z-10 flex h-full flex-col justify-between gap-3 sm:gap-4">
         <div className="flex items-start justify-between gap-4">
           <span className={`text-[10px] font-extrabold uppercase tracking-[0.16em] ${style.text} sm:text-[11px]`}>
             {tierLabel}
@@ -152,7 +158,7 @@ function NuarClubCard({ card, target }) {
           </span>
         </div>
 
-        <div className="grid justify-items-center gap-2 text-center">
+        <div className="grid -translate-y-1 justify-items-center gap-2 text-center sm:translate-y-0">
           <small
             className="font-sans text-[8px] font-extrabold uppercase tracking-[0.16em] opacity-70 sm:text-[9px]"
             style={{ color: style.accent }}
@@ -167,8 +173,8 @@ function NuarClubCard({ card, target }) {
           </strong>
         </div>
 
-        <div className="flex items-end justify-between gap-4">
-          <div className="grid max-w-[250px] flex-1 grid-cols-6 gap-1.5 sm:gap-2">
+        <div className="flex items-end justify-between gap-3 sm:gap-4">
+          <div className="grid max-w-[230px] flex-1 grid-cols-6 gap-1.5 sm:max-w-[250px] sm:gap-2">
             {Array.from({ length: 6 }).map((_, index) => {
               const isGift = index === 5;
               const filled = index < stamps;
