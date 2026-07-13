@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ExternalLink, Gift, ShieldCheck } from "lucide-react";
 import { useParams } from "react-router-dom";
+import { BOOKSY_URL } from "../constants/theme";
 
 const BACKEND_URL =
   import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl";
@@ -299,7 +300,7 @@ export default function LoyaltyCardPage() {
             <div className="mt-4 grid gap-2.5 sm:mt-6 sm:grid-cols-2 sm:gap-3">
               <a
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894] sm:min-h-12"
-                href={card.bookingUrl || "https://nuarr.pl"}
+                href={BOOKSY_URL}
                 rel="noreferrer"
                 target="_blank"
               >
