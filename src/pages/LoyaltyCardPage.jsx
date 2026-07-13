@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
-import { Copy, ExternalLink, Gift, ShieldCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ExternalLink, Gift, ShieldCheck } from "lucide-react";
 import { useParams } from "react-router-dom";
 
 const BACKEND_URL =
   import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl";
+const REVIEW_URL = "https://g.page/r/CZGwQdcksfMuEAE/review";
 
 const tierLabels = {
   MEMBER: "NUAR MEMBER",
@@ -50,44 +51,29 @@ const stringsByLanguage = {
   en: {
     booking: "Book a visit",
     cardInactive: "The card is inactive",
-    copied: "Link copied",
-    copyLink: "Copy link",
     failed: "Could not open the card",
     loading: "Loading card...",
-    remaining: "Remaining until reward",
-    rewardAvailable: "Reward is available",
-    status: "Status",
+    review: "Leave a review",
     subtitle: "Membership card",
     title: "NUAR CLUB",
-    updated: "Last update",
   },
   pl: {
     booking: "Zarezerwuj wizytę",
     cardInactive: "Karta jest nieaktywna",
-    copied: "Link skopiowany",
-    copyLink: "Kopiuj link",
     failed: "Nie udało się otworzyć karty",
     loading: "Ładowanie karty...",
-    remaining: "Do nagrody pozostało",
-    rewardAvailable: "Nagroda jest dostępna",
-    status: "Status",
+    review: "Zostaw opinię",
     subtitle: "Karta członkowska",
     title: "NUAR CLUB",
-    updated: "Ostatnia aktualizacja",
   },
   ru: {
     booking: "Записаться",
     cardInactive: "Карта неактивна",
-    copied: "Ссылка скопирована",
-    copyLink: "Скопировать ссылку",
     failed: "Не удалось открыть карту",
     loading: "Загрузка карты...",
-    remaining: "До подарка осталось",
-    rewardAvailable: "Подарок доступен",
-    status: "Статус",
+    review: "Оставить отзыв",
     subtitle: "Карта лояльности",
     title: "NUAR CLUB",
-    updated: "Последнее обновление",
   },
 };
 const defaultStrings = stringsByLanguage.pl;
@@ -137,14 +123,14 @@ function NuarClubCard({ card, target }) {
 
   return (
     <article
-      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-5 text-white shadow-[0_32px_90px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1 hover:shadow-[0_40px_110px_rgba(0,0,0,0.5)] sm:p-6`}
+      className={`group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg ${style.background} p-4 text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:-translate-y-1 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)] sm:p-6`}
       style={{ "--card-accent": style.accent }}
     >
       <div className="absolute inset-y-0 -left-1/2 w-1/2 rotate-12 bg-white/10 blur-2xl transition duration-700 group-hover:left-full" />
 
       <div className="relative z-10 flex h-full flex-col justify-between gap-4">
         <div className="flex items-start justify-between gap-4">
-          <span className={`text-[11px] font-extrabold uppercase tracking-[0.18em] ${style.text}`}>
+          <span className={`text-[10px] font-extrabold uppercase tracking-[0.16em] ${style.text} sm:text-[11px]`}>
             {tierLabel}
           </span>
           <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/62">
@@ -154,13 +140,13 @@ function NuarClubCard({ card, target }) {
 
         <div className="grid justify-items-center gap-2 text-center">
           <small
-            className="font-sans text-[9px] font-extrabold uppercase tracking-[0.18em] opacity-70"
+            className="font-sans text-[8px] font-extrabold uppercase tracking-[0.16em] opacity-70 sm:text-[9px]"
             style={{ color: style.accent }}
           >
             {getLoyaltyLabel(card?.cardLanguage)}
           </small>
           <strong
-            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[34px] font-normal leading-none opacity-90 sm:text-[48px]"
+            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[30px] font-normal leading-none opacity-90 sm:text-[48px]"
             style={{ color: style.accent }}
           >
             {name}
@@ -168,7 +154,7 @@ function NuarClubCard({ card, target }) {
         </div>
 
         <div className="flex items-end justify-between gap-4">
-          <div className="grid max-w-[250px] flex-1 grid-cols-6 gap-2">
+          <div className="grid max-w-[250px] flex-1 grid-cols-6 gap-1.5 sm:gap-2">
             {Array.from({ length: 6 }).map((_, index) => {
               const isGift = index === 5;
               const filled = index < stamps;
@@ -189,7 +175,7 @@ function NuarClubCard({ card, target }) {
               );
             })}
           </div>
-          <span className="text-sm font-black" style={{ color: style.accent }}>
+          <span className="text-xs font-black sm:text-sm" style={{ color: style.accent }}>
             {stamps}/6
           </span>
         </div>
@@ -201,23 +187,11 @@ function NuarClubCard({ card, target }) {
 export default function LoyaltyCardPage() {
   const { token = "" } = useParams();
   const [card, setCard] = useState(null);
-  const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(Boolean(token));
 
-  const publicUrl = typeof window === "undefined" ? "" : window.location.href;
   const strings = stringsByLanguage[card?.cardLanguage] || defaultStrings;
   const target = Math.max(6, Number(card?.targetStamps) || 6);
-  const stamps = Math.max(0, Number(card?.stamps) || 0);
-  const remaining = Math.max(0, target - stamps);
-  const progress = Math.min(100, Math.round((stamps / target) * 100));
-  const updatedAt = useMemo(() => {
-    const value = card?.lastTransactionAt || card?.updatedAt;
-    if (!value) return "—";
-    const date = new Date(value);
-    const locale = card?.cardLanguage === "ru" ? "ru-RU" : card?.cardLanguage === "en" ? "en-US" : "pl-PL";
-    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(locale);
-  }, [card?.cardLanguage, card?.lastTransactionAt, card?.updatedAt]);
 
   useEffect(() => {
     let meta = document.querySelector('meta[name="robots"]');
@@ -263,26 +237,19 @@ export default function LoyaltyCardPage() {
     };
   }, [token]);
 
-  const copyLink = async () => {
-    if (!publicUrl) return;
-    await navigator.clipboard?.writeText(publicUrl);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 1600);
-  };
-
   return (
-    <main className="min-h-screen bg-[#120d16] px-4 py-8 text-[#f8f0df] sm:px-6">
-      <section className="mx-auto grid min-h-[calc(100vh-4rem)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+    <main className="min-h-screen bg-[#120d16] px-4 py-6 text-[#f8f0df] sm:px-6 sm:py-8">
+      <section className="mx-auto grid min-h-[calc(100vh-3rem)] w-full max-w-3xl content-center gap-5 sm:min-h-[calc(100vh-4rem)] sm:gap-6">
         <div className="min-w-0">
-          <div className="mb-5 flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded-full border border-[#d6bb7d]/24 bg-[#d6bb7d]/10 text-[#d6bb7d]">
+          <div className="mb-4 flex items-center gap-3 sm:mb-5">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-[#d6bb7d]/24 bg-[#d6bb7d]/10 text-[#d6bb7d] sm:h-11 sm:w-11">
               <ShieldCheck size={19} />
             </span>
             <div>
-              <h1 className="text-xl font-semibold tracking-[0.12em] text-[#d6bb7d]">
+              <h1 className="text-lg font-semibold tracking-[0.12em] text-[#d6bb7d] sm:text-xl">
                 {strings.title}
               </h1>
-              <p className="text-sm text-[#f8f0df]/62">{strings.subtitle}</p>
+              <p className="text-xs text-[#f8f0df]/62 sm:text-sm">{strings.subtitle}</p>
             </div>
           </div>
 
@@ -300,43 +267,9 @@ export default function LoyaltyCardPage() {
           ) : (
             <NuarClubCard card={card} target={target} />
           )}
-        </div>
 
-        {card ? (
-          <aside className="rounded-[24px] border border-white/10 bg-[#211628]/82 p-5 shadow-[0_24px_70px_rgba(0,0,0,0.28)]">
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <span className="text-xs uppercase tracking-[0.18em] text-[#d6bb7d]/80">
-                  {strings.status}
-                </span>
-                <strong className="mt-1 block text-2xl">
-                  {stamps}/{target}
-                </strong>
-              </div>
-              <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-white/64">
-                {card.tier ? tierLabels[String(card.tier).toUpperCase()] : "NUAR MEMBER"}
-              </span>
-            </div>
-
-            <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/10">
-              <span
-                className="block h-full rounded-full bg-[#d6bb7d]"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-
-            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4">
-              <strong className="block">
-                {card.rewardAvailable
-                  ? strings.rewardAvailable
-                  : `${strings.remaining}: ${remaining}`}
-              </strong>
-              <span className="mt-1 block text-sm text-[#f8f0df]/58">
-                {strings.updated}: {updatedAt}
-              </span>
-            </div>
-
-            <div className="mt-5 grid gap-3">
+          {card ? (
+            <div className="mt-5 grid gap-3 sm:mt-6 sm:grid-cols-2">
               <a
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894]"
                 href={card.bookingUrl || "https://nuarr.pl"}
@@ -346,17 +279,18 @@ export default function LoyaltyCardPage() {
                 {strings.booking}
                 <ExternalLink size={15} />
               </a>
-              <button
+              <a
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-white/12 px-5 text-sm font-bold text-[#f8f0df] transition hover:border-[#d6bb7d]/45"
-                type="button"
-                onClick={copyLink}
+                href={REVIEW_URL}
+                rel="noreferrer"
+                target="_blank"
               >
-                <Copy size={15} />
-                {copied ? strings.copied : strings.copyLink}
-              </button>
+                {strings.review}
+                <ExternalLink size={15} />
+              </a>
             </div>
-          </aside>
-        ) : null}
+          ) : null}
+        </div>
       </section>
     </main>
   );
