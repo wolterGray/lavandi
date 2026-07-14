@@ -1,0 +1,461 @@
+.nuar-public-card {
+  --physical-accent: #d4bd82;
+  --physical-engrave: color-mix(in srgb, var(--physical-accent) 58%, #f5f0e6);
+  --physical-glow: rgba(212, 189, 130, 0.24);
+  --physical-ink: color-mix(in srgb, var(--physical-accent) 44%, #f5f0e6);
+  --physical-ink-gradient: linear-gradient(92deg, rgba(255, 243, 204, 0.92), var(--physical-ink) 42%, rgba(165, 128, 64, 0.88) 74%, rgba(255, 230, 156, 0.78));
+  --physical-shine: nuarPublicSheenMember 8.5s ease-in-out infinite;
+  --physical-shine-blur: 24px;
+  --physical-shine-opacity: 0.22;
+  --physical-shine-width: 34%;
+  --physical-text: #f5f0e6;
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  overflow: hidden;
+  width: 100%;
+  aspect-ratio: 1.586 / 1;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid color-mix(in srgb, var(--physical-accent) 42%, rgba(255, 255, 255, 0.12));
+  border-radius: 13px;
+  padding: clamp(18px, 3.2vw, 32px);
+  color: var(--physical-text);
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.18)),
+    var(--physical-bg);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.11),
+    inset 0 -28px 46px rgba(0, 0, 0, 0.34),
+    inset 0 0 42px color-mix(in srgb, var(--physical-glow) 52%, transparent),
+    0 24px 58px rgba(0, 0, 0, 0.38);
+}
+
+.nuar-public-card::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 22% 28%, rgba(255, 255, 255, 0.035), transparent 26%),
+    radial-gradient(ellipse at 72% 82%, rgba(0, 0, 0, 0.22), transparent 44%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.045),
+    inset 18px 18px 52px rgba(255, 255, 255, 0.035),
+    inset -22px -28px 56px rgba(0, 0, 0, 0.34);
+  content: "";
+  opacity: 0.42;
+  pointer-events: none;
+}
+
+.nuar-public-card::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 16%, rgba(255, 255, 255, 0.12), transparent 25%),
+    linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.1) 46%, transparent 58%);
+  content: "";
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.nuar-public-card.is-silver {
+  --physical-engrave: rgba(222, 230, 240, 0.68);
+  --physical-shine: nuarPublicSheenSilver 7.6s ease-in-out infinite;
+  --physical-shine-blur: 18px;
+  --physical-shine-opacity: 0.34;
+  --physical-shine-width: 26%;
+}
+
+.nuar-public-card.is-gold {
+  --physical-engrave: rgba(231, 186, 91, 0.7);
+  --physical-shine: nuarPublicSheenGold 8.2s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  --physical-shine-blur: 20px;
+  --physical-shine-opacity: 0.38;
+  --physical-shine-width: 30%;
+}
+
+.nuar-public-card.is-diamond {
+  --physical-engrave: rgba(170, 221, 255, 0.68);
+  --physical-shine: nuarPublicSheenDiamond 6.8s ease-in-out infinite;
+  --physical-shine-blur: 16px;
+  --physical-shine-opacity: 0.46;
+  --physical-shine-width: 24%;
+}
+
+.nuar-public-card.is-royal {
+  --physical-engrave: rgba(226, 173, 86, 0.82);
+  --physical-shine: nuarPublicSheenRoyal 9.4s ease-in-out infinite;
+  --physical-shine-blur: 28px;
+  --physical-shine-opacity: 0.28;
+  --physical-shine-width: 32%;
+  border-color: rgba(216, 161, 94, 0.34);
+}
+
+.nuar-public-card.is-royal::after {
+  background:
+    radial-gradient(circle at 18% 16%, rgba(215, 164, 109, 0.04), transparent 22%),
+    linear-gradient(120deg, transparent 0%, rgba(215, 164, 109, 0.035) 46%, transparent 58%);
+  opacity: 0.36;
+}
+
+.nuar-public-card__shine {
+  position: absolute;
+  inset: -34% auto -34% 0;
+  width: var(--physical-shine-width);
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.12), transparent),
+    var(--physical-shine-color);
+  filter: blur(var(--physical-shine-blur));
+  animation: var(--physical-shine);
+  transform: translateX(-130%) rotate(16deg);
+}
+
+.nuar-public-card__topline,
+.nuar-public-card__signature,
+.nuar-public-card__bottomline {
+  position: relative;
+  z-index: 1;
+}
+
+.nuar-public-card__topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.nuar-public-card__brand {
+  display: grid;
+  min-width: 0;
+  justify-items: start;
+  gap: 8px;
+}
+
+.nuar-public-card__brand strong,
+.nuar-public-card__signature strong {
+  color: var(--physical-ink);
+  background: var(--physical-ink-gradient);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.nuar-public-card__brand strong {
+  font-family: "Snell Roundhand", "Segoe Script", "Brush Script MT", cursive;
+  font-size: clamp(25px, 3.45vw, 42px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  opacity: 0.86;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08),
+    0 -1px 0 rgba(0, 0, 0, 0.64),
+    0 0 10px color-mix(in srgb, var(--physical-accent) 9%, transparent);
+}
+
+.nuar-public-card__brand small {
+  color: var(--physical-engrave);
+  font-size: clamp(11px, 1.55vw, 18px);
+  font-weight: 430;
+  letter-spacing: 0.38em;
+  line-height: 1;
+  opacity: 0.78;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.05),
+    0 -1px 0 rgba(0, 0, 0, 0.58);
+  text-transform: uppercase;
+}
+
+.nuar-public-card__signature {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  align-self: center;
+  justify-self: center;
+  justify-items: center;
+  gap: 6px;
+  padding: 4px 12px 10px;
+  text-align: center;
+}
+
+.nuar-public-card__signature small {
+  display: none;
+}
+
+.nuar-public-card__signature strong {
+  overflow: visible;
+  max-width: 100%;
+  font-family: "Snell Roundhand", "Zapfino", "Brush Script MT", "Segoe Script", cursive;
+  font-size: clamp(34px, 4.9vw, 58px);
+  font-weight: 400;
+  line-height: 1.28;
+  opacity: 0.9;
+  text-overflow: ellipsis;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.08),
+    0 -1px 0 rgba(0, 0, 0, 0.7),
+    0 0 10px color-mix(in srgb, var(--physical-accent) 8%, transparent);
+  white-space: nowrap;
+}
+
+.nuar-public-card.is-royal .nuar-public-card__signature strong {
+  background-size: 220% 100%;
+  animation: nuarPublicRoyalGold 6.8s ease-in-out infinite;
+  opacity: 0.92;
+  text-shadow:
+    0 1px 0 rgba(255, 239, 184, 0.12),
+    0 -1px 0 rgba(35, 14, 4, 0.92),
+    0 2px 5px rgba(10, 0, 22, 0.42),
+    0 0 18px rgba(226, 173, 86, 0.14);
+}
+
+.nuar-public-card__signature-crown {
+  margin-bottom: -2px;
+  color: var(--physical-engrave);
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--physical-accent) 34%, transparent));
+}
+
+.nuar-public-card__mark {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  z-index: 1;
+  display: grid;
+  width: clamp(34px, 9%, 46px);
+  height: clamp(34px, 9%, 46px);
+  place-items: center;
+  color: var(--physical-engrave);
+  opacity: 0.92;
+  filter:
+    drop-shadow(0 1px 0 rgba(255, 255, 255, 0.04))
+    drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.5));
+}
+
+.nuar-public-card.is-diamond .nuar-public-card__mark {
+  opacity: 0.96;
+  filter:
+    drop-shadow(0 0 14px rgba(187, 230, 255, 0.46))
+    drop-shadow(0 4px 12px rgba(0, 0, 0, 0.28));
+}
+
+.nuar-public-card.is-royal .nuar-public-card__mark {
+  opacity: 1;
+  transform: scale(1.12);
+  filter:
+    drop-shadow(0 0 12px rgba(226, 173, 86, 0.24))
+    drop-shadow(0 1px 0 rgba(255, 236, 174, 0.12))
+    drop-shadow(0 -1px 0 rgba(0, 0, 0, 0.48));
+}
+
+.nuar-public-card__bottomline {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.nuar-public-card__stamps {
+  display: grid;
+  width: min(100%, 430px);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(8px, 2.5vw, 18px);
+}
+
+.nuar-public-card__stamps i {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  aspect-ratio: 1;
+  min-width: 0;
+  place-items: center;
+  border: 1.35px solid color-mix(in srgb, var(--physical-engrave) 82%, rgba(255, 255, 255, 0.1));
+  border-radius: 50%;
+  color: var(--physical-engrave);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(255, 255, 255, 0.035), transparent 24%),
+    rgba(0, 0, 0, 0.035);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.045),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.42);
+  font-style: normal;
+}
+
+.nuar-public-card__stamps i.is-gift {
+  border-width: 1.45px;
+}
+
+.nuar-public-card__stamps i.is-gift.is-ready {
+  animation: nuarPublicGiftPulse 1.45s ease-in-out infinite;
+  background: color-mix(in srgb, var(--physical-accent) 22%, transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--physical-accent) 36%, transparent),
+    0 0 18px color-mix(in srgb, var(--physical-accent) 30%, transparent);
+}
+
+.nuar-public-card__stamps i.is-filled {
+  animation: nuarPublicFilledGlow 3.8s ease-in-out infinite;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.62), transparent 22%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--physical-accent) 76%, rgba(255, 255, 255, 0.08)),
+      color-mix(in srgb, var(--physical-accent) 28%, rgba(0, 0, 0, 0.12))
+    );
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--physical-accent) 62%, transparent),
+    inset 0 0 16px color-mix(in srgb, var(--physical-accent) 36%, transparent),
+    0 0 12px color-mix(in srgb, var(--physical-accent) 28%, transparent);
+}
+
+.nuar-public-card__foot {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--physical-engrave);
+  font-size: clamp(10px, 1.35vw, 14px);
+  font-weight: 430;
+  letter-spacing: 0.18em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.nuar-public-card__foot span:last-child {
+  overflow: hidden;
+  max-width: 64%;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nuar-public-card__progress {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: inherit;
+  font-weight: 480;
+  letter-spacing: 0.08em;
+}
+
+@keyframes nuarPublicSheenMember {
+  0% { opacity: 0; transform: translateX(-135%) rotate(16deg); }
+  24% { opacity: var(--physical-shine-opacity); }
+  54% { opacity: 0.12; }
+  100% { opacity: 0; transform: translateX(270%) rotate(16deg); }
+}
+
+@keyframes nuarPublicSheenSilver {
+  0% { opacity: 0; transform: translateX(285%) rotate(-14deg); }
+  28% { opacity: var(--physical-shine-opacity); }
+  100% { opacity: 0; transform: translateX(-145%) rotate(-14deg); }
+}
+
+@keyframes nuarPublicSheenGold {
+  0% { opacity: 0; transform: translateX(245%) rotate(9deg); }
+  34% { opacity: var(--physical-shine-opacity); }
+  64% { opacity: 0.18; }
+  100% { opacity: 0; transform: translateX(-130%) rotate(9deg); }
+}
+
+@keyframes nuarPublicSheenDiamond {
+  0% { opacity: 0; transform: translateX(-120%) rotate(31deg) scaleY(1.25); }
+  22% { opacity: var(--physical-shine-opacity); }
+  42% { opacity: 0.16; }
+  100% { opacity: 0; transform: translateX(315%) rotate(31deg) scaleY(1.25); }
+}
+
+@keyframes nuarPublicSheenRoyal {
+  0% { opacity: 0; transform: translateX(260%) rotate(-8deg) scaleY(1.15); }
+  30% { opacity: var(--physical-shine-opacity); }
+  58% { opacity: 0.12; }
+  100% { opacity: 0; transform: translateX(-150%) rotate(-8deg) scaleY(1.15); }
+}
+
+@keyframes nuarPublicRoyalGold {
+  0%, 100% {
+    background-position: 0% 50%;
+    filter: saturate(0.94) brightness(0.92);
+  }
+
+  45% {
+    background-position: 100% 50%;
+    filter: saturate(1.12) brightness(1.08);
+  }
+}
+
+@keyframes nuarPublicFilledGlow {
+  0%, 100% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--physical-accent) 48%, transparent),
+      inset 0 0 14px color-mix(in srgb, var(--physical-accent) 24%, transparent),
+      0 0 8px color-mix(in srgb, var(--physical-accent) 18%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      inset 0 0 0 1px color-mix(in srgb, var(--physical-accent) 82%, transparent),
+      inset 0 0 20px color-mix(in srgb, var(--physical-accent) 44%, transparent),
+      0 0 18px color-mix(in srgb, var(--physical-accent) 34%, transparent);
+  }
+}
+
+@keyframes nuarPublicGiftPulse {
+  0%, 100% {
+    opacity: 0.82;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@media (max-width: 640px) {
+  .nuar-public-card {
+    padding: clamp(16px, 4.6vw, 22px);
+  }
+
+  .nuar-public-card__brand {
+    gap: 5px;
+  }
+
+  .nuar-public-card__brand strong {
+    font-size: clamp(24px, 9.2vw, 38px);
+  }
+
+  .nuar-public-card__brand small {
+    font-size: clamp(9px, 3vw, 13px);
+    letter-spacing: 0.34em;
+  }
+
+  .nuar-public-card__signature {
+    padding: 0 8px 4px;
+  }
+
+  .nuar-public-card__signature strong {
+    max-width: 92%;
+    font-size: clamp(30px, 10vw, 44px);
+  }
+
+  .nuar-public-card__mark {
+    top: 15px;
+    right: 16px;
+    width: clamp(30px, 10vw, 40px);
+    height: clamp(30px, 10vw, 40px);
+  }
+
+  .nuar-public-card__stamps {
+    width: min(74%, 260px);
+    gap: 7px;
+  }
+
+  .nuar-public-card__foot {
+    font-size: clamp(9px, 2.6vw, 11px);
+    letter-spacing: 0.12em;
+  }
+}

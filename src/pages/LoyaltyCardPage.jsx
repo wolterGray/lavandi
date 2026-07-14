@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
-import { ExternalLink, Gift, ShieldCheck } from "lucide-react";
+import { Crown, Diamond, ExternalLink, Gift, Medal, ShieldCheck, Star } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { BOOKSY_URL } from "../constants/theme";
+import "./LoyaltyCardPage.css";
 
 const BACKEND_URL =
   import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl";
 const REVIEW_URL = "https://g.page/r/CZGwQdcksfMuEAE/review";
 const DESIGN_TIMEOUT_MS = 2500;
 
-const tierLabels = {
-  MEMBER: "NUAR MEMBER",
-  SILVER: "NUAR SILVER",
-  GOLD: "NUAR GOLD",
-  DIAMOND: "NUAR DIAMOND",
-  ROYAL: "NUAR ROYAL",
+const tierIcons = {
+  DIAMOND: Diamond,
+  GOLD: Star,
+  MEMBER: ShieldCheck,
+  ROYAL: Crown,
+  SILVER: Medal,
 };
 
 const fallbackTierDesign = {
@@ -163,113 +164,83 @@ const getLoyaltyLabel = (language) => {
 const getTierDesign = (design, tier) =>
   design?.tiers?.[tier] || fallbackTierDesign[tier] || fallbackTierDesign.MEMBER;
 
+const getVisitWord = (language, count) => {
+  if (language === "en") return count === 1 ? "visit" : "visits";
+  if (language === "pl") return count === 1 ? "wizyta" : "wizyt";
+  return "визитов";
+};
+
 function NuarClubCard({ card, design, target }) {
   const tier = String(card?.tier || "MEMBER").toUpperCase();
-  const tierLabel = getTierDesign(design, tier)?.label || tierLabels[tier] || tierLabels.MEMBER;
   const style = getTierDesign(design, tier);
+  const TierIcon = tierIcons[tier] || ShieldCheck;
   const name = card?.displayName || "NUAR Member";
   const stamps = Math.min(6, Math.max(0, Number(card?.stamps) || 0));
+  const visits = Math.max(0, Number(card?.lifetimeVisits) || 0);
   const isRewardReady = Boolean(card?.rewardAvailable) && stamps >= target;
   const giftLabel = getGiftLabel(card?.cardLanguage);
+  const visitWord = getVisitWord(card?.cardLanguage, visits);
+  const tierClass = tier === "ROYAL" ? "royal" : tier.toLowerCase();
+  const footerEnd = tier === "ROYAL"
+    ? (card?.cardLanguage === "pl" ? "status ekskluzywny" : card?.cardLanguage === "en" ? "exclusive status" : "эксклюзивный статус")
+    : `${visits} ${visitWord}`;
 
   return (
     <article
-      className="group relative aspect-[1.586/1] w-full overflow-hidden rounded-lg text-white shadow-[0_24px_70px_rgba(0,0,0,0.42)] ring-1 ring-white/10 transition duration-500 hover:shadow-[0_34px_95px_rgba(0,0,0,0.5)]"
+      className={`nuar-public-card is-${tierClass}`}
       style={{
-        "--card-accent": style.accent,
-        "--card-ink-gradient": style.inkGradient,
-        "--card-shine-color": style.shine?.color || style.accent,
-        "--card-shine-duration": style.shine?.duration || "8s",
-        "--card-shine-rotate": style.shine?.rotate || "14deg",
-        backgroundImage: style.backgroundImage,
-        color: style.text,
+        "--physical-accent": style.accent,
+        "--physical-bg": style.backgroundImage,
+        "--physical-engrave": style.accent,
+        "--physical-glow": style.shine?.color || style.accent,
+        "--physical-ink": style.accent,
+        "--physical-ink-gradient": style.inkGradient,
+        "--physical-shine-color": style.shine?.color || style.accent,
+        "--physical-text": style.text,
       }}
     >
-      <style>{`
-        @keyframes nuarClubCardSheen {
-          0% { transform: translateX(-135%) rotate(var(--card-shine-rotate)); opacity: 0; }
-          18% { opacity: 0.36; }
-          52% { opacity: 0.2; }
-          76% { opacity: 0.34; }
-          100% { transform: translateX(330%) rotate(var(--card-shine-rotate)); opacity: 0; }
-        }
+      <span aria-hidden="true" className="nuar-public-card__shine" />
+      {TierIcon ? (
+        <span className="nuar-public-card__mark" aria-label={style.badge || tier}>
+          <TierIcon size={27} strokeWidth={1.65} />
+        </span>
+      ) : null}
 
-        @keyframes nuarClubCardSoftWash {
-          0%, 100% { transform: translate3d(-14%, -4%, 0) scale(1.02); opacity: 0.18; }
-          45% { transform: translate3d(12%, 5%, 0) scale(1.08); opacity: 0.34; }
-          70% { transform: translate3d(4%, -2%, 0) scale(1.04); opacity: 0.26; }
-        }
+      <span className="nuar-public-card__topline">
+        <span className="nuar-public-card__brand">
+          <strong>Nuar</strong>
+          <small>{style.badge || tier}</small>
+        </span>
+      </span>
 
-        @keyframes nuarClubCardColorFlow {
-          0%, 100% { transform: translateX(-10%) rotate(0deg); opacity: 0.2; }
-          50% { transform: translateX(10%) rotate(2deg); opacity: 0.42; }
-        }
+      <span className="nuar-public-card__signature">
+        <small>{getLoyaltyLabel(card?.cardLanguage)}</small>
+        {tier === "ROYAL" ? <Crown aria-hidden="true" className="nuar-public-card__signature-crown" size={28} strokeWidth={1.55} /> : null}
+        <strong>{name}</strong>
+      </span>
 
-        @keyframes nuarClubNameGold {
-          0%, 100% { background-position: 0% 50%; filter: saturate(.96) brightness(.94); }
-          48% { background-position: 100% 50%; filter: saturate(1.12) brightness(1.08); }
-        }
-
-        @keyframes nuarClubFilledGlow {
-          0%, 100% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 48%, transparent), inset 0 0 14px color-mix(in srgb, var(--card-accent) 24%, transparent), 0 0 8px color-mix(in srgb, var(--card-accent) 18%, transparent); }
-          50% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--card-accent) 82%, transparent), inset 0 0 20px color-mix(in srgb, var(--card-accent) 44%, transparent), 0 0 18px color-mix(in srgb, var(--card-accent) 34%, transparent); }
-        }
-      `}</style>
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_24%_78%,color-mix(in_srgb,var(--card-accent)_24%,transparent),transparent_30%),radial-gradient(circle_at_78%_18%,color-mix(in_srgb,var(--card-accent)_18%,transparent),transparent_24%),linear-gradient(112deg,transparent_0%,color-mix(in_srgb,var(--card-accent)_16%,transparent)_42%,transparent_60%)] blur-[1px] [animation:nuarClubCardSoftWash_8s_ease-in-out_infinite]" />
-      <div className="pointer-events-none absolute inset-[-18%] bg-[conic-gradient(from_160deg_at_50%_50%,transparent,color-mix(in_srgb,var(--card-accent)_16%,transparent),transparent,color-mix(in_srgb,var(--card-accent)_22%,transparent),transparent)] blur-xl [animation:nuarClubCardColorFlow_11s_ease-in-out_infinite]" />
-      <div className="pointer-events-none absolute inset-y-[-30%] left-0 w-1/3 bg-[linear-gradient(90deg,transparent,var(--card-shine-color),transparent)] blur-2xl [animation:nuarClubCardSheen_var(--card-shine-duration)_ease-in-out_infinite]" />
-
-      <div className="absolute inset-x-4 bottom-5 top-4 z-10 flex flex-col justify-between gap-2 sm:inset-x-6 sm:bottom-6 sm:top-6 sm:gap-4">
-        <div className="flex items-start justify-between gap-4">
-          <span className="text-[10px] font-extrabold uppercase tracking-[0.16em] sm:text-[11px]">
-            {tierLabel}
-          </span>
-          <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-white/62">
-            NUAR CLUB
-          </span>
-        </div>
-
-        <div className="grid -translate-y-1 justify-items-center gap-1.5 text-center sm:translate-y-0 sm:gap-2">
-          <small
-            className="font-sans text-[8px] font-extrabold uppercase tracking-[0.16em] opacity-70 sm:text-[9px]"
-            style={{ color: style.accent }}
-          >
-            {getLoyaltyLabel(card?.cardLanguage)}
-          </small>
-          <strong
-            className="max-w-full overflow-hidden text-ellipsis whitespace-nowrap bg-[image:var(--card-ink-gradient)] bg-[length:220%_100%] bg-clip-text font-['Snell_Roundhand','Zapfino','Brush_Script_MT','Segoe_Script',cursive] text-[28px] font-normal leading-none text-transparent opacity-90 [animation:nuarClubNameGold_7s_ease-in-out_infinite] sm:text-[48px]"
-          >
-            {name}
-          </strong>
-        </div>
-
-        <div className="flex items-end justify-between gap-3 sm:gap-4">
-          <div className="grid max-w-[210px] flex-1 grid-cols-6 gap-1.5 sm:max-w-[250px] sm:gap-2">
-            {Array.from({ length: 6 }).map((_, index) => {
-              const isGift = index === 5;
-              const filled = index < stamps;
-              return (
-                <span
-                  className={`relative grid aspect-square place-items-center overflow-hidden rounded-full border text-[10px] ${
-                    filled ? "bg-[radial-gradient(circle_at_34%_28%,rgba(255,255,255,0.55),transparent_23%),linear-gradient(135deg,color-mix(in_srgb,var(--card-accent)_42%,transparent),color-mix(in_srgb,var(--card-accent)_14%,transparent))] [animation:nuarClubFilledGlow_3.8s_ease-in-out_infinite]" : ""
-                  } ${isGift && isRewardReady ? "animate-pulse shadow-[0_0_20px_var(--card-accent)]" : ""}`}
-                  key={index}
-                  style={{
-                    borderColor: style.accent,
-                    color: style.accent,
-                  }}
-                  title={isGift ? giftLabel : undefined}
-                >
-                  {isGift ? <Gift size={14} strokeWidth={1.5} /> : ""}
-                </span>
-              );
-            })}
-          </div>
-          <span className="text-xs font-black sm:text-sm" style={{ color: style.accent }}>
-            {stamps}/6
-          </span>
-        </div>
-      </div>
+      <span className="nuar-public-card__bottomline">
+        <span className="nuar-public-card__stamps" aria-label={`${stamps} / 6`} role="list">
+          {Array.from({ length: 6 }).map((_, index) => {
+            const isGift = index === 5;
+            const filled = index < stamps;
+            return (
+              <i
+                className={`${filled ? "is-filled" : ""} ${isGift ? "is-gift" : ""} ${isGift && isRewardReady ? "is-ready" : ""}`}
+                key={index}
+                role="listitem"
+                title={isGift ? giftLabel : undefined}
+              >
+                {isGift ? <Gift size={13} /> : ""}
+              </i>
+            );
+          })}
+        </span>
+        <span className="nuar-public-card__foot">
+          <span className="nuar-public-card__progress">{stamps} / 6</span>
+          <span>{footerEnd}</span>
+        </span>
+      </span>
     </article>
   );
 }
