@@ -9,6 +9,14 @@ const BACKEND_URL =
 const REVIEW_URL = "https://g.page/r/CZGwQdcksfMuEAE/review";
 const DESIGN_TIMEOUT_MS = 2500;
 
+const localTierBackgrounds = {
+  DIAMOND: "/loyalty-card-assets/diamond.jpg",
+  GOLD: "/loyalty-card-assets/gold.jpg",
+  MEMBER: "/loyalty-card-assets/member.jpg",
+  ROYAL: "/loyalty-card-assets/royal.jpg",
+  SILVER: "/loyalty-card-assets/silver.jpg",
+};
+
 const tierIcons = {
   DIAMOND: Diamond,
   GOLD: Star,
@@ -164,6 +172,19 @@ const getLoyaltyLabel = (language) => {
 const getTierDesign = (design, tier) =>
   design?.tiers?.[tier] || fallbackTierDesign[tier] || fallbackTierDesign.MEMBER;
 
+const getTierBackground = (style, tier) => {
+  const localBackground = localTierBackgrounds[tier]
+    ? `url("${localTierBackgrounds[tier]}")`
+    : "";
+  const remoteBackground = String(style?.backgroundImage || "").trim();
+
+  if (remoteBackground && localBackground) {
+    return `${localBackground}, ${remoteBackground}`;
+  }
+
+  return remoteBackground || localBackground || fallbackTierDesign.MEMBER.backgroundImage;
+};
+
 const getVisitWord = (language, count) => {
   if (language === "en") return count === 1 ? "visit" : "visits";
   if (language === "pl") return count === 1 ? "wizyta" : "wizyt";
@@ -190,7 +211,7 @@ function NuarClubCard({ card, design, target }) {
       className={`nuar-public-card is-${tierClass}`}
       style={{
         "--physical-accent": style.accent,
-        "--physical-bg": style.backgroundImage,
+        "--physical-bg": getTierBackground(style, tier),
         "--physical-engrave": style.accent,
         "--physical-glow": style.shine?.color || style.accent,
         "--physical-ink": style.accent,
