@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Crown, Diamond, ExternalLink, Gift, Medal, ShieldCheck, Star } from "lucide-react";
+import { CalendarDays, Crown, Diamond, ExternalLink, Gift, MapPin, Medal, ShieldCheck, Star } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { BOOKSY_URL } from "../constants/theme";
 import "./LoyaltyCardPage.css";
@@ -7,6 +7,7 @@ import "./LoyaltyCardPage.css";
 const BACKEND_URL =
   import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl";
 const REVIEW_URL = "https://g.page/r/CZGwQdcksfMuEAE/review";
+const MAPS_URL = "https://maps.google.com/?q=NUAR%20Warszawa";
 const DESIGN_TIMEOUT_MS = 2500;
 
 const localTierBackgrounds = {
@@ -90,8 +91,20 @@ const stringsByLanguage = {
     failed: "Could not open the card",
     loading: "Loading card...",
     review: "Leave a review",
+    tabCard: "Card",
+    tabGifts: "Gifts",
+    tabVisit: "Visit",
     subtitle: "Membership card",
     title: "NUAR CLUB",
+    noVisit: "No active booking",
+    nextVisit: "Next visit",
+    route: "Route",
+    noGifts: "No gifts yet",
+    unopenedChests: "Chests",
+    openChest: "Open chest",
+    availableRewards: "Available rewards",
+    usedRewards: "Used rewards",
+    visitsToChest: "visits to the next chest",
   },
   pl: {
     booking: "Zarezerwuj wizytę",
@@ -99,8 +112,20 @@ const stringsByLanguage = {
     failed: "Nie udało się otworzyć karty",
     loading: "Ładowanie karty...",
     review: "Zostaw opinię",
+    tabCard: "Karta",
+    tabGifts: "Prezenty",
+    tabVisit: "Wizyta",
     subtitle: "Karta członkowska",
     title: "NUAR CLUB",
+    noVisit: "Brak aktywnej wizyty",
+    nextVisit: "Najbliższa wizyta",
+    route: "Trasa",
+    noGifts: "Nie ma jeszcze prezentów",
+    unopenedChests: "Skrzynie",
+    openChest: "Otwórz skrzynię",
+    availableRewards: "Dostępne prezenty",
+    usedRewards: "Wykorzystane prezenty",
+    visitsToChest: "wizyt do kolejnej skrzyni",
   },
   ru: {
     booking: "Записаться",
@@ -108,8 +133,20 @@ const stringsByLanguage = {
     failed: "Не удалось открыть карту",
     loading: "Загрузка карты...",
     review: "Оставить отзыв",
+    tabCard: "Карта",
+    tabGifts: "Подарки",
+    tabVisit: "Визит",
     subtitle: "Карта лояльности",
     title: "NUAR CLUB",
+    noVisit: "Активной записи нет",
+    nextVisit: "Ближайший визит",
+    route: "Маршрут",
+    noGifts: "Подарков пока нет",
+    unopenedChests: "Сундуки",
+    openChest: "Открыть сундук",
+    availableRewards: "Доступные подарки",
+    usedRewards: "Использованные подарки",
+    visitsToChest: "визитов до следующего сундука",
   },
 };
 const defaultStrings = stringsByLanguage.pl;
@@ -133,6 +170,21 @@ async function fetchPublicLoyaltyCard(token) {
     throw new Error(payload?.error || defaultStrings.failed);
   }
 
+  return payload?.data ?? null;
+}
+
+async function openPublicChest(token, chestId) {
+  const response = await fetch(
+    `${BACKEND_URL}/api/public/loyalty/${encodeURIComponent(token)}/chests/${chestId}/open`,
+    {
+      headers: { "Content-Type": "application/json" },
+      method: "POST",
+    },
+  );
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    throw new Error(payload?.error || defaultStrings.failed);
+  }
   return payload?.data ?? null;
 }
 
@@ -272,9 +324,31 @@ export default function LoyaltyCardPage() {
   const [cardDesign, setCardDesign] = useState({ tiers: fallbackTierDesign });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(Boolean(token));
+  const [activeTab, setActiveTab] = useState("card");
+  const [openingChestId, setOpeningChestId] = useState(null);
 
   const strings = stringsByLanguage[card?.cardLanguage] || defaultStrings;
   const target = Math.max(6, Number(card?.targetStamps) || 6);
+  const stamps = Math.min(target, Math.max(0, Number(card?.stamps) || 0));
+  const visitsLeft = Math.max(0, target - stamps);
+  const chests = Array.isArray(card?.chests) ? card.chests : [];
+  const rewards = Array.isArray(card?.rewards) ? card.rewards : [];
+  const availableChests = chests.filter((chest) => chest.status === "available");
+  const availableRewards = rewards.filter((reward) => reward.status === "available");
+  const usedRewards = rewards.filter((reward) => reward.status === "redeemed");
+
+  const refreshCard = () => fetchPublicLoyaltyCard(token).then((data) => setCard(data));
+
+  const handleOpenChest = async (chestId) => {
+    if (openingChestId) return;
+    setOpeningChestId(chestId);
+    try {
+      await openPublicChest(token, chestId);
+      await refreshCard();
+    } finally {
+      setOpeningChestId(null);
+    }
+  };
 
   useEffect(() => {
     let meta = document.querySelector('meta[name="robots"]');
@@ -372,10 +446,98 @@ export default function LoyaltyCardPage() {
           )}
 
           {card ? (
-            <div className="mt-4 grid gap-2.5 sm:mt-6 sm:grid-cols-2 sm:gap-3">
+            <>
+            <div className="mt-4 grid grid-cols-3 rounded-full border border-white/10 bg-white/[0.035] p-1 text-xs font-semibold text-[#f8f0df]/68 sm:mt-6">
+              {[
+                ["card", strings.tabCard],
+                ["visit", strings.tabVisit],
+                ["gifts", strings.tabGifts],
+              ].map(([id, label]) => (
+                <button
+                  className={`rounded-full px-3 py-2 transition ${activeTab === id ? "bg-[#d6bb7d] text-[#1e1324]" : "hover:text-[#f8f0df]"}`}
+                  key={id}
+                  type="button"
+                  onClick={() => setActiveTab(id)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-3 rounded-[18px] border border-white/10 bg-white/[0.035] p-4 text-sm text-[#f8f0df]/72">
+              {activeTab === "card" ? (
+                <div className="grid gap-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-[#d6bb7d]">{card.tier === "ROYAL" ? "ROYALTY" : card.tier}</span>
+                    <strong className="text-[#f8f0df]">{stamps} / {target}</strong>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
+                    <span className="block h-full rounded-full bg-[#d6bb7d]" style={{ width: `${Math.min(100, (stamps / target) * 100)}%` }} />
+                  </div>
+                  <span>{visitsLeft} {strings.visitsToChest}</span>
+                </div>
+              ) : null}
+
+              {activeTab === "visit" ? (
+                card.upcomingVisit ? (
+                  <div className="grid gap-3">
+                    <span className="inline-flex items-center gap-2 text-[#d6bb7d]">
+                      <CalendarDays size={16} />
+                      {strings.nextVisit}
+                    </span>
+                    <strong className="text-[#f8f0df]">{card.upcomingVisit.date || new Date(card.upcomingVisit.scheduledAt).toLocaleDateString()} {card.upcomingVisit.time || ""}</strong>
+                    <span>{[card.upcomingVisit.serviceName, card.upcomingVisit.employeeName].filter(Boolean).join(" · ")}</span>
+                    <a className="inline-flex items-center gap-2 text-[#d6bb7d]" href={MAPS_URL} rel="noreferrer" target="_blank">
+                      <MapPin size={15} />
+                      {strings.route}
+                    </a>
+                  </div>
+                ) : (
+                  <span>{strings.noVisit}</span>
+                )
+              ) : null}
+
+              {activeTab === "gifts" ? (
+                <div className="grid gap-4">
+                  <div className="grid gap-2">
+                    <strong className="text-[#f8f0df]">{strings.unopenedChests}</strong>
+                    {availableChests.length ? availableChests.map((chest) => (
+                      <button
+                        className="inline-flex items-center justify-between gap-3 rounded-xl border border-[#d6bb7d]/22 bg-[#d6bb7d]/8 px-3 py-2 text-left text-[#f8f0df]"
+                        disabled={openingChestId === chest.id}
+                        key={chest.id}
+                        type="button"
+                        onClick={() => handleOpenChest(chest.id)}
+                      >
+                        <span>{chest.tier === "ROYAL" ? "ROYALTY" : chest.tier}</span>
+                        <span className="text-[#d6bb7d]">{openingChestId === chest.id ? "..." : strings.openChest}</span>
+                      </button>
+                    )) : <span>{strings.noGifts}</span>}
+                  </div>
+                  {availableRewards.length ? (
+                    <div className="grid gap-2">
+                      <strong className="text-[#f8f0df]">{strings.availableRewards}</strong>
+                      {availableRewards.map((reward) => (
+                        <span className="rounded-xl bg-white/5 px-3 py-2" key={reward.id}>{reward.name}</span>
+                      ))}
+                    </div>
+                  ) : null}
+                  {usedRewards.length ? (
+                    <div className="grid gap-2">
+                      <strong className="text-[#f8f0df]">{strings.usedRewards}</strong>
+                      {usedRewards.map((reward) => (
+                        <span className="rounded-xl bg-white/5 px-3 py-2 opacity-65" key={reward.id}>{reward.name}</span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+
+            <div className="mt-4 grid gap-2.5 sm:grid-cols-2 sm:gap-3">
               <a
                 className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894] sm:min-h-12"
-                href={BOOKSY_URL}
+                href={card.bookingUrl || BOOKSY_URL}
                 rel="noreferrer"
                 target="_blank"
               >
@@ -392,6 +554,7 @@ export default function LoyaltyCardPage() {
                 <ExternalLink size={15} />
               </a>
             </div>
+            </>
           ) : null}
         </div>
       </section>
