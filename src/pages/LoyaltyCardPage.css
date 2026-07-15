@@ -749,3 +749,1071 @@
     letter-spacing: 0.12em;
   }
 }
+
+/* Private club public page */
+.loyalty-public-page {
+  --club-royal-bg: #050409;
+  --club-royal-panel: rgba(12, 11, 16, 0.72);
+  --club-royal-panel-soft: rgba(18, 15, 22, 0.68);
+  --club-royal-border: rgba(216, 173, 105, 0.16);
+  --club-royal-border-strong: rgba(216, 173, 105, 0.42);
+  --club-royal-gold: #d8ad69;
+  --club-royal-gold-soft: #f0d493;
+  --club-royal-text: #f2eee8;
+  --club-royal-muted: rgba(242, 238, 232, 0.62);
+  --club-royal-purple: #1c0f25;
+  --club-royal-danger: #d51f2a;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: clamp(28px, 5vw, 66px);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(216, 173, 105, 0.11), transparent 24%),
+    radial-gradient(circle at 84% 22%, rgba(112, 57, 153, 0.18), transparent 32%),
+    radial-gradient(circle at 48% 72%, rgba(216, 173, 105, 0.07), transparent 42%),
+    linear-gradient(135deg, #030406, #07050b 46%, #110719);
+}
+
+.loyalty-public-shell {
+  min-height: auto;
+  align-items: start;
+}
+
+.loyalty-public-stack {
+  width: min(100%, 1100px);
+  gap: clamp(18px, 2.5vw, 28px);
+}
+
+.loyalty-private-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+  padding-bottom: clamp(22px, 3vw, 34px);
+}
+
+.loyalty-private-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  color: var(--club-royal-gold);
+  text-decoration: none;
+}
+
+.loyalty-private-monogram {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 6vw, 66px);
+  font-weight: 400;
+  letter-spacing: -0.08em;
+  line-height: 0.9;
+}
+
+.loyalty-private-divider {
+  width: 1px;
+  height: 56px;
+  background: linear-gradient(180deg, transparent, rgba(216, 173, 105, 0.52), transparent);
+}
+
+.loyalty-private-logo strong,
+.loyalty-private-logo small {
+  display: block;
+  font-weight: 420;
+  letter-spacing: 0.28em;
+  line-height: 1.2;
+}
+
+.loyalty-private-logo strong {
+  font-size: 22px;
+}
+
+.loyalty-private-logo small {
+  margin-top: 6px;
+  font-size: 19px;
+}
+
+.loyalty-private-login {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--club-royal-gold);
+  font-size: 22px;
+  text-decoration: none;
+}
+
+.loyalty-private-login span {
+  display: grid;
+  width: 62px;
+  height: 62px;
+  place-items: center;
+  border: 1px solid rgba(242, 238, 232, 0.34);
+  border-radius: 50%;
+  color: rgba(242, 238, 232, 0.86);
+}
+
+.loyalty-private-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  align-items: center;
+  gap: clamp(24px, 5vw, 64px);
+}
+
+.loyalty-private-hero-copy p {
+  margin: 0 0 12px;
+  color: var(--club-royal-muted);
+  font-size: clamp(22px, 2.7vw, 30px);
+  line-height: 1.15;
+}
+
+.loyalty-private-hero-copy h1 {
+  margin: 0;
+  color: #f1edf0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(50px, 7vw, 78px);
+  font-weight: 420;
+  letter-spacing: 0.03em;
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-shadow: 0 14px 48px rgba(255, 255, 255, 0.1);
+}
+
+.loyalty-public-page.is-gold .loyalty-private-hero-copy h1,
+.loyalty-public-page.is-royal .loyalty-private-hero-copy h1 {
+  color: transparent;
+  background: linear-gradient(92deg, #fff1bd, #d8ad69 46%, #946126 72%, #ffe1a0);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.loyalty-private-hero-copy > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  color: var(--club-royal-gold);
+  font-size: 20px;
+}
+
+.loyalty-private-next,
+.loyalty-private-section,
+.loyalty-private-chest,
+.loyalty-private-status,
+.loyalty-private-thanks {
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  border-radius: 28px;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008)),
+    rgba(12, 10, 15, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 22px 60px rgba(0, 0, 0, 0.24);
+}
+
+.loyalty-private-next {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 4px 18px;
+  padding: 26px 30px;
+}
+
+.loyalty-private-next svg {
+  grid-row: span 2;
+  color: var(--club-royal-gold);
+}
+
+.loyalty-private-next span {
+  color: var(--club-royal-muted);
+  font-size: 23px;
+  line-height: 1.25;
+}
+
+.loyalty-private-next strong {
+  color: var(--club-royal-gold-soft);
+  font-size: 28px;
+  font-weight: 560;
+  letter-spacing: 0.05em;
+  text-transform: lowercase;
+}
+
+.loyalty-public-card-shell {
+  width: min(100%, 960px);
+  justify-self: center;
+}
+
+.loyalty-public-tabs {
+  width: min(100%, 960px);
+  justify-self: center;
+  gap: 0;
+  padding: 4px;
+  border-color: rgba(216, 173, 105, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.006)),
+    rgba(14, 10, 17, 0.82);
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.28);
+}
+
+.loyalty-public-tabs button {
+  min-height: 74px;
+  gap: 14px;
+  color: rgba(242, 238, 232, 0.58);
+  font-size: clamp(17px, 2vw, 21px);
+  font-weight: 560;
+}
+
+.loyalty-public-tabs button svg {
+  color: currentColor;
+}
+
+.loyalty-public-tabs button.is-active {
+  color: #f5c774;
+  border: 1px solid rgba(216, 173, 105, 0.54);
+  background:
+    radial-gradient(circle at 30% 18%, rgba(216, 173, 105, 0.22), transparent 50%),
+    rgba(12, 10, 14, 0.82);
+  box-shadow:
+    inset 0 0 22px rgba(216, 173, 105, 0.09),
+    0 0 26px rgba(216, 173, 105, 0.16);
+}
+
+.loyalty-public-tab-badge {
+  min-width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.loyalty-public-tab-stage {
+  width: min(100%, 960px);
+  justify-self: center;
+  transition: min-height 260ms ease, opacity 220ms ease;
+}
+
+.loyalty-public-panel {
+  gap: 20px;
+  padding: 0;
+}
+
+.loyalty-private-chest {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 410px);
+  align-items: center;
+  overflow: hidden;
+  min-height: 285px;
+  padding: clamp(28px, 4vw, 46px);
+}
+
+.loyalty-private-chest-copy span {
+  color: rgba(242, 238, 232, 0.68);
+  font-size: 15px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.loyalty-private-chest-copy h2 {
+  margin: 18px 0 18px;
+  color: #eee9ee;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(42px, 5.2vw, 58px);
+  font-weight: 420;
+  line-height: 1;
+}
+
+.loyalty-private-chest-copy i {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: min(100%, 360px);
+  color: var(--club-royal-gold);
+  font-style: normal;
+}
+
+.loyalty-private-chest-copy i::before,
+.loyalty-private-chest-copy i::after {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(216, 173, 105, 0.46));
+  content: "";
+}
+
+.loyalty-private-chest-copy i::after {
+  background: linear-gradient(90deg, rgba(216, 173, 105, 0.46), transparent);
+}
+
+.loyalty-private-chest-copy p {
+  max-width: 360px;
+  margin: 22px 0 0;
+  color: var(--club-royal-muted);
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.loyalty-private-chest-art {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.loyalty-private-chest-art img {
+  width: min(100%, 390px);
+  filter: drop-shadow(0 30px 38px rgba(0, 0, 0, 0.5));
+}
+
+.loyalty-private-chest-art strong {
+  display: inline-flex;
+  min-width: min(100%, 330px);
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(216, 173, 105, 0.18);
+  border-radius: 999px;
+  color: var(--club-royal-gold-soft);
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.loyalty-private-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 34px;
+}
+
+.loyalty-private-status > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 20px;
+  align-items: center;
+}
+
+.loyalty-private-status svg {
+  grid-row: span 2;
+  color: var(--club-royal-gold);
+}
+
+.loyalty-private-status span {
+  color: var(--club-royal-muted);
+  font-size: 22px;
+}
+
+.loyalty-private-status strong {
+  color: var(--club-royal-gold);
+}
+
+.loyalty-private-status small {
+  color: var(--club-royal-muted);
+  font-size: 17px;
+}
+
+.loyalty-private-status a {
+  display: inline-flex;
+  min-height: 54px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(216, 173, 105, 0.42);
+  border-radius: 12px;
+  padding: 0 24px;
+  color: var(--club-royal-gold-soft);
+  text-decoration: none;
+}
+
+.loyalty-private-thanks {
+  padding: 22px;
+  color: var(--club-royal-muted);
+  font-size: 22px;
+  line-height: 1.35;
+  text-align: center;
+}
+
+.loyalty-private-section {
+  display: grid;
+  gap: 22px;
+  padding: clamp(26px, 4vw, 42px);
+}
+
+.loyalty-public-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.loyalty-public-button {
+  min-height: 58px;
+  font-size: 18px;
+}
+
+.loyalty-public-button.is-primary {
+  color: #160b1d;
+  background: linear-gradient(94deg, #ffe4a0, var(--club-royal-gold) 56%, #c07b2f);
+}
+
+.loyalty-public-button.is-secondary {
+  border-color: rgba(242, 238, 232, 0.38);
+}
+
+@media (max-width: 760px) {
+  .loyalty-public-page {
+    padding: 18px 16px 34px;
+  }
+
+  .loyalty-private-header {
+    padding-bottom: 18px;
+  }
+
+  .loyalty-private-logo {
+    gap: 12px;
+  }
+
+  .loyalty-private-monogram {
+    font-size: 40px;
+  }
+
+  .loyalty-private-divider {
+    height: 40px;
+  }
+
+  .loyalty-private-logo strong {
+    font-size: 16px;
+  }
+
+  .loyalty-private-logo small {
+    margin-top: 3px;
+    font-size: 13px;
+  }
+
+  .loyalty-private-login {
+    gap: 8px;
+    font-size: 15px;
+  }
+
+  .loyalty-private-login span {
+    width: 42px;
+    height: 42px;
+  }
+
+  .loyalty-private-hero {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .loyalty-private-hero-copy p {
+    font-size: 19px;
+  }
+
+  .loyalty-private-hero-copy h1 {
+    font-size: clamp(38px, 11vw, 48px);
+  }
+
+  .loyalty-private-hero-copy > span {
+    margin-top: 14px;
+    font-size: 15px;
+  }
+
+  .loyalty-private-next {
+    grid-template-columns: auto 1fr auto;
+    padding: 16px 18px;
+  }
+
+  .loyalty-private-next svg {
+    grid-row: auto;
+    width: 25px;
+    height: 25px;
+  }
+
+  .loyalty-private-next span {
+    font-size: 15px;
+  }
+
+  .loyalty-private-next strong {
+    font-size: 17px;
+    white-space: nowrap;
+  }
+
+  .loyalty-public-tabs {
+    padding: 3px;
+  }
+
+  .loyalty-public-tabs button {
+    min-height: 54px;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .loyalty-public-tabs button svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .loyalty-private-chest {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 24px 20px;
+  }
+
+  .loyalty-private-chest-copy h2 {
+    font-size: 36px;
+  }
+
+  .loyalty-private-chest-copy p {
+    font-size: 16px;
+  }
+
+  .loyalty-private-chest-art img {
+    width: min(100%, 300px);
+  }
+
+  .loyalty-private-status {
+    display: grid;
+    padding: 20px;
+  }
+
+  .loyalty-private-status span {
+    font-size: 18px;
+  }
+
+  .loyalty-private-status small {
+    font-size: 14px;
+  }
+
+  .loyalty-private-status a {
+    min-height: 48px;
+  }
+
+  .loyalty-private-thanks {
+    font-size: 17px;
+  }
+
+  .loyalty-public-actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final scale pass: keep the card real-size and fit the page into the viewport. */
+.loyalty-public-page {
+  padding: clamp(14px, 2.4vw, 32px);
+}
+
+.loyalty-public-stack {
+  width: min(100%, 940px);
+  gap: clamp(12px, 1.6vw, 18px);
+}
+
+.loyalty-private-header {
+  padding-bottom: clamp(12px, 1.8vw, 20px);
+}
+
+.loyalty-private-logo {
+  gap: 16px;
+}
+
+.loyalty-private-monogram {
+  font-size: clamp(34px, 4vw, 50px);
+}
+
+.loyalty-private-divider {
+  height: 40px;
+}
+
+.loyalty-private-logo strong {
+  font-size: 17px;
+}
+
+.loyalty-private-logo small {
+  margin-top: 3px;
+  font-size: 14px;
+}
+
+.loyalty-private-login {
+  gap: 10px;
+  font-size: 17px;
+}
+
+.loyalty-private-login span {
+  width: 48px;
+  height: 48px;
+}
+
+.loyalty-private-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: clamp(16px, 3vw, 34px);
+}
+
+.loyalty-private-hero-copy p {
+  margin-bottom: 7px;
+  font-size: clamp(17px, 1.8vw, 23px);
+}
+
+.loyalty-private-hero-copy h1 {
+  font-size: clamp(36px, 4.8vw, 56px);
+}
+
+.loyalty-private-hero-copy > span {
+  margin-top: 12px;
+  font-size: 15px;
+}
+
+.loyalty-private-next {
+  gap: 3px 13px;
+  padding: 18px 20px;
+}
+
+.loyalty-private-next svg {
+  width: 28px;
+  height: 28px;
+}
+
+.loyalty-private-next span {
+  font-size: 17px;
+}
+
+.loyalty-private-next strong {
+  font-size: 21px;
+}
+
+.loyalty-public-card-shell,
+.loyalty-public-tabs,
+.loyalty-public-tab-stage {
+  width: min(100%, 760px);
+}
+
+.loyalty-public-tabs button {
+  min-height: 52px;
+  gap: 9px;
+  font-size: clamp(14px, 1.4vw, 16px);
+}
+
+.loyalty-public-tabs button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.loyalty-private-chest {
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 300px);
+  min-height: 220px;
+  padding: clamp(20px, 2.8vw, 30px);
+}
+
+.loyalty-private-chest-copy h2 {
+  margin: 10px 0 12px;
+  font-size: clamp(30px, 3.8vw, 40px);
+}
+
+.loyalty-private-chest-copy p {
+  margin-top: 14px;
+  font-size: 15px;
+}
+
+.loyalty-private-chest-art img {
+  width: min(100%, 285px);
+}
+
+.loyalty-private-status {
+  padding: 16px 22px;
+}
+
+.loyalty-private-status span {
+  font-size: 17px;
+}
+
+.loyalty-private-status small {
+  font-size: 14px;
+}
+
+.loyalty-private-status a {
+  min-height: 44px;
+  padding: 0 18px;
+}
+
+.loyalty-private-thanks {
+  padding: 14px;
+  font-size: 17px;
+}
+
+@media (max-width: 760px) {
+  .loyalty-public-page {
+    padding: 12px 12px 28px;
+  }
+
+  .loyalty-public-stack {
+    gap: 12px;
+  }
+
+  .loyalty-private-header {
+    gap: 12px;
+  }
+
+  .loyalty-private-logo {
+    gap: 10px;
+  }
+
+  .loyalty-private-monogram {
+    font-size: 32px;
+  }
+
+  .loyalty-private-divider {
+    height: 34px;
+  }
+
+  .loyalty-private-logo strong {
+    font-size: 13px;
+    letter-spacing: 0.22em;
+  }
+
+  .loyalty-private-logo small {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+  }
+
+  .loyalty-private-login {
+    font-size: 0;
+  }
+
+  .loyalty-private-login span {
+    width: 38px;
+    height: 38px;
+  }
+
+  .loyalty-private-hero {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .loyalty-private-hero-copy p {
+    font-size: 16px;
+  }
+
+  .loyalty-private-hero-copy h1 {
+    font-size: clamp(30px, 9vw, 38px);
+  }
+
+  .loyalty-private-hero-copy > span {
+    margin-top: 9px;
+    font-size: 13px;
+  }
+
+  .loyalty-private-next {
+    grid-template-columns: auto 1fr auto;
+    border-radius: 18px;
+    padding: 12px 14px;
+  }
+
+  .loyalty-private-next span {
+    font-size: 13px;
+  }
+
+  .loyalty-private-next strong {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  .loyalty-public-card-shell,
+  .loyalty-public-tabs,
+  .loyalty-public-tab-stage {
+    width: 100%;
+  }
+
+  .loyalty-public-tabs button {
+    min-height: 46px;
+    gap: 5px;
+    font-size: 12px;
+  }
+
+  .loyalty-private-chest {
+    grid-template-columns: 1fr;
+    border-radius: 20px;
+    padding: 18px;
+  }
+
+  .loyalty-private-chest-copy h2 {
+    font-size: 31px;
+  }
+
+  .loyalty-private-chest-copy p {
+    font-size: 14px;
+  }
+
+  .loyalty-private-chest-art img {
+    width: min(100%, 250px);
+  }
+
+  .loyalty-private-status {
+    border-radius: 20px;
+    padding: 16px;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 820px) {
+  .loyalty-public-page {
+    padding-top: 12px;
+    padding-bottom: 18px;
+  }
+
+  .loyalty-public-stack {
+    gap: 8px;
+  }
+
+  .loyalty-private-header {
+    padding-bottom: 7px;
+  }
+
+  .loyalty-private-monogram {
+    font-size: 30px;
+  }
+
+  .loyalty-private-divider {
+    height: 26px;
+  }
+
+  .loyalty-private-logo strong {
+    font-size: 11px;
+  }
+
+  .loyalty-private-logo small {
+    font-size: 9px;
+  }
+
+  .loyalty-private-hero {
+    gap: 10px;
+  }
+
+  .loyalty-private-hero-copy p {
+    margin-bottom: 4px;
+    font-size: 13px;
+  }
+
+  .loyalty-private-hero-copy h1 {
+    font-size: 29px;
+  }
+
+  .loyalty-private-hero-copy > span {
+    margin-top: 5px;
+    font-size: 11px;
+  }
+
+  .loyalty-private-next {
+    padding: 9px 12px;
+  }
+
+  .loyalty-public-card-shell,
+  .loyalty-public-tabs,
+  .loyalty-public-tab-stage {
+    width: min(100%, 540px);
+  }
+
+  .loyalty-public-tabs button {
+    min-height: 34px;
+  }
+
+  .loyalty-private-chest {
+    min-height: 180px;
+    padding: 16px 20px;
+  }
+
+  .loyalty-private-chest-copy h2 {
+    margin: 7px 0 8px;
+    font-size: 28px;
+  }
+
+  .loyalty-private-chest-copy p {
+    margin-top: 10px;
+    font-size: 13px;
+  }
+
+  .loyalty-private-chest-art img {
+    width: min(100%, 230px);
+  }
+
+  .loyalty-private-status {
+    padding: 12px 18px;
+  }
+
+  .loyalty-private-thanks {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 761px) and (max-height: 720px) {
+  .loyalty-public-page {
+    padding-top: 8px;
+    padding-bottom: 12px;
+  }
+
+  .loyalty-public-stack {
+    gap: 6px;
+  }
+
+  .loyalty-private-header {
+    padding-bottom: 5px;
+  }
+
+  .loyalty-private-hero-copy h1 {
+    font-size: 25px;
+  }
+
+  .loyalty-private-hero-copy p,
+  .loyalty-private-hero-copy > span {
+    font-size: 11px;
+  }
+
+  .loyalty-private-next {
+    border-radius: 14px;
+    padding: 7px 10px;
+  }
+
+  .loyalty-private-next svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .loyalty-private-next span {
+    font-size: 11px;
+  }
+
+  .loyalty-private-next strong {
+    font-size: 12px;
+  }
+
+  .loyalty-public-card-shell,
+  .loyalty-public-tabs,
+  .loyalty-public-tab-stage {
+    width: min(100%, 480px);
+  }
+
+  .loyalty-public-tabs button {
+    min-height: 30px;
+    font-size: 11px;
+  }
+
+  .loyalty-private-chest {
+    min-height: 155px;
+    padding: 12px 16px;
+  }
+
+  .loyalty-private-chest-copy span {
+    font-size: 11px;
+  }
+
+  .loyalty-private-chest-copy h2 {
+    font-size: 24px;
+  }
+
+  .loyalty-private-chest-copy p {
+    font-size: 12px;
+  }
+
+  .loyalty-private-chest-art img {
+    width: min(100%, 200px);
+  }
+}
+
+/* Compact viewport fit: the public card must feel like a real card, not a poster. */
+.loyalty-public-stack {
+  width: min(100%, 1240px);
+  gap: 10px;
+}
+
+.loyalty-private-header {
+  padding-bottom: 8px;
+}
+
+.loyalty-private-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 260px);
+  gap: 18px;
+}
+
+.loyalty-private-hero-copy p {
+  font-size: clamp(13px, 1.1vw, 16px);
+}
+
+.loyalty-private-hero-copy h1 {
+  font-size: clamp(24px, 3.2vw, 34px);
+}
+
+.loyalty-private-hero-copy > span {
+  margin-top: 6px;
+  font-size: 12px;
+}
+
+.loyalty-private-next {
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.loyalty-private-next svg {
+  width: 22px;
+  height: 22px;
+}
+
+.loyalty-private-next span {
+  font-size: 12px;
+}
+
+.loyalty-private-next strong {
+  font-size: 14px;
+}
+
+.loyalty-public-card-shell,
+.loyalty-public-tabs,
+.loyalty-public-tab-stage {
+  width: min(100%, 640px);
+}
+
+.loyalty-public-tabs button {
+  min-height: 36px;
+  font-size: 12px;
+}
+
+.loyalty-public-tabs button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.loyalty-private-logo {
+  gap: 10px;
+}
+
+.loyalty-private-monogram {
+  font-size: clamp(26px, 3vw, 36px);
+}
+
+.loyalty-private-divider {
+  height: 28px;
+}
+
+.loyalty-private-logo strong {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+}
+
+.loyalty-private-logo small {
+  margin-top: 2px;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+}
+
+@media (max-width: 760px) {
+  .loyalty-public-stack {
+    width: 100%;
+    gap: 10px;
+  }
+
+  .loyalty-private-hero {
+    gap: 8px;
+  }
+
+  .loyalty-private-hero-copy h1 {
+    font-size: clamp(23px, 7vw, 30px);
+  }
+
+  .loyalty-public-card-shell,
+  .loyalty-public-tabs,
+  .loyalty-public-tab-stage {
+    width: 100%;
+  }
+
+  .loyalty-public-tabs button {
+    min-height: 36px;
+    font-size: 11px;
+  }
+}

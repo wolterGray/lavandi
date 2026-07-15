@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CalendarDays, Crown, Diamond, ExternalLink, Gift, MapPin, Medal, ShieldCheck, Star } from "lucide-react";
+import { CalendarDays, CreditCard, Crown, Diamond, ExternalLink, Gift, MapPin, Medal, ShieldCheck, Star } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { BOOKSY_URL } from "../constants/theme";
 import "./LoyaltyCardPage.css";
@@ -24,6 +24,22 @@ const tierIcons = {
   MEMBER: ShieldCheck,
   ROYAL: Crown,
   SILVER: Medal,
+};
+
+const chestAssets = {
+  DIAMOND: "/loyalty-card-assets/chest-diamond.svg",
+  GOLD: "/loyalty-card-assets/chest-gold.svg",
+  MEMBER: "/loyalty-card-assets/chest-silver.svg",
+  ROYAL: "/loyalty-card-assets/chest-royal.svg",
+  SILVER: "/loyalty-card-assets/chest-silver.svg",
+};
+
+const nextTierByTier = {
+  DIAMOND: "ROYALTY",
+  GOLD: "DIAMOND",
+  MEMBER: "SILVER",
+  ROYAL: "ROYALTY",
+  SILVER: "GOLD",
 };
 
 const fallbackTierDesign = {
@@ -243,6 +259,29 @@ const getVisitWord = (language, count) => {
   return "визитов";
 };
 
+const getTierName = (tier) => (tier === "ROYAL" ? "ROYALTY" : tier);
+
+const getFirstName = (name) => {
+  const [firstName] = String(name || "").trim().split(/\s+/);
+  return firstName || "гость";
+};
+
+const getMemberSince = (card) => {
+  const value = card?.createdAt || card?.issuedAt || card?.updatedAt;
+  const date = value ? new Date(value) : new Date();
+  if (Number.isNaN(date.getTime())) return "Участник NUAR Club";
+
+  const language = card?.cardLanguage || "ru";
+  const locale = language === "pl" ? "pl-PL" : language === "en" ? "en-US" : "ru-RU";
+  const month = new Intl.DateTimeFormat(locale, { month: "long" }).format(date);
+  const year = date.getFullYear();
+  if (language === "pl") return `Uczestnik od ${month} ${year}`;
+  if (language === "en") return `Member since ${month} ${year}`;
+  return `Участник с ${month} ${year}`;
+};
+
+const getChestTitle = (tier) => `${getTierName(tier).charAt(0)}${getTierName(tier).slice(1).toLowerCase()} Chest`;
+
 function NuarClubCard({ card, design, target }) {
   const tier = String(card?.tier || "MEMBER").toUpperCase();
   const style = getTierDesign(design, tier);
@@ -337,6 +376,12 @@ export default function LoyaltyCardPage() {
   const availableRewards = rewards.filter((reward) => reward.status === "available");
   const usedRewards = rewards.filter((reward) => reward.status === "redeemed");
   const giftsCount = availableChests.length + availableRewards.length;
+  const tier = String(card?.tier || "MEMBER").toUpperCase();
+  const tierName = getTierName(tier);
+  const firstName = getFirstName(card?.displayName);
+  const chestImage = chestAssets[tier] || chestAssets.MEMBER;
+  const nextTier = nextTierByTier[tier] || "SILVER";
+  const pageTierClass = `is-${tier === "ROYAL" ? "royal" : tier.toLowerCase()}`;
 
   const refreshCard = () => fetchPublicLoyaltyCard(token).then((data) => setCard(data));
 
@@ -416,21 +461,19 @@ export default function LoyaltyCardPage() {
   }, [token]);
 
   return (
-    <main className="loyalty-public-page">
+    <main className={`loyalty-public-page ${pageTierClass}`}>
       <section className="loyalty-public-shell">
         <div className="loyalty-public-stack">
-          <div className="loyalty-public-heading">
-            <span className="loyalty-public-emblem">
-              <ShieldCheck size={18} />
-            </span>
-            <div>
-              <h1 className="loyalty-public-title">
-                <span>NUAR</span>
-                <small>Club</small>
-              </h1>
-              <p className="loyalty-public-subtitle">{strings.subtitle}</p>
-            </div>
-          </div>
+          <header className="loyalty-private-header">
+            <a className="loyalty-private-logo" href="/" aria-label="NUAR">
+              <span className="loyalty-private-monogram">NR</span>
+              <span className="loyalty-private-divider" />
+              <span>
+                <strong>NUAR</strong>
+                <small>PRIVATE CLUB</small>
+              </span>
+            </a>
+          </header>
 
           {loading ? (
             <div className="loyalty-public-panel">
@@ -443,26 +486,43 @@ export default function LoyaltyCardPage() {
                 {strings.cardInactive}
               </span>
             </div>
-          ) : card && activeTab === "card" ? (
-            <div className="loyalty-public-card-shell">
-              <NuarClubCard card={card} design={cardDesign} target={target} />
-            </div>
-          ) : null}
-
-          {card ? (
+          ) : card ? (
             <>
-            <div className="loyalty-public-tabs">
+            <section className="loyalty-private-hero">
+              <div className="loyalty-private-hero-copy">
+                <p>Добро пожаловать, {firstName}</p>
+                <h1>NUAR {tierName}</h1>
+                <span>
+                  <ShieldCheck size={16} />
+                  {getMemberSince(card)}
+                </span>
+              </div>
+              <aside className="loyalty-private-next">
+                <Gift size={34} strokeWidth={1.45} />
+                <span>До следующего<br />сундука:</span>
+                <strong>{visitsLeft || target} {getVisitWord(card?.cardLanguage, visitsLeft || target)}</strong>
+              </aside>
+            </section>
+
+            {activeTab === "card" ? (
+              <div className="loyalty-public-card-shell">
+                <NuarClubCard card={card} design={cardDesign} target={target} />
+              </div>
+            ) : null}
+
+            <div className="loyalty-public-tabs" aria-label="NUAR Club">
               {[
-                ["card", strings.tabCard],
-                ["visit", strings.tabVisit],
-                ["gifts", strings.tabGifts],
-              ].map(([id, label]) => (
+                ["card", strings.tabCard, CreditCard],
+                ["visit", strings.tabVisit, CalendarDays],
+                ["gifts", strings.tabGifts, Gift],
+              ].map(([id, label, Icon]) => (
                 <button
                   className={activeTab === id ? "is-active" : ""}
                   key={id}
                   type="button"
                   onClick={() => setActiveTab(id)}
                 >
+                  <Icon size={20} strokeWidth={1.5} />
                   {label}
                   {id === "gifts" && giftsCount > 0 ? (
                     <span className="loyalty-public-tab-badge">{giftsCount}</span>
@@ -474,64 +534,83 @@ export default function LoyaltyCardPage() {
             <div className="loyalty-public-tab-stage" key={activeTab}>
               <div className="loyalty-public-panel">
                 {activeTab === "card" ? (
-                  <div className="loyalty-public-progress">
-                    <div>
-                      <span>{card.tier === "ROYAL" ? "ROYALTY" : card.tier}</span>
-                      <strong>{stamps} / {target}</strong>
-                    </div>
-                    <div className="loyalty-public-progress-bar">
-                      <span style={{ width: `${Math.min(100, (stamps / target) * 100)}%` }} />
-                    </div>
-                    <span>{visitsLeft} {strings.visitsToChest}</span>
-                  </div>
+                  <>
+                    <section className="loyalty-private-chest">
+                      <div className="loyalty-private-chest-copy">
+                        <span>Следующий сундук</span>
+                        <h2>{getChestTitle(tier)}</h2>
+                        <i aria-hidden="true"><Gift size={15} /></i>
+                        <p>Каждые {target} завершённых визитов вы получаете сундук с подарками от NUAR.</p>
+                      </div>
+                      <div className="loyalty-private-chest-art">
+                        <img src={chestImage} alt="" />
+                        <strong>До открытия: {visitsLeft || target} {getVisitWord(card?.cardLanguage, visitsLeft || target)}</strong>
+                      </div>
+                    </section>
+
+                    <section className="loyalty-private-status">
+                      <div>
+                        <Crown size={34} strokeWidth={1.35} />
+                        <span>Ваш статус: <strong>{tierName}</strong></span>
+                        <small>{nextTier === "ROYALTY" && tier === "ROYAL" ? "Максимальный уровень NUAR Club" : `${Math.max(0, Number(card?.lifetimeVisits) || 0)} визитов · следующий уровень: ${nextTier}`}</small>
+                      </div>
+                      <a href={BOOKSY_URL} rel="noreferrer" target="_blank">
+                        Подробнее о статусах
+                        <ExternalLink size={15} />
+                      </a>
+                    </section>
+
+                    <footer className="loyalty-private-thanks">
+                      Спасибо, что выбираете NUAR.<br />Мы ценим ваше доверие.
+                    </footer>
+                  </>
                 ) : null}
 
                 {activeTab === "visit" ? (
-                  card.upcomingVisit ? (
-                    <div className="loyalty-public-visit">
-                      <span className="loyalty-public-kicker">
-                        <CalendarDays size={16} />
-                        {strings.nextVisit}
-                      </span>
-                      <strong>{card.upcomingVisit.date || new Date(card.upcomingVisit.scheduledAt).toLocaleDateString()} {card.upcomingVisit.time || ""}</strong>
-                      <span>{[card.upcomingVisit.serviceName, card.upcomingVisit.employeeName].filter(Boolean).join(" · ")}</span>
-                      <a className="loyalty-public-text-link" href={MAPS_URL} rel="noreferrer" target="_blank">
-                        <MapPin size={15} />
-                        {strings.route}
+                  <section className="loyalty-private-section">
+                    {card.upcomingVisit ? (
+                      <div className="loyalty-public-visit">
+                        <span className="loyalty-public-kicker">
+                          <CalendarDays size={16} />
+                          {strings.nextVisit}
+                        </span>
+                        <strong>{card.upcomingVisit.date || new Date(card.upcomingVisit.scheduledAt).toLocaleDateString()} {card.upcomingVisit.time || ""}</strong>
+                        <span>{[card.upcomingVisit.serviceName, card.upcomingVisit.employeeName].filter(Boolean).join(" · ")}</span>
+                        <a className="loyalty-public-text-link" href={MAPS_URL} rel="noreferrer" target="_blank">
+                          <MapPin size={15} />
+                          {strings.route}
+                        </a>
+                      </div>
+                    ) : (
+                      <div className="loyalty-public-visit">
+                        <span>{strings.noVisit}</span>
+                      </div>
+                    )}
+                    <div className="loyalty-public-actions">
+                      <a
+                        className="loyalty-public-button is-primary"
+                        href={card.bookingUrl || BOOKSY_URL}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {strings.booking}
+                        <ExternalLink size={15} />
+                      </a>
+                      <a
+                        className="loyalty-public-button is-secondary"
+                        href={REVIEW_URL}
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {strings.review}
+                        <ExternalLink size={15} />
                       </a>
                     </div>
-                  ) : (
-                    <div className="loyalty-public-visit">
-                      <span>{strings.noVisit}</span>
-                    </div>
-                  )
-                ) : null}
-
-                {activeTab === "visit" ? (
-                  <div className="loyalty-public-actions">
-                    <a
-                      className="loyalty-public-button is-primary"
-                      href={card.bookingUrl || BOOKSY_URL}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {strings.booking}
-                      <ExternalLink size={15} />
-                    </a>
-                    <a
-                      className="loyalty-public-button is-secondary"
-                      href={REVIEW_URL}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      {strings.review}
-                      <ExternalLink size={15} />
-                    </a>
-                  </div>
+                  </section>
                 ) : null}
 
                 {activeTab === "gifts" ? (
-                  <div className="loyalty-public-gifts">
+                  <section className="loyalty-private-section loyalty-public-gifts">
                     <div>
                       <strong>{strings.unopenedChests}</strong>
                       {availableChests.length ? availableChests.map((chest) => (
@@ -563,7 +642,7 @@ export default function LoyaltyCardPage() {
                         ))}
                       </div>
                     ) : null}
-                  </div>
+                  </section>
                 ) : null}
               </div>
             </div>

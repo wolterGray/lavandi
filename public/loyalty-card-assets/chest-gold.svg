@@ -1,0 +1,40 @@
+<svg width="640" height="360" viewBox="0 0 640 360" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(354 158) rotate(90) scale(178 290)">
+      <stop stop-color="#FFD980" stop-opacity=".5"/>
+      <stop offset=".48" stop-color="#9B5E18" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#080503" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="104" y1="72" x2="534" y2="299" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#080402"/>
+      <stop offset=".24" stop-color="#4C2B0A"/>
+      <stop offset=".47" stop-color="#D8A043"/>
+      <stop offset=".65" stop-color="#5B310A"/>
+      <stop offset="1" stop-color="#090502"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="110" y1="96" x2="530" y2="273" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFE7A6"/>
+      <stop offset=".44" stop-color="#A86C25"/>
+      <stop offset="1" stop-color="#FFE4A0"/>
+    </linearGradient>
+    <filter id="shadow" x="52" y="52" width="544" height="284" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="26" stdDeviation="22" flood-color="#000" flood-opacity=".64"/>
+    </filter>
+  </defs>
+  <rect width="640" height="360" fill="none"/>
+  <ellipse cx="318" cy="260" rx="224" ry="48" fill="#050302" opacity=".56"/>
+  <g filter="url(#shadow)">
+    <path d="M118 120c0-25 20-45 45-45h317c25 0 45 20 45 45v34H118v-34Z" fill="url(#metal)" stroke="url(#edge)" stroke-opacity=".5"/>
+    <path d="M98 151h447v116c0 20-16 36-36 36H134c-20 0-36-16-36-36V151Z" fill="url(#metal)" stroke="url(#edge)" stroke-opacity=".36"/>
+    <path d="M98 151h447v37H98v-37Z" fill="#170C04" opacity=".82"/>
+    <path d="M132 91h379" stroke="#FFE7A6" stroke-opacity=".28"/>
+    <path d="M145 124h350" stroke="#FFD980" stroke-opacity=".18"/>
+    <path d="M98 209h447" stroke="#F4C46E" stroke-opacity=".18"/>
+    <path d="M155 151v151M490 151v151" stroke="#F0B858" stroke-opacity=".16"/>
+    <rect x="281" y="178" width="82" height="70" rx="8" fill="#110803" stroke="#E9B85E" stroke-opacity=".44"/>
+    <text x="322" y="222" text-anchor="middle" font-family="Georgia, serif" font-size="31" fill="#F1CA77" fill-opacity=".84">NR</text>
+    <path d="M118 120c56 18 122 28 201 28 78 0 148-10 206-30v35H118v-33Z" fill="url(#glow)" opacity=".72"/>
+    <path d="M415 78c-60 78-86 151-78 220" stroke="#FFD980" stroke-width="2" stroke-opacity=".18"/>
+    <path d="M444 80c-50 74-69 145-55 214" stroke="#FFF1C6" stroke-width="1" stroke-opacity=".18"/>
+  </g>
+</svg>
