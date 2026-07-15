@@ -336,6 +336,7 @@ export default function LoyaltyCardPage() {
   const availableChests = chests.filter((chest) => chest.status === "available");
   const availableRewards = rewards.filter((reward) => reward.status === "available");
   const usedRewards = rewards.filter((reward) => reward.status === "redeemed");
+  const giftsCount = availableChests.length + availableRewards.length;
 
   const refreshCard = () => fetchPublicLoyaltyCard(token).then((data) => setCard(data));
 
@@ -415,144 +416,156 @@ export default function LoyaltyCardPage() {
   }, [token]);
 
   return (
-    <main className="h-[100svh] overflow-hidden bg-[#120d16] px-4 py-4 text-[#f8f0df] sm:min-h-screen sm:overflow-auto sm:px-6 sm:py-8">
-      <section className="mx-auto grid h-full w-full max-w-3xl content-center gap-4 sm:min-h-[calc(100vh-4rem)] sm:gap-6">
-        <div className="min-w-0">
-          <div className="mb-3 flex items-center gap-3 sm:mb-5">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#d6bb7d]/24 bg-[#d6bb7d]/10 text-[#d6bb7d] sm:h-11 sm:w-11">
+    <main className="loyalty-public-page">
+      <section className="loyalty-public-shell">
+        <div className="loyalty-public-stack">
+          <div className="loyalty-public-heading">
+            <span className="loyalty-public-emblem">
               <ShieldCheck size={18} />
             </span>
             <div>
-              <h1 className="text-base font-semibold tracking-[0.12em] text-[#d6bb7d] sm:text-xl">
-                {strings.title}
+              <h1 className="loyalty-public-title">
+                <span>NUAR</span>
+                <small>Club</small>
               </h1>
-              <p className="text-xs text-[#f8f0df]/62 sm:text-sm">{strings.subtitle}</p>
+              <p className="loyalty-public-subtitle">{strings.subtitle}</p>
             </div>
           </div>
 
           {loading ? (
-            <div className="rounded-[24px] border border-white/10 bg-white/5 p-6 text-sm text-[#f8f0df]/72">
+            <div className="loyalty-public-panel">
               {strings.loading}
             </div>
           ) : error || !card ? (
-            <div className="rounded-[24px] border border-[#d6bb7d]/20 bg-[#d6bb7d]/8 p-6">
-              <strong className="block text-base text-[#d6bb7d]">{strings.failed}</strong>
-              <span className="mt-1 block text-sm text-[#f8f0df]/68">
+            <div className="loyalty-public-panel">
+              <strong>{strings.failed}</strong>
+              <span>
                 {strings.cardInactive}
               </span>
             </div>
-          ) : (
-            <NuarClubCard card={card} design={cardDesign} target={target} />
-          )}
+          ) : card && activeTab === "card" ? (
+            <div className="loyalty-public-card-shell">
+              <NuarClubCard card={card} design={cardDesign} target={target} />
+            </div>
+          ) : null}
 
           {card ? (
             <>
-            <div className="mt-4 grid grid-cols-3 rounded-full border border-white/10 bg-white/[0.035] p-1 text-xs font-semibold text-[#f8f0df]/68 sm:mt-6">
+            <div className="loyalty-public-tabs">
               {[
                 ["card", strings.tabCard],
                 ["visit", strings.tabVisit],
                 ["gifts", strings.tabGifts],
               ].map(([id, label]) => (
                 <button
-                  className={`rounded-full px-3 py-2 transition ${activeTab === id ? "bg-[#d6bb7d] text-[#1e1324]" : "hover:text-[#f8f0df]"}`}
+                  className={activeTab === id ? "is-active" : ""}
                   key={id}
                   type="button"
                   onClick={() => setActiveTab(id)}
                 >
                   {label}
+                  {id === "gifts" && giftsCount > 0 ? (
+                    <span className="loyalty-public-tab-badge">{giftsCount}</span>
+                  ) : null}
                 </button>
               ))}
             </div>
 
-            <div className="mt-3 rounded-[18px] border border-white/10 bg-white/[0.035] p-4 text-sm text-[#f8f0df]/72">
-              {activeTab === "card" ? (
-                <div className="grid gap-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-[#d6bb7d]">{card.tier === "ROYAL" ? "ROYALTY" : card.tier}</span>
-                    <strong className="text-[#f8f0df]">{stamps} / {target}</strong>
+            <div className="loyalty-public-tab-stage" key={activeTab}>
+              <div className="loyalty-public-panel">
+                {activeTab === "card" ? (
+                  <div className="loyalty-public-progress">
+                    <div>
+                      <span>{card.tier === "ROYAL" ? "ROYALTY" : card.tier}</span>
+                      <strong>{stamps} / {target}</strong>
+                    </div>
+                    <div className="loyalty-public-progress-bar">
+                      <span style={{ width: `${Math.min(100, (stamps / target) * 100)}%` }} />
+                    </div>
+                    <span>{visitsLeft} {strings.visitsToChest}</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-white/10">
-                    <span className="block h-full rounded-full bg-[#d6bb7d]" style={{ width: `${Math.min(100, (stamps / target) * 100)}%` }} />
-                  </div>
-                  <span>{visitsLeft} {strings.visitsToChest}</span>
-                </div>
-              ) : null}
+                ) : null}
 
-              {activeTab === "visit" ? (
-                card.upcomingVisit ? (
-                  <div className="grid gap-3">
-                    <span className="inline-flex items-center gap-2 text-[#d6bb7d]">
-                      <CalendarDays size={16} />
-                      {strings.nextVisit}
-                    </span>
-                    <strong className="text-[#f8f0df]">{card.upcomingVisit.date || new Date(card.upcomingVisit.scheduledAt).toLocaleDateString()} {card.upcomingVisit.time || ""}</strong>
-                    <span>{[card.upcomingVisit.serviceName, card.upcomingVisit.employeeName].filter(Boolean).join(" · ")}</span>
-                    <a className="inline-flex items-center gap-2 text-[#d6bb7d]" href={MAPS_URL} rel="noreferrer" target="_blank">
-                      <MapPin size={15} />
-                      {strings.route}
+                {activeTab === "visit" ? (
+                  card.upcomingVisit ? (
+                    <div className="loyalty-public-visit">
+                      <span className="loyalty-public-kicker">
+                        <CalendarDays size={16} />
+                        {strings.nextVisit}
+                      </span>
+                      <strong>{card.upcomingVisit.date || new Date(card.upcomingVisit.scheduledAt).toLocaleDateString()} {card.upcomingVisit.time || ""}</strong>
+                      <span>{[card.upcomingVisit.serviceName, card.upcomingVisit.employeeName].filter(Boolean).join(" · ")}</span>
+                      <a className="loyalty-public-text-link" href={MAPS_URL} rel="noreferrer" target="_blank">
+                        <MapPin size={15} />
+                        {strings.route}
+                      </a>
+                    </div>
+                  ) : (
+                    <div className="loyalty-public-visit">
+                      <span>{strings.noVisit}</span>
+                    </div>
+                  )
+                ) : null}
+
+                {activeTab === "visit" ? (
+                  <div className="loyalty-public-actions">
+                    <a
+                      className="loyalty-public-button is-primary"
+                      href={card.bookingUrl || BOOKSY_URL}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {strings.booking}
+                      <ExternalLink size={15} />
+                    </a>
+                    <a
+                      className="loyalty-public-button is-secondary"
+                      href={REVIEW_URL}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      {strings.review}
+                      <ExternalLink size={15} />
                     </a>
                   </div>
-                ) : (
-                  <span>{strings.noVisit}</span>
-                )
-              ) : null}
+                ) : null}
 
-              {activeTab === "gifts" ? (
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <strong className="text-[#f8f0df]">{strings.unopenedChests}</strong>
-                    {availableChests.length ? availableChests.map((chest) => (
-                      <button
-                        className="inline-flex items-center justify-between gap-3 rounded-xl border border-[#d6bb7d]/22 bg-[#d6bb7d]/8 px-3 py-2 text-left text-[#f8f0df]"
-                        disabled={openingChestId === chest.id}
-                        key={chest.id}
-                        type="button"
-                        onClick={() => handleOpenChest(chest.id)}
-                      >
-                        <span>{chest.tier === "ROYAL" ? "ROYALTY" : chest.tier}</span>
-                        <span className="text-[#d6bb7d]">{openingChestId === chest.id ? "..." : strings.openChest}</span>
-                      </button>
-                    )) : <span>{strings.noGifts}</span>}
+                {activeTab === "gifts" ? (
+                  <div className="loyalty-public-gifts">
+                    <div>
+                      <strong>{strings.unopenedChests}</strong>
+                      {availableChests.length ? availableChests.map((chest) => (
+                        <button
+                          className="loyalty-public-gift-row"
+                          disabled={openingChestId === chest.id}
+                          key={chest.id}
+                          type="button"
+                          onClick={() => handleOpenChest(chest.id)}
+                        >
+                          <span>{chest.tier === "ROYAL" ? "ROYALTY" : chest.tier}</span>
+                          <span>{openingChestId === chest.id ? "..." : strings.openChest}</span>
+                        </button>
+                      )) : <span>{strings.noGifts}</span>}
+                    </div>
+                    {availableRewards.length ? (
+                      <div>
+                        <strong>{strings.availableRewards}</strong>
+                        {availableRewards.map((reward) => (
+                          <span className="loyalty-public-gift-row" key={reward.id}>{reward.name}</span>
+                        ))}
+                      </div>
+                    ) : null}
+                    {usedRewards.length ? (
+                      <div>
+                        <strong>{strings.usedRewards}</strong>
+                        {usedRewards.map((reward) => (
+                          <span className="loyalty-public-gift-row is-muted" key={reward.id}>{reward.name}</span>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
-                  {availableRewards.length ? (
-                    <div className="grid gap-2">
-                      <strong className="text-[#f8f0df]">{strings.availableRewards}</strong>
-                      {availableRewards.map((reward) => (
-                        <span className="rounded-xl bg-white/5 px-3 py-2" key={reward.id}>{reward.name}</span>
-                      ))}
-                    </div>
-                  ) : null}
-                  {usedRewards.length ? (
-                    <div className="grid gap-2">
-                      <strong className="text-[#f8f0df]">{strings.usedRewards}</strong>
-                      {usedRewards.map((reward) => (
-                        <span className="rounded-xl bg-white/5 px-3 py-2 opacity-65" key={reward.id}>{reward.name}</span>
-                      ))}
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
-            </div>
-
-            <div className="mt-4 grid gap-2.5 sm:grid-cols-2 sm:gap-3">
-              <a
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-[#d6bb7d] px-5 text-sm font-bold text-[#1e1324] transition hover:bg-[#f0d894] sm:min-h-12"
-                href={card.bookingUrl || BOOKSY_URL}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {strings.booking}
-                <ExternalLink size={15} />
-              </a>
-              <a
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/12 px-5 text-sm font-bold text-[#f8f0df] transition hover:border-[#d6bb7d]/45 sm:min-h-12"
-                href={REVIEW_URL}
-                rel="noreferrer"
-                target="_blank"
-              >
-                {strings.review}
-                <ExternalLink size={15} />
-              </a>
+                ) : null}
+              </div>
             </div>
             </>
           ) : null}

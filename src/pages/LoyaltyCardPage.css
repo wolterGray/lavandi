@@ -1,3 +1,309 @@
+.loyalty-public-page {
+  --club-royal-bg: #0c0712;
+  --club-royal-panel: rgba(24, 17, 29, 0.86);
+  --club-royal-panel-soft: rgba(37, 25, 46, 0.72);
+  --club-royal-border: rgba(232, 184, 104, 0.18);
+  --club-royal-border-strong: rgba(232, 184, 104, 0.34);
+  --club-royal-gold: #e2ad56;
+  --club-royal-gold-soft: #f3d798;
+  --club-royal-text: #f7eddd;
+  --club-royal-muted: rgba(247, 237, 221, 0.64);
+  --club-royal-purple: #251337;
+  --club-royal-danger: #d51f2a;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: clamp(18px, 3vw, 42px);
+  color: var(--club-royal-text);
+  background:
+    radial-gradient(circle at 76% 16%, rgba(104, 46, 145, 0.16), transparent 32%),
+    radial-gradient(circle at 20% 88%, rgba(226, 173, 86, 0.08), transparent 34%),
+    linear-gradient(135deg, #07040b, var(--club-royal-bg) 52%, #11091a);
+}
+
+.loyalty-public-shell {
+  display: grid;
+  width: 100%;
+  min-height: calc(100svh - clamp(36px, 6vw, 84px));
+  align-items: center;
+  justify-items: center;
+  transition: min-height 260ms ease;
+}
+
+.loyalty-public-stack {
+  display: grid;
+  width: min(100%, 620px);
+  gap: 14px;
+  transition: gap 220ms ease;
+}
+
+.loyalty-public-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.loyalty-public-emblem {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid var(--club-royal-border-strong);
+  border-radius: 50%;
+  color: var(--club-royal-gold);
+  background:
+    radial-gradient(circle at 35% 28%, rgba(226, 173, 86, 0.18), transparent 38%),
+    rgba(37, 19, 55, 0.62);
+  box-shadow: inset 0 0 18px rgba(226, 173, 86, 0.08);
+}
+
+.loyalty-public-title {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  color: var(--club-royal-gold-soft);
+  font-size: clamp(18px, 3.1vw, 28px);
+  font-weight: 520;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.loyalty-public-title span {
+  background: linear-gradient(92deg, #eee8ff, #b9a8d7 48%, #736182 78%, #f4ecff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  font-family: "Avenir Next", "Montserrat", "Inter", system-ui, sans-serif;
+  font-size: 1.34em;
+  font-weight: 250;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  -webkit-text-fill-color: transparent;
+}
+
+.loyalty-public-title small {
+  color: var(--club-royal-gold-soft);
+  font-size: 0.58em;
+  font-weight: 540;
+  letter-spacing: 0.24em;
+  opacity: 0.78;
+}
+
+.loyalty-public-subtitle {
+  margin: 4px 0 0;
+  color: var(--club-royal-muted);
+  font-size: 13px;
+}
+
+.loyalty-public-card-shell {
+  width: 100%;
+  animation: loyaltyPublicTabIn 260ms ease both;
+}
+
+.loyalty-public-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+  padding: 5px;
+  border: 1px solid var(--club-royal-border);
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.015)),
+    rgba(17, 10, 24, 0.76);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.loyalty-public-tabs button {
+  position: relative;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--club-royal-muted);
+  background: transparent;
+  font-size: 13px;
+  font-weight: 760;
+  transition: color 180ms ease, background 180ms ease;
+}
+
+.loyalty-public-tabs button.is-active {
+  color: #1a0d21;
+  background:
+    linear-gradient(94deg, #f6dd9c, var(--club-royal-gold) 54%, #b67531);
+  box-shadow: 0 8px 24px rgba(226, 173, 86, 0.14);
+}
+
+.loyalty-public-tab-badge {
+  display: inline-grid;
+  min-width: 18px;
+  height: 18px;
+  place-items: center;
+  border-radius: 999px;
+  padding: 0 5px;
+  color: #fff;
+  background: var(--club-royal-danger);
+  box-shadow: 0 0 0 2px rgba(12, 7, 18, 0.92), 0 0 14px rgba(213, 31, 42, 0.38);
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.loyalty-public-tabs button.is-active .loyalty-public-tab-badge {
+  box-shadow: 0 0 0 2px rgba(246, 221, 156, 0.72), 0 0 14px rgba(213, 31, 42, 0.4);
+}
+
+.loyalty-public-panel {
+  display: grid;
+  gap: 14px;
+  border: 0;
+  border-radius: 0;
+  padding: 8px 4px 0;
+  color: var(--club-royal-muted);
+  background: transparent;
+  box-shadow: none;
+}
+
+.loyalty-public-tab-stage {
+  display: grid;
+  animation: loyaltyPublicTabIn 260ms ease both;
+  transform-origin: top center;
+}
+
+.loyalty-public-panel strong {
+  color: var(--club-royal-text);
+}
+
+.loyalty-public-progress {
+  display: grid;
+  gap: 10px;
+}
+
+.loyalty-public-progress > div:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.loyalty-public-progress > div:first-child span {
+  color: var(--club-royal-gold);
+  font-size: 14px;
+  font-weight: 720;
+  letter-spacing: 0.1em;
+}
+
+.loyalty-public-progress-bar {
+  overflow: hidden;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+.loyalty-public-progress-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #8a2342, #d51f2a 46%, var(--club-royal-gold));
+}
+
+.loyalty-public-visit,
+.loyalty-public-gifts,
+.loyalty-public-gifts > div {
+  display: grid;
+  gap: 12px;
+}
+
+.loyalty-public-visit {
+  min-height: 42px;
+}
+
+.loyalty-public-kicker,
+.loyalty-public-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--club-royal-gold);
+  text-decoration: none;
+}
+
+.loyalty-public-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.loyalty-public-button {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-size: 14px;
+  font-weight: 860;
+  text-decoration: none;
+  transition: border-color 180ms ease, color 180ms ease, background 180ms ease;
+}
+
+.loyalty-public-button.is-primary {
+  border: 1px solid var(--club-royal-border-strong);
+  color: var(--club-royal-gold-soft);
+  background: transparent;
+  box-shadow: inset 0 0 24px rgba(226, 173, 86, 0.035);
+}
+
+.loyalty-public-button.is-secondary {
+  border: 1px solid rgba(247, 237, 221, 0.14);
+  color: var(--club-royal-text);
+  background: transparent;
+}
+
+.loyalty-public-button:hover {
+  border-color: rgba(243, 215, 152, 0.48);
+  color: var(--club-royal-gold-soft);
+  background: rgba(226, 173, 86, 0.045);
+}
+
+.loyalty-public-gift-row {
+  display: flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  border-bottom: 1px solid rgba(232, 184, 104, 0.14);
+  border-radius: 0;
+  padding: 10px 0;
+  color: var(--club-royal-text);
+  background: transparent;
+  text-align: left;
+}
+
+.loyalty-public-gift-row span:last-child {
+  color: var(--club-royal-gold);
+  font-weight: 800;
+}
+
+.loyalty-public-gift-row.is-muted {
+  opacity: 0.62;
+}
+
+@keyframes loyaltyPublicTabIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .nuar-public-card {
   --physical-accent: #d4bd82;
   --physical-engrave: color-mix(in srgb, var(--physical-accent) 58%, #f5f0e6);
