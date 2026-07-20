@@ -118,7 +118,7 @@ export async function compressImageThumbForUpload(file, folder = "uploads") {
   return renderWebpFile(file, folder, { thumb: true });
 }
 
-function fileToBase64(file) {
+export function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onload = () => {

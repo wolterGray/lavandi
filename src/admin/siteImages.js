@@ -8,6 +8,8 @@ import {
 } from "./cmsBackend";
 import {
   compressImageForUpload,
+  compressImageThumbForUpload,
+  fileToBase64,
   recompressStoredImageRow,
 } from "../utils/imageCompress";
 import {
@@ -204,7 +206,7 @@ export async function fetchSiteImagesStorageUsage() {
 }
 
 export async function saveSiteImageToDatabase(file, folder = "uploads", replaceRef = null) {
-  if (!supabase) {
+  if (!isSiteImagesConfigured() && !supabase) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
 
@@ -212,48 +214,55 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
     throw new Error(adminRu.media.invalidFileType);
   }
 
-  if (file.size > 5 * 1024 * 1024) {
+  if (file.size > 15 * 1024 * 1024) {
     throw new Error(adminRu.media.fileTooLarge);
   }
 
   const safeFolder = sanitizeFolder(folder);
   const prepared = await compressImageForUpload(file, safeFolder);
+  const thumb = await compressImageThumbForUpload(file, safeFolder);
   const id = `${safeFolder}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-  const fileName = `${safeFolder}/${id}.webp`;
 
-  const { error } = await supabase.storage
-    .from("site-images")
-    .upload(fileName, prepared, {
-      contentType: prepared.type,
-      cacheControl: "31536000",
-      upsert: true,
+  const dataBase64 = await fileToBase64(prepared);
+  const thumbBase64 = thumb ? await fileToBase64(thumb) : null;
+
+  const payload = {
+    id,
+    folder: safeFolder,
+    mime_type: prepared.type,
+    data_base64: dataBase64,
+    size_bytes: prepared.size,
+    thumb_mime_type: thumb?.type ?? null,
+    thumb_base64: thumbBase64,
+    thumb_size_bytes: thumb?.size ?? null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (shouldUseCmsBackend()) {
+    await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+      label: "Save site image",
     });
+  } else {
+    if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
+    const { error } = await supabase.from("site_images").upsert(payload);
 
-  if (error) {
-    throw new Error(`${adminRu.media.uploadFailed}: ${error.message}`);
+    if (error) throw error;
   }
 
-  const { data: { publicUrl } } = supabase.storage
-    .from("site-images")
-    .getPublicUrl(fileName);
+  const newRef = toImageRef(id);
 
-  if (replaceRef && typeof replaceRef === "string" && replaceRef.startsWith("https://")) {
+  const oldId = parseImageRef(replaceRef);
+  if (oldId) {
     try {
-      const bucketPath = replaceRef.split("/storage/v1/object/public/site-images/")[1];
-      if (bucketPath) {
-        await supabase.storage.from("site-images").remove([bucketPath]);
-      }
-    } catch {
-      // ignore errors deleting old image
-    }
-  } else if (replaceRef && isImageRef(replaceRef)) {
-    const oldId = parseImageRef(replaceRef);
-    if (oldId) {
       await deleteSiteImagesByIds([oldId]);
+    } catch {
+      // ignore delete errors
     }
   }
 
-  return publicUrl;
+  return newRef;
 }
 
 export async function fetchSiteImageRecord(id, { variant = IMAGE_VARIANT.full } = {}) {
