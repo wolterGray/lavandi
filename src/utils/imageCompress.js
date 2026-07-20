@@ -103,14 +103,8 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
   });
 }
 
-export async function compressImageForUpload(file, folder = "uploads") {
-  if (!file || SKIP_TYPES.has(file.type)) return file;
-
-  if (file.type === "image/webp" && file.size <= 350_000) {
-    return file;
-  }
-
-  return renderWebpFile(file, folder, { thumb: false });
+export async function compressImageForUpload(file) {
+  return file;
 }
 
 export async function compressImageThumbForUpload(file, folder = "uploads") {
