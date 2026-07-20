@@ -1,5 +1,5 @@
 import { forwardRef, useEffect } from "react";
-import { CircleHelp, ExternalLink, Search } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle2, CircleHelp, ExternalLink, Info, Loader2, Search, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { getAdminNavMeta, getAdminPreviewPath } from "./adminNav";
 import { ADMIN_LOCALE, adminRu } from "./adminStrings";
@@ -229,20 +229,24 @@ export function adminInputClass(extra = "") {
   return `w-full rounded-card border border-border/60 bg-surface px-3 py-2.5 text-sm text-milk outline-none transition placeholder:text-muted focus:border-gold/40 focus:ring-1 focus:ring-gold/20 ${extra}`;
 }
 
-export function AdminButton({ variant = "primary", className = "", type = "button", ...props }) {
+export function AdminButton({ variant = "primary", loading = false, disabled, className = "", type = "button", children, ...props }) {
   const styles =
     variant === "ghost"
       ? "border border-border/60 bg-transparent text-stone hover:border-gold/30 hover:text-milk"
       : variant === "danger"
-        ? "border border-red-900/40 bg-red-950/30 text-red-200 hover:border-red-700/50"
+        ? "border border-red-900/40 bg-red-950/40 text-red-200 hover:border-red-700/60 hover:bg-red-900/40"
         : "border border-gold/35 bg-gold/10 text-gold hover:border-gold/50 hover:bg-gold/15";
 
   return (
     <button
       type={type}
-      className={`inline-flex items-center justify-center rounded-pill px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
+      disabled={disabled || loading}
+      className={`inline-flex items-center justify-center gap-2 rounded-pill px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
       {...props}
-    />
+    >
+      {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden /> : null}
+      {children}
+    </button>
   );
 }
 
@@ -260,53 +264,70 @@ export function AdminConfirmDialog({
     if (!open) return undefined;
     const onKeyDown = (event) => {
       if (event.key === "Escape") onCancel?.();
+      if (event.key === "Enter") onConfirm?.();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onCancel]);
+  }, [open, onCancel, onConfirm]);
 
   if (!open) return null;
 
+  const isDanger = variant === "danger";
+
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-void/80 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-void/80 p-4 backdrop-blur-md transition-opacity animate-in fade-in duration-200"
       onClick={onCancel}
       role="presentation"
     >
       <div className="w-full max-w-md" onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true">
-      <AdminPanel className="border-gold/25">
-        <h3 className="font-display text-xl text-milk">{title}</h3>
-        {message ? <p className="mt-3 text-sm leading-relaxed text-stone">{message}</p> : null}
-        <div className="mt-6 flex flex-wrap justify-end gap-2">
-          <AdminButton variant="ghost" onClick={onCancel}>
-            {cancelLabel}
-          </AdminButton>
-          <AdminButton variant={variant} onClick={onConfirm}>
-            {confirmLabel}
-          </AdminButton>
-        </div>
-      </AdminPanel>
+        <AdminPanel className={`border-2 ${isDanger ? "border-red-900/50 bg-surface/95" : "border-gold/30 bg-surface/95"}`}>
+          <div className="flex items-start gap-4">
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${isDanger ? "bg-red-950/60 text-red-400 ring-1 ring-red-800/40" : "bg-gold/10 text-gold ring-1 ring-gold/20"}`}>
+              {isDanger ? <AlertTriangle className="h-5 w-5" aria-hidden /> : <Info className="h-5 w-5" aria-hidden />}
+            </div>
+            <div className="flex-1">
+              <h3 className="font-display text-xl text-milk">{title}</h3>
+              {message ? <p className="mt-2 text-sm leading-relaxed text-stone">{message}</p> : null}
+            </div>
+          </div>
+          <div className="mt-6 flex flex-wrap justify-end gap-2.5">
+            <AdminButton variant="ghost" onClick={onCancel}>
+              {cancelLabel}
+            </AdminButton>
+            <AdminButton variant={variant} onClick={onConfirm}>
+              {confirmLabel}
+            </AdminButton>
+          </div>
+        </AdminPanel>
       </div>
     </div>
   );
 }
 
-export function AdminStatusToast({ message, tone = "info" }) {
+export function AdminStatusToast({ message, tone = "info", onClose }) {
   if (!message) return null;
 
+  const Icon = tone === "success" ? CheckCircle2 : tone === "error" ? AlertCircle : Info;
   const tones = {
-    success: "border-emerald-900/40 bg-emerald-950/50 text-emerald-100",
-    error: "border-red-900/40 bg-red-950/50 text-red-100",
-    info: "border-gold/30 bg-gold/10 text-gold",
+    success: "border-emerald-900/50 bg-emerald-950/80 text-emerald-100 ring-1 ring-emerald-500/20",
+    error: "border-red-900/50 bg-red-950/80 text-red-100 ring-1 ring-red-500/20",
+    info: "border-gold/40 bg-surface/90 text-gold ring-1 ring-gold/20",
   };
 
   return (
     <div
       role="status"
       aria-live="polite"
-      className={`fixed bottom-24 right-4 z-[190] max-w-sm rounded-card border px-4 py-3 text-sm shadow-spa-hover backdrop-blur-sm sm:bottom-8 ${tones[tone] ?? tones.info}`}
+      className={`fixed bottom-20 right-4 z-[190] flex items-center gap-3 max-w-md rounded-card border px-4 py-3.5 text-sm shadow-spa-hover backdrop-blur-md sm:bottom-6 sm:right-6 animate-in slide-in-from-bottom-5 duration-300 ${tones[tone] ?? tones.info}`}
     >
-      {message}
+      <Icon className="h-5 w-5 shrink-0" aria-hidden />
+      <span className="flex-1 font-medium">{message}</span>
+      {onClose && (
+        <button type="button" onClick={onClose} className="rounded-full p-1 opacity-70 transition hover:opacity-100">
+          <X className="h-4 w-4" aria-hidden />
+        </button>
+      )}
     </div>
   );
 }
@@ -340,23 +361,37 @@ export function AdminSaveBar({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [dirty, mode, onSave, saving]);
 
+  if (mode === "edit" && !dirty && !saving) {
+    return null;
+  }
+
   return (
-    <div className="sticky bottom-4 z-10 mt-8 flex flex-wrap items-center justify-end gap-2 rounded-card border border-gold/25 bg-surface/95 p-3 shadow-spa-hover backdrop-blur-sm">
-      <span className="mr-auto text-xs text-stone">
-        {statusText}
-        {mode === "edit" && dirty ? ` · ${adminRu.common.saveShortcut}` : ""}
-      </span>
-      {mode === "edit" && dirty && onDiscard && (
-        <AdminButton variant="ghost" onClick={onDiscard} disabled={saving}>
-          {adminRu.common.discard}
+    <div className="sticky bottom-6 z-30 mt-8 flex flex-wrap items-center justify-between gap-4 rounded-pill border border-gold/30 bg-surface/95 px-5 py-3 shadow-spa-hover backdrop-blur-md animate-in slide-in-from-bottom-4 duration-300">
+      <div className="flex items-center gap-2.5 text-xs text-milk">
+        <span className="relative flex h-2 w-2">
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-gold" />
+        </span>
+        <span className="font-semibold">{statusText}</span>
+        {mode === "edit" && dirty ? (
+          <kbd className="hidden rounded border border-border/60 bg-void/50 px-1.5 py-0.5 text-[10px] text-muted sm:inline-block">⌘S</kbd>
+        ) : null}
+      </div>
+
+      <div className="flex items-center gap-2">
+        {mode === "edit" && dirty && onDiscard && (
+          <AdminButton variant="ghost" onClick={onDiscard} disabled={saving}>
+            {adminRu.common.discard}
+          </AdminButton>
+        )}
+        <AdminButton
+          onClick={onSave}
+          loading={saving}
+          disabled={saving || mode !== "edit" || !dirty || !onSave}
+        >
+          {saving ? adminRu.common.saving : adminRu.common.save}
         </AdminButton>
-      )}
-      <AdminButton
-        onClick={onSave}
-        disabled={saving || mode !== "edit" || !dirty || !onSave}
-      >
-        {saving ? adminRu.common.saving : adminRu.common.save}
-      </AdminButton>
+      </div>
     </div>
   );
 }

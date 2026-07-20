@@ -87,7 +87,7 @@ export function AdminShellProvider({ children }) {
   return (
     <AdminShellContext.Provider value={value}>
       {children}
-      <AdminStatusToast message={toast?.message} tone={toast?.tone} />
+      <AdminStatusToast message={toast?.message} tone={toast?.tone} onClose={() => setToast(null)} />
       <AdminCommandPalette open={commandOpen} onClose={() => setCommandOpen(false)} />
       <AdminConfirmDialog
         open={Boolean(confirmState)}
