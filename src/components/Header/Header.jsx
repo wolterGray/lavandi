@@ -60,8 +60,10 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-500 ${
-          showBar ? "border-b border-border/30 bg-void/95 shadow-header backdrop-blur-sm" : "border-b border-transparent bg-transparent"
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+          showBar
+            ? "border-b border-border/30 bg-gradient-to-b from-void/95 via-void/85 to-void/70 shadow-header backdrop-blur-md"
+            : "border-b border-white/5 bg-gradient-to-b from-void/90 via-void/50 to-transparent backdrop-blur-xs"
         }`}
       >
         <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">

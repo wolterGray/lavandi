@@ -213,6 +213,7 @@
 
   .logo-gold {
     filter: brightness(0) saturate(100%) invert(72%) sepia(22%) saturate(520%) hue-rotate(5deg) brightness(88%) contrast(88%);
+    mix-blend-mode: screen;
   }
 
   .image-skeleton {

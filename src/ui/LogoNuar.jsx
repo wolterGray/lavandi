@@ -6,8 +6,9 @@ function LogoNuar({ className = "", gold = true }) {
       <SiteImage
         src="/logo_nuar.PNG"
         alt="NUAR — studio masażu premium"
-        wrapperClassName="max-w-full"
-        className={`max-w-full h-auto ${gold ? "logo-gold" : ""}`}
+        wrapperClassName="max-w-full !bg-transparent"
+        className={`max-w-full h-auto bg-transparent ${gold ? "logo-gold" : ""}`}
+        showSkeleton={false}
         loading="eager"
         fetchPriority="high"
       />
