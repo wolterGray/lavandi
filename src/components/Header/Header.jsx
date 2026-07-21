@@ -60,9 +60,9 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className={`w-full border-b border-border/40 bg-void transition-all duration-300 ${
+        className={`w-full border-b border-[#251838]/60 bg-[#130b1e] transition-all duration-300 ${
           scrolled
-            ? "fixed inset-x-0 top-0 z-50 backdrop-blur-md shadow-header animate-in fade-in duration-300"
+            ? "fixed inset-x-0 top-0 z-50 bg-[#130b1e]/95 backdrop-blur-md shadow-header animate-in fade-in duration-300"
             : "relative z-40"
         }`}
       >
