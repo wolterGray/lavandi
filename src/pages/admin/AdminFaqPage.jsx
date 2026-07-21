@@ -88,7 +88,7 @@ export default function AdminFaqPage() {
   };
 
   const addItem = () => {
-    setRuDraft((prev) => [...prev, { question: "", answer: "" }]);
+    setRuDraft((prev) => [{ question: "", answer: "" }, ...prev]);
     setDirty(true);
   };
 
@@ -103,9 +103,10 @@ export default function AdminFaqPage() {
   };
 
   const removeItem = async (index) => {
+    const item = ruDraft[index];
     const ok = await requestConfirm({
       title: adminRu.common.confirmDeleteTitle,
-      message: adminRu.common.confirmDeleteMessage,
+      message: item?.question ? `Удалить вопрос «${item.question}»?` : adminRu.common.confirmDeleteMessage,
       variant: "danger",
       confirmLabel: adminRu.common.delete,
     });

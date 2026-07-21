@@ -238,13 +238,22 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
     updated_at: new Date().toISOString(),
   };
 
+  let saved = false;
+
   if (shouldUseCmsBackend()) {
-    await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
-      method: "PUT",
-      body: JSON.stringify(payload),
-      label: "Save site image",
-    });
-  } else {
+    try {
+      await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+        label: "Save site image",
+      });
+      saved = true;
+    } catch {
+      // Fall back to direct Supabase if CMS backend request fails or times out
+    }
+  }
+
+  if (!saved) {
     if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
     const { error } = await supabase.from("site_images").upsert(payload);
 

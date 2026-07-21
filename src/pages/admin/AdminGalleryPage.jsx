@@ -41,7 +41,7 @@ export default function AdminGalleryPage() {
   };
 
   const addItem = () => {
-    setDraft((prev) => [...prev, { src: "/massage/1.webp", altKey: "studio" }]);
+    setDraft((prev) => [{ src: "/massage/1.webp", altKey: "studio" }, ...prev]);
     setDirty(true);
   };
 

@@ -50,7 +50,7 @@ export default function AdminReviewsPage() {
   };
 
   const addReview = () => {
-    setDraft((prev) => [...prev, { name: "", text: "", rating: 5 }]);
+    setDraft((prev) => [{ name: "", text: "", rating: 5 }, ...prev]);
   };
 
   const cloneReview = (index) => {
@@ -58,9 +58,10 @@ export default function AdminReviewsPage() {
   };
 
   const removeReview = async (index) => {
+    const review = draft[index];
     const ok = await requestConfirm({
       title: adminRu.common.confirmDeleteTitle,
-      message: adminRu.common.confirmDeleteMessage,
+      message: review?.name ? `Удалить отзыв от «${review.name}»?` : adminRu.common.confirmDeleteMessage,
       variant: "danger",
       confirmLabel: adminRu.common.delete,
     });

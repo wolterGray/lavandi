@@ -91,7 +91,7 @@ export default function AdminTeamPage() {
 
   const addMember = () => {
     const id = `member-${Date.now()}`;
-    setTeamDraft((prev) => [...prev, { id, name: "Новый", img: "/team/1.png", role: "master" }]);
+    setTeamDraft((prev) => [{ id, name: "Новый сотрудник", img: "/team/1.png", role: "master" }, ...prev]);
     setLocaleDraft((prev) => ({
       ...prev,
       members: {
@@ -102,14 +102,15 @@ export default function AdminTeamPage() {
   };
 
   const removeMember = async (index) => {
+    const member = teamDraft[index];
     const ok = await requestConfirm({
       title: adminRu.common.confirmDeleteTitle,
-      message: adminRu.common.confirmDeleteMessage,
+      message: member?.name ? `Удалить сотрудника «${member.name}»?` : adminRu.common.confirmDeleteMessage,
       variant: "danger",
       confirmLabel: adminRu.common.delete,
     });
     if (!ok) return;
-    const id = teamDraft[index]?.id;
+    const id = member?.id;
     setTeamDraft((prev) => prev.filter((_, i) => i !== index));
     if (id) {
       setLocaleDraft((prev) => {

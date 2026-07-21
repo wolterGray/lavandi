@@ -1,8 +1,8 @@
 const SKIP_TYPES = new Set(["image/svg+xml", "image/gif"]);
 
 const FOLDER_PRESETS = {
-  cosmetics: { maxWidth: 960, maxHeight: 960, quality: 0.8, thumb: 480, thumbQuality: 0.72 },
-  uploads: { maxWidth: 1200, maxHeight: 1200, quality: 0.82, thumb: 560, thumbQuality: 0.74 },
+  cosmetics: { maxWidth: 2000, maxHeight: 2000, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
+  uploads: { maxWidth: 2500, maxHeight: 2500, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
 };
 
 function getPreset(folder = "uploads") {
@@ -103,8 +103,10 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
   });
 }
 
-export async function compressImageForUpload(file) {
-  return file;
+export async function compressImageForUpload(file, folder = "uploads") {
+  if (!file || SKIP_TYPES.has(file.type)) return file;
+  if (file.size <= 1.5 * 1024 * 1024 && file.type === "image/webp") return file;
+  return renderWebpFile(file, folder, { thumb: false });
 }
 
 export async function compressImageThumbForUpload(file, folder = "uploads") {

@@ -62,14 +62,15 @@ export default function AdminHomePage() {
     if (heroCount >= MAX_HERO_SLIDES) return;
     setHeroDraft((prev) => ({
       ...prev,
-      items: [...(prev.items ?? []), { img: "/massage/1.webp", title: "", news: "" }],
+      items: [{ img: "/massage/1.webp", title: "", news: "" }, ...(prev.items ?? [])],
     }));
   };
 
   const removeSlide = async (index) => {
+    const slide = heroDraft.items?.[index];
     const ok = await requestConfirm({
       title: adminRu.common.confirmDeleteTitle,
-      message: adminRu.common.confirmDeleteMessage,
+      message: slide?.title ? `Удалить слайд «${slide.title}»?` : adminRu.common.confirmDeleteMessage,
       variant: "danger",
       confirmLabel: adminRu.common.delete,
     });
@@ -92,14 +93,15 @@ export default function AdminHomePage() {
     if (newsCount >= MAX_HOME_NEWS) return;
     setNewsDraft((prev) => ({
       ...prev,
-      items: [...(prev.items ?? []), createNewsItem()],
+      items: [createNewsItem(), ...(prev.items ?? [])],
     }));
   };
 
   const removeNewsItem = async (index) => {
+    const item = newsDraft.items?.[index];
     const ok = await requestConfirm({
       title: adminRu.common.confirmDeleteTitle,
-      message: adminRu.common.confirmDeleteMessage,
+      message: item?.title ? `Удалить новость «${item.title}»?` : adminRu.common.confirmDeleteMessage,
       variant: "danger",
       confirmLabel: adminRu.common.delete,
     });
