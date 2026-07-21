@@ -42,7 +42,7 @@ export default function HeroCarousel() {
                 src={slide.img}
                 alt={slide.title}
                 fill
-                className="object-contain object-center"
+                className="object-cover object-center"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
               />
