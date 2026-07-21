@@ -38,7 +38,7 @@ export default function Header({ navItems, linkToHome = false }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 80);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -60,7 +60,11 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className="sticky top-0 z-50 w-full border-b border-border/40 bg-void backdrop-blur-md shadow-header"
+        className={`w-full border-b border-border/40 bg-void transition-all duration-300 ${
+          scrolled
+            ? "fixed inset-x-0 top-0 z-50 backdrop-blur-md shadow-header animate-in fade-in duration-300"
+            : "relative z-40"
+        }`}
       >
         <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
           <div className="w-[92px] shrink-0 sm:w-[108px]">
