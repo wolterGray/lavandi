@@ -47,7 +47,7 @@ export default function HeroCarousel() {
                 fetchPriority={index === 0 ? "high" : "auto"}
               />
               <div
-                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/2 bg-gradient-to-t from-[#1a1226]/90 via-[#181122]/45 to-transparent"
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-3/5 bg-gradient-to-t from-[#0e0a14] via-[#160e22]/80 to-transparent"
                 aria-hidden
               />
               <div className="relative z-20 flex h-full flex-col justify-end px-6 pb-16 pt-8 sm:px-10 sm:pb-20 lg:px-14 lg:pb-24">
