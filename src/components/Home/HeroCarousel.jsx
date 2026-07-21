@@ -42,36 +42,27 @@ export default function HeroCarousel() {
                 src={slide.img}
                 alt={slide.title}
                 fill
-                className="object-cover object-top"
+                className="object-contain object-center"
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
               />
-              <div className="absolute inset-0 bg-surface/10" aria-hidden />
-              <div
-                className="absolute inset-0 bg-[rgba(112,80,96,0.10)]"
-                aria-hidden
-              />
-              <div
-                className="hero-section-fade pointer-events-none absolute inset-x-0 bottom-0 z-10"
-                aria-hidden
-              />
-              <div className="relative z-20 flex h-full flex-col justify-end px-5 pb-12 pt-10 sm:px-8 sm:pb-16 sm:pt-14 lg:px-12 lg:pb-18">
-                <div className="max-w-2xl">
-                  <p className="section-label">{t("hero.eyebrow")}</p>
-                  <h1 className="mt-4 font-display text-display-md font-bold tracking-[-0.03em] text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-display-lg lg:max-w-xl">
+              <div className="relative z-20 flex h-full flex-col justify-end px-6 pb-8 pt-8 sm:px-10 sm:pb-10 lg:px-12 lg:pb-12">
+                <div className="max-w-xl">
+                  <p className="section-label text-[11px] sm:text-xs">{t("hero.eyebrow")}</p>
+                  <h1 className="mt-2 font-display text-2xl font-bold tracking-[-0.02em] text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-3xl lg:text-4xl lg:max-w-lg">
                     {slide.title}
                   </h1>
-                  <p className="mt-5 max-w-md text-base leading-[1.75] text-stone [text-shadow:0_1px_10px_rgba(6,5,8,0.45)] md:text-[17px] md:leading-8">
+                  <p className="mt-3 max-w-md text-sm leading-[1.6] text-stone [text-shadow:0_1px_10px_rgba(6,5,8,0.45)] sm:text-base">
                     {slide.news}
                   </p>
-                  <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                    <BookVisitButton size="lg">{t("hero.cta")}</BookVisitButton>
+                  <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <BookVisitButton size="md">{t("hero.cta")}</BookVisitButton>
                     <Link
                       to="services"
                       smooth
                       duration={600}
                       offset={-80}
-                      className="inline-flex min-h-[52px] cursor-pointer items-center justify-center px-2 text-sm text-stone transition hover:text-milk"
+                      className="inline-flex min-h-[44px] cursor-pointer items-center justify-center px-2 text-sm text-stone transition hover:text-milk"
                     >
                       {t("hero.ctaSecondary")} →
                     </Link>
