@@ -6,11 +6,13 @@
   :root {
     --color-bg: #08060c;
     --color-surface: #0c0a10;
+    --color-purple-header: #130b1e;
     --color-card: #100e14;
     --color-border: #1a1520;
     --color-text: #e5dfd8;
     --color-secondary: #9a8880;
     --color-gold: #d9a752;
+    --color-gold-hover: #c59239;
     --color-footer: #07050a;
     --hero-fade-height: clamp(11rem, 38vh, 20rem);
   }
