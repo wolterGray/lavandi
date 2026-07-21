@@ -40,8 +40,8 @@ function PriceSection({ services = [] }) {
                   className={[
                     "rounded-pill px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300 border",
                     active
-                      ? "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#130b1e] border-[#d4af37]/60 shadow-[0_2px_12px_rgba(197,155,39,0.25)]"
-                      : "bg-[#130b1e] text-[#c59b27] border-[#b8860b]/40 hover:border-[#c59b27] hover:bg-[#b8860b]/20 hover:text-[#f5ebd6]",
+                      ? "bg-[#c89f65] text-[#08060c] border-[#c89f65]"
+                      : "bg-[#100e14] text-stone border-border/40 hover:border-[#c89f65]/40 hover:text-[#c89f65]",
                   ].join(" ")}
                 >
                   {time} {t("common.min")}

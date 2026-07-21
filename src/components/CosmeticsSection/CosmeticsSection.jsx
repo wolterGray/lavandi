@@ -55,7 +55,7 @@ export default function CosmeticsSection() {
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">
           <RouterLink
             to={COSMETICS_ROUTE}
-            className="inline-flex min-h-[52px] items-center justify-center rounded-pill border border-[#b8860b]/60 bg-[#130b1e] px-9 font-display text-xs font-bold uppercase tracking-[0.22em] text-[#c59b27] transition duration-300 ease-luxury hover:bg-gradient-to-r hover:from-[#c59b27] hover:via-[#b8860b] hover:to-[#967048] hover:text-[#130b1e]"
+            className="inline-flex min-h-[52px] items-center justify-center rounded-pill border border-[#c89f65]/40 bg-[#c89f65]/10 px-9 font-display text-xs font-bold uppercase tracking-[0.22em] text-[#c89f65] transition duration-300 ease-luxury hover:border-[#c89f65] hover:bg-[#c89f65] hover:text-[#08060c]"
           >
             {t("cosmetics.viewAll")}
           </RouterLink>

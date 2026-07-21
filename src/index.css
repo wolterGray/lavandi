@@ -10,7 +10,7 @@
     --color-border: #1a1520;
     --color-text: #e5dfd8;
     --color-secondary: #9a8880;
-    --color-gold: #c59b27;
+    --color-gold: #c89f65;
     --color-footer: #07050a;
     --hero-fade-height: clamp(11rem, 38vh, 20rem);
   }
@@ -135,7 +135,7 @@
   }
 
   .spa-divider {
-    @apply mx-auto my-6 h-[2px] w-16 bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] rounded-full;
+    @apply mx-auto my-6 h-[2px] w-16 bg-[#c89f65] rounded-full;
   }
 
   .hero-section-fade {

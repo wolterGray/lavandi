@@ -1,14 +1,14 @@
 const variants = {
   primary:
-    "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#130b1e] border border-[#d4af37]/40 hover:brightness-115 font-bold",
+    "bg-[#c89f65] text-[#08060c] border border-[#c89f65]/60 hover:bg-[#b38848] hover:border-[#b38848] font-bold transition duration-300",
   secondary:
-    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:border-[#c59b27] hover:text-[#130b1e] hover:bg-[#b8860b]",
+    "bg-transparent text-[#e5dfd8] border border-border/50 hover:border-[#c89f65]/60 hover:text-[#c89f65] hover:bg-[#c89f65]/[0.06] transition duration-300",
   ghost:
-    "bg-transparent text-[#b8860b] border border-transparent hover:text-[#c59b27]",
+    "bg-transparent text-stone border border-transparent hover:text-milk transition duration-300",
   light:
-    "bg-[#130b1e] text-[#c59b27] border border-[#b8860b]/50 hover:border-[#c59b27] hover:bg-[#b8860b]/20",
+    "bg-surface text-milk border border-border/50 hover:border-[#c89f65]/40 hover:bg-[#c89f65]/[0.05] transition duration-300",
   outlineLight:
-    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:bg-[#b8860b] hover:text-[#130b1e]",
+    "bg-transparent text-milk border border-milk/40 hover:bg-[#c89f65] hover:text-[#08060c] transition duration-300",
 };
 
 const sizes = {
