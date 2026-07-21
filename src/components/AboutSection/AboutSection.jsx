@@ -15,8 +15,8 @@ export default function AboutSection() {
       <Container>
         <div className="grid items-start gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16">
           <ScrollAnimationWrapper direction="left">
-            <SectionTitle label={about.label} align="left">{about.title}</SectionTitle>
-            <div className="spa-divider !mx-0" />
+            <SectionTitle label={about.label} align="center">{about.title}</SectionTitle>
+            <div className="spa-divider my-6" />
             <p className="-mt-2 max-w-lg text-base leading-relaxed text-stone md:text-[17px] md:leading-8">{about.text}</p>
             <p className="mt-6 text-sm font-bold uppercase tracking-[0.12em] text-gold">{about.location}</p>
           </ScrollAnimationWrapper>

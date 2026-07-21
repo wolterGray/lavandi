@@ -81,12 +81,12 @@ export default function MassageServices({ services = [] }) {
           <SectionTitle
             label={t("services.label")}
             description={t("services.description")}
-            align="left"
+            align="center"
             className="!mb-0"
           >
             {t("services.title")}
           </SectionTitle>
-          <div className="spa-divider !mx-0 mt-6" />
+          <div className="spa-divider my-6" />
         </ScrollAnimationWrapper>
 
         <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
