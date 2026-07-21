@@ -46,7 +46,11 @@ export default function HeroCarousel() {
                 loading={index === 0 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
               />
-              <div className="relative z-20 flex h-full flex-col justify-end px-6 pb-8 pt-8 sm:px-10 sm:pb-10 lg:px-12 lg:pb-12">
+              <div
+                className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-1/2 bg-gradient-to-t from-[#1a1226]/90 via-[#181122]/45 to-transparent"
+                aria-hidden
+              />
+              <div className="relative z-20 flex h-full flex-col justify-end px-6 pb-16 pt-8 sm:px-10 sm:pb-20 lg:px-14 lg:pb-24">
                 <div className="max-w-xl">
                   <p className="section-label text-[11px] sm:text-xs">{t("hero.eyebrow")}</p>
                   <h1 className="mt-2 font-display text-2xl font-bold tracking-[-0.02em] text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-3xl lg:text-4xl lg:max-w-lg">
@@ -74,8 +78,8 @@ export default function HeroCarousel() {
         ))}
       </Swiper>
 
-      <div ref={paginationRef} className="hero-pagination absolute bottom-8 left-5 z-20 flex gap-2 sm:left-8 lg:left-12" />
-      <div className="absolute bottom-8 right-6 z-20 hidden flex-col items-center gap-2 text-muted lg:flex">
+      <div ref={paginationRef} className="hero-pagination absolute bottom-6 left-6 z-30 flex gap-2 sm:bottom-8 sm:left-10 lg:bottom-10 lg:left-14" />
+      <div className="absolute bottom-6 right-8 z-30 hidden flex-col items-center gap-2 text-muted sm:bottom-8 sm:right-10 lg:bottom-10 lg:right-14 lg:flex">
         <span className="text-[10px] uppercase tracking-[0.2em]">{t("hero.scroll")}</span>
         <span className="h-8 w-px bg-milk/20" />
       </div>
