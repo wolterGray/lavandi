@@ -1,14 +1,14 @@
 const variants = {
   primary:
-    "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#f5ebd6] border border-[#d4af37]/40 hover:brightness-115 font-bold",
+    "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#130b1e] border border-[#d4af37]/40 hover:brightness-115 font-bold",
   secondary:
-    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:border-[#c59b27] hover:text-[#f5ebd6] hover:bg-[#b8860b]",
+    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:border-[#c59b27] hover:text-[#130b1e] hover:bg-[#b8860b]",
   ghost:
     "bg-transparent text-[#b8860b] border border-transparent hover:text-[#c59b27]",
   light:
     "bg-[#130b1e] text-[#c59b27] border border-[#b8860b]/50 hover:border-[#c59b27] hover:bg-[#b8860b]/20",
   outlineLight:
-    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:bg-[#b8860b] hover:text-[#f5ebd6]",
+    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:bg-[#b8860b] hover:text-[#130b1e]",
 };
 
 const sizes = {
