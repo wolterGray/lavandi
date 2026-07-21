@@ -60,9 +60,7 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 transition-all duration-300 border-b border-border/40 bg-void/95 backdrop-blur-md shadow-header ${
-          showBar ? "py-0" : ""
-        }`}
+        className="fixed inset-x-0 top-0 z-50 transition-all duration-300 border-b border-border/40 bg-void/95 backdrop-blur-md shadow-header"
       >
         <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
           <div className="w-[92px] shrink-0 sm:w-[108px]">
