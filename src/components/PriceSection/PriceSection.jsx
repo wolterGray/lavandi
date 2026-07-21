@@ -28,7 +28,7 @@ function PriceSection({ services = [] }) {
           <SectionTitle label={t("pricing.label")} description={t("pricing.description")}>{t("pricing.title")}</SectionTitle>
           <div className="spa-divider" />
 
-          <div className="mb-8 flex flex-wrap justify-center gap-4">
+          <div className="mb-8 flex flex-wrap justify-center gap-3">
             {times.map((time) => {
               const active = selectedTime === time;
               return (
@@ -38,8 +38,10 @@ function PriceSection({ services = [] }) {
                   onClick={() => setSelectedTime(time)}
                   aria-pressed={active}
                   className={[
-                    "rounded-pill px-5 py-2 text-xs font-bold uppercase tracking-[0.12em] transition",
-                    active ? "bg-gold text-white" : "bg-card text-stone hover:text-gold",
+                    "rounded-pill px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300 border",
+                    active
+                      ? "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#130b1e] border-[#d4af37]/60 shadow-[0_2px_12px_rgba(197,155,39,0.25)]"
+                      : "bg-[#130b1e] text-[#c59b27] border-[#b8860b]/40 hover:border-[#c59b27] hover:bg-[#b8860b]/20 hover:text-[#f5ebd6]",
                   ].join(" ")}
                 >
                   {time} {t("common.min")}
