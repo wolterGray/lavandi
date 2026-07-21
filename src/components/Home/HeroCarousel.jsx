@@ -55,7 +55,7 @@ export default function HeroCarousel() {
                 className="hero-section-fade pointer-events-none absolute inset-x-0 bottom-0 z-10"
                 aria-hidden
               />
-              <div className="relative z-20 flex h-full flex-col justify-end px-5 pb-12 pt-12 sm:px-8 sm:pb-16 lg:px-12 lg:pb-18">
+              <div className="relative z-20 flex h-full flex-col justify-end px-5 pb-12 pt-28 sm:px-8 sm:pb-16 sm:pt-32 lg:px-12 lg:pb-18">
                 <div className="max-w-2xl">
                   <p className="section-label">{t("hero.eyebrow")}</p>
                   <h1 className="mt-4 font-display text-display-md font-bold tracking-[-0.03em] text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-display-lg lg:max-w-xl">
