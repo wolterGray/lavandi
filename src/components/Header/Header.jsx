@@ -60,10 +60,8 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-          showBar
-            ? "bg-gradient-to-b from-void/95 via-void/85 to-void/70 backdrop-blur-md"
-            : "bg-gradient-to-b from-void/90 via-void/50 to-transparent backdrop-blur-xs"
+        className={`sticky top-0 z-50 transition-all duration-300 border-b border-border/40 bg-void/95 backdrop-blur-md shadow-header ${
+          showBar ? "py-0" : ""
         }`}
       >
         <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
