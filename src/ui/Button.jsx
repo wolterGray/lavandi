@@ -1,14 +1,14 @@
 const variants = {
   primary:
-    "bg-gold text-void border border-gold/60 hover:bg-gold-dark hover:border-gold-dark shadow-[0_2px_12px_rgba(184,149,107,0.12)] hover:shadow-[0_4px_16px_rgba(150,112,72,0.2)]",
+    "bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#b8956b] text-[#0c0a10] border border-[#f3e098]/40 hover:brightness-110 shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_28px_rgba(212,175,55,0.45)] font-semibold",
   secondary:
-    "bg-transparent text-milk border border-border/50 hover:border-gold/40 hover:text-gold hover:bg-gold/[0.04]",
+    "bg-transparent text-[#e5c158] border border-[#d4af37]/60 hover:border-[#d4af37] hover:text-white hover:bg-[#d4af37]/10 shadow-[0_2px_12px_rgba(212,175,55,0.1)]",
   ghost:
-    "bg-transparent text-stone border border-transparent hover:text-milk",
+    "bg-transparent text-[#c5a059] border border-transparent hover:text-[#f3e098]",
   light:
-    "bg-surface text-milk border border-border/50 hover:border-gold/30 hover:bg-gold/[0.03]",
+    "bg-[#130b1e] text-[#e5c158] border border-[#d4af37]/40 hover:border-[#d4af37] hover:bg-[#d4af37]/10",
   outlineLight:
-    "bg-transparent text-milk border border-milk/40 hover:bg-milk hover:text-void",
+    "bg-transparent text-[#e5c158] border border-[#d4af37]/60 hover:bg-[#d4af37] hover:text-[#0c0a10]",
 };
 
 const sizes = {
