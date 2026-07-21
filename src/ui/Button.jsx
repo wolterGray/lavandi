@@ -1,14 +1,14 @@
 const variants = {
   primary:
-    "bg-gradient-to-r from-[#d4af37] via-[#c5a059] to-[#b8956b] text-[#0c0a10] border border-[#f3e098]/40 hover:brightness-110 shadow-[0_4px_20px_rgba(212,175,55,0.3)] hover:shadow-[0_6px_28px_rgba(212,175,55,0.45)] font-semibold",
+    "bg-gradient-to-r from-[#c59b27] via-[#b8860b] to-[#967048] text-[#f5ebd6] border border-[#d4af37]/40 hover:brightness-115 font-bold",
   secondary:
-    "bg-transparent text-[#e5c158] border border-[#d4af37]/60 hover:border-[#d4af37] hover:text-white hover:bg-[#d4af37]/10 shadow-[0_2px_12px_rgba(212,175,55,0.1)]",
+    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:border-[#c59b27] hover:text-[#f5ebd6] hover:bg-[#b8860b]",
   ghost:
-    "bg-transparent text-[#c5a059] border border-transparent hover:text-[#f3e098]",
+    "bg-transparent text-[#b8860b] border border-transparent hover:text-[#c59b27]",
   light:
-    "bg-[#130b1e] text-[#e5c158] border border-[#d4af37]/40 hover:border-[#d4af37] hover:bg-[#d4af37]/10",
+    "bg-[#130b1e] text-[#c59b27] border border-[#b8860b]/50 hover:border-[#c59b27] hover:bg-[#b8860b]/20",
   outlineLight:
-    "bg-transparent text-[#e5c158] border border-[#d4af37]/60 hover:bg-[#d4af37] hover:text-[#0c0a10]",
+    "bg-transparent text-[#c59b27] border border-[#b8860b]/70 hover:bg-[#b8860b] hover:text-[#f5ebd6]",
 };
 
 const sizes = {
