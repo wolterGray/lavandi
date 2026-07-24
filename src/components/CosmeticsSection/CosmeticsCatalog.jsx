@@ -74,23 +74,21 @@ export default function CosmeticsCatalog() {
 
   if (contentLoading) {
     return (
-      <>
-        <ScrollAnimationWrapper delay={0.08} className="mt-10">
-          <div className="relative max-w-xl">
-            <ImageSkeleton className="h-12 w-full rounded-pill" />
-          </div>
-        </ScrollAnimationWrapper>
-        <div className={CATEGORY_GRID_CLASSNAME}>
-          {CATEGORY_KEYS.map((key) => (
-            <ImageSkeleton key={key} className="h-11 rounded-pill" />
-          ))}
-        </div>
-        <div className={CATALOG_GRID_CLASSNAME}>
-          {Array.from({ length: cosmetics.length }, (_, index) => (
-            <CosmeticProductCardSkeleton key={index} />
-          ))}
-        </div>
-      </>
+      <div className="mt-12 py-16 text-center">
+        <p className="text-sm font-light text-stone/50 tracking-wider animate-pulse">
+          {t("common.loading", "Ładowanie...")}
+        </p>
+      </div>
+    );
+  }
+
+  if (products.length === 0) {
+    return (
+      <div className="mt-12 py-20 text-center">
+        <p className="text-base font-light text-stone/60 tracking-wider">
+          {t("cosmetics.catalogEmpty", "Katalog jest pusty")}
+        </p>
+      </div>
     );
   }
 
@@ -120,13 +118,9 @@ export default function CosmeticsCatalog() {
       />
 
       {filteredProducts.length === 0 ? (
-        <ScrollAnimationWrapper delay={0.15} className="mt-10 rounded-card border border-border/40 bg-card/60 px-6 py-12 text-center">
-          <p className="text-sm text-stone">
-            {products.length === 0
-              ? t("cosmetics.emptyCatalog", "Katalog produktów jest obecnie pusty. Wkrótce pojawią się nowe produkty.")
-              : t("cosmetics.noResults")}
-          </p>
-        </ScrollAnimationWrapper>
+        <div className="mt-10 py-16 text-center">
+          <p className="text-sm font-light text-stone/60">{t("cosmetics.noResults")}</p>
+        </div>
       ) : (
         <div className={CATALOG_GRID_CLASSNAME}>
           {filteredProducts.map((product, index) => (
