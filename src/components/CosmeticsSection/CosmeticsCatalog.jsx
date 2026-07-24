@@ -86,7 +86,7 @@ export default function CosmeticsCatalog() {
     return (
       <div className="mt-12 py-20 text-center">
         <p className="text-base font-light text-stone/60 tracking-wider">
-          {t("cosmetics.catalogEmpty", "Katalog jest pusty")}
+          {t("cosmetics.catalogEmpty", "Katalog produktów jest pusty")}
         </p>
       </div>
     );

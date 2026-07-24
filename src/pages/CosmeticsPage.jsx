@@ -10,11 +10,13 @@ import Button from "../ui/Button";
 import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
+import { useContent } from "../context/ContentProvider";
 import { EMAIL, SITE_URL } from "../constants/theme";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
 
 export default function CosmeticsPage() {
   const { t, lang } = useTranslation();
+  const { cosmetics } = useContent();
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}`;
   const title = t("cosmeticsPage.meta.title");
   const description = t("cosmeticsPage.meta.description");
@@ -52,30 +54,28 @@ export default function CosmeticsPage() {
             {t("common.backHome")}
           </Link>
 
-          <div className="mt-8 grid gap-10 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:items-end lg:gap-16">
-            <ScrollAnimationWrapper>
-              <div>
-                <SectionTitle label={t("cosmetics.label")}>{t("cosmetics.title")}</SectionTitle>
-                <div className="spa-divider !mx-0" />
-              </div>
-            </ScrollAnimationWrapper>
-            <ScrollAnimationWrapper delay={0.08}>
-              <p className="max-w-lg text-base leading-relaxed text-stone lg:pb-2">
-                {t("cosmetics.description")}
-              </p>
-            </ScrollAnimationWrapper>
-          </div>
+          <ScrollAnimationWrapper className="mt-8 text-center">
+            <SectionTitle label={t("cosmetics.label")} align="center">
+              {t("cosmetics.title")}
+            </SectionTitle>
+            <div className="spa-divider my-6" />
+            <p className="mx-auto max-w-2xl text-base leading-relaxed text-stone">
+              {t("cosmetics.description")}
+            </p>
+          </ScrollAnimationWrapper>
 
           <CosmeticsCatalog />
 
-          <ScrollAnimationWrapper delay={0.15} className="mt-12 flex flex-wrap items-center justify-center gap-4">
-            <Button href={`mailto:${EMAIL}?subject=${encodeURIComponent(t("cosmetics.emailSubject"))}`} size="lg">
-              {t("cosmetics.cta")}
-            </Button>
-            <BookVisitButton variant="secondary" size="lg">
-              {t("cosmetics.ctaSecondary")}
-            </BookVisitButton>
-          </ScrollAnimationWrapper>
+          {cosmetics.length > 0 && (
+            <ScrollAnimationWrapper delay={0.15} className="mt-12 flex flex-wrap items-center justify-center gap-4">
+              <Button href={`mailto:${EMAIL}?subject=${encodeURIComponent(t("cosmetics.emailSubject"))}`} size="lg">
+                {t("cosmetics.cta")}
+              </Button>
+              <BookVisitButton variant="secondary" size="lg">
+                {t("cosmetics.ctaSecondary")}
+              </BookVisitButton>
+            </ScrollAnimationWrapper>
+          )}
 
         </Container>
       </section>
