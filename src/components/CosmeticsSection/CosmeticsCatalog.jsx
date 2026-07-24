@@ -121,7 +121,11 @@ export default function CosmeticsCatalog() {
 
       {filteredProducts.length === 0 ? (
         <ScrollAnimationWrapper delay={0.15} className="mt-10 rounded-card border border-border/40 bg-card/60 px-6 py-12 text-center">
-          <p className="text-sm text-stone">{t("cosmetics.noResults")}</p>
+          <p className="text-sm text-stone">
+            {products.length === 0
+              ? t("cosmetics.emptyCatalog", "Katalog produktów jest obecnie pusty. Wkrótce pojawią się nowe produkty.")
+              : t("cosmetics.noResults")}
+          </p>
         </ScrollAnimationWrapper>
       ) : (
         <div className={CATALOG_GRID_CLASSNAME}>

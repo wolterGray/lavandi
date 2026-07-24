@@ -14,7 +14,10 @@ export default function CosmeticsSection() {
   const { cosmetics, featuredCosmeticIds, getProductTexts, contentLoading } = useContent();
 
   const featuredProducts = useMemo(() => {
-    const featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
+    let featured = getFeaturedProducts(t, cosmetics, featuredCosmeticIds);
+    if (!featured.length && cosmetics.length) {
+      featured = cosmetics.slice(0, 3);
+    }
     return featured.map((product) => {
       const base = cosmetics.find((item) => item.id === product.id);
       return base ? buildLocalizedProduct(base, t, lang, getProductTexts) : product;
@@ -35,22 +38,30 @@ export default function CosmeticsSection() {
           <div className="spa-divider my-6" />
         </ScrollAnimationWrapper>
 
-        <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
-          {contentLoading
-            ? Array.from({ length: 3 }, (_, index) => (
-                <CosmeticProductCardSkeleton key={index} variant="featured" />
-              ))
-            : featuredProducts.map((product, index) => (
-                <CosmeticProductCard
-                  key={product.id}
-                  product={product}
-                  index={index}
-                  categoryLabel={formatProductCategoryLabels(t, product)}
-                  variant="featured"
-                  reveal={false}
-                />
-              ))}
-        </div>
+        {contentLoading ? (
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {Array.from({ length: 3 }, (_, index) => (
+              <CosmeticProductCardSkeleton key={index} variant="featured" />
+            ))}
+          </div>
+        ) : featuredProducts.length > 0 ? (
+          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
+            {featuredProducts.map((product, index) => (
+              <CosmeticProductCard
+                key={product.id}
+                product={product}
+                index={index}
+                categoryLabel={formatProductCategoryLabels(t, product)}
+                variant="featured"
+                reveal={false}
+              />
+            ))}
+          </div>
+        ) : (
+          <ScrollAnimationWrapper delay={0.1} className="mt-10 text-center">
+            <p className="text-sm text-stone">{t("cosmetics.emptyCatalog", "Katalog jest obecnie pusty. Wkrótce pojawią się nowe produkty.")}</p>
+          </ScrollAnimationWrapper>
+        )}
 
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">
           <RouterLink

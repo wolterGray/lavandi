@@ -122,11 +122,7 @@ export function normalizeCosmeticsList(products = cosmeticsBase) {
 
 export const MAX_FEATURED_COSMETICS = 3;
 
-export const DEFAULT_FEATURED_COSMETIC_IDS = [
-  "rose-body-oil",
-  "magnesium-balm",
-  "velvet-body-cream",
-];
+export const DEFAULT_FEATURED_COSMETIC_IDS = [];
 
 export const COSMETICS_ROUTE = "/katalog";
 
