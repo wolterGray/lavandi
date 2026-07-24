@@ -111,8 +111,18 @@ export default function AdminFaqPage() {
       confirmLabel: adminRu.common.delete,
     });
     if (!ok) return;
-    setRuDraft((prev) => prev.filter((_, i) => i !== index));
-    setDirty(true);
+    const nextDraft = ruDraft.filter((_, i) => i !== index);
+    setTranslating(true);
+    const saved = await runSave(async () =>
+      saveMerged(async (current) => publishFaqLocalesFromRussian(current, nextDraft), "faq")
+    );
+    setTranslating(false);
+    if (saved) {
+      sessionStorage.removeItem(DRAFT_KEY);
+      setRuDraft(nextDraft);
+      setDirty(false);
+      setRecoveryOffer(null);
+    }
   };
 
   const handleSave = async () => {
@@ -155,7 +165,7 @@ export default function AdminFaqPage() {
       ) : null}
 
       <AdminPageHeader
-        title={adminRu.nav.faq}
+        title={`${adminRu.nav.faq} (Вопросов: ${displayItems.length})`}
         description={adminRu.faq.description}
         sectionSavedAt={sectionSavedAt}
         actions={

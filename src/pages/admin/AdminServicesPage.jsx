@@ -77,7 +77,7 @@ export default function AdminServicesPage() {
   return (
     <>
       <AdminPageHeader
-        title={adminRu.nav.services}
+        title={`${adminRu.nav.services} (Всего: ${services.length})`}
         description="Фото и тексты услуг. Цены и длительности задаются в CRM и обновляются на сайте автоматически."
         sectionSavedAt={sectionSavedAt}
       />

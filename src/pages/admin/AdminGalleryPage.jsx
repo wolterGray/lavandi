@@ -36,8 +36,12 @@ export default function AdminGalleryPage() {
       confirmLabel: adminRu.common.delete,
     });
     if (!ok) return;
-    setDraft((prev) => prev.filter((_, i) => i !== index));
-    setDirty(true);
+    const next = draft.filter((_, i) => i !== index);
+    const saved = await runSave(() => saveSection("gallery", next));
+    if (saved) {
+      setDraft(next);
+      setDirty(false);
+    }
   };
 
   const addItem = () => {
@@ -69,7 +73,7 @@ export default function AdminGalleryPage() {
   return (
     <>
       <AdminPageHeader
-        title={adminRu.nav.gallery}
+        title={`${adminRu.nav.gallery} (Всего фото: ${draft.length})`}
         description="Первое фото — главная плитка (2×2). Alt key соответствует переводам в gallery.items.*"
         sectionSavedAt={getSectionMeta(overrides, getAdminSectionKey("/admin/gallery"))}
         actions={<AdminButton onClick={addItem}><Plus className="mr-1 h-3.5 w-3.5" /> {adminRu.common.add}</AdminButton>}

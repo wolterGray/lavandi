@@ -111,13 +111,19 @@ export default function AdminTeamPage() {
     });
     if (!ok) return;
     const id = member?.id;
-    setTeamDraft((prev) => prev.filter((_, i) => i !== index));
-    if (id) {
-      setLocaleDraft((prev) => {
-        const members = { ...prev.members };
-        delete members[id];
-        return { ...prev, members };
-      });
+    const nextTeam = teamDraft.filter((_, i) => i !== index);
+    const nextMembers = { ...localeDraft.members };
+    if (id) delete nextMembers[id];
+    const nextLocale = { ...localeDraft, members: nextMembers };
+
+    const saved = await runSave(async () =>
+      saveMerged(async (current) => publishTeamLocalesFromRussian(current, nextTeam, nextLocale), "team")
+    );
+    if (saved) {
+      setTeamDraft(nextTeam);
+      setLocaleDraft(nextLocale);
+      resetTeam();
+      resetLocale();
     }
   };
 

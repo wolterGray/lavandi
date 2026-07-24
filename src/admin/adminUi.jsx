@@ -319,7 +319,7 @@ export function AdminStatusToast({ message, tone = "info", onClose }) {
     <div
       role="status"
       aria-live="polite"
-      className={`fixed bottom-20 right-4 z-[190] flex items-center gap-3 max-w-md rounded-card border px-4 py-3.5 text-sm shadow-spa-hover backdrop-blur-md sm:bottom-6 sm:right-6 animate-in slide-in-from-bottom-5 duration-300 ${tones[tone] ?? tones.info}`}
+      className={`fixed top-6 right-6 z-[250] flex items-center gap-3 max-w-md rounded-card border px-4 py-3.5 text-sm shadow-spa-hover backdrop-blur-md animate-in slide-in-from-top-5 duration-300 ${tones[tone] ?? tones.info}`}
     >
       <Icon className="h-5 w-5 shrink-0" aria-hidden />
       <span className="flex-1 font-medium">{message}</span>

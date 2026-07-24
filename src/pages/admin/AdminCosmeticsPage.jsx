@@ -311,6 +311,46 @@ export default function AdminCosmeticsPage() {
     showStatus(adminRu.cosmetics.statusDeleted, "success");
   };
 
+  const executeSaveCosmetics = async (nextDraft, nextTextDraft, nextFeatured, nextRetired) => {
+    const enriched = nextDraft.map((item, index) => {
+      const texts = nextTextDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+      const categories = getProductCategories(item);
+      return syncProductImageFields({
+        ...item,
+        categories,
+        category: categories[0],
+        initials: deriveCosmeticInitials(texts.name),
+        accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
+      });
+    });
+    const authorProducts = buildAuthorProductsDraft(nextDraft, nextTextDraft);
+
+    showStatus(adminRu.cosmetics.statusSaving, "info");
+
+    const ok = await runSave(async () =>
+      saveMerged(async (current) => {
+        return publishCosmeticsLocalesFromAuthor(
+          {
+            ...current,
+            cosmetics: enriched,
+            featuredCosmeticIds: normalizeFeaturedCosmeticIds(nextFeatured, enriched),
+            cosmeticRetiredIds: nextRetired.filter((id) => !enriched.some((item) => item.id === id)),
+          },
+          authorProducts,
+        );
+      }, "cosmetics"),
+    );
+
+    if (ok) {
+      setDraft(nextDraft);
+      setTextDraft(nextTextDraft);
+      setFeaturedDraft(nextFeatured);
+      setRetiredDraft(nextRetired);
+      setDirty(false);
+      showStatus(adminRu.cosmetics.statusDeleted, "success");
+    }
+  };
+
   const requestRemoveItem = (index) => {
     const item = draft[index];
     if (!item) return;
@@ -324,56 +364,21 @@ export default function AdminCosmeticsPage() {
       confirmLabel: adminRu.common.delete,
       onConfirm: async () => {
         setConfirm(null);
-        await removeItem(index);
+        const nextDraft = draft.filter((_, i) => i !== index);
+        const id = item?.id;
+        const nextTextDraft = { ...textDraft };
+        if (id) delete nextTextDraft[id];
+        const nextFeatured = featuredDraft.filter((featuredId) => featuredId !== id);
+        const nextRetired = id ? (retiredDraft.includes(id) ? retiredDraft : [...retiredDraft, id]) : retiredDraft;
+
+        await executeSaveCosmetics(nextDraft, nextTextDraft, nextFeatured, nextRetired);
       },
     });
   };
 
   const handleSave = useCallback(async () => {
-    const enriched = draft.map((item, index) => {
-      const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
-      const categories = getProductCategories(item);
-      return syncProductImageFields({
-        ...item,
-        categories,
-        category: categories[0],
-        initials: deriveCosmeticInitials(texts.name),
-        accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
-      });
-    });
-    const authorProducts = buildAuthorProductsDraft(draft, textDraft);
-
-    showStatus(adminRu.cosmetics.statusSaving, "info");
-
-    const ok = await runSave(async () =>
-      saveMerged(async (current) => {
-        return publishCosmeticsLocalesFromAuthor(
-          {
-            ...current,
-            cosmetics: enriched,
-            featuredCosmeticIds: normalizeFeaturedCosmeticIds(featuredDraft, enriched),
-            cosmeticRetiredIds: retiredDraft.filter((id) => !enriched.some((item) => item.id === id)),
-          },
-          authorProducts,
-        );
-      }, "cosmetics"),
-    );
-
-    if (ok) {
-      setDirty(false);
-      showStatus(adminRu.cosmetics.statusSaved, "success");
-    }
+    await executeSaveCosmetics(draft, textDraft, featuredDraft, retiredDraft);
   }, [draft, textDraft, featuredDraft, retiredDraft, runSave, saveMerged]);
-
-  useEffect(() => {
-    if (!dirty) return undefined;
-
-    const timer = window.setTimeout(() => {
-      void handleSave();
-    }, 2000);
-
-    return () => window.clearTimeout(timer);
-  }, [dirty, handleSave]);
 
   const handleDiscard = () => {
     setDraft(cosmetics);
@@ -407,7 +412,7 @@ export default function AdminCosmeticsPage() {
       />
 
       <AdminPageHeader
-        title={adminRu.nav.cosmetics}
+        title={`${adminRu.nav.cosmetics} (Всего: ${draft.length})`}
         description={adminRu.cosmetics.description}
         sectionSavedAt={sectionSavedAt}
         actions={

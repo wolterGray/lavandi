@@ -66,7 +66,12 @@ export default function AdminReviewsPage() {
       confirmLabel: adminRu.common.delete,
     });
     if (!ok) return;
-    setDraft((prev) => prev.filter((_, i) => i !== index));
+    const next = draft.filter((_, i) => i !== index);
+    const saved = await runSave(() => saveSection("reviews", next));
+    if (saved) {
+      setDraft(next);
+      reset();
+    }
   };
 
   const handleSave = async () => {
@@ -85,7 +90,7 @@ export default function AdminReviewsPage() {
       ) : null}
 
       <AdminPageHeader
-        title={adminRu.nav.reviews}
+        title={`${adminRu.nav.reviews} (Всего: ${draft.length})`}
         description="Список отзывов гостей в секции рецензий."
         sectionSavedAt={sectionSavedAt}
         actions={
