@@ -99,23 +99,33 @@ export default function CosmeticProductPage({ product }) {
               <p className="section-label">{categoryLabel}</p>
               <div className="spa-divider !mx-0" />
               <h1 className="mt-4 font-display text-display-sm text-milk">{product.name}</h1>
-              {product.volume ? (
-                <p className="mt-3 text-sm font-semibold uppercase tracking-[0.12em] text-gold">
-                  {product.volume}
-                </p>
-              ) : null}
-              <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
-                {t("cosmeticsProductPage.productId")}: {product.id}
-              </p>
 
-              {priceLabel ? (
-                <div className="mt-5 inline-flex items-baseline gap-3 rounded-card border border-gold/25 bg-gold/[0.06] px-4 py-3">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-                    {t("cosmeticsProductPage.price")}
-                  </span>
-                  <span className="font-display text-2xl text-milk">{priceLabel}</span>
+              <dl className="mt-5 grid max-w-xl gap-3 border-y border-border/35 py-4 sm:grid-cols-3">
+                {product.volume ? (
+                  <div>
+                    <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                      {t("cosmeticsProductPage.volume")}
+                    </dt>
+                    <dd className="mt-1 text-sm font-semibold uppercase tracking-[0.08em] text-gold">
+                      {product.volume}
+                    </dd>
+                  </div>
+                ) : null}
+                {priceLabel ? (
+                  <div>
+                    <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                      {t("cosmeticsProductPage.price")}
+                    </dt>
+                    <dd className="mt-1 text-xl font-semibold text-milk">{priceLabel}</dd>
+                  </div>
+                ) : null}
+                <div>
+                  <dt className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">
+                    {t("cosmeticsProductPage.productId")}
+                  </dt>
+                  <dd className="mt-1 text-sm uppercase tracking-[0.08em] text-stone">{product.id}</dd>
                 </div>
-              ) : null}
+              </dl>
 
               {product.description ? (
                 <p className="mt-6 max-w-2xl text-base leading-relaxed text-stone">{product.description}</p>
