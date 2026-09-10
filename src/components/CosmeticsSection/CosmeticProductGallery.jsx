@@ -74,7 +74,7 @@ export default function CosmeticProductGallery({ product, className = "" }) {
         ))}
       </div>
 
-      <div className={`relative min-w-0 flex-1 ${className}`}>
+      <div className="relative min-w-0 flex-1">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeImage}
@@ -87,7 +87,7 @@ export default function CosmeticProductGallery({ product, className = "" }) {
             <CosmeticProductImageMagnifier
               product={product}
               imageRef={activeImage}
-              className="h-full min-h-[360px] w-full sm:min-h-[480px]"
+              className={className}
             />
           </motion.div>
         </AnimatePresence>

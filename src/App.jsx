@@ -39,6 +39,14 @@ function AdminLoader() {
   );
 }
 
+function PublicLoader() {
+  return (
+    <div className="flex min-h-screen w-full items-center justify-center bg-void text-xs font-bold uppercase tracking-[0.12em] text-gold">
+      NUAR
+    </div>
+  );
+}
+
 function ScrollToTop() {
   const { pathname } = useLocation();
 
@@ -60,8 +68,9 @@ function ServiceRoute() {
 function CosmeticProductRoute() {
   const { id } = useParams();
   const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts } = useContent();
+  const { cosmetics, getProductTexts, contentLoading } = useContent();
   const product = findLocalizedProduct(cosmetics, id, t, lang, getProductTexts);
+  if (!product && contentLoading) return <PublicLoader />;
   if (!product) return <NotFoundPage />;
   return <CosmeticProductPage product={product} />;
 }

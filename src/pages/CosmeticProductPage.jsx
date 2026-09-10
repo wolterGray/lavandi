@@ -71,7 +71,7 @@ export default function CosmeticProductPage({ product }) {
 
       <Header navItems={navItems} linkToHome />
 
-      <Container className="pb-20 pt-28 lg:pt-36">
+      <Container className="pb-16 pt-12 sm:pt-14 lg:pt-16">
         <Link
           to={COSMETICS_ROUTE}
           className="inline-flex items-center gap-1.5 text-sm text-stone transition hover:text-gold"
@@ -80,12 +80,12 @@ export default function CosmeticProductPage({ product }) {
           {t("cosmeticsProductPage.backToCatalog")}
         </Link>
 
-        <div className="mt-8 grid gap-12 lg:grid-cols-2">
+        <div className="mt-6 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <ScrollAnimationWrapper direction="left">
             <div className="card-gradient-border overflow-visible rounded-card shadow-spa">
               <CosmeticProductGallery
                 product={product}
-                className="min-h-[360px] w-full sm:min-h-[480px]"
+                className="min-h-[300px] w-full sm:min-h-[400px] lg:min-h-[460px]"
               />
             </div>
           </ScrollAnimationWrapper>
@@ -105,7 +105,7 @@ export default function CosmeticProductPage({ product }) {
               </p>
 
               {product.description ? (
-                <p className="mt-6 text-base leading-relaxed text-stone">{product.description}</p>
+                <p className="mt-6 max-w-2xl text-base leading-relaxed text-stone">{product.description}</p>
               ) : null}
 
               {product.composition ? (
