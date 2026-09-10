@@ -4,6 +4,21 @@ import { adminRu } from "./adminStrings";
 import { fetchSiteImagesCatalog } from "./siteImages";
 import { AdminButton, AdminPanel, adminInputClass } from "./adminUi";
 
+function formatBytes(bytes = 0) {
+  if (!bytes) return "0 KB";
+  if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatDate(value) {
+  if (!value) return "";
+  try {
+    return new Date(value).toLocaleDateString("ru-RU");
+  } catch {
+    return "";
+  }
+}
+
 export default function AdminMediaPicker({ open, folder, onSelect, onClose }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,7 +61,9 @@ export default function AdminMediaPicker({ open, folder, onSelect, onClose }) {
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     if (!normalized) return items;
-    return items.filter((item) => item.id.toLowerCase().includes(normalized));
+    return items.filter((item) =>
+      `${item.id} ${item.folder ?? ""} ${item.mimeType ?? ""}`.toLowerCase().includes(normalized)
+    );
   }, [items, query]);
 
   if (!open) return null;
@@ -87,7 +104,7 @@ export default function AdminMediaPicker({ open, folder, onSelect, onClose }) {
                       onSelect(item.ref);
                       onClose();
                     }}
-                    className="overflow-hidden rounded-card border border-border/50 bg-surface text-left transition hover:border-gold/40"
+                    className="overflow-hidden rounded-card border border-border/50 bg-surface text-left transition hover:border-gold/40 hover:bg-card"
                   >
                     <div className="flex aspect-square items-center justify-center bg-void/20 p-2">
                       {item.dataUrl ? (
@@ -96,7 +113,11 @@ export default function AdminMediaPicker({ open, folder, onSelect, onClose }) {
                         <span className="text-[10px] text-muted">preview</span>
                       )}
                     </div>
-                    <p className="truncate px-2 py-1.5 text-[10px] text-muted">{item.id}</p>
+                    <div className="space-y-1 px-2 py-2">
+                      <p className="truncate text-[10px] font-bold uppercase tracking-[0.08em] text-stone">{item.folder ?? folder ?? "uploads"}</p>
+                      <p className="truncate text-[10px] text-muted">{item.id}</p>
+                      <p className="text-[10px] text-muted">{formatBytes(item.sizeBytes)}{item.updatedAt ? ` · ${formatDate(item.updatedAt)}` : ""}</p>
+                    </div>
                   </button>
                 ))}
               </div>

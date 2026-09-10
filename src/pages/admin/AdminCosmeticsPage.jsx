@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, ImageIcon, Plus, Star, Trash2 } from "lucide-react";
 import { getAdminSectionKey } from "../../admin/adminNav";
 import { getSectionMeta } from "../../admin/adminSectionMeta";
 import { publishCosmeticsLocalesFromAuthor } from "../../admin/publishCmsFromRu";
@@ -29,7 +29,6 @@ import {
   usesTransparentProductPhoto,
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
-import { deleteSiteImageByRef, isImageRef } from "../../admin/siteImages";
 import {
   AdminButton,
   AdminConfirmDialog,
@@ -56,6 +55,44 @@ const EMPTY_PRODUCT_TEXT = {
   volume: "",
   composition: "",
 };
+
+function isFilled(value) {
+  return typeof value === "string" ? value.trim().length > 0 : Boolean(value);
+}
+
+function getProductHealth(item, texts, isFeatured) {
+  const missing = [];
+  if (!isFilled(item.img)) missing.push("фото");
+  if (!getProductCategories(item).length) missing.push("категория");
+  if (!isFilled(texts.name)) missing.push("название");
+  if (!isFilled(texts.volume)) missing.push("объём");
+  if (!isFilled(texts.description)) missing.push("описание");
+  if (!isFilled(texts.composition)) missing.push("состав");
+
+  return {
+    isReady: missing.length === 0,
+    missing,
+    isFeatured,
+    imageCount: getProductImages(item).length,
+  };
+}
+
+function StatusPill({ tone = "neutral", children }) {
+  const toneClass =
+    tone === "good"
+      ? "border-emerald-700/40 bg-emerald-950/35 text-emerald-100"
+      : tone === "warn"
+        ? "border-amber-700/40 bg-amber-950/35 text-amber-100"
+        : tone === "gold"
+          ? "border-gold/35 bg-gold/10 text-gold"
+          : "border-border/50 bg-surface text-stone";
+
+  return (
+    <span className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${toneClass}`}>
+      {children}
+    </span>
+  );
+}
 
 function buildDefaultTexts(cosmetics, activeLang, overrides) {
   const products = {};
@@ -236,15 +273,6 @@ export default function AdminCosmeticsPage() {
   const removeGalleryImage = async (index, galleryIndex) => {
     const item = draft[index];
     const images = getProductImages(item);
-    const imageRef = images[galleryIndex];
-
-    if (imageRef && isImageRef(imageRef)) {
-      try {
-        await deleteSiteImageByRef(imageRef);
-      } catch {
-        // gallery row is still removed from draft
-      }
-    }
 
     const next = images.filter((_, imageIndex) => imageIndex !== galleryIndex);
     setDraft((prev) =>
@@ -281,34 +309,6 @@ export default function AdminCosmeticsPage() {
       return [...prev, productId];
     });
     setDirty(true);
-  };
-
-  const removeItem = async (index) => {
-    const item = draft[index];
-    const id = item?.id;
-
-    for (const imageRef of [...new Set(getProductImages(item))]) {
-      if (imageRef && isImageRef(imageRef)) {
-        try {
-          await deleteSiteImageByRef(imageRef);
-        } catch {
-          // product row is still removed from catalog even if DB delete fails
-        }
-      }
-    }
-
-    setDraft((prev) => prev.filter((_, i) => i !== index));
-    if (id) {
-      setTextDraft((prev) => {
-        const next = { ...prev };
-        delete next[id];
-        return next;
-      });
-      setFeaturedDraft((prev) => prev.filter((featuredId) => featuredId !== id));
-      setRetiredDraft((prev) => (prev.includes(id) ? prev : [...prev, id]));
-    }
-    setDirty(true);
-    showStatus(adminRu.cosmetics.statusDeleted, "success");
   };
 
   const executeSaveCosmetics = async (nextDraft, nextTextDraft, nextFeatured, nextRetired) => {
@@ -396,6 +396,21 @@ export default function AdminCosmeticsPage() {
     return `${item.id} ${texts.name ?? ""} ${texts.description ?? ""} ${getProductCategories(item).join(" ")}`;
   });
   const sectionSavedAt = getSectionMeta(overrides, getAdminSectionKey("/admin/cosmetics"));
+  const catalogStats = useMemo(() => {
+    const missingPhoto = draft.filter((item) => !isFilled(item.img)).length;
+    const incomplete = draft.filter((item) => {
+      const texts = textDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
+      return !getProductHealth(item, texts, featuredDraft.includes(item.id)).isReady;
+    }).length;
+
+    return {
+      total: draft.length,
+      featured: featuredDraft.length,
+      missingPhoto,
+      ready: draft.length - incomplete,
+      incomplete,
+    };
+  }, [draft, featuredDraft, textDraft]);
 
   return (
     <>
@@ -427,6 +442,29 @@ export default function AdminCosmeticsPage() {
         {isAuthoring ? adminRu.cosmetics.authoringHint : adminRu.cosmetics.previewHint}
       </p>
 
+      <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <AdminPanel className="p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Всего товаров</p>
+          <p className="mt-1 font-display text-2xl text-milk">{catalogStats.total}</p>
+        </AdminPanel>
+        <AdminPanel className="p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Готовы</p>
+          <p className="mt-1 font-display text-2xl text-emerald-100">{catalogStats.ready}</p>
+        </AdminPanel>
+        <AdminPanel className="p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Нужно заполнить</p>
+          <p className="mt-1 font-display text-2xl text-amber-100">{catalogStats.incomplete}</p>
+        </AdminPanel>
+        <AdminPanel className="p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Без фото</p>
+          <p className="mt-1 font-display text-2xl text-milk">{catalogStats.missingPhoto}</p>
+        </AdminPanel>
+        <AdminPanel className="p-4">
+          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">На главной</p>
+          <p className="mt-1 font-display text-2xl text-gold">{catalogStats.featured}/{MAX_FEATURED_COSMETICS}</p>
+        </AdminPanel>
+      </div>
+
       {featuredLimitHint ? <p className="mb-4 text-sm text-gold">{featuredLimitHint}</p> : null}
 
       <AdminListSearch value={searchQuery} onChange={setSearchQuery} />
@@ -442,6 +480,7 @@ export default function AdminCosmeticsPage() {
           const texts = (isAuthoring ? textDraft : previewTexts)[item.id] ?? EMPTY_PRODUCT_TEXT;
           const isFeatured = featuredDraft.includes(item.id);
           const isHighlighted = highlightId === item.id;
+          const health = getProductHealth(item, textDraft[item.id] ?? EMPTY_PRODUCT_TEXT, isFeatured);
           return (
             <AdminPanel
               key={item.id}
@@ -465,6 +504,26 @@ export default function AdminCosmeticsPage() {
                   <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
                     {adminRu.cosmetics.productId}: {item.id}
                   </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <StatusPill tone={health.isReady ? "good" : "warn"}>
+                      {health.isReady ? (
+                        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                      ) : (
+                        <AlertCircle className="h-3.5 w-3.5" aria-hidden />
+                      )}
+                      {health.isReady ? "готово" : `заполнить: ${health.missing.join(", ")}`}
+                    </StatusPill>
+                    <StatusPill>
+                      <ImageIcon className="h-3.5 w-3.5" aria-hidden />
+                      фото: {health.imageCount}
+                    </StatusPill>
+                    {health.isFeatured ? (
+                      <StatusPill tone="gold">
+                        <Star className="h-3.5 w-3.5" aria-hidden />
+                        главная
+                      </StatusPill>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <AdminViewSiteButton href={`/katalog/${item.id}`} />

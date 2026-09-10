@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
 import AdminMediaPicker from "./AdminMediaPicker";
 import { adminRu } from "./adminStrings";
-import { deleteSiteImageByRef, isImageRef, saveSiteImageToDatabase } from "./siteImages";
+import { isImageRef, saveSiteImageToDatabase } from "./siteImages";
 import { AdminButton, AdminField } from "./adminUi";
 
 export default function AdminImageField({
@@ -22,18 +22,7 @@ export default function AdminImageField({
 
   const handleRemove = async () => {
     setError("");
-    setUploading(true);
-
-    try {
-      if (isImageRef(value)) {
-        await deleteSiteImageByRef(value);
-      }
-      onChange("");
-    } catch (removeError) {
-      setError(removeError.message ?? adminRu.media.removeFailed);
-    } finally {
-      setUploading(false);
-    }
+    onChange("");
   };
 
   const uploadFile = async (file) => {
@@ -83,8 +72,8 @@ export default function AdminImageField({
         ) : null}
         <div className="min-w-0 flex-1 space-y-2">
           {isImageRef(value) ? (
-            <p className="rounded-card border border-border/60 bg-surface px-3 py-2.5 text-xs text-stone">
-              {adminRu.media.storedInDb}: <span className="text-milk">{value}</span>
+            <p className="rounded-card border border-border/60 bg-surface px-3 py-2.5 text-xs text-stone" title={value}>
+              {adminRu.media.storedInDb}. Можно заменить, выбрать из медиатеки или убрать из черновика.
             </p>
           ) : value ? (
             <p className="text-xs text-muted">{adminRu.media.legacyUrlHint}</p>

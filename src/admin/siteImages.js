@@ -205,7 +205,7 @@ export async function fetchSiteImagesStorageUsage() {
   });
 }
 
-export async function saveSiteImageToDatabase(file, folder = "uploads", replaceRef = null) {
+export async function saveSiteImageToDatabase(file, folder = "uploads") {
   if (!isSiteImagesConfigured() && !supabase) {
     throw new Error(adminRu.media.storageNotConfigured);
   }
@@ -261,15 +261,6 @@ export async function saveSiteImageToDatabase(file, folder = "uploads", replaceR
   }
 
   const newRef = toImageRef(id);
-
-  const oldId = parseImageRef(replaceRef);
-  if (oldId) {
-    try {
-      await deleteSiteImagesByIds([oldId]);
-    } catch {
-      // ignore delete errors
-    }
-  }
 
   return newRef;
 }

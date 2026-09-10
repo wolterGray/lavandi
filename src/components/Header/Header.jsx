@@ -55,8 +55,6 @@ export default function Header({ navItems, linkToHome = false }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [mobileMenuOpen]);
 
-  const showBar = scrolled || mobileMenuOpen;
-
   return (
     <>
       <header

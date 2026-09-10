@@ -14,6 +14,7 @@ import {
 } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
 import AdminImageField from "../../admin/AdminImageField";
+import SiteImage from "../../ui/SiteImage";
 import {
   AdminButton,
   AdminField,
@@ -183,6 +184,17 @@ export default function AdminHomePage() {
                   <AdminButton variant="danger" onClick={() => removeSlide(index)} aria-label={adminRu.common.delete}>
                     <Trash2 className="h-4 w-4" />
                   </AdminButton>
+                </div>
+              </div>
+              <div className="mb-4 overflow-hidden rounded-card border border-border/50 bg-surface">
+                <div className="relative h-44 overflow-hidden sm:h-56">
+                  <SiteImage fill src={slide.img} alt="" className="object-cover object-center" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-void via-void/50 to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">Hero preview</p>
+                    <p className="mt-1 font-display text-2xl text-milk">{slide.title || adminRu.common.title}</p>
+                    <p className="mt-2 max-w-md text-sm leading-relaxed text-stone">{slide.news || adminRu.common.description}</p>
+                  </div>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
