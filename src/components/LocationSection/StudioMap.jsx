@@ -34,7 +34,7 @@ export default function StudioMap({ lat, lng, mapsLink, openLabel }) {
   const position = [lat, lng];
 
   return (
-    <div ref={ref} className="relative overflow-hidden rounded-card border border-gold/40 shadow-spa ring-1 ring-gold/10">
+    <div ref={ref} className="relative h-full min-h-[340px] overflow-hidden rounded-card border border-border/60 shadow-spa ring-1 ring-gold/10 sm:min-h-[420px] lg:min-h-[560px]">
       <MapContainer
         center={position}
         zoom={16}
@@ -43,7 +43,7 @@ export default function StudioMap({ lat, lng, mapsLink, openLabel }) {
         doubleClickZoom={false}
         zoomControl={false}
         attributionControl={false}
-        className="studio-map z-0 h-[320px] w-full sm:h-[360px]"
+        className="studio-map z-0 h-full min-h-[340px] w-full sm:min-h-[420px] lg:min-h-[560px]"
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
         <Marker position={position} icon={studioIcon} />
