@@ -221,9 +221,9 @@
   .admin-shell {
     --admin-bg: #09090b;
     --admin-surface: #0f0f12;
-    --admin-card: #151518;
-    --admin-elevated: #1c1c20;
-    --admin-border: #2a2a30;
+    --admin-card: #141416;
+    --admin-elevated: #19191c;
+    --admin-border: #202024;
     --admin-text: #f4f4f5;
     --admin-muted: #71717a;
     --admin-soft: #a1a1aa;
@@ -296,15 +296,49 @@
   }
 
   .admin-shell [class*="border-gold"] {
-    border-color: rgb(244 244 245 / 0.32);
+    border-color: rgb(63 63 70 / 0.55);
+  }
+
+  .admin-shell [class*="ring-border"],
+  .admin-shell [class*="ring-gold"] {
+    --tw-ring-color: rgb(63 63 70 / 0.5);
   }
 
   .admin-shell [class*="bg-gold"] {
-    background-color: rgb(244 244 245 / 0.08);
+    background-color: rgb(244 244 245 / 0.06);
   }
 
   .admin-shell .bg-gold {
-    background-color: var(--admin-accent-strong);
+    background-color: #e4e4e7;
+  }
+
+  .admin-shell .border,
+  .admin-shell .border-b,
+  .admin-shell .border-t,
+  .admin-shell .border-l,
+  .admin-shell .border-r {
+    border-color: var(--admin-border);
+  }
+
+  .admin-shell [class*="border-red"] {
+    border-color: rgb(127 29 29 / 0.65);
+  }
+
+  .admin-shell [class*="border-emerald"] {
+    border-color: rgb(6 78 59 / 0.65);
+  }
+
+  .admin-shell [class*="border-amber"] {
+    border-color: rgb(120 53 15 / 0.65);
+  }
+
+  .admin-shell .focus\:border-gold\/40:focus,
+  .admin-shell .focus\:ring-gold\/20:focus,
+  .admin-shell .focus\:ring-gold\/70:focus,
+  .admin-shell .focus\:ring-2:focus,
+  .admin-shell .focus\:ring-1:focus {
+    border-color: rgb(82 82 91 / 0.8);
+    --tw-ring-color: rgb(82 82 91 / 0.35);
   }
 
   .admin-shell .text-void {
