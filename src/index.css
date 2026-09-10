@@ -219,15 +219,16 @@
   }
 
   .admin-shell {
-    --admin-bg: #090b10;
-    --admin-surface: #0f1218;
-    --admin-card: #121620;
-    --admin-border: #252b36;
-    --admin-text: #edf1f7;
-    --admin-muted: #778191;
-    --admin-soft: #a9b2c1;
-    --admin-accent: #7dd3fc;
-    --admin-accent-strong: #38bdf8;
+    --admin-bg: #09090b;
+    --admin-surface: #0f0f12;
+    --admin-card: #151518;
+    --admin-elevated: #1c1c20;
+    --admin-border: #2a2a30;
+    --admin-text: #f4f4f5;
+    --admin-muted: #71717a;
+    --admin-soft: #a1a1aa;
+    --admin-accent: #f4f4f5;
+    --admin-accent-strong: #ffffff;
     background: var(--admin-bg);
     color: var(--admin-text);
   }
@@ -263,6 +264,13 @@
     background-color: var(--admin-card);
   }
 
+  .admin-shell .bg-card\/50,
+  .admin-shell .bg-card\/60,
+  .admin-shell .bg-card\/80,
+  .admin-shell .bg-card\/95 {
+    background-color: color-mix(in srgb, var(--admin-card) 86%, transparent);
+  }
+
   .admin-shell .text-milk,
   .admin-shell .text-cream,
   .admin-shell .text-ink {
@@ -288,11 +296,11 @@
   }
 
   .admin-shell [class*="border-gold"] {
-    border-color: rgb(56 189 248 / 0.45);
+    border-color: rgb(244 244 245 / 0.32);
   }
 
   .admin-shell [class*="bg-gold"] {
-    background-color: rgb(56 189 248 / 0.12);
+    background-color: rgb(244 244 245 / 0.08);
   }
 
   .admin-shell .bg-gold {
@@ -300,7 +308,7 @@
   }
 
   .admin-shell .text-void {
-    color: #061018;
+    color: #09090b;
   }
 
   .admin-shell .shadow-spa,
@@ -320,7 +328,7 @@
   }
 
   .admin-shell ::selection {
-    background: rgb(56 189 248 / 0.22);
+    background: rgb(244 244 245 / 0.18);
     color: var(--admin-text);
   }
 }
