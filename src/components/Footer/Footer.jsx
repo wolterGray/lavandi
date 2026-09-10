@@ -1,16 +1,12 @@
-import { useState } from "react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
 import { Link } from "react-scroll";
 import LogoNuar from "../../ui/LogoNuar";
-import Button from "../../ui/Button";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
-import { BOOKSY_URL, EMAIL, SOCIAL } from "../../constants/theme";
+import { BOOKSY_URL, SOCIAL } from "../../constants/theme";
 import { useContent } from "../../context/ContentProvider";
-
-const ENDPOINT = import.meta.env.VITE_NEWSLETTER_ENDPOINT;
 
 export default function Footer({ navItems = [], linkToHome = false }) {
   const { t } = useTranslation();
@@ -68,67 +64,10 @@ export default function Footer({ navItems = [], linkToHome = false }) {
           </ScrollAnimationWrapper>
         </div>
       </Container>
-      <NewsletterBand />
       <div className="border-t border-white/10 py-6 text-center text-xs text-white/50">
         © {new Date().getFullYear()} NUAR. {t("footer.copyright")}
       </div>
     </footer>
-  );
-}
-
-function NewsletterBand() {
-  const { t } = useTranslation();
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("idle");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!ENDPOINT) {
-      window.location.href = `mailto:${EMAIL}?subject=Newsletter NUAR&body=Email: ${encodeURIComponent(email)}`;
-      return;
-    }
-    setStatus("loading");
-    try {
-      const res = await fetch(ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ email, source: "nuarr.pl" }),
-      });
-      if (!res.ok) throw new Error();
-      setStatus("success");
-      setEmail("");
-    } catch {
-      setStatus("error");
-    }
-  };
-
-  return (
-    <div className="border-t border-white/10 py-10">
-      <Container>
-        <ScrollAnimationWrapper>
-          <div className="mx-auto max-w-xl text-center">
-            <p className="text-xs font-bold uppercase tracking-[0.14em] text-gold">{t("footer.newsletter")}</p>
-            <p className="mt-2 font-display text-xl text-white">{t("footer.newsletterTitle")}</p>
-            <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("footer.emailPlaceholder")}
-                aria-label={t("footer.emailAria")}
-                className="min-w-0 flex-1 rounded-pill border border-white/15 bg-milk/5 px-5 py-3 text-sm text-white placeholder:text-white/40 outline-none focus:border-gold"
-              />
-              <Button type="submit" size="sm" disabled={status === "loading"}>
-                {status === "loading" ? t("footer.subscribing") : t("footer.subscribe")}
-              </Button>
-            </form>
-            {status === "success" && <p className="mt-3 text-sm">{t("footer.subscribeSuccess")}</p>}
-            {status === "error" && <p className="mt-3 text-sm">{t("footer.subscribeError", { email: EMAIL })}</p>}
-          </div>
-        </ScrollAnimationWrapper>
-      </Container>
-    </div>
   );
 }
 
