@@ -22,8 +22,25 @@ export default function LocationSection() {
           </p>
         </ScrollAnimationWrapper>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start">
-          <ScrollAnimationWrapper direction="left">
+        <ol className="mt-8 grid gap-4 border-y border-border/60 py-5 sm:grid-cols-3">
+          {steps.map((step, index) => (
+            <li key={step.title} className="flex gap-4 sm:border-r sm:border-border/45 sm:pr-4 sm:last:border-r-0">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/25 text-gold">
+                <VisitStepIcon id={step.id} />
+              </div>
+              <div>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">0{index + 1}</span>
+                  <h3 className="font-display text-lg leading-snug text-milk">{step.title}</h3>
+                </div>
+                <p className="mt-1 text-sm leading-relaxed text-stone">{step.description}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
+          <ScrollAnimationWrapper direction="left" className="w-full max-w-[560px] lg:justify-self-start">
             <StudioMap
               lat={contact.lat}
               lng={contact.lng}
@@ -47,23 +64,6 @@ export default function LocationSection() {
             </div>
           </ScrollAnimationWrapper>
         </div>
-
-        <ol className="mt-8 grid gap-4 border-y border-border/60 py-5 sm:grid-cols-3">
-          {steps.map((step, index) => (
-            <li key={step.title} className="flex gap-4 sm:border-r sm:border-border/45 sm:pr-4 sm:last:border-r-0">
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/25 text-gold">
-                <VisitStepIcon id={step.id} />
-              </div>
-              <div>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">0{index + 1}</span>
-                  <h3 className="font-display text-lg leading-snug text-milk">{step.title}</h3>
-                </div>
-                <p className="mt-1 text-sm leading-relaxed text-stone">{step.description}</p>
-              </div>
-            </li>
-          ))}
-        </ol>
       </Container>
     </section>
   );

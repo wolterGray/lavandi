@@ -43,7 +43,7 @@ export default function StudioMap({ lat, lng, mapsLink, openLabel }) {
         doubleClickZoom={false}
         zoomControl={false}
         attributionControl={false}
-        className="studio-map z-0 h-[320px] w-full sm:h-[380px] lg:h-[430px]"
+        className="studio-map z-0 h-[220px] w-full sm:h-[250px] lg:h-[280px]"
       >
         <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
         <Marker position={position} icon={studioIcon} />
