@@ -71,7 +71,7 @@ export default function CosmeticProductPage({ product }) {
 
       <Header navItems={navItems} linkToHome />
 
-      <Container className="pb-16 pt-12 sm:pt-14 lg:pt-16">
+      <Container className="pb-16 pt-5 sm:pt-6 lg:pt-7">
         <Link
           to={COSMETICS_ROUTE}
           className="inline-flex items-center gap-1.5 text-sm text-stone transition hover:text-gold"
@@ -80,7 +80,7 @@ export default function CosmeticProductPage({ product }) {
           {t("cosmeticsProductPage.backToCatalog")}
         </Link>
 
-        <div className="mt-6 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+        <div className="mt-4 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <ScrollAnimationWrapper direction="left">
             <div className="card-gradient-border overflow-visible rounded-card shadow-spa">
               <CosmeticProductGallery
