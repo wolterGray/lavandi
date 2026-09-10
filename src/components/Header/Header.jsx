@@ -60,13 +60,14 @@ export default function Header({ navItems, linkToHome = false }) {
   return (
     <>
       <header
-        className={`w-full bg-purple-header transition-all duration-300 ${
-          scrolled
-            ? "fixed inset-x-0 top-0 z-50 bg-purple-header/95 backdrop-blur-md shadow-header animate-in fade-in duration-300"
-            : "relative z-40"
-        }`}
+        className="relative z-50 h-[68px] w-full md:h-[70px] lg:h-[74px]"
       >
-        <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
+        <div
+          className={`fixed inset-x-0 top-0 z-50 w-full bg-purple-header/95 backdrop-blur-md transition-shadow duration-300 ${
+            scrolled ? "shadow-header" : ""
+          }`}
+        >
+          <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
           <div className="w-[92px] shrink-0 sm:w-[108px]">
             {linkToHome ? (
               <RouterLink to="/"><LogoNuar className="block h-auto w-full !mb-0" /></RouterLink>
@@ -105,7 +106,8 @@ export default function Header({ navItems, linkToHome = false }) {
               </svg>
             </button>
           </div>
-        </Container>
+          </Container>
+        </div>
       </header>
 
       <AnimatePresence>
