@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
 import AdminMediaPicker from "./AdminMediaPicker";
 import { adminRu } from "./adminStrings";
@@ -17,8 +18,22 @@ export default function AdminImageField({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const { src: previewSrc } = useImageSrc(value);
+
+  useEffect(() => {
+    if (!previewOpen) return undefined;
+
+    const closeOnEscape = (event) => {
+      if (event.key === "Escape") {
+        setPreviewOpen(false);
+      }
+    };
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [previewOpen]);
 
   const handleRemove = async () => {
     setError("");
@@ -66,9 +81,17 @@ export default function AdminImageField({
         onDrop={handleDrop}
       >
         {previewSrc ? (
-          <div className={previewClassName}>
-            <img src={previewSrc} alt="" className="max-h-full w-full object-contain object-center" />
-          </div>
+          <button
+            type="button"
+            className={`${previewClassName} group relative overflow-hidden text-left transition hover:ring-gold/60 focus:outline-none focus:ring-2 focus:ring-gold/70`}
+            onClick={() => setPreviewOpen(true)}
+            aria-label={`Открыть предпросмотр: ${label}`}
+          >
+            <img src={previewSrc} alt="" className="h-full max-h-full w-full object-contain object-center" />
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-void/75 px-2 py-1 text-center text-[10px] font-bold uppercase tracking-[0.12em] text-cream opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
+              Просмотр
+            </span>
+          </button>
         ) : null}
         <div className="min-w-0 flex-1 space-y-2">
           {isImageRef(value) ? (
@@ -114,6 +137,33 @@ export default function AdminImageField({
         onSelect={onChange}
         onClose={() => setPickerOpen(false)}
       />
+      {previewSrc && previewOpen ? (
+        <div
+          className="fixed inset-0 z-[260] flex items-center justify-center bg-void/90 p-4 backdrop-blur-sm"
+          role="presentation"
+          onClick={() => setPreviewOpen(false)}
+        >
+          <div
+            className="relative w-full max-w-5xl rounded-card border border-border/60 bg-surface p-3 shadow-spa-hover"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Предпросмотр: ${label}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-void/80 text-cream transition hover:border-gold/60"
+              onClick={() => setPreviewOpen(false)}
+              aria-label="Закрыть предпросмотр"
+            >
+              <X className="h-4 w-4" aria-hidden />
+            </button>
+            <div className="flex max-h-[82vh] items-center justify-center overflow-hidden rounded-card bg-void/40 p-4">
+              <img src={previewSrc} alt="" className="max-h-[76vh] max-w-full object-contain" />
+            </div>
+          </div>
+        </div>
+      ) : null}
     </AdminField>
   );
 }

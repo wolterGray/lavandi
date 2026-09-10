@@ -546,7 +546,7 @@ export default function AdminCosmeticsPage() {
                     folder="cosmetics"
                     label={adminRu.cosmetics.photo}
                     value={item.img}
-                    previewClassName={`mt-3 flex h-48 w-full max-w-sm items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
+                    previewClassName={`flex h-24 w-24 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
                     onChange={(img) => updatePrimaryImage(index, img)}
                   />
                 </div>
@@ -563,7 +563,7 @@ export default function AdminCosmeticsPage() {
                             folder="cosmetics"
                             label={`${adminRu.cosmetics.galleryPhoto} ${galleryIndex + 2}`}
                             value={galleryRef}
-                            previewClassName={`mt-3 flex h-32 w-full max-w-xs items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(galleryRef) })}`}
+                            previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(galleryRef) })}`}
                             onChange={(img) => updateGalleryImage(index, galleryIndex + 1, img)}
                           />
                         </div>
@@ -580,7 +580,7 @@ export default function AdminCosmeticsPage() {
                     folder="cosmetics"
                     label={adminRu.cosmetics.addGalleryPhoto}
                     value=""
-                    previewClassName={`mt-3 flex h-24 w-full max-w-xs items-center justify-center rounded-card p-3 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: false })}`}
+                    previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: false })}`}
                     onChange={(img) => addGalleryImage(index, img)}
                     allowRemove={false}
                   />
