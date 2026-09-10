@@ -1,4 +1,4 @@
-import { X } from "lucide-react";
+import { Eye, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useImageSrc } from "../hooks/useImageSrc";
 import AdminMediaPicker from "./AdminMediaPicker";
@@ -88,8 +88,9 @@ export default function AdminImageField({
             aria-label={`Открыть предпросмотр: ${label}`}
           >
             <img src={previewSrc} alt="" className="h-full max-h-full w-full object-contain object-center" />
-            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-void/75 px-2 py-1 text-center text-[10px] font-bold uppercase tracking-[0.12em] text-cream opacity-0 transition group-hover:opacity-100 group-focus-visible:opacity-100">
-              Просмотр
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 inline-flex items-center justify-center gap-1 bg-void/85 px-1.5 py-1 text-[9px] font-bold uppercase tracking-normal text-cream shadow-lg transition group-hover:bg-gold group-hover:text-void group-focus-visible:bg-gold group-focus-visible:text-void">
+              <Eye className="h-3 w-3" aria-hidden />
+              Открыть
             </span>
           </button>
         ) : null}
@@ -144,20 +145,24 @@ export default function AdminImageField({
           onClick={() => setPreviewOpen(false)}
         >
           <div
-            className="relative w-full max-w-5xl rounded-card border border-border/60 bg-surface p-3 shadow-spa-hover"
+            className="relative w-full max-w-5xl rounded-card border border-border/60 bg-surface p-4 shadow-spa-hover"
             role="dialog"
             aria-modal="true"
             aria-label={`Предпросмотр: ${label}`}
             onClick={(event) => event.stopPropagation()}
           >
-            <button
-              type="button"
-              className="absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-void/80 text-cream transition hover:border-gold/60"
-              onClick={() => setPreviewOpen(false)}
-              aria-label="Закрыть предпросмотр"
-            >
-              <X className="h-4 w-4" aria-hidden />
-            </button>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">Предпросмотр фото</p>
+              <button
+                type="button"
+                className="inline-flex h-10 items-center gap-2 rounded-full bg-gold px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-void shadow-lg shadow-gold/20 transition hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold/70"
+                onClick={() => setPreviewOpen(false)}
+                aria-label="Закрыть предпросмотр"
+              >
+                <X className="h-4 w-4" aria-hidden />
+                Закрыть
+              </button>
+            </div>
             <div className="flex max-h-[82vh] items-center justify-center overflow-hidden rounded-card bg-void/40 p-4">
               <img src={previewSrc} alt="" className="max-h-[76vh] max-w-full object-contain" />
             </div>
