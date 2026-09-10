@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, CheckCircle2, ImageIcon, Plus, Star, Trash2 } from "lucide-react";
+import { AlertCircle, CheckCircle2, ImageIcon, Pencil, Plus, Star, Trash2, X } from "lucide-react";
 import { getAdminSectionKey } from "../../admin/adminNav";
 import { getSectionMeta } from "../../admin/adminSectionMeta";
 import { publishCosmeticsLocalesFromAuthor } from "../../admin/publishCmsFromRu";
+import { IMAGE_VARIANT } from "../../admin/siteImages";
 import { CMS_AUTHOR_LANG, localeDefaults } from "../../admin/siteContent";
 import {
   LangTabs,
@@ -39,12 +40,12 @@ import {
   AdminListSearch,
   AdminSaveBar,
   AdminSearchEmpty,
-  AdminStickyCardHeader,
   AdminStatusToast,
   AdminViewSiteButton,
   adminInputClass,
 } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
+import SiteImage from "../../ui/SiteImage";
 
 const PRODUCT_CATEGORIES = CATEGORY_KEYS.filter((key) => key !== "all");
 const STATUS_TIMEOUT_MS = 4000;
@@ -124,6 +125,7 @@ export default function AdminCosmeticsPage() {
   useRegisterAdminDirty(dirty);
   const [featuredLimitHint, setFeaturedLimitHint] = useState("");
   const [highlightId, setHighlightId] = useState("");
+  const [editingProductId, setEditingProductId] = useState(null);
   const [status, setStatus] = useState(null);
   const [confirm, setConfirm] = useState(null);
   const cardRefs = useRef({});
@@ -171,6 +173,26 @@ export default function AdminCosmeticsPage() {
     const timer = window.setTimeout(() => setHighlightId(""), 2400);
     return () => window.clearTimeout(timer);
   }, [highlightId, draft]);
+
+  useEffect(() => {
+    if (!editingProductId) return undefined;
+
+    const onKeyDown = (event) => {
+      if (event.key === "Escape") {
+        setEditingProductId(null);
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [editingProductId]);
+
+  useEffect(() => {
+    if (!editingProductId) return;
+    if (!draft.some((item) => item.id === editingProductId)) {
+      setEditingProductId(null);
+    }
+  }, [draft, editingProductId]);
 
   const showStatus = (message, tone = "info") => setStatus({ message, tone });
 
@@ -221,6 +243,7 @@ export default function AdminCosmeticsPage() {
       retiredDraft,
     );
     addProductToDraft(id);
+    setEditingProductId(id);
   };
 
   const toggleCategory = (index, categoryKey) => {
@@ -370,6 +393,7 @@ export default function AdminCosmeticsPage() {
         if (id) delete nextTextDraft[id];
         const nextFeatured = featuredDraft.filter((featuredId) => featuredId !== id);
         const nextRetired = id ? (retiredDraft.includes(id) ? retiredDraft : [...retiredDraft, id]) : retiredDraft;
+        if (editingProductId === id) setEditingProductId(null);
 
         await executeSaveCosmetics(nextDraft, nextTextDraft, nextFeatured, nextRetired);
       },
@@ -411,6 +435,217 @@ export default function AdminCosmeticsPage() {
       incomplete,
     };
   }, [draft, featuredDraft, textDraft]);
+
+  const editingIndex = editingProductId
+    ? draft.findIndex((item) => item.id === editingProductId)
+    : -1;
+  const editingItem = editingIndex >= 0 ? draft[editingIndex] : null;
+  const editingTexts = editingItem
+    ? (isAuthoring ? textDraft : previewTexts)[editingItem.id] ?? EMPTY_PRODUCT_TEXT
+    : EMPTY_PRODUCT_TEXT;
+  const editingIsFeatured = editingItem ? featuredDraft.includes(editingItem.id) : false;
+  const editingHealth = editingItem
+    ? getProductHealth(editingItem, textDraft[editingItem.id] ?? EMPTY_PRODUCT_TEXT, editingIsFeatured)
+    : null;
+
+  const renderProductEditor = (item, index, texts, isFeatured) => (
+    <div className="space-y-5">
+      <div>
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+          {adminRu.cosmetics.cardSection}
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <AdminImageField
+              folder="cosmetics"
+              label={adminRu.cosmetics.photo}
+              value={item.img}
+              previewClassName={`flex h-24 w-24 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
+              onChange={(img) => updatePrimaryImage(index, img)}
+            />
+          </div>
+
+          {getProductImages(item).length > 1 ? (
+            <div className="sm:col-span-2 space-y-3">
+              <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+                {adminRu.cosmetics.galleryPhotos}
+              </p>
+              {getProductImages(item).slice(1).map((galleryRef, galleryIndex) => (
+                <div key={`${item.id}-gallery-${galleryIndex + 1}`} className="flex flex-wrap items-end gap-3">
+                  <div className="min-w-0 flex-1">
+                    <AdminImageField
+                      folder="cosmetics"
+                      label={`${adminRu.cosmetics.galleryPhoto} ${galleryIndex + 2}`}
+                      value={galleryRef}
+                      previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(galleryRef) })}`}
+                      onChange={(img) => updateGalleryImage(index, galleryIndex + 1, img)}
+                    />
+                  </div>
+                  <AdminButton variant="danger" onClick={() => removeGalleryImage(index, galleryIndex + 1)}>
+                    <Trash2 className="h-4 w-4" />
+                  </AdminButton>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="sm:col-span-2">
+            <AdminImageField
+              folder="cosmetics"
+              label={adminRu.cosmetics.addGalleryPhoto}
+              value=""
+              previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: false })}`}
+              onChange={(img) => addGalleryImage(index, img)}
+              allowRemove={false}
+            />
+          </div>
+
+          <AdminField label={adminRu.cosmetics.transparentPhoto} help={adminRu.help.transparentPhoto}>
+            <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
+              <input
+                type="checkbox"
+                checked={usesTransparentProductPhoto(item)}
+                onChange={() =>
+                  updateItem(index, {
+                    transparentPhoto: !usesTransparentProductPhoto(item),
+                  })
+                }
+                className="h-4 w-4 accent-gold"
+              />
+              <span className="text-sm text-stone">
+                {usesTransparentProductPhoto(item)
+                  ? adminRu.cosmetics.transparentPhotoOn
+                  : adminRu.cosmetics.transparentPhotoOff}
+              </span>
+            </label>
+          </AdminField>
+
+          <div className="sm:col-span-2">
+            <AdminField label={adminRu.cosmetics.category} help={adminRu.help.productCategories}>
+              <div className="flex flex-wrap gap-2 rounded-card border border-border/50 bg-surface p-3">
+                {PRODUCT_CATEGORIES.map((key) => {
+                  const checked = getProductCategories(item).includes(key);
+                  return (
+                    <label
+                      key={key}
+                      className={`flex cursor-pointer items-center gap-2 rounded-pill border px-3 py-1.5 text-sm transition ${
+                        checked
+                          ? "border-gold/40 bg-gold/10 text-gold"
+                          : "border-border/40 text-stone hover:border-gold/25 hover:text-milk"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => toggleCategory(index, key)}
+                        className="h-3.5 w-3.5 accent-gold"
+                      />
+                      <span>{adminRu.cosmetics.categories[key] ?? key}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </AdminField>
+          </div>
+
+          <AdminField label={adminRu.cosmetics.featured} help={adminRu.help.featuredCosmetics}>
+            <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
+              <input
+                type="checkbox"
+                checked={isFeatured}
+                onChange={() => toggleFeatured(item.id)}
+                className="h-4 w-4 accent-gold"
+              />
+              <span className="text-sm text-stone">
+                {isFeatured ? adminRu.cosmetics.featuredOn : adminRu.cosmetics.featuredOff}
+              </span>
+            </label>
+          </AdminField>
+        </div>
+      </div>
+
+      <div className="border-t border-border/20 pt-5">
+        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+          {adminRu.cosmetics.siteTexts} · {activeLang.toUpperCase()}
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2">
+          <AdminField label={adminRu.cosmetics.name}>
+            <input
+              value={texts.name ?? ""}
+              readOnly={!isAuthoring}
+              onChange={(e) => isAuthoring && updateText(item.id, { name: e.target.value })}
+              className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+            />
+          </AdminField>
+          <AdminField label={adminRu.cosmetics.volume}>
+            {(() => {
+              const volumeParts = parseCosmeticVolume(texts.volume ?? "");
+              const setVolumeParts = (next) => {
+                if (!isAuthoring) return;
+                updateText(item.id, {
+                  volume: formatCosmeticVolume(next),
+                });
+              };
+
+              return (
+                <div className="grid grid-cols-[minmax(0,1fr)_88px] gap-2">
+                  <input
+                    inputMode="decimal"
+                    value={volumeParts.amount}
+                    readOnly={!isAuthoring}
+                    onChange={(e) =>
+                      setVolumeParts({
+                        amount: e.target.value,
+                        unit: volumeParts.unit,
+                      })
+                    }
+                    placeholder="400"
+                    className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                  />
+                  <select
+                    value={volumeParts.unit}
+                    disabled={!isAuthoring}
+                    onChange={(e) =>
+                      setVolumeParts({
+                        amount: volumeParts.amount,
+                        unit: e.target.value,
+                      })
+                    }
+                    className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+                  >
+                    <option value="ml">ml</option>
+                    <option value="g">g</option>
+                  </select>
+                </div>
+              );
+            })()}
+          </AdminField>
+          <div className="sm:col-span-2">
+            <AdminField label={adminRu.cosmetics.productDescription}>
+              <textarea
+                value={texts.description ?? ""}
+                readOnly={!isAuthoring}
+                onChange={(e) => isAuthoring && updateText(item.id, { description: e.target.value })}
+                rows={3}
+                className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
+              />
+            </AdminField>
+          </div>
+          <div className="sm:col-span-2">
+            <AdminField label={adminRu.cosmetics.composition}>
+              <textarea
+                value={texts.composition ?? ""}
+                readOnly={!isAuthoring}
+                onChange={(e) => isAuthoring && updateText(item.id, { composition: e.target.value })}
+                rows={3}
+                className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
+              />
+            </AdminField>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -474,266 +709,168 @@ export default function AdminCosmeticsPage() {
       ) : filteredDraft.length === 0 ? (
         <AdminSearchEmpty />
       ) : (
-      <div className="space-y-4">
-        {filteredDraft.map((item) => {
-          const index = draft.findIndex((entry) => entry.id === item.id);
-          const texts = (isAuthoring ? textDraft : previewTexts)[item.id] ?? EMPTY_PRODUCT_TEXT;
-          const isFeatured = featuredDraft.includes(item.id);
-          const isHighlighted = highlightId === item.id;
-          const health = getProductHealth(item, textDraft[item.id] ?? EMPTY_PRODUCT_TEXT, isFeatured);
-          return (
-            <AdminPanel
-              key={item.id}
-              ref={(node) => {
-                cardRefs.current[item.id] = node;
-              }}
-              className={isHighlighted ? "border-gold/50 ring-1 ring-gold/30" : ""}
-            >
-              <AdminStickyCardHeader>
-                <div>
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-display text-lg text-milk">
-                      {(textDraft[item.id]?.name ?? texts.name)?.trim() || adminRu.cosmetics.newProduct}
+        <div className="space-y-2">
+          {filteredDraft.map((item) => {
+            const index = draft.findIndex((entry) => entry.id === item.id);
+            const texts = (isAuthoring ? textDraft : previewTexts)[item.id] ?? EMPTY_PRODUCT_TEXT;
+            const isFeatured = featuredDraft.includes(item.id);
+            const isHighlighted = highlightId === item.id;
+            const health = getProductHealth(item, textDraft[item.id] ?? EMPTY_PRODUCT_TEXT, isFeatured);
+            const productName = (textDraft[item.id]?.name ?? texts.name)?.trim() || adminRu.cosmetics.newProduct;
+            const productImages = getProductImages(item);
+            const coverImage = productImages[0] || item.img;
+
+            return (
+              <AdminPanel
+                key={item.id}
+                ref={(node) => {
+                  cardRefs.current[item.id] = node;
+                }}
+                className={`!p-0 ${isHighlighted ? "border-gold/50 ring-1 ring-gold/30" : ""}`}
+              >
+                <div className="grid gap-3 p-3 sm:grid-cols-[72px_minmax(0,1fr)_auto] sm:items-center">
+                  <button
+                    type="button"
+                    onClick={() => setEditingProductId(item.id)}
+                    className={`relative flex h-16 w-16 items-center justify-center overflow-hidden rounded-card border border-border/50 p-1 transition hover:border-gold/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(coverImage) })}`}
+                    aria-label={`Редактировать ${productName}`}
+                  >
+                    {coverImage ? (
+                      <SiteImage
+                        src={coverImage}
+                        alt=""
+                        fill
+                        imageVariant={IMAGE_VARIANT.thumb}
+                        wrapperClassName="absolute inset-0"
+                        className="object-contain object-center"
+                      />
+                    ) : (
+                      <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted">Без фото</span>
+                    )}
+                  </button>
+
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="truncate font-display text-lg text-milk">{productName}</p>
+                      {isHighlighted ? (
+                        <span className="rounded-pill border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
+                          {adminRu.cosmetics.newProductBadge}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
+                      {adminRu.cosmetics.productId}: {item.id}
+                      {texts.volume ? <span className="ml-2 text-gold">{texts.volume}</span> : null}
                     </p>
-                    {isHighlighted ? (
-                      <span className="rounded-pill border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
-                        {adminRu.cosmetics.newProductBadge}
-                      </span>
-                    ) : null}
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <StatusPill tone={health.isReady ? "good" : "warn"}>
+                        {health.isReady ? (
+                          <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+                        ) : (
+                          <AlertCircle className="h-3.5 w-3.5" aria-hidden />
+                        )}
+                        {health.isReady ? "готово" : `заполнить: ${health.missing.join(", ")}`}
+                      </StatusPill>
+                      <StatusPill>
+                        <ImageIcon className="h-3.5 w-3.5" aria-hidden />
+                        фото: {health.imageCount}
+                      </StatusPill>
+                      {health.isFeatured ? (
+                        <StatusPill tone="gold">
+                          <Star className="h-3.5 w-3.5" aria-hidden />
+                          главная
+                        </StatusPill>
+                      ) : null}
+                    </div>
                   </div>
-                  <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
-                    {adminRu.cosmetics.productId}: {item.id}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <StatusPill tone={health.isReady ? "good" : "warn"}>
-                      {health.isReady ? (
+
+                  <div className="flex flex-wrap gap-2 sm:justify-end">
+                    <AdminButton onClick={() => setEditingProductId(item.id)}>
+                      <Pencil className="h-3.5 w-3.5" aria-hidden />
+                      Редактировать
+                    </AdminButton>
+                    <AdminViewSiteButton href={`/katalog/${item.id}`} />
+                    <AdminButton
+                      variant="danger"
+                      onClick={() => requestRemoveItem(index)}
+                      aria-label={adminRu.common.delete}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </AdminButton>
+                  </div>
+                </div>
+              </AdminPanel>
+            );
+          })}
+        </div>
+      )}
+
+      {editingItem ? (
+        <div
+          className="fixed inset-0 z-[190] flex items-start justify-center overflow-y-auto bg-void/85 p-4 pt-[7vh] backdrop-blur-md"
+          role="presentation"
+          onClick={() => setEditingProductId(null)}
+        >
+          <div
+            className="flex max-h-[86vh] w-full max-w-5xl flex-col rounded-card border border-border/60 bg-card shadow-spa-hover"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Редактирование товара ${editingTexts.name || editingItem.id}`}
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border/30 px-5 py-4">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">Редактирование товара</p>
+                <h3 className="mt-1 truncate font-display text-2xl text-milk">
+                  {editingTexts.name?.trim() || adminRu.cosmetics.newProduct}
+                </h3>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {editingHealth ? (
+                    <StatusPill tone={editingHealth.isReady ? "good" : "warn"}>
+                      {editingHealth.isReady ? (
                         <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
                       ) : (
                         <AlertCircle className="h-3.5 w-3.5" aria-hidden />
                       )}
-                      {health.isReady ? "готово" : `заполнить: ${health.missing.join(", ")}`}
+                      {editingHealth.isReady ? "готово" : `заполнить: ${editingHealth.missing.join(", ")}`}
                     </StatusPill>
-                    <StatusPill>
-                      <ImageIcon className="h-3.5 w-3.5" aria-hidden />
-                      фото: {health.imageCount}
-                    </StatusPill>
-                    {health.isFeatured ? (
-                      <StatusPill tone="gold">
-                        <Star className="h-3.5 w-3.5" aria-hidden />
-                        главная
-                      </StatusPill>
-                    ) : null}
-                  </div>
+                  ) : null}
+                  <StatusPill>
+                    {adminRu.cosmetics.productId}: {editingItem.id}
+                  </StatusPill>
                 </div>
-                <div className="flex items-center gap-2">
-                  <AdminViewSiteButton href={`/katalog/${item.id}`} />
-                  <AdminButton
-                    variant="danger"
-                    onClick={() => requestRemoveItem(index)}
-                    aria-label={adminRu.common.delete}
-                  >
-                    <Trash2 className="h-4 w-4" />
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2">
+                <AdminViewSiteButton href={`/katalog/${editingItem.id}`} />
+                {dirty ? (
+                  <AdminButton variant="ghost" onClick={handleDiscard} disabled={contentSaving}>
+                    {adminRu.common.discard}
                   </AdminButton>
-                </div>
-              </AdminStickyCardHeader>
-
-              <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-                {adminRu.cosmetics.cardSection}
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <AdminImageField
-                    folder="cosmetics"
-                    label={adminRu.cosmetics.photo}
-                    value={item.img}
-                    previewClassName={`flex h-24 w-24 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(item.img) })}`}
-                    onChange={(img) => updatePrimaryImage(index, img)}
-                  />
-                </div>
-
-                {getProductImages(item).length > 1 ? (
-                  <div className="sm:col-span-2 space-y-3">
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-                      {adminRu.cosmetics.galleryPhotos}
-                    </p>
-                    {getProductImages(item).slice(1).map((galleryRef, galleryIndex) => (
-                      <div key={`${item.id}-gallery-${galleryIndex + 1}`} className="flex flex-wrap items-end gap-3">
-                        <div className="min-w-0 flex-1">
-                          <AdminImageField
-                            folder="cosmetics"
-                            label={`${adminRu.cosmetics.galleryPhoto} ${galleryIndex + 2}`}
-                            value={galleryRef}
-                            previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: Boolean(galleryRef) })}`}
-                            onChange={(img) => updateGalleryImage(index, galleryIndex + 1, img)}
-                          />
-                        </div>
-                        <AdminButton variant="danger" onClick={() => removeGalleryImage(index, galleryIndex + 1)}>
-                          <Trash2 className="h-4 w-4" />
-                        </AdminButton>
-                      </div>
-                    ))}
-                  </div>
                 ) : null}
-
-                <div className="sm:col-span-2">
-                  <AdminImageField
-                    folder="cosmetics"
-                    label={adminRu.cosmetics.addGalleryPhoto}
-                    value=""
-                    previewClassName={`flex h-20 w-20 shrink-0 items-center justify-center rounded-card p-2 ring-1 ring-border/50 ${getProductImageSurfaceClass(item, { hasImage: false })}`}
-                    onChange={(img) => addGalleryImage(index, img)}
-                    allowRemove={false}
-                  />
-                </div>
-
-                <AdminField label={adminRu.cosmetics.transparentPhoto} help={adminRu.help.transparentPhoto}>
-                  <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
-                    <input
-                      type="checkbox"
-                      checked={usesTransparentProductPhoto(item)}
-                      onChange={() =>
-                        updateItem(index, {
-                          transparentPhoto: !usesTransparentProductPhoto(item),
-                        })
-                      }
-                      className="h-4 w-4 accent-gold"
-                    />
-                    <span className="text-sm text-stone">
-                      {usesTransparentProductPhoto(item)
-                        ? adminRu.cosmetics.transparentPhotoOn
-                        : adminRu.cosmetics.transparentPhotoOff}
-                    </span>
-                  </label>
-                </AdminField>
-
-                <div className="sm:col-span-2">
-                  <AdminField label={adminRu.cosmetics.category} help={adminRu.help.productCategories}>
-                    <div className="flex flex-wrap gap-2 rounded-card border border-border/50 bg-surface p-3">
-                      {PRODUCT_CATEGORIES.map((key) => {
-                        const checked = getProductCategories(item).includes(key);
-                        return (
-                          <label
-                            key={key}
-                            className={`flex cursor-pointer items-center gap-2 rounded-pill border px-3 py-1.5 text-sm transition ${
-                              checked
-                                ? "border-gold/40 bg-gold/10 text-gold"
-                                : "border-border/40 text-stone hover:border-gold/25 hover:text-milk"
-                            }`}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={checked}
-                              onChange={() => toggleCategory(index, key)}
-                              className="h-3.5 w-3.5 accent-gold"
-                            />
-                            <span>{adminRu.cosmetics.categories[key] ?? key}</span>
-                          </label>
-                        );
-                      })}
-                    </div>
-                  </AdminField>
-                </div>
-
-                <AdminField label={adminRu.cosmetics.featured} help={adminRu.help.featuredCosmetics}>
-                  <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
-                    <input
-                      type="checkbox"
-                      checked={isFeatured}
-                      onChange={() => toggleFeatured(item.id)}
-                      className="h-4 w-4 accent-gold"
-                    />
-                    <span className="text-sm text-stone">
-                      {isFeatured ? adminRu.cosmetics.featuredOn : adminRu.cosmetics.featuredOff}
-                    </span>
-                  </label>
-                </AdminField>
+                <AdminButton onClick={handleSave} loading={contentSaving} disabled={contentSaving || !dirty}>
+                  {contentSaving ? adminRu.common.saving : adminRu.common.save}
+                </AdminButton>
+                <AdminButton variant="danger" onClick={() => requestRemoveItem(editingIndex)}>
+                  <Trash2 className="h-4 w-4" />
+                </AdminButton>
+                <button
+                  type="button"
+                  className="inline-flex h-10 items-center gap-2 rounded-full bg-gold px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-void shadow-lg shadow-gold/20 transition hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold/70"
+                  onClick={() => setEditingProductId(null)}
+                >
+                  <X className="h-4 w-4" aria-hidden />
+                  Закрыть
+                </button>
               </div>
+            </div>
 
-              <div className="mt-4 border-t border-border/20 pt-4">
-                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
-                  {adminRu.cosmetics.siteTexts} · {activeLang.toUpperCase()}
-                </p>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <AdminField label={adminRu.cosmetics.name}>
-                    <input
-                      value={texts.name ?? ""}
-                      readOnly={!isAuthoring}
-                      onChange={(e) => isAuthoring && updateText(item.id, { name: e.target.value })}
-                      className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
-                    />
-                  </AdminField>
-                  <AdminField label={adminRu.cosmetics.volume}>
-                    {(() => {
-                      const volumeParts = parseCosmeticVolume(texts.volume ?? "");
-                      const setVolumeParts = (next) => {
-                        if (!isAuthoring) return;
-                        updateText(item.id, {
-                          volume: formatCosmeticVolume(next),
-                        });
-                      };
-
-                      return (
-                        <div className="grid grid-cols-[minmax(0,1fr)_88px] gap-2">
-                          <input
-                            inputMode="decimal"
-                            value={volumeParts.amount}
-                            readOnly={!isAuthoring}
-                            onChange={(e) =>
-                              setVolumeParts({
-                                amount: e.target.value,
-                                unit: volumeParts.unit,
-                              })
-                            }
-                            placeholder="400"
-                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
-                          />
-                          <select
-                            value={volumeParts.unit}
-                            disabled={!isAuthoring}
-                            onChange={(e) =>
-                              setVolumeParts({
-                                amount: volumeParts.amount,
-                                unit: e.target.value,
-                              })
-                            }
-                            className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
-                          >
-                            <option value="ml">ml</option>
-                            <option value="g">g</option>
-                          </select>
-                        </div>
-                      );
-                    })()}
-                  </AdminField>
-                  <div className="sm:col-span-2">
-                    <AdminField label={adminRu.cosmetics.productDescription}>
-                      <textarea
-                        value={texts.description ?? ""}
-                        readOnly={!isAuthoring}
-                        onChange={(e) => isAuthoring && updateText(item.id, { description: e.target.value })}
-                        rows={3}
-                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
-                      />
-                    </AdminField>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <AdminField label={adminRu.cosmetics.composition}>
-                      <textarea
-                        value={texts.composition ?? ""}
-                        readOnly={!isAuthoring}
-                        onChange={(e) => isAuthoring && updateText(item.id, { composition: e.target.value })}
-                        rows={3}
-                        className={adminInputClass(`resize-y ${!isAuthoring ? "cursor-default opacity-80" : ""}`)}
-                      />
-                    </AdminField>
-                  </div>
-                </div>
-              </div>
-            </AdminPanel>
-          );
-        })}
-      </div>
-      )}
+            <div className="min-h-0 flex-1 overflow-y-auto px-5 py-5">
+              {renderProductEditor(editingItem, editingIndex, editingTexts, editingIsFeatured)}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {saveError ? (
         <p className="mt-4 text-sm text-red-300" role="alert">
