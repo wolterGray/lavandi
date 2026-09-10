@@ -160,6 +160,7 @@
     "compositionLabel": "Skład",
     "searchLabel": "Szukaj produktu",
     "searchPlaceholder": "Nazwa lub ID produktu",
+    "catalogEmpty": "Katalog produktów jest pusty",
     "noResults": "Brak produktów dla tego wyszukiwania",
     "viewProduct": "Zobacz produkt",
     "interestedCta": "Zapytaj o produkt",

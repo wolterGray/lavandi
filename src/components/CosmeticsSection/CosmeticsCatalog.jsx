@@ -1,11 +1,9 @@
-import { useMemo, useState } from "react";
-import { Search } from "lucide-react";
-import { ImageSkeleton } from "../../ui/SiteImage";
+import {useMemo, useState} from "react";
+import {Search} from "lucide-react";
 import CosmeticProductCard from "./CosmeticProductCard";
-import CosmeticProductCardSkeleton from "./CosmeticProductCardSkeleton";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
-import { useTranslation } from "../../i18n/LanguageProvider";
-import { useContent } from "../../context/ContentProvider";
+import {useTranslation} from "../../i18n/LanguageProvider";
+import {useContent} from "../../context/ContentProvider";
 import {
   buildLocalizedProducts,
   CATEGORY_KEYS,
@@ -21,9 +19,12 @@ const CATALOG_GRID_CLASSNAME =
 const CATEGORY_GRID_CLASSNAME =
   "mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 md:flex md:flex-wrap md:gap-2";
 
-function CategoryFilters({ activeCategory, onSelect, t }) {
+function CategoryFilters({activeCategory, onSelect, t}) {
   return (
-    <div className={CATEGORY_GRID_CLASSNAME} role="tablist" aria-label={t("cosmetics.filterLabel")}>
+    <div
+      className={CATEGORY_GRID_CLASSNAME}
+      role="tablist"
+      aria-label={t("cosmetics.filterLabel")}>
       {CATEGORY_KEYS.map((key) => {
         const isActive = activeCategory === key;
         const fullLabel = t(`cosmetics.categories.${key}`);
@@ -40,9 +41,10 @@ function CategoryFilters({ activeCategory, onSelect, t }) {
               isActive
                 ? "border-gold/40 bg-gold/10 text-gold"
                 : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
-            }`}
-          >
-            <span className="md:hidden">{getCategoryFilterLabel(t, key, { short: true })}</span>
+            }`}>
+            <span className="md:hidden">
+              {getCategoryFilterLabel(t, key, {short: true})}
+            </span>
             <span className="hidden md:inline">{fullLabel}</span>
           </button>
         );
@@ -52,14 +54,14 @@ function CategoryFilters({ activeCategory, onSelect, t }) {
 }
 
 export default function CosmeticsCatalog() {
-  const { t, lang } = useTranslation();
-  const { cosmetics, getProductTexts, contentLoading } = useContent();
+  const {t, lang} = useTranslation();
+  const {cosmetics, getProductTexts, contentLoading} = useContent();
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const products = useMemo(
     () => buildLocalizedProducts(cosmetics, t, lang, getProductTexts),
-    [t, lang, cosmetics, getProductTexts]
+    [t, lang, cosmetics, getProductTexts],
   );
 
   const filteredProducts = useMemo(
@@ -67,14 +69,14 @@ export default function CosmeticsCatalog() {
       products.filter(
         (product) =>
           matchesProductSearch(product, searchQuery) &&
-          productMatchesCategory(product, activeCategory)
+          productMatchesCategory(product, activeCategory),
       ),
-    [activeCategory, products, searchQuery]
+    [activeCategory, products, searchQuery],
   );
 
   if (contentLoading) {
     return (
-      <div className="mt-12 py-16 text-center">
+      <div className="mt-8 rounded-card border border-border/50 bg-card/40 py-16 text-center">
         <p className="text-sm font-light text-stone/50 tracking-wider animate-pulse">
           {t("common.loading", "Ładowanie...")}
         </p>
@@ -84,10 +86,8 @@ export default function CosmeticsCatalog() {
 
   if (products.length === 0) {
     return (
-      <div className="mt-12 py-20 text-center">
-        <p className="text-base font-light text-stone/60 tracking-wider">
-          {t("cosmetics.catalogEmpty", "Katalog produktów jest pusty")}
-        </p>
+      <div className="mt-8 border-t border-border/60 py-10">
+        <p className="font-display text-2xl text-milk">{t("cosmetics.catalogEmpty")}</p>
       </div>
     );
   }
@@ -119,7 +119,9 @@ export default function CosmeticsCatalog() {
 
       {filteredProducts.length === 0 ? (
         <div className="mt-10 py-16 text-center">
-          <p className="text-sm font-light text-stone/60">{t("cosmetics.noResults")}</p>
+          <p className="text-sm font-light text-stone/60">
+            {t("cosmetics.noResults")}
+          </p>
         </div>
       ) : (
         <div className={CATALOG_GRID_CLASSNAME}>

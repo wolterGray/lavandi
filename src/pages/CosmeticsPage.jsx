@@ -5,7 +5,6 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import CosmeticsCatalog from "../components/CosmeticsSection/CosmeticsCatalog";
 import Container from "../ui/Container";
-import SectionTitle from "../ui/SectionTitle";
 import Button from "../ui/Button";
 import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
@@ -44,7 +43,7 @@ export default function CosmeticsPage() {
 
       <Header navItems={navItems} linkToHome />
 
-      <section className="bg-surface pb-20 pt-28 lg:pt-36">
+      <section className="bg-surface pb-20 pt-10 sm:pt-12 lg:pt-14">
         <Container>
           <Link
             to="/"
@@ -54,14 +53,15 @@ export default function CosmeticsPage() {
             {t("common.backHome")}
           </Link>
 
-          <ScrollAnimationWrapper className="mt-8 text-center">
-            <SectionTitle label={t("cosmetics.label")} align="center">
-              {t("cosmetics.title")}
-            </SectionTitle>
-            <div className="spa-divider my-6" />
-            <p className="mx-auto max-w-2xl text-base leading-relaxed text-stone">
-              {t("cosmetics.description")}
-            </p>
+          <ScrollAnimationWrapper className="mt-8">
+            <div className="border-b border-border/60 pb-8">
+              <h1 className="max-w-3xl font-display text-[2.55rem] leading-[1.04] text-milk sm:text-display-lg lg:text-display-xl">
+                {t("cosmetics.title")}
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-relaxed text-stone sm:text-lg">
+                {t("cosmetics.description")}
+              </p>
+            </div>
           </ScrollAnimationWrapper>
 
           <CosmeticsCatalog />

@@ -160,6 +160,7 @@
     "compositionLabel": "Склад",
     "searchLabel": "Пошук продукту",
     "searchPlaceholder": "Назва або ID продукту",
+    "catalogEmpty": "Каталог товарів порожній",
     "noResults": "Немає продуктів за цим запитом",
     "viewProduct": "Переглянути продукт",
     "interestedCta": "Цікавить продукт",

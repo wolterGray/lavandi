@@ -160,6 +160,7 @@
     "compositionLabel": "Ingredients",
     "searchLabel": "Search products",
     "searchPlaceholder": "Product name or ID",
+    "catalogEmpty": "The product catalog is empty",
     "noResults": "No products match your search",
     "viewProduct": "View product",
     "interestedCta": "I'm interested",
