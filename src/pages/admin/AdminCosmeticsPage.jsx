@@ -92,7 +92,7 @@ function StatusPill({ tone = "neutral", children }) {
           : "border-border/50 bg-surface text-stone";
 
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-pill border px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] ${toneClass}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-card border px-2.5 py-1 text-xs font-semibold ${toneClass}`}>
       {children}
     </span>
   );
@@ -694,24 +694,24 @@ export default function AdminCosmeticsPage() {
 
       <div className="mb-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
         <AdminPanel className="p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Всего товаров</p>
-          <p className="mt-1 font-display text-2xl text-milk">{catalogStats.total}</p>
+          <p className="text-xs font-semibold text-muted">Всего товаров</p>
+          <p className="mt-1 text-2xl font-semibold text-milk">{catalogStats.total}</p>
         </AdminPanel>
         <AdminPanel className="p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Готовы</p>
-          <p className="mt-1 font-display text-2xl text-emerald-100">{catalogStats.ready}</p>
+          <p className="text-xs font-semibold text-muted">Готовы</p>
+          <p className="mt-1 text-2xl font-semibold text-emerald-100">{catalogStats.ready}</p>
         </AdminPanel>
         <AdminPanel className="p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Нужно заполнить</p>
-          <p className="mt-1 font-display text-2xl text-amber-100">{catalogStats.incomplete}</p>
+          <p className="text-xs font-semibold text-muted">Нужно заполнить</p>
+          <p className="mt-1 text-2xl font-semibold text-amber-100">{catalogStats.incomplete}</p>
         </AdminPanel>
         <AdminPanel className="p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">Без фото</p>
-          <p className="mt-1 font-display text-2xl text-milk">{catalogStats.missingPhoto}</p>
+          <p className="text-xs font-semibold text-muted">Без фото</p>
+          <p className="mt-1 text-2xl font-semibold text-milk">{catalogStats.missingPhoto}</p>
         </AdminPanel>
         <AdminPanel className="p-4">
-          <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-muted">На главной</p>
-          <p className="mt-1 font-display text-2xl text-gold">{catalogStats.featured}/{MAX_FEATURED_COSMETICS}</p>
+          <p className="text-xs font-semibold text-muted">На главной</p>
+          <p className="mt-1 text-2xl font-semibold text-gold">{catalogStats.featured}/{MAX_FEATURED_COSMETICS}</p>
         </AdminPanel>
       </div>
 
@@ -767,7 +767,7 @@ export default function AdminCosmeticsPage() {
 
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="truncate font-display text-lg text-milk">{productName}</p>
+                      <p className="truncate text-base font-semibold text-milk">{productName}</p>
                       {isHighlighted ? (
                         <span className="rounded-pill border border-gold/40 bg-gold/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
                           {adminRu.cosmetics.newProductBadge}
@@ -837,8 +837,8 @@ export default function AdminCosmeticsPage() {
           >
             <div className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border/30 px-5 py-4">
               <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">Редактирование товара</p>
-                <h3 className="mt-1 truncate font-display text-2xl text-milk">
+                <p className="text-xs font-semibold text-gold">Редактирование товара</p>
+                <h3 className="mt-1 truncate text-2xl font-semibold text-milk">
                   {editingTexts.name?.trim() || adminRu.cosmetics.newProduct}
                 </h3>
                 <div className="mt-2 flex flex-wrap gap-2">

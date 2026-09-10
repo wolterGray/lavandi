@@ -57,28 +57,28 @@ function AdminLayoutInner() {
   };
 
   return (
-    <div className="min-h-screen bg-void text-milk">
+    <div className="admin-shell min-h-screen bg-void font-sans text-milk">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <aside className="border-b border-border/60 bg-surface lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between px-5 py-5 lg:block">
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">NUAR</p>
-              <h1 className="mt-1 font-display text-xl">{adminRu.nav.adminTitle}</h1>
+              <p className="text-xs font-semibold text-gold">NUAR CMS</p>
+              <h1 className="mt-1 text-lg font-semibold">{adminRu.nav.adminTitle}</h1>
             </div>
             <div className="mt-2 flex flex-wrap gap-2 lg:mt-3">
               {isSupabaseEnabled ? (
-                <span className="rounded-pill border border-emerald-900/40 bg-emerald-950/30 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-emerald-200">
+                <span className="rounded-card border border-emerald-900/40 bg-emerald-950/30 px-2.5 py-1 text-[11px] font-semibold text-emerald-200">
                   CRM backend
                 </span>
               ) : (
                 hasOverrides && (
-                  <span className="rounded-pill border border-gold/30 bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-gold">
+                  <span className="rounded-card border border-gold/30 bg-gold/10 px-2.5 py-1 text-[11px] font-semibold text-gold">
                     {adminRu.nav.localOnly}
                   </span>
                 )
               )}
               {contentSaving && (
-                <span className="rounded-pill border border-border/50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.12em] text-stone">
+                <span className="rounded-card border border-border/50 px-2.5 py-1 text-[11px] font-semibold text-stone">
                   {adminRu.common.saving}
                 </span>
               )}
@@ -92,7 +92,7 @@ function AdminLayoutInner() {
             <button
               type="button"
               onClick={() => setCommandOpen(true)}
-              className="flex w-full items-center gap-2 rounded-card border border-border/50 px-3 py-2.5 text-sm text-stone transition hover:border-gold/30 hover:text-milk"
+              className="flex w-full items-center gap-2 rounded-card border border-border/60 bg-card/50 px-3 py-2.5 text-sm text-stone transition hover:border-gold/30 hover:text-milk"
             >
               <Search className="h-4 w-4 shrink-0" aria-hidden />
               <span className="flex-1 text-left">{adminRu.common.commandPalette}</span>
@@ -108,7 +108,7 @@ function AdminLayoutInner() {
                 <button
                   type="button"
                   onClick={() => toggleGroup(group.label)}
-                  className="mb-2 flex w-full items-center justify-between px-2 text-[10px] font-bold uppercase tracking-[0.14em] text-muted transition hover:text-stone"
+                  className="mb-2 flex w-full items-center justify-between px-2 text-xs font-semibold text-muted transition hover:text-stone"
                 >
                   <span>{group.label}</span>
                   <ChevronDown className={`h-3.5 w-3.5 transition ${collapsed ? "-rotate-90" : ""}`} aria-hidden />
@@ -122,7 +122,7 @@ function AdminLayoutInner() {
                       end={end}
                       onClick={handleNavClick}
                       className={({ isActive }) =>
-                        `flex shrink-0 items-center gap-2 rounded-card px-3 py-2.5 text-sm transition ${
+                        `flex shrink-0 items-center gap-2 rounded-card px-3 py-2.5 text-sm font-medium transition ${
                           isActive
                             ? "bg-card text-gold ring-1 ring-gold/20"
                             : "text-stone hover:bg-card/60 hover:text-milk"
@@ -145,7 +145,7 @@ function AdminLayoutInner() {
               href="/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk"
+              className="flex items-center gap-2 rounded-card px-3 py-2.5 text-sm font-medium text-stone transition hover:bg-card/60 hover:text-milk"
             >
               <ExternalLink className="h-4 w-4" aria-hidden />
               {adminRu.nav.viewSite}
@@ -153,7 +153,7 @@ function AdminLayoutInner() {
             <button
               type="button"
               onClick={handleLogout}
-              className="mt-1 flex w-full items-center gap-2 rounded-card px-3 py-2.5 text-sm text-stone transition hover:bg-card/60 hover:text-milk"
+              className="mt-1 flex w-full items-center gap-2 rounded-card px-3 py-2.5 text-sm font-medium text-stone transition hover:bg-card/60 hover:text-milk"
             >
               <LogOut className="h-4 w-4" aria-hidden />
               {adminRu.nav.logout}

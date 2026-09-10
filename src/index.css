@@ -217,4 +217,110 @@
   .category-scroll-strip::-webkit-scrollbar {
     display: none;
   }
+
+  .admin-shell {
+    --admin-bg: #090b10;
+    --admin-surface: #0f1218;
+    --admin-card: #121620;
+    --admin-border: #252b36;
+    --admin-text: #edf1f7;
+    --admin-muted: #778191;
+    --admin-soft: #a9b2c1;
+    --admin-accent: #7dd3fc;
+    --admin-accent-strong: #38bdf8;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+  }
+
+  .admin-shell,
+  .admin-shell * {
+    letter-spacing: 0;
+  }
+
+  .admin-shell .font-display,
+  .admin-shell .font-cormorant {
+    font-family: theme("fontFamily.sans");
+    font-weight: 600;
+  }
+
+  .admin-shell .bg-void,
+  .admin-shell .bg-surface,
+  .admin-shell .bg-card,
+  .admin-shell .bg-cream {
+    background-image: none;
+  }
+
+  .admin-shell .bg-void {
+    background-color: var(--admin-bg);
+  }
+
+  .admin-shell .bg-surface {
+    background-color: var(--admin-surface);
+  }
+
+  .admin-shell .bg-card,
+  .admin-shell .bg-panel {
+    background-color: var(--admin-card);
+  }
+
+  .admin-shell .text-milk,
+  .admin-shell .text-cream,
+  .admin-shell .text-ink {
+    color: var(--admin-text);
+  }
+
+  .admin-shell .text-stone,
+  .admin-shell .text-ink-muted {
+    color: var(--admin-soft);
+  }
+
+  .admin-shell .text-muted,
+  .admin-shell .text-ink-faint {
+    color: var(--admin-muted);
+  }
+
+  .admin-shell [class*="text-gold"] {
+    color: var(--admin-accent);
+  }
+
+  .admin-shell [class*="border-border"] {
+    border-color: var(--admin-border);
+  }
+
+  .admin-shell [class*="border-gold"] {
+    border-color: rgb(56 189 248 / 0.45);
+  }
+
+  .admin-shell [class*="bg-gold"] {
+    background-color: rgb(56 189 248 / 0.12);
+  }
+
+  .admin-shell .bg-gold {
+    background-color: var(--admin-accent-strong);
+  }
+
+  .admin-shell .text-void {
+    color: #061018;
+  }
+
+  .admin-shell .shadow-spa,
+  .admin-shell .shadow-spa-hover,
+  .admin-shell .shadow-header {
+    box-shadow: none;
+  }
+
+  .admin-shell .rounded-card {
+    border-radius: 0.875rem;
+  }
+
+  .admin-shell input,
+  .admin-shell textarea,
+  .admin-shell select {
+    font-family: theme("fontFamily.sans");
+  }
+
+  .admin-shell ::selection {
+    background: rgb(56 189 248 / 0.22);
+    color: var(--admin-text);
+  }
 }

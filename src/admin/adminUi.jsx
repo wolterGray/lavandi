@@ -12,7 +12,7 @@ export function AdminTabs({ tabs, activeId, onChange }) {
           key={tab.id}
           type="button"
           onClick={() => onChange(tab.id)}
-          className={`rounded-pill border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition ${
+          className={`rounded-card border px-3.5 py-2 text-xs font-semibold transition ${
             activeId === tab.id
               ? "border-gold/40 bg-gold/10 text-gold"
               : "border-border/50 text-stone hover:border-gold/30 hover:text-milk"
@@ -53,7 +53,7 @@ export function AdminViewSiteButton({ href, label = adminRu.common.viewSection }
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center justify-center gap-1.5 rounded-pill border border-border/60 bg-transparent px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] text-stone transition hover:border-gold/30 hover:text-milk"
+      className="inline-flex items-center justify-center gap-1.5 rounded-card border border-border/60 bg-transparent px-3.5 py-2 text-xs font-semibold text-stone transition hover:border-gold/30 hover:text-milk"
     >
       <ExternalLink className="h-3.5 w-3.5" aria-hidden />
       {label}
@@ -161,7 +161,7 @@ export function AdminPageHeader({ title, description, actions, viewOnSite, secti
   return (
     <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h2 className="font-display text-2xl text-milk sm:text-3xl">{title}</h2>
+        <h2 className="text-2xl font-semibold text-milk sm:text-3xl">{title}</h2>
         {description && <p className="mt-2 max-w-2xl text-sm leading-relaxed text-stone">{description}</p>}
         {sectionSavedAt !== undefined ? (
           <p className="mt-2 text-xs text-muted">
@@ -198,7 +198,7 @@ export const AdminPanel = forwardRef(function AdminPanel({ children, className =
   return (
     <div
       ref={ref}
-      className={`rounded-card border border-border/50 bg-card p-5 shadow-spa sm:p-6 ${className}`}
+      className={`rounded-card border border-border/60 bg-card/80 p-4 shadow-spa sm:p-5 ${className}`}
     >
       {children}
     </div>
@@ -208,7 +208,7 @@ export const AdminPanel = forwardRef(function AdminPanel({ children, className =
 export function AdminField({ label, hint, help, children }) {
   return (
     <label className="block">
-      <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+      <span className="flex items-center gap-1.5 text-[11px] font-semibold text-muted">
         {label}
         {help ? (
           <span className="group relative inline-flex">
@@ -241,7 +241,7 @@ export function AdminButton({ variant = "primary", loading = false, disabled, cl
     <button
       type={type}
       disabled={disabled || loading}
-      className={`inline-flex items-center justify-center gap-2 rounded-pill px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
+      className={`inline-flex items-center justify-center gap-2 rounded-card px-3.5 py-2 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-50 ${styles} ${className}`}
       {...props}
     >
       {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" aria-hidden /> : null}
@@ -287,7 +287,7 @@ export function AdminConfirmDialog({
               {isDanger ? <AlertTriangle className="h-5 w-5" aria-hidden /> : <Info className="h-5 w-5" aria-hidden />}
             </div>
             <div className="flex-1">
-              <h3 className="font-display text-xl text-milk">{title}</h3>
+              <h3 className="text-xl font-semibold text-milk">{title}</h3>
               {message ? <p className="mt-2 text-sm leading-relaxed text-stone">{message}</p> : null}
             </div>
           </div>
@@ -366,7 +366,7 @@ export function AdminSaveBar({
   }
 
   return (
-    <div className="sticky bottom-6 z-30 mt-8 flex flex-wrap items-center justify-between gap-4 rounded-pill border border-gold/30 bg-surface/95 px-5 py-3 shadow-spa-hover backdrop-blur-md animate-in slide-in-from-bottom-4 duration-300">
+    <div className="sticky bottom-6 z-30 mt-8 flex flex-wrap items-center justify-between gap-4 rounded-card border border-gold/30 bg-surface/95 px-5 py-3 shadow-spa-hover backdrop-blur-md animate-in slide-in-from-bottom-4 duration-300">
       <div className="flex items-center gap-2.5 text-xs text-milk">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold opacity-75" />
