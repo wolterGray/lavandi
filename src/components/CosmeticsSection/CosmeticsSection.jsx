@@ -24,6 +24,10 @@ export default function CosmeticsSection() {
     });
   }, [t, lang, cosmetics, featuredCosmeticIds, getProductTexts]);
 
+  if (!contentLoading && featuredProducts.length === 0) {
+    return null;
+  }
+
   return (
     <section id="catalog" className="section-padding bg-surface">
       <Container>
@@ -44,7 +48,7 @@ export default function CosmeticsSection() {
               <CosmeticProductCardSkeleton key={index} variant="featured" />
             ))}
           </div>
-        ) : featuredProducts.length > 0 ? (
+        ) : (
           <div className="mx-auto mt-10 grid max-w-4xl grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4">
             {featuredProducts.map((product, index) => (
               <CosmeticProductCard
@@ -57,10 +61,6 @@ export default function CosmeticsSection() {
               />
             ))}
           </div>
-        ) : (
-          <ScrollAnimationWrapper delay={0.1} className="mt-10 text-center">
-            <p className="text-sm text-stone">{t("cosmetics.emptyCatalog", "Katalog jest obecnie pusty. Wkrótce pojawią się nowe produkty.")}</p>
-          </ScrollAnimationWrapper>
         )}
 
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">

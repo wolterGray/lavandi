@@ -11,18 +11,18 @@ export default function AboutSection() {
   const about = getAboutContent(lang, t("about"));
 
   return (
-    <section id="about" className="section-padding bg-surface">
+    <section id="about" className="bg-surface pb-10 pt-16 md:pb-12 md:pt-20">
       <Container>
-        <div className="grid items-start gap-12 lg:grid-cols-2 lg:items-stretch lg:gap-16">
+        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[0.92fr_1.08fr] lg:gap-14">
           <ScrollAnimationWrapper direction="left">
-            <SectionTitle label={about.label} align="center">{about.title}</SectionTitle>
-            <div className="spa-divider my-6" />
-            <p className="-mt-2 max-w-lg text-base leading-relaxed text-stone md:text-[17px] md:leading-8">{about.text}</p>
+            <SectionTitle label={about.label} align="left" className="mb-0 max-w-xl">{about.title}</SectionTitle>
+            <div className="spa-divider mx-0 my-6" />
+            <p className="max-w-xl text-base leading-relaxed text-stone md:text-[17px] md:leading-8">{about.text}</p>
             <p className="mt-6 text-sm font-bold uppercase tracking-[0.12em] text-gold">{about.location}</p>
           </ScrollAnimationWrapper>
-          <ScrollAnimationWrapper direction="right" delay={0.1} className="min-h-[220px] sm:min-h-[260px] lg:h-full lg:min-h-0">
-            <div className="h-full min-h-[220px] overflow-hidden rounded-card shadow-spa sm:min-h-[260px] lg:min-h-0">
-              <SiteImage src={about.image} alt={t("hero.imageAlt")} className="h-full w-full object-cover object-center" loading="lazy" />
+          <ScrollAnimationWrapper direction="right" delay={0.1}>
+            <div className="relative h-[240px] overflow-hidden rounded-card shadow-spa sm:h-[300px] lg:h-[340px]">
+              <SiteImage fill src={about.image} alt={t("hero.imageAlt")} className="object-cover object-center" loading="lazy" />
             </div>
           </ScrollAnimationWrapper>
         </div>
