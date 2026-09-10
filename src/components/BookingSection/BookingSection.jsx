@@ -3,15 +3,12 @@ import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
-import SiteBookingForm from "./SiteBookingForm";
 import Button from "../../ui/Button";
 import { BOOKSY_URL } from "../../constants/theme";
 
 export default function BookingSection() {
   const { t } = useTranslation();
-  const { siteSettings, contact } = useContent();
-
-  const bookingEnabled = siteSettings?.bookingEnabled !== false;
+  const { contact } = useContent();
 
   return (
     <section id="contact" className=" none relative overflow-hidden">
@@ -35,25 +32,12 @@ export default function BookingSection() {
             {t("booking.title")}
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-white/85 sm:text-base">
-            {bookingEnabled ? t("booking.subtitle") : t("booking.disabledMessage")}
+            {t("booking.subtitle")}
           </p>
 
-          {bookingEnabled ? (
-            <SiteBookingForm />
-          ) : (
-            <div className="mx-auto mt-8 max-w-xl rounded-card border border-white/15 bg-void/55 p-6 text-center backdrop-blur-sm sm:p-8">
-              <div className="flex flex-wrap justify-center gap-4">
-                {contact?.phone && (
-                  <Button href={`tel:${contact.phone}`} variant="primary">
-                    {contact.phoneDisplay || contact.phone}
-                  </Button>
-                )}
-                <Button href={contact?.booksyUrl || BOOKSY_URL} variant="secondary">
-                  {t("booking.cta")}
-                </Button>
-              </div>
-            </div>
-          )}
+          <Button href={contact?.booksyUrl || BOOKSY_URL} size="lg" className="mt-8">
+            {t("booking.cta")}
+          </Button>
         </ScrollAnimationWrapper>
       </Container>
     </section>

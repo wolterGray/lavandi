@@ -176,7 +176,7 @@ export const adminRu = {
     activeOnSite: "Показывать на сайте",
   },
   analytics: {
-    description: "Настройка Google Analytics 4 и работы формы онлайн-записи на сайте.",
+    description: "Настройка Google Analytics 4 на сайте.",
     enabled: "Аналитика GA4 включена",
     consentHint: "События GA4 отправляются только после согласия пользователя в cookie-баннере (GDPR).",
     measurementId: "Measurement ID (GA4)",
@@ -185,9 +185,6 @@ export const adminRu = {
     trackPageViews: "Просмотры страниц и маршрутов SPA",
     trackConsent: "Принятие / отказ от cookies",
     trackSpa: "Переходы между страницами услуг и каталогом",
-    bookingTitle: "Онлайн-запись на визит",
-    bookingEnabled: "Форма записи на сайте включена",
-    bookingDisabledHint: "Если отключено, вместо формы записи на сайте будет показано сообщение с предложением записаться по телефону / Telegram.",
   },
   nav: {
     panel: "Панель",

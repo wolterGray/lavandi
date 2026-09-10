@@ -437,7 +437,7 @@
   "booking": {
     "label": "Rezerwacja",
     "title": "Zatrzymaj się. Oddychaj. Zarezerwuj chwilę tylko dla siebie.",
-    "subtitle": "Wyślij prośbę o termin — potwierdzimy ją telefonicznie. Możesz też zarezerwować od razu w Booksy.",
+    "subtitle": "Wybierz usługę, terapeutę i dogodny termin bezpośrednio w Booksy.",
     "cta": "Zarezerwuj w Booksy",
     "disabledMessage": "Rezerwacja online jest tymczasowo niedostępna. Skontaktuj się z nami telefonicznie lub przez Telegram, aby umówić wizytę.",
     "form": {
