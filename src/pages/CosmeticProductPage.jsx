@@ -5,19 +5,20 @@ import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import Container from "../ui/Container";
 import Button from "../ui/Button";
-import BookVisitButton from "../ui/BookVisitButton";
 import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { isImageRef, IMAGE_VARIANT } from "../admin/siteImages";
-import { EMAIL, SITE_URL } from "../constants/theme";
+import { EMAIL, PHONE, SITE_URL } from "../constants/theme";
 import CosmeticProductGallery from "../components/CosmeticsSection/CosmeticProductGallery";
 import {
   buildCosmeticInquiryMailto,
   formatProductCategoryLabels,
+  formatCosmeticPriceLabel,
   getProductImages,
   COSMETICS_ROUTE,
 } from "../components/CosmeticsSection/cosmeticsShared";
 import { useImageSrc } from "../hooks/useImageSrc";
+import { useContent } from "../context/ContentProvider";
 
 function resolveOgImage(image) {
   if (!image || isImageRef(image) || image.startsWith("data:")) {
@@ -29,9 +30,12 @@ function resolveOgImage(image) {
 
 export default function CosmeticProductPage({ product }) {
   const { t, lang } = useTranslation();
+  const { contact } = useContent();
   const { src: imageSrc } = useImageSrc(getProductImages(product)[0], { variant: IMAGE_VARIANT.full });
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
   const categoryLabel = formatProductCategoryLabels(t, product);
+  const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
+  const phoneHref = `tel:${contact?.phone || PHONE}`;
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });
   const description =
     product.description?.trim() ||
@@ -104,6 +108,15 @@ export default function CosmeticProductPage({ product }) {
                 {t("cosmeticsProductPage.productId")}: {product.id}
               </p>
 
+              {priceLabel ? (
+                <div className="mt-5 inline-flex items-baseline gap-3 rounded-card border border-gold/25 bg-gold/[0.06] px-4 py-3">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-gold">
+                    {t("cosmeticsProductPage.price")}
+                  </span>
+                  <span className="font-display text-2xl text-milk">{priceLabel}</span>
+                </div>
+              ) : null}
+
               {product.description ? (
                 <p className="mt-6 max-w-2xl text-base leading-relaxed text-stone">{product.description}</p>
               ) : null}
@@ -125,9 +138,9 @@ export default function CosmeticProductPage({ product }) {
                 <Button href={buildCosmeticInquiryMailto(EMAIL, t, product)} size="lg">
                   {t("cosmetics.interestedCta")}
                 </Button>
-                <BookVisitButton variant="secondary" size="lg">
-                  {t("cosmetics.ctaSecondary")}
-                </BookVisitButton>
+                <Button href={phoneHref} variant="secondary" size="lg">
+                  {t("cosmeticsProductPage.contactPhone")}
+                </Button>
               </div>
             </div>
           </ScrollAnimationWrapper>

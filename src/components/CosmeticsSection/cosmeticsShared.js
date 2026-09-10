@@ -109,6 +109,27 @@ export function syncProductImageFields(product) {
   };
 }
 
+export function normalizeCosmeticPrice(value) {
+  const raw = String(value ?? "").trim().replace(/\s+/g, " ");
+  if (!raw) return "";
+
+  const numeric = raw.match(/^(\d+(?:[.,]\d{1,2})?)\s*(?:zł|zl|pln)?$/iu);
+  if (numeric) return numeric[1].replace(",", ".");
+
+  return raw;
+}
+
+export function formatCosmeticPriceLabel(value, currency = "zł") {
+  const price = normalizeCosmeticPrice(value);
+  if (!price) return "";
+
+  if (/^\d+(?:\.\d{1,2})?$/.test(price)) {
+    return `${price.replace(".", ",")} ${currency}`;
+  }
+
+  return price;
+}
+
 export function normalizeCosmeticsList(products = cosmeticsBase) {
   return products.map((product) => {
     const categories = getProductCategories(product);

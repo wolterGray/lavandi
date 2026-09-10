@@ -144,6 +144,7 @@ export const adminRu = {
     name: "Название",
     productDescription: "Описание",
     volume: "Объём",
+    price: "Цена",
     composition: "Состав",
     categories: {
       "candles-aroma": "Свечи и ароматы",

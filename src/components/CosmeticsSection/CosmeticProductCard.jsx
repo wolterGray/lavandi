@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import CosmeticProductImage from "./CosmeticProductImage";
-import { getCosmeticProductUrl } from "./cosmeticsShared";
+import { formatCosmeticPriceLabel, getCosmeticProductUrl } from "./cosmeticsShared";
 
 export default function CosmeticProductCard({
   product,
@@ -15,6 +15,7 @@ export default function CosmeticProductCard({
   const { t } = useTranslation();
   const productUrl = getCosmeticProductUrl(product.id);
   const featured = variant === "featured";
+  const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
 
   const card = (
     <Link
@@ -56,6 +57,11 @@ export default function CosmeticProductCard({
               }`}
             >
               {product.volume}
+            </p>
+          ) : null}
+          {priceLabel ? (
+            <p className={`mt-1 font-bold text-gold ${featured ? "text-sm" : "text-xs"}`}>
+              {priceLabel}
             </p>
           ) : null}
           {featured && product.description ? (

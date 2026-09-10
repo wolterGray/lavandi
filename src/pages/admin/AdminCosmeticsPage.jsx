@@ -17,12 +17,14 @@ import {
   CATEGORY_KEYS,
   buildAuthorProductsDraft,
   formatCosmeticVolume,
+  formatCosmeticPriceLabel,
   generateCosmeticNumericId,
   getProductCategories,
   getProductImages,
   getProductImageSurfaceClass,
   syncProductImageFields,
   MAX_FEATURED_COSMETICS,
+  normalizeCosmeticPrice,
   normalizeCosmeticCopy,
   normalizeFeaturedCosmeticIds,
   parseCosmeticVolume,
@@ -65,6 +67,7 @@ function getProductHealth(item, texts, isFeatured) {
   const missing = [];
   if (!isFilled(item.img)) missing.push("фото");
   if (!getProductCategories(item).length) missing.push("категория");
+  if (!isFilled(item.price)) missing.push("цена");
   if (!isFilled(texts.name)) missing.push("название");
   if (!isFilled(texts.volume)) missing.push("объём");
   if (!isFilled(texts.description)) missing.push("описание");
@@ -221,6 +224,7 @@ export default function AdminCosmeticsPage() {
         category: "pro-cosmetics",
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
+        price: "",
         transparentPhoto: true,
       },
       ...prev,
@@ -342,6 +346,7 @@ export default function AdminCosmeticsPage() {
         ...item,
         categories,
         category: categories[0],
+        price: normalizeCosmeticPrice(item.price) || undefined,
         initials: deriveCosmeticInitials(texts.name),
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       });
@@ -620,6 +625,16 @@ export default function AdminCosmeticsPage() {
               );
             })()}
           </AdminField>
+          <AdminField label={adminRu.cosmetics.price}>
+            <input
+              inputMode="decimal"
+              value={item.price ?? ""}
+              readOnly={!isAuthoring}
+              onChange={(e) => isAuthoring && updateItem(index, { price: e.target.value })}
+              placeholder="250"
+              className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+            />
+          </AdminField>
           <div className="sm:col-span-2">
             <AdminField label={adminRu.cosmetics.productDescription}>
               <textarea
@@ -719,6 +734,7 @@ export default function AdminCosmeticsPage() {
             const productName = (textDraft[item.id]?.name ?? texts.name)?.trim() || adminRu.cosmetics.newProduct;
             const productImages = getProductImages(item);
             const coverImage = productImages[0] || item.img;
+            const priceLabel = formatCosmeticPriceLabel(item.price);
 
             return (
               <AdminPanel
@@ -761,6 +777,7 @@ export default function AdminCosmeticsPage() {
                     <p className="mt-1 text-[10px] uppercase tracking-[0.12em] text-muted">
                       {adminRu.cosmetics.productId}: {item.id}
                       {texts.volume ? <span className="ml-2 text-gold">{texts.volume}</span> : null}
+                      {priceLabel ? <span className="ml-2 text-milk">{priceLabel}</span> : null}
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <StatusPill tone={health.isReady ? "good" : "warn"}>

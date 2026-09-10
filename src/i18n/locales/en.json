@@ -554,6 +554,8 @@
     "backToCatalog": "Catalog",
     "navLabel": "Product page navigation",
     "productId": "Product ID",
+    "price": "Price",
+    "contactPhone": "Call us",
     "meta": {
       "title": "{{name}} — NUAR Catalog",
       "descriptionFallback": "{{name}} — available at NUAR studio in Warsaw."

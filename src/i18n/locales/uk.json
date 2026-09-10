@@ -554,6 +554,8 @@
     "backToCatalog": "Каталог",
     "navLabel": "Навігація сторінки продукту",
     "productId": "ID продукту",
+    "price": "Ціна",
+    "contactPhone": "Зателефонувати",
     "meta": {
       "title": "{{name}} — Каталог NUAR",
       "descriptionFallback": "{{name}} — продукт доступний у студії NUAR у Варшаві."
