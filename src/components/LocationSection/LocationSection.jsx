@@ -39,8 +39,8 @@ export default function LocationSection() {
           ))}
         </ol>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
-          <ScrollAnimationWrapper direction="left" className="w-full max-w-[560px] lg:justify-self-start">
+        <div className="mx-auto mt-8 grid max-w-5xl gap-8 lg:grid-cols-2 lg:items-start">
+          <ScrollAnimationWrapper direction="left" className="w-full">
             <StudioMap
               lat={contact.lat}
               lng={contact.lng}
