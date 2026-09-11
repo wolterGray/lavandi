@@ -154,7 +154,7 @@ export const adminRu = {
     categories: {
       "candles-aroma": "Свечи и ароматы",
       "pro-cosmetics": "Профессиональная косметика",
-      "home-spa": "Домашний SPA",
+      supplements: "БАДы и добавки",
       "anti-cellulite": "Антицеллюлитный уход",
       "gift-certificates": "Подарочные сертификаты",
       "nuar-premium": "Премиум товары Nuar",

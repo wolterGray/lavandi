@@ -43,7 +43,7 @@ export const PLACEHOLDER_GRADIENTS = [
 export const PRODUCT_CATEGORY_KEYS = [
   "candles-aroma",
   "pro-cosmetics",
-  "home-spa",
+  "supplements",
   "anti-cellulite",
   "gift-certificates",
   "nuar-premium",
@@ -60,7 +60,8 @@ export const LEGACY_COSMETIC_CATEGORY_MAP = {
   aroma: "candles-aroma",
   candles: "candles-aroma",
   incense: "candles-aroma",
-  home: "home-spa",
+  home: "supplements",
+  "home-spa": "supplements",
   wraps: "anti-cellulite",
 };
 
