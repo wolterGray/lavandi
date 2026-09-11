@@ -541,7 +541,8 @@
   "notFound": {
     "label": "404",
     "title": "Strona nie istnieje",
-    "description": "Wróć na stronę główną i zarezerwuj wizytę w NUAR."
+    "description": "Wróć na stronę główną albo przejdź do katalogu NUAR.",
+    "catalog": "Katalog"
   },
   "cosmeticsPage": {
     "meta": {

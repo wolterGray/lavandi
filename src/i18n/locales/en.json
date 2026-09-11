@@ -541,7 +541,8 @@
   "notFound": {
     "label": "404",
     "title": "Page not found",
-    "description": "Return to the homepage and book your visit at NUAR."
+    "description": "Return to the homepage or browse the NUAR catalog.",
+    "catalog": "Catalog"
   },
   "cosmeticsPage": {
     "meta": {
