@@ -19,11 +19,14 @@ import {
   formatCosmeticVolume,
   formatCosmeticPriceLabel,
   generateCosmeticNumericId,
+  getCosmeticAvailability,
   getProductCategories,
   getProductImages,
   getProductImageSurfaceClass,
   getProductPhotoSurface,
+  getProductAvailabilityStatus,
   PRODUCT_PHOTO_SURFACES,
+  PRODUCT_AVAILABILITY_STATUSES,
   syncProductImageFields,
   MAX_FEATURED_COSMETICS,
   normalizeCosmeticPrice,
@@ -249,6 +252,7 @@ export default function AdminCosmeticsPage() {
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
         price: "",
         stock: 0,
+        availabilityStatus: "coming-soon",
         photoSurface: "light",
         transparentPhoto: true,
       },
@@ -395,6 +399,7 @@ export default function AdminCosmeticsPage() {
         category: categories[0],
         price: normalizeCosmeticPrice(item.price) || undefined,
         stock: normalizeCosmeticStock(item.stock),
+        availabilityStatus: getProductAvailabilityStatus(item),
         photoSurface: getProductPhotoSurface(item),
         transparentPhoto: getProductPhotoSurface(item) === "light",
         initials: deriveCosmeticInitials(texts.name),
@@ -747,6 +752,30 @@ export default function AdminCosmeticsPage() {
               className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
             />
           </AdminField>
+          <AdminField label={adminRu.cosmetics.availabilityStatus}>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {PRODUCT_AVAILABILITY_STATUSES.map((status) => {
+                const checked = getProductAvailabilityStatus(item) === status;
+                return (
+                  <button
+                    key={status}
+                    type="button"
+                    disabled={!isAuthoring}
+                    onClick={() => isAuthoring && updateItem(index, { availabilityStatus: status })}
+                    className={`min-h-[44px] rounded-card px-3 text-left text-sm font-semibold transition ${
+                      checked
+                        ? "bg-gold text-void"
+                        : "bg-surface text-stone hover:text-milk"
+                    } ${!isAuthoring ? "cursor-default opacity-80" : ""}`}
+                  >
+                    {status === "coming-soon"
+                      ? adminRu.cosmetics.availabilityComingSoon
+                      : adminRu.cosmetics.availabilityAuto}
+                  </button>
+                );
+              })}
+            </div>
+          </AdminField>
           <div className="sm:col-span-2">
             <AdminField label={adminRu.cosmetics.productDescription}>
               <textarea
@@ -847,6 +876,12 @@ export default function AdminCosmeticsPage() {
             const productImages = getProductImages(item);
             const coverImage = productImages[0] || item.img;
             const priceLabel = formatCosmeticPriceLabel(item.price);
+            const availability = getCosmeticAvailability(item);
+            const availabilityLabel = availability.status === "COMING_SOON"
+              ? adminRu.cosmetics.availabilityComingSoon
+              : availability.status === "OUT_OF_STOCK"
+                ? "Нет в наличии"
+                : adminRu.cosmetics.stock;
 
             return (
               <AdminPanel
@@ -904,6 +939,9 @@ export default function AdminCosmeticsPage() {
                       <StatusPill>
                         <ImageIcon className="h-3.5 w-3.5" aria-hidden />
                         фото: {health.imageCount}
+                      </StatusPill>
+                      <StatusPill tone={availability.status === "COMING_SOON" ? "gold" : availability.status === "OUT_OF_STOCK" ? "warn" : "good"}>
+                        {availabilityLabel}
                       </StatusPill>
                       {health.isFeatured ? (
                         <StatusPill tone="gold">

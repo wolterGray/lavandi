@@ -3,7 +3,7 @@ import { ArrowUpRight } from "lucide-react";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import CosmeticProductImage from "./CosmeticProductImage";
-import { formatCosmeticPriceLabel, getCosmeticProductUrl } from "./cosmeticsShared";
+import { formatCosmeticPriceLabel, getCosmeticAvailability, getCosmeticProductUrl } from "./cosmeticsShared";
 
 export default function CosmeticProductCard({
   product,
@@ -16,6 +16,13 @@ export default function CosmeticProductCard({
   const productUrl = getCosmeticProductUrl(product.id);
   const featured = variant === "featured";
   const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
+  const availability = getCosmeticAvailability(product);
+  const statusLabel =
+    availability.status === "COMING_SOON"
+      ? t("cosmeticsOrder.comingSoon")
+      : availability.status === "OUT_OF_STOCK"
+        ? t("cosmeticsOrder.outOfStock")
+        : "";
   const compactCategoryLabel = String(categoryLabel ?? "").split("·")[0]?.trim() || categoryLabel;
 
   const card = (
@@ -65,6 +72,13 @@ export default function CosmeticProductCard({
           {priceLabel ? (
             <p className={`mt-1 font-bold text-gold ${featured ? "text-sm" : "text-xs"}`}>
               {priceLabel}
+            </p>
+          ) : null}
+          {statusLabel ? (
+            <p className={`mt-2 inline-flex w-fit rounded-card bg-surface px-2 py-1 font-bold uppercase tracking-[0.08em] ${
+              availability.status === "COMING_SOON" ? "text-gold" : "text-stone"
+            } ${featured ? "text-[10px]" : "text-[9px]"}`}>
+              {statusLabel}
             </p>
           ) : null}
           {featured && product.description ? (

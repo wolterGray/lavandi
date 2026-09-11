@@ -57,7 +57,11 @@ function ProductOrderModal({ open, product, contact, onClose }) {
     : unitPriceLabel;
   const availabilityLabel = availability.status === "IN_STOCK"
     ? t("cosmeticsOrder.inStock")
-    : t("cosmeticsOrder.orderRequiredShort");
+    : availability.status === "COMING_SOON"
+      ? t("cosmeticsOrder.comingSoon")
+      : availability.status === "OUT_OF_STOCK"
+        ? t("cosmeticsOrder.outOfStock")
+        : t("cosmeticsOrder.orderRequiredShort");
 
   const handleQuantity = (next) => {
     setQuantity(Math.max(1, Number.parseInt(String(next), 10) || 1));
@@ -252,9 +256,11 @@ function ProductOrderModal({ open, product, contact, onClose }) {
             <p className="rounded-card border border-gold/20 bg-gold/[0.06] px-4 py-3 text-sm leading-relaxed text-stone">
               {availability.status === "IN_STOCK"
                 ? t("cosmeticsOrder.inStockNotice")
-                : availability.stock > 0
-                  ? t("cosmeticsOrder.partialNotice")
-                  : t("cosmeticsOrder.orderRequiredNotice")}
+                : availability.status === "COMING_SOON"
+                  ? t("cosmeticsOrder.comingSoonNotice")
+                  : availability.status === "OUT_OF_STOCK"
+                    ? t("cosmeticsOrder.outOfStockNotice")
+                    : t("cosmeticsOrder.partialNotice")}
             </p>
 
             {error ? <p className="text-sm text-red-200" role="alert">{error}</p> : null}
@@ -278,11 +284,14 @@ export default function CosmeticProductPage({ product }) {
   const categoryLabel = formatProductCategoryLabels(t, product);
   const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
   const availability = getCosmeticAvailability(product);
-  const stockLabel = availability.stock > 0
+  const canOrder = availability.status === "IN_STOCK";
+  const stockLabel = availability.status === "COMING_SOON"
+    ? t("cosmeticsOrder.comingSoon")
+    : availability.stock > 0
     ? availability.isLowStock
       ? t("cosmeticsOrder.lowStock", { count: availability.stock })
       : t("cosmeticsOrder.inStock")
-    : t("cosmeticsOrder.orderRequired");
+    : t("cosmeticsOrder.outOfStock");
   const phoneHref = `tel:${contact?.phone || PHONE}`;
   const title = t("cosmeticsProductPage.meta.title", { name: product.name });
   const description =
@@ -382,9 +391,11 @@ export default function CosmeticProductPage({ product }) {
               </dl>
 
               <p className={`mt-4 inline-flex rounded-pill border px-4 py-2 text-sm font-semibold ${
-                availability.stock > 0
+                availability.status === "IN_STOCK"
                   ? "border-gold/30 bg-gold/[0.08] text-gold"
-                  : "border-border/60 bg-surface/70 text-stone"
+                  : availability.status === "COMING_SOON"
+                    ? "border-gold/30 bg-gold/[0.08] text-gold"
+                    : "border-border/60 bg-surface/70 text-stone"
               }`}>
                 {stockLabel}
               </p>
@@ -407,9 +418,11 @@ export default function CosmeticProductPage({ product }) {
               </p>
 
               <div className="mt-8 flex flex-wrap gap-4">
-                <Button onClick={() => setOrderOpen(true)} size="lg">
-                  {t("cosmeticsOrder.orderCta")}
-                </Button>
+                {canOrder ? (
+                  <Button onClick={() => setOrderOpen(true)} size="lg">
+                    {t("cosmeticsOrder.orderCta")}
+                  </Button>
+                ) : null}
                 <Button href={phoneHref} variant="secondary" size="lg">
                   {t("cosmeticsProductPage.contactPhone")}
                 </Button>

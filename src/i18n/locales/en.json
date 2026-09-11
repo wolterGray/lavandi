@@ -570,6 +570,8 @@
     "orderCta": "Order",
     "inStock": "In stock",
     "lowStock": "Left: {{count}} pcs.",
+    "outOfStock": "Out of stock",
+    "comingSoon": "Coming soon",
     "orderRequired": "Available to order — preparation up to 72 hours",
     "orderRequiredShort": "To order — up to 72 hours",
     "name": "Name",
@@ -589,6 +591,8 @@
     "inStockNotice": "The product is in stock. We will contact you to confirm the order.",
     "partialNotice": "Part of the order will need to be ordered from the supplier. Preparation may take up to 72 hours.",
     "orderRequiredNotice": "This product is currently available to order. Preparation may take up to 72 hours. We will contact you to confirm the timing.",
+    "outOfStockNotice": "This product is not available at NUAR right now. Call us and we will let you know when it returns.",
+    "comingSoonNotice": "This product is coming to NUAR soon. Call us if you want to ask about the launch.",
     "thanksTitle": "Thank you!",
     "thanksBody": "We received your order request. We will contact you to confirm availability and pickup time.",
     "emailSubject": "Order {{orderId}} — {{product}}"

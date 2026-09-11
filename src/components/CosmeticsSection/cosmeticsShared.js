@@ -9,6 +9,7 @@ export const PRODUCT_SILK_BG = "product-surface-silk ring-1 ring-gold/10";
 export const PRODUCT_OPAQUE_BG = "bg-void";
 
 export const PRODUCT_PHOTO_SURFACES = ["light", "silk", "none"];
+export const PRODUCT_AVAILABILITY_STATUSES = ["auto", "coming-soon"];
 
 export function getProductPhotoSurface(product) {
   if (PRODUCT_PHOTO_SURFACES.includes(product?.photoSurface)) {
@@ -159,17 +160,31 @@ export function normalizeCosmeticStock(value) {
   return numeric;
 }
 
+export function getProductAvailabilityStatus(product) {
+  return PRODUCT_AVAILABILITY_STATUSES.includes(product?.availabilityStatus)
+    ? product.availabilityStatus
+    : "auto";
+}
+
 export function getCosmeticAvailability(product, quantity = 1) {
   const stock = normalizeCosmeticStock(product?.stock);
   const qty = Math.max(1, Number.parseInt(String(quantity ?? 1), 10) || 1);
   const shortage = Math.max(qty - stock, 0);
+  const availabilityStatus = getProductAvailabilityStatus(product);
+  const isComingSoon = availabilityStatus === "coming-soon";
+  const isOutOfStock = !isComingSoon && stock <= 0;
+  const isInStock = !isComingSoon && stock > 0 && shortage === 0;
+  const needsSupplier = !isComingSoon && stock > 0 && shortage > 0;
 
   return {
     stock,
     shortage,
-    status: stock > 0 && shortage === 0 ? "IN_STOCK" : "ORDER_REQUIRED",
+    status: isComingSoon ? "COMING_SOON" : isOutOfStock ? "OUT_OF_STOCK" : isInStock ? "IN_STOCK" : "ORDER_REQUIRED",
+    isComingSoon,
+    isOutOfStock,
+    isInStock,
     isLowStock: stock > 0 && stock <= 3,
-    needsSupplier: shortage > 0,
+    needsSupplier,
   };
 }
 
@@ -181,6 +196,7 @@ export function normalizeCosmeticsList(products = cosmeticsBase) {
       categories,
       category: categories[0],
       stock: normalizeCosmeticStock(product.stock),
+      availabilityStatus: getProductAvailabilityStatus(product),
     });
   });
 }

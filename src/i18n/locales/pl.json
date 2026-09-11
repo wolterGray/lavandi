@@ -570,6 +570,8 @@
     "orderCta": "Zamów",
     "inStock": "Dostępny",
     "lowStock": "Pozostało: {{count}} szt.",
+    "outOfStock": "Brak w magazynie",
+    "comingSoon": "Już wkrótce",
     "orderRequired": "Na zamówienie — realizacja do 72 godzin",
     "orderRequiredShort": "Na zamówienie — do 72 godzin",
     "name": "Imię",
@@ -589,6 +591,8 @@
     "inStockNotice": "Produkt jest dostępny. Skontaktujemy się z Tobą, aby potwierdzić zamówienie.",
     "partialNotice": "Część zamówienia trzeba będzie zamówić u dostawcy. Przygotowanie może potrwać do 72 godzin.",
     "orderRequiredNotice": "Produkt jest obecnie dostępny na zamówienie. Realizacja może potrwać do 72 godzin. Skontaktujemy się z Tobą, aby potwierdzić termin.",
+    "outOfStockNotice": "Tego produktu nie ma teraz w NUAR. Zadzwoń do nas, a damy znać, kiedy wróci.",
+    "comingSoonNotice": "Produkt pojawi się w NUAR już wkrótce. Zadzwoń do nas, jeśli chcesz zapytać o premierę.",
     "thanksTitle": "Dziękujemy!",
     "thanksBody": "Otrzymaliśmy Twoje zamówienie. Skontaktujemy się z Tobą, aby potwierdzić dostępność i termin odbioru.",
     "emailSubject": "Zamówienie {{orderId}} — {{product}}"
