@@ -4,15 +4,31 @@ import cosmeticsBase from "../../data/cosmetics.json";
 export const PRODUCT_TRANSPARENT_BG =
   "bg-[linear-gradient(165deg,#FAF7F2_0%,#F3EDE4_42%,#E9E0D5_100%)] ring-1 ring-black/5";
 
+export const PRODUCT_SILK_BG = "product-surface-silk ring-1 ring-gold/10";
+
 export const PRODUCT_OPAQUE_BG = "bg-void";
 
+export const PRODUCT_PHOTO_SURFACES = ["light", "silk", "none"];
+
+export function getProductPhotoSurface(product) {
+  if (PRODUCT_PHOTO_SURFACES.includes(product?.photoSurface)) {
+    return product.photoSurface;
+  }
+
+  return product?.transparentPhoto === false ? "none" : "light";
+}
+
 export function usesTransparentProductPhoto(product) {
-  return product?.transparentPhoto !== false;
+  return getProductPhotoSurface(product) === "light";
 }
 
 export function getProductImageSurfaceClass(product, { hasImage = true } = {}) {
   if (!hasImage) return "";
-  return usesTransparentProductPhoto(product) ? PRODUCT_TRANSPARENT_BG : PRODUCT_OPAQUE_BG;
+
+  const surface = getProductPhotoSurface(product);
+  if (surface === "silk") return PRODUCT_SILK_BG;
+  if (surface === "none") return PRODUCT_OPAQUE_BG;
+  return PRODUCT_TRANSPARENT_BG;
 }
 
 export const PLACEHOLDER_GRADIENTS = [

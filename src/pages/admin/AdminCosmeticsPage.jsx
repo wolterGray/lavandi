@@ -22,6 +22,8 @@ import {
   getProductCategories,
   getProductImages,
   getProductImageSurfaceClass,
+  getProductPhotoSurface,
+  PRODUCT_PHOTO_SURFACES,
   syncProductImageFields,
   MAX_FEATURED_COSMETICS,
   normalizeCosmeticPrice,
@@ -29,7 +31,6 @@ import {
   normalizeFeaturedCosmeticIds,
   parseCosmeticVolume,
   PLACEHOLDER_GRADIENTS,
-  usesTransparentProductPhoto,
 } from "../../components/CosmeticsSection/cosmeticsShared";
 import AdminImageField from "../../admin/AdminImageField";
 import {
@@ -225,6 +226,7 @@ export default function AdminCosmeticsPage() {
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
         price: "",
+        photoSurface: "light",
         transparentPhoto: true,
       },
       ...prev,
@@ -347,6 +349,8 @@ export default function AdminCosmeticsPage() {
         categories,
         category: categories[0],
         price: normalizeCosmeticPrice(item.price) || undefined,
+        photoSurface: getProductPhotoSurface(item),
+        transparentPhoto: getProductPhotoSurface(item) === "light",
         initials: deriveCosmeticInitials(texts.name),
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       });
@@ -506,23 +510,40 @@ export default function AdminCosmeticsPage() {
           </div>
 
           <AdminField label={adminRu.cosmetics.transparentPhoto} help={adminRu.help.transparentPhoto}>
-            <label className="flex min-h-[42px] cursor-pointer items-center gap-3 rounded-card border border-border/50 bg-surface px-3">
-              <input
-                type="checkbox"
-                checked={usesTransparentProductPhoto(item)}
-                onChange={() =>
-                  updateItem(index, {
-                    transparentPhoto: !usesTransparentProductPhoto(item),
-                  })
-                }
-                className="h-4 w-4 accent-gold"
-              />
-              <span className="text-sm text-stone">
-                {usesTransparentProductPhoto(item)
-                  ? adminRu.cosmetics.transparentPhotoOn
-                  : adminRu.cosmetics.transparentPhotoOff}
-              </span>
-            </label>
+            <div className="grid gap-2 sm:grid-cols-3">
+              {PRODUCT_PHOTO_SURFACES.map((surface) => {
+                const checked = getProductPhotoSurface(item) === surface;
+                const swatchClass =
+                  surface === "light"
+                    ? "bg-[linear-gradient(165deg,#FAF7F2_0%,#E9E0D5_100%)]"
+                    : surface === "silk"
+                      ? "product-surface-silk"
+                      : "bg-void";
+
+                return (
+                  <button
+                    key={surface}
+                    type="button"
+                    disabled={!isAuthoring}
+                    onClick={() =>
+                      isAuthoring &&
+                      updateItem(index, {
+                        photoSurface: surface,
+                        transparentPhoto: surface === "light",
+                      })
+                    }
+                    className={`flex min-h-[44px] items-center gap-2 rounded-card border px-3 text-left text-sm transition ${
+                      checked
+                        ? "border-gold/45 bg-gold/10 text-milk"
+                        : "border-border/50 bg-surface text-stone hover:border-gold/25 hover:text-milk"
+                    } ${!isAuthoring ? "cursor-default opacity-80" : ""}`}
+                  >
+                    <span className={`h-5 w-5 shrink-0 rounded-full border border-border/60 ${swatchClass}`} />
+                    <span>{adminRu.cosmetics.photoSurfaces[surface]}</span>
+                  </button>
+                );
+              })}
+            </div>
           </AdminField>
 
           <div className="sm:col-span-2">
