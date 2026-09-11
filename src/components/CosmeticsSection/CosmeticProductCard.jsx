@@ -16,6 +16,7 @@ export default function CosmeticProductCard({
   const productUrl = getCosmeticProductUrl(product.id);
   const featured = variant === "featured";
   const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
+  const compactCategoryLabel = String(categoryLabel ?? "").split("·")[0]?.trim() || categoryLabel;
 
   const card = (
     <Link
@@ -33,19 +34,21 @@ export default function CosmeticProductCard({
           className={`flex flex-1 flex-col ${featured ? "p-4 sm:p-5" : "p-3 sm:p-3.5"}`}
         >
           <p
-            className={`font-bold uppercase tracking-[0.14em] text-gold ${
+            title={categoryLabel}
+            className={`font-sans font-bold uppercase tracking-[0.12em] text-gold ${
               featured
-                ? "text-[10px] tracking-[0.16em]"
-                : "text-[9px] leading-snug line-clamp-2 md:line-clamp-1"
+                ? "text-[10px]"
+                : "truncate text-[9px]"
             }`}
           >
-            {categoryLabel}
+            {compactCategoryLabel}
           </p>
           <h3
-            className={`mt-1.5 font-display leading-snug text-milk ${
+            title={product.name}
+            className={`mt-2 font-sans font-semibold leading-snug text-milk ${
               featured
-                ? "mt-2 line-clamp-2 text-base sm:text-lg"
-                : "line-clamp-2 text-sm sm:text-[15px]"
+                ? "line-clamp-2 min-h-[3rem] text-[17px] sm:text-lg"
+                : "line-clamp-2 min-h-[2.65rem] text-[15px] sm:text-base"
             }`}
           >
             {product.name}
