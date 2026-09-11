@@ -138,10 +138,11 @@ function buildDefaultTexts(cosmetics, activeLang, overrides) {
 const ADMIN_COSMETIC_LANGS = ["uk", "pl", "en"];
 
 export default function AdminCosmeticsPage() {
-  const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
-  const { contentSaving, saveError, setSaveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
+  const { cosmetics, rawCosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
+  const editableCosmetics = rawCosmetics ?? cosmetics;
+  const { contentSaving, saveError, setSaveError, runSave, savePatch } = useAdminPersist({ showSuccessToast: false });
   const [activeLang, setActiveLang] = useState(CMS_AUTHOR_LANG);
-  const [draft, setDraft] = useState(cosmetics);
+  const [draft, setDraft] = useState(editableCosmetics);
   const [textDraft, setTextDraft] = useState({});
   const [featuredDraft, setFeaturedDraft] = useState(featuredCosmeticIds);
   const [retiredDraft, setRetiredDraft] = useState(cosmeticRetiredIds);
@@ -164,24 +165,24 @@ export default function AdminCosmeticsPage() {
   }, []);
 
   const authorTexts = useMemo(
-    () => buildDefaultTexts(cosmetics, CMS_AUTHOR_LANG, overrides),
-    [cosmetics, overrides.locales],
+    () => buildDefaultTexts(editableCosmetics, CMS_AUTHOR_LANG, overrides),
+    [editableCosmetics, overrides],
   );
 
   const previewTexts = useMemo(
-    () => buildDefaultTexts(cosmetics, activeLang, overrides),
-    [cosmetics, activeLang, overrides.locales],
+    () => buildDefaultTexts(editableCosmetics, activeLang, overrides),
+    [editableCosmetics, activeLang, overrides],
   );
 
   useEffect(() => {
     if (dirty) return;
-    setDraft(cosmetics);
+    setDraft(editableCosmetics);
     setTextDraft(authorTexts);
-    setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
+    setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, editableCosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setDirty(false);
     setHighlightId("");
-  }, [cosmetics, authorTexts, featuredCosmeticIds, cosmeticRetiredIds, dirty]);
+  }, [editableCosmetics, authorTexts, featuredCosmeticIds, cosmeticRetiredIds, dirty]);
 
   useEffect(() => {
     if (!status) return undefined;
@@ -407,8 +408,8 @@ export default function AdminCosmeticsPage() {
     showStatus(adminRu.cosmetics.statusSaving, "info");
 
     const ok = await runSave(async () =>
-      saveMerged(async (current) => {
-        return publishCosmeticsLocalesFromAuthor(
+      savePatch(async (current) => {
+        const next = publishCosmeticsLocalesFromAuthor(
           {
             ...current,
             cosmetics: enriched,
@@ -417,6 +418,22 @@ export default function AdminCosmeticsPage() {
           },
           authorProducts,
         );
+        return {
+          cosmetics: enriched,
+          featuredCosmeticIds: normalizedFeatured,
+          cosmeticRetiredIds: normalizedRetired,
+          locales: {
+            [CMS_AUTHOR_LANG]: {
+              cosmetics: next.locales?.[CMS_AUTHOR_LANG]?.cosmetics ?? { products: authorProducts },
+            },
+            pl: {
+              cosmetics: next.locales?.pl?.cosmetics ?? { products: {} },
+            },
+            en: {
+              cosmetics: next.locales?.en?.cosmetics ?? { products: {} },
+            },
+          },
+        };
       }, "cosmetics"),
     );
 
@@ -474,12 +491,12 @@ export default function AdminCosmeticsPage() {
     }
 
     return ok;
-  }, [draft, textDraft, featuredDraft, retiredDraft, runSave, saveMerged]);
+  }, [draft, textDraft, featuredDraft, retiredDraft, runSave, savePatch]);
 
   const handleDiscard = () => {
-    setDraft(cosmetics);
+    setDraft(editableCosmetics);
     setTextDraft(authorTexts);
-    setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, cosmetics));
+    setFeaturedDraft(normalizeFeaturedCosmeticIds(featuredCosmeticIds, editableCosmetics));
     setRetiredDraft(cosmeticRetiredIds);
     setFeaturedLimitHint("");
     setHighlightId("");

@@ -50,6 +50,21 @@ export { ContentContext };
 
 const isCmsSyncConfigured = isCmsBackendConfigured;
 
+function mergeOverridesPatch(target, source) {
+  if (typeof target !== "object" || target === null) return source;
+  if (typeof source !== "object" || source === null) return source;
+  if (Array.isArray(target) || Array.isArray(source)) return source;
+
+  const result = { ...target };
+  Object.keys(source).forEach((key) => {
+    result[key] =
+      source[key] && typeof source[key] === "object" && key in target
+        ? mergeOverridesPatch(target[key], source[key])
+        : source[key];
+  });
+  return result;
+}
+
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);
   const overridesRef = useRef(initialOverrides);
@@ -154,23 +169,34 @@ export function ContentProvider({ children }) {
     setOverrides(next);
     saveOverrides(next);
 
-    if (!isCmsSyncConfigured) return;
+    if (!isCmsSyncConfigured) return next;
 
     setContentSaving(true);
     try {
       let updatedAt;
+      let persistedOverrides = next;
       if (patch) {
-        updatedAt = await patchSiteContentInSupabase(patch);
+        const data = await patchSiteContentInSupabase(patch);
+        updatedAt = data?.updatedAt ?? null;
+        if (data?.overrides) {
+          persistedOverrides = data.overrides;
+        }
       } else {
         updatedAt = await saveSiteContentToSupabase(next);
       }
+      if (persistedOverrides !== next) {
+        overridesRef.current = persistedOverrides;
+        setOverrides(persistedOverrides);
+        saveOverrides(persistedOverrides);
+      }
       try {
-        await cleanupOrphanedSiteImages(next);
+        await cleanupOrphanedSiteImages(persistedOverrides);
       } catch (error) {
         console.warn("Site image cleanup skipped after save:", error);
       }
       setLastSyncedAt(updatedAt);
       setSyncError(null);
+      return persistedOverrides;
     } catch (error) {
       setSyncError(error.message ?? adminRu.sync.saveFailed);
       throw error;
@@ -181,6 +207,14 @@ export function ContentProvider({ children }) {
 
   const saveOverridesBundle = useCallback(
     (next) => persistOverrides(next),
+    [persistOverrides]
+  );
+
+  const saveOverridesPatch = useCallback(
+    (patch) => {
+      const next = mergeOverridesPatch(overridesRef.current, patch);
+      return persistOverrides(next, patch);
+    },
     [persistOverrides]
   );
 
@@ -359,6 +393,8 @@ export function ContentProvider({ children }) {
     () => ({
       ...resolvedContent,
       cosmetics: normalizeCosmeticsList(resolvedContent.cosmetics),
+      rawContent: content,
+      rawCosmetics: normalizeCosmeticsList(content.cosmetics),
       overrides,
       contentLoading: cmsSyncing && !hasUsableCachedCatalog(overrides),
       cmsSyncing,
@@ -369,6 +405,7 @@ export function ContentProvider({ children }) {
       imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
+      saveOverridesPatch,
       getLatestOverrides,
       updateSection,
       updateLocaleBlock,
@@ -389,6 +426,7 @@ export function ContentProvider({ children }) {
     }),
     [
       resolvedContent,
+      content,
       overrides,
       cmsSyncing,
       contentSaving,
@@ -397,6 +435,7 @@ export function ContentProvider({ children }) {
       imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
+      saveOverridesPatch,
       getLatestOverrides,
       updateSection,
       updateLocaleBlock,

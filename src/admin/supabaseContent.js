@@ -33,7 +33,7 @@ export async function patchSiteContentInSupabase(patch) {
       body: JSON.stringify({ overrides: patch }),
       label: "Patch site content",
     });
-    return data?.updatedAt ?? null;
+    return data ?? { updatedAt: null };
   }
 
   throw new Error("CRM backend session is missing");

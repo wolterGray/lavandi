@@ -50,7 +50,15 @@ export function createNewsItem() {
 }
 
 export function useAdminPersist({ successMessage, showSuccessToast = true } = {}) {
-  const { contentSaving, overrides, getLatestOverrides, saveOverridesBundle, updateSection, updateLocaleBlock } = useContent();
+  const {
+    contentSaving,
+    overrides,
+    getLatestOverrides,
+    saveOverridesBundle,
+    saveOverridesPatch,
+    updateSection,
+    updateLocaleBlock,
+  } = useContent();
   const { showToast } = useAdminShell();
   const [saveError, setSaveError] = useState("");
 
@@ -92,6 +100,15 @@ export function useAdminPersist({ successMessage, showSuccessToast = true } = {}
     [getLatestOverrides, overrides, saveOverridesBundle]
   );
 
+  const savePatch = useCallback(
+    async (buildPatch, sectionKey) => {
+      const current = getLatestOverrides ? getLatestOverrides() : overrides;
+      const patch = typeof buildPatch === "function" ? await buildPatch(current) : buildPatch;
+      return saveOverridesPatch(stampSectionMeta(patch, sectionKey));
+    },
+    [getLatestOverrides, overrides, saveOverridesPatch]
+  );
+
   return {
     contentSaving,
     saveError,
@@ -100,6 +117,7 @@ export function useAdminPersist({ successMessage, showSuccessToast = true } = {}
     overrides,
     patchLocaleBlock,
     saveMerged,
+    savePatch,
     saveSection,
     saveLocaleBlock,
     updateSection,
