@@ -147,6 +147,32 @@ export function formatCosmeticPriceLabel(value, currency = "zł") {
   return price;
 }
 
+export function getCosmeticPriceNumber(value) {
+  const price = normalizeCosmeticPrice(value);
+  if (!/^\d+(?:\.\d{1,2})?$/.test(price)) return null;
+  return Number(price);
+}
+
+export function normalizeCosmeticStock(value) {
+  const numeric = Number.parseInt(String(value ?? "").trim(), 10);
+  if (!Number.isFinite(numeric) || numeric < 0) return 0;
+  return numeric;
+}
+
+export function getCosmeticAvailability(product, quantity = 1) {
+  const stock = normalizeCosmeticStock(product?.stock);
+  const qty = Math.max(1, Number.parseInt(String(quantity ?? 1), 10) || 1);
+  const shortage = Math.max(qty - stock, 0);
+
+  return {
+    stock,
+    shortage,
+    status: stock > 0 && shortage === 0 ? "IN_STOCK" : "ORDER_REQUIRED",
+    isLowStock: stock > 0 && stock <= 3,
+    needsSupplier: shortage > 0,
+  };
+}
+
 export function normalizeCosmeticsList(products = cosmeticsBase) {
   return products.map((product) => {
     const categories = getProductCategories(product);
@@ -154,6 +180,7 @@ export function normalizeCosmeticsList(products = cosmeticsBase) {
       ...product,
       categories,
       category: categories[0],
+      stock: normalizeCosmeticStock(product.stock),
     });
   });
 }
@@ -196,6 +223,52 @@ export function buildCosmeticInquiryMailto(email, t, product) {
   const subject = t("cosmetics.interestedEmailSubject", { name: product.name });
   const body = t("cosmetics.interestedEmailBody", { name: product.name, id: product.id });
   return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+export function buildCosmeticOrderMailto(email, t, product, order) {
+  const availability = getCosmeticAvailability(product, order.quantity);
+  const unitPrice = formatCosmeticPriceLabel(product.price, t("common.pln"));
+  const unitPriceNumber = getCosmeticPriceNumber(product.price);
+  const total = unitPriceNumber != null
+    ? formatCosmeticPriceLabel(String(unitPriceNumber * order.quantity), t("common.pln"))
+    : "";
+  const requestedAt = new Date().toLocaleString("pl-PL", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+  const pickupMethod = order.deliveryMethod === "delivery"
+    ? t("cosmeticsOrder.delivery")
+    : t("cosmeticsOrder.pickup");
+
+  const lines = [
+    `Order ID: ${order.orderId}`,
+    `Product ID: ${product.id}`,
+    `Product: ${product.name}`,
+    `Quantity: ${order.quantity}`,
+    `Unit price: ${unitPrice || "-"}`,
+    `Total: ${total || "-"}`,
+    `Current NUAR stock: ${availability.stock}`,
+    `Product status: ${availability.status}`,
+  ];
+
+  if (availability.shortage > 0) {
+    lines.push(`Ordered: ${order.quantity} pcs.`);
+    lines.push(`In NUAR stock: ${availability.stock} pcs.`);
+    lines.push(`To order from supplier: ${availability.shortage} pcs.`);
+  }
+
+  lines.push("");
+  lines.push(`Client name: ${order.name}`);
+  lines.push(`Client phone: ${order.phone}`);
+  lines.push(`Delivery method: ${pickupMethod}`);
+  lines.push(`Comment: ${order.comment || "-"}`);
+  lines.push(`Requested at: ${requestedAt}`);
+
+  const subject = t("cosmeticsOrder.emailSubject", {
+    orderId: order.orderId,
+    product: product.name,
+  });
+  return `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
 }
 
 export const COSMETIC_TEXT_FIELDS = ["name", "description", "volume", "composition"];

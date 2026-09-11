@@ -27,6 +27,7 @@ import {
   syncProductImageFields,
   MAX_FEATURED_COSMETICS,
   normalizeCosmeticPrice,
+  normalizeCosmeticStock,
   normalizeCosmeticCopy,
   normalizeFeaturedCosmeticIds,
   parseCosmeticVolume,
@@ -246,6 +247,7 @@ export default function AdminCosmeticsPage() {
         initials: "NU",
         accent: prev.length % PLACEHOLDER_GRADIENTS.length,
         price: "",
+        stock: 0,
         photoSurface: "light",
         transparentPhoto: true,
       },
@@ -391,6 +393,7 @@ export default function AdminCosmeticsPage() {
         categories,
         category: categories[0],
         price: normalizeCosmeticPrice(item.price) || undefined,
+        stock: normalizeCosmeticStock(item.stock),
         photoSurface: getProductPhotoSurface(item),
         transparentPhoto: getProductPhotoSurface(item) === "light",
         initials: deriveCosmeticInitials(texts.name),
@@ -714,6 +717,17 @@ export default function AdminCosmeticsPage() {
               className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
             />
           </AdminField>
+          <AdminField label={adminRu.cosmetics.stock}>
+            <input
+              type="number"
+              min="0"
+              step="1"
+              value={item.stock ?? 0}
+              readOnly={!isAuthoring}
+              onChange={(e) => isAuthoring && updateItem(index, { stock: e.target.value })}
+              className={adminInputClass(!isAuthoring ? "cursor-default opacity-80" : "")}
+            />
+          </AdminField>
           <div className="sm:col-span-2">
             <AdminField label={adminRu.cosmetics.productDescription}>
               <textarea
@@ -857,6 +871,7 @@ export default function AdminCosmeticsPage() {
                       {adminRu.cosmetics.productId}: {item.id}
                       {texts.volume ? <span className="ml-2 text-gold">{texts.volume}</span> : null}
                       {priceLabel ? <span className="ml-2 text-milk">{priceLabel}</span> : null}
+                      <span className="ml-2 text-stone">{adminRu.cosmetics.stock}: {normalizeCosmeticStock(item.stock)}</span>
                     </p>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <StatusPill tone={health.isReady ? "good" : "warn"}>

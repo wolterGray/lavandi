@@ -28,7 +28,7 @@ export default function Button({
   ...props
 }) {
   const classes = [
-    "inline-flex items-center justify-center gap-2 rounded-pill transition-all duration-300 ease-luxury",
+    "inline-flex items-center justify-center gap-2 rounded-pill transition-all duration-300 ease-luxury disabled:cursor-not-allowed disabled:opacity-60",
     variants[variant],
     sizes[size],
     className,
