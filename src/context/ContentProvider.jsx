@@ -161,7 +161,11 @@ export function ContentProvider({ children }) {
       } else {
         updatedAt = await saveSiteContentToSupabase(next);
       }
-      await cleanupOrphanedSiteImages(next);
+      try {
+        await cleanupOrphanedSiteImages(next);
+      } catch (error) {
+        console.warn("Site image cleanup skipped after save:", error);
+      }
       setLastSyncedAt(updatedAt);
       setSyncError(null);
     } catch (error) {

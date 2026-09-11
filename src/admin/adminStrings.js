@@ -143,8 +143,12 @@ export const adminRu = {
     statusAdded: "Товар добавлен. Сохраните изменения.",
     statusDeleted: "Товар удалён. Сохраните изменения.",
     statusSaved: "Каталог сохранён на сайте.",
+    statusSavedProduct: (name) => `«${name}» сохранён в базе. Готово.`,
     statusSavedPartial:
       "Каталог сохранён на UA. Перевод PL/EN не выполнен — подождите минуту и сохраните снова.",
+    validationFailed: "Товар не сохранён: заполните обязательные поля.",
+    validationProductMissing: (name, fields) => `«${name}»: заполните ${fields}.`,
+    validationPriceInvalid: (name) => `«${name}»: цена должна быть числом, например 250.`,
     newProductBadge: "Новый",
     name: "Название",
     productDescription: "Описание",

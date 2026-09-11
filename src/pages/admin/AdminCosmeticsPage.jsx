@@ -82,6 +82,26 @@ function getProductHealth(item, texts, isFeatured) {
   };
 }
 
+function getRequiredProductIssues(item, texts) {
+  const missing = [];
+  const name = texts.name?.trim() || adminRu.cosmetics.newProduct;
+  const price = normalizeCosmeticPrice(item.price);
+
+  if (!isFilled(texts.name)) missing.push(adminRu.cosmetics.name.toLowerCase());
+  if (!isFilled(item.price)) missing.push(adminRu.cosmetics.price.toLowerCase());
+  if (!getProductCategories(item).length) missing.push(adminRu.cosmetics.category.toLowerCase());
+
+  if (missing.length) {
+    return adminRu.cosmetics.validationProductMissing(name, missing.join(", "));
+  }
+
+  if (price && !/^\d+(?:\.\d{1,2})?$/.test(price)) {
+    return adminRu.cosmetics.validationPriceInvalid(name);
+  }
+
+  return "";
+}
+
 function StatusPill({ tone = "neutral", children }) {
   const toneClass =
     tone === "good"
@@ -118,7 +138,7 @@ const ADMIN_COSMETIC_LANGS = ["uk", "pl", "en"];
 
 export default function AdminCosmeticsPage() {
   const { cosmetics, featuredCosmeticIds, cosmeticRetiredIds, overrides } = useContent();
-  const { contentSaving, saveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
+  const { contentSaving, saveError, setSaveError, runSave, saveMerged } = useAdminPersist({ showSuccessToast: false });
   const [activeLang, setActiveLang] = useState(CMS_AUTHOR_LANG);
   const [draft, setDraft] = useState(cosmetics);
   const [textDraft, setTextDraft] = useState({});
@@ -340,7 +360,29 @@ export default function AdminCosmeticsPage() {
     setDirty(true);
   };
 
-  const executeSaveCosmetics = async (nextDraft, nextTextDraft, nextFeatured, nextRetired) => {
+  const validateProductsBeforeSave = (nextDraft, nextTextDraft) => {
+    const issues = nextDraft
+      .map((item) => getRequiredProductIssues(item, nextTextDraft[item.id] ?? EMPTY_PRODUCT_TEXT))
+      .filter(Boolean);
+
+    if (!issues.length) return true;
+
+    const message = issues[0] ?? adminRu.cosmetics.validationFailed;
+    setSaveError(message);
+    showStatus(message, "error");
+    const invalidProduct = nextDraft.find((item) =>
+      getRequiredProductIssues(item, nextTextDraft[item.id] ?? EMPTY_PRODUCT_TEXT),
+    );
+    if (invalidProduct) {
+      setEditingProductId(invalidProduct.id);
+      setHighlightId(invalidProduct.id);
+    }
+    return false;
+  };
+
+  const executeSaveCosmetics = async (nextDraft, nextTextDraft, nextFeatured, nextRetired, { successMessage } = {}) => {
+    if (!validateProductsBeforeSave(nextDraft, nextTextDraft)) return false;
+
     const enriched = nextDraft.map((item, index) => {
       const texts = nextTextDraft[item.id] ?? EMPTY_PRODUCT_TEXT;
       const categories = getProductCategories(item);
@@ -379,8 +421,10 @@ export default function AdminCosmeticsPage() {
       setFeaturedDraft(nextFeatured);
       setRetiredDraft(nextRetired);
       setDirty(false);
-      showStatus(adminRu.cosmetics.statusDeleted, "success");
+      showStatus(successMessage ?? adminRu.cosmetics.statusSaved, "success");
     }
+
+    return ok;
   };
 
   const requestRemoveItem = (index) => {
@@ -404,13 +448,27 @@ export default function AdminCosmeticsPage() {
         const nextRetired = id ? (retiredDraft.includes(id) ? retiredDraft : [...retiredDraft, id]) : retiredDraft;
         if (editingProductId === id) setEditingProductId(null);
 
-        await executeSaveCosmetics(nextDraft, nextTextDraft, nextFeatured, nextRetired);
+        await executeSaveCosmetics(nextDraft, nextTextDraft, nextFeatured, nextRetired, {
+          successMessage: adminRu.cosmetics.statusDeleted,
+        });
       },
     });
   };
 
-  const handleSave = useCallback(async () => {
-    await executeSaveCosmetics(draft, textDraft, featuredDraft, retiredDraft);
+  const handleSave = useCallback(async ({ closeOnSuccess = false, productId } = {}) => {
+    const product = productId ? draft.find((item) => item.id === productId) : null;
+    const productName = product
+      ? (textDraft[product.id]?.name?.trim() || adminRu.cosmetics.newProduct)
+      : "";
+    const ok = await executeSaveCosmetics(draft, textDraft, featuredDraft, retiredDraft, {
+      successMessage: productName ? adminRu.cosmetics.statusSavedProduct(productName) : adminRu.cosmetics.statusSaved,
+    });
+
+    if (ok && closeOnSuccess) {
+      setEditingProductId(null);
+    }
+
+    return ok;
   }, [draft, textDraft, featuredDraft, retiredDraft, runSave, saveMerged]);
 
   const handleDiscard = () => {
@@ -850,13 +908,22 @@ export default function AdminCosmeticsPage() {
           onClick={() => setEditingProductId(null)}
         >
           <div
-            className="flex max-h-[86vh] w-full max-w-5xl flex-col rounded-card border border-border/60 bg-card shadow-spa-hover"
+            className="relative flex max-h-[86vh] w-full max-w-5xl flex-col rounded-card border border-border/60 bg-card shadow-spa-hover"
             role="dialog"
             aria-modal="true"
             aria-label={`Редактирование товара ${editingTexts.name || editingItem.id}`}
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border/30 px-5 py-4">
+            <button
+              type="button"
+              aria-label="Закрыть редактор товара"
+              className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-card border border-border/70 bg-surface text-stone shadow-sm transition hover:border-gold/35 hover:bg-card hover:text-milk focus:outline-none focus:ring-1 focus:ring-gold/30"
+              onClick={() => setEditingProductId(null)}
+            >
+              <X className="h-4 w-4" aria-hidden />
+            </button>
+
+            <div className="flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border/30 px-5 py-4 pr-16">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-gold">Редактирование товара</p>
                 <h3 className="mt-1 truncate text-2xl font-semibold text-milk">
@@ -886,20 +953,16 @@ export default function AdminCosmeticsPage() {
                     {adminRu.common.discard}
                   </AdminButton>
                 ) : null}
-                <AdminButton onClick={handleSave} loading={contentSaving} disabled={contentSaving || !dirty}>
+                <AdminButton
+                  onClick={() => handleSave({ closeOnSuccess: true, productId: editingItem.id })}
+                  loading={contentSaving}
+                  disabled={contentSaving || !dirty}
+                >
                   {contentSaving ? adminRu.common.saving : adminRu.common.save}
                 </AdminButton>
                 <AdminButton variant="danger" onClick={() => requestRemoveItem(editingIndex)}>
                   <Trash2 className="h-4 w-4" />
                 </AdminButton>
-                <button
-                  type="button"
-                  className="inline-flex h-10 items-center gap-2 rounded-full bg-gold px-4 text-[10px] font-bold uppercase tracking-[0.12em] text-void shadow-lg shadow-gold/20 transition hover:bg-gold/90 focus:outline-none focus:ring-2 focus:ring-gold/70"
-                  onClick={() => setEditingProductId(null)}
-                >
-                  <X className="h-4 w-4" aria-hidden />
-                  Закрыть
-                </button>
               </div>
             </div>
 
