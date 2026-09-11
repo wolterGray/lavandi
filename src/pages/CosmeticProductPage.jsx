@@ -17,6 +17,7 @@ import {
   formatCosmeticPriceLabel,
   getCosmeticAvailability,
   getCosmeticPriceNumber,
+  getCosmeticSchemaAvailability,
   getProductImages,
   COSMETICS_ROUTE,
 } from "../components/CosmeticsSection/cosmeticsShared";
@@ -283,6 +284,7 @@ export default function CosmeticProductPage({ product }) {
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}/${product.id}`;
   const categoryLabel = formatProductCategoryLabels(t, product);
   const priceLabel = formatCosmeticPriceLabel(product.price, t("common.pln"));
+  const priceValue = getCosmeticPriceNumber(product.price);
   const availability = getCosmeticAvailability(product);
   const canOrder = availability.status === "IN_STOCK";
   const stockLabel = availability.status === "COMING_SOON"
@@ -297,6 +299,28 @@ export default function CosmeticProductPage({ product }) {
   const description =
     product.description?.trim() ||
     t("cosmeticsProductPage.meta.descriptionFallback", { name: product.name });
+  const productSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description,
+    sku: product.id,
+    category: categoryLabel,
+    brand: { "@type": "Brand", name: "NUAR" },
+    image: resolveOgImage(imageSrc),
+    offers: priceValue == null ? undefined : {
+      "@type": "Offer",
+      url: pageUrl,
+      price: String(priceValue),
+      priceCurrency: "PLN",
+      availability: getCosmeticSchemaAvailability(product),
+      itemCondition: "https://schema.org/NewCondition",
+      seller: {
+        "@type": "Organization",
+        name: "NUAR",
+      },
+    },
+  };
 
   const navItems = [
     { label: t("nav.home"), path: "home" },
@@ -318,15 +342,7 @@ export default function CosmeticProductPage({ product }) {
         <meta property="og:url" content={pageUrl} />
         <meta property="og:image" content={resolveOgImage(imageSrc)} />
         <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "Product",
-            name: product.name,
-            description: product.description,
-            sku: product.id,
-            brand: { "@type": "Brand", name: "NUAR" },
-            image: resolveOgImage(imageSrc),
-          })}
+          {JSON.stringify(productSchema)}
         </script>
       </Helmet>
 

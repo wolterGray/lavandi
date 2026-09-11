@@ -78,23 +78,27 @@ async function generateSitemap() {
     console.log(`generate-seo: Loaded ${cosmetics.length} cosmetics from local fallback`);
   }
 
+  const lastmod = new Date().toISOString();
   const links = [
-    { url: "/", changefreq: "weekly", priority: 1.0 },
-    { url: "/katalog", changefreq: "weekly", priority: 0.9 },
+    { url: "/", changefreq: "weekly", priority: 1.0, lastmod },
+    { url: "/katalog", changefreq: "weekly", priority: 0.9, lastmod },
     {
       url: "/polityka-prywatnosci.html",
       changefreq: "yearly",
       priority: 0.3,
+      lastmod,
     },
     ...services.map((service) => ({
       url: `/uslugi/${service.slug}`,
       changefreq: "monthly",
       priority: 0.8,
+      lastmod,
     })),
     ...cosmetics.map((product) => ({
       url: `/katalog/${product.id}`,
-      changefreq: "monthly",
-      priority: 0.7,
+      changefreq: "weekly",
+      priority: 0.75,
+      lastmod,
     })),
   ];
 

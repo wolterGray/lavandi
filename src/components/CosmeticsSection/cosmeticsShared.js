@@ -188,6 +188,14 @@ export function getCosmeticAvailability(product, quantity = 1) {
   };
 }
 
+export function getCosmeticSchemaAvailability(product, quantity = 1) {
+  const status = getCosmeticAvailability(product, quantity).status;
+  if (status === "COMING_SOON") return "https://schema.org/PreOrder";
+  if (status === "OUT_OF_STOCK") return "https://schema.org/OutOfStock";
+  if (status === "ORDER_REQUIRED") return "https://schema.org/BackOrder";
+  return "https://schema.org/InStock";
+}
+
 export function normalizeCosmeticsList(products = cosmeticsBase) {
   return products.map((product) => {
     const categories = getProductCategories(product);

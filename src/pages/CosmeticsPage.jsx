@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { ChevronLeft } from "lucide-react";
@@ -11,14 +12,39 @@ import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { useContent } from "../context/ContentProvider";
 import { EMAIL, SITE_URL } from "../constants/theme";
-import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
+import {
+  buildLocalizedProducts,
+  COSMETICS_ROUTE,
+  getCosmeticProductUrl,
+} from "../components/CosmeticsSection/cosmeticsShared";
 
 export default function CosmeticsPage() {
   const { t, lang } = useTranslation();
-  const { cosmetics } = useContent();
+  const { cosmetics, getProductTexts } = useContent();
   const pageUrl = `${SITE_URL}${COSMETICS_ROUTE}`;
   const title = t("cosmeticsPage.meta.title");
   const description = t("cosmeticsPage.meta.description");
+  const products = useMemo(
+    () => buildLocalizedProducts(cosmetics, t, lang, getProductTexts),
+    [cosmetics, getProductTexts, lang, t],
+  );
+  const catalogSchema = useMemo(
+    () => ({
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: t("cosmetics.title"),
+      description,
+      url: pageUrl,
+      numberOfItems: products.length,
+      itemListElement: products.map((product, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        url: `${SITE_URL}${getCosmeticProductUrl(product.id)}`,
+        name: product.name,
+      })),
+    }),
+    [description, pageUrl, products, t],
+  );
 
   const navItems = [
     { label: t("nav.home"), path: "home" },
@@ -39,6 +65,7 @@ export default function CosmeticsPage() {
         <meta property="og:description" content={description} />
         <meta property="og:url" content={pageUrl} />
         <meta property="og:image" content={`${SITE_URL}/og-image.jpg`} />
+        <script type="application/ld+json">{JSON.stringify(catalogSchema)}</script>
       </Helmet>
 
       <Header navItems={navItems} linkToHome />
