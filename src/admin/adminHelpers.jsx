@@ -50,7 +50,7 @@ export function createNewsItem() {
 }
 
 export function useAdminPersist({ successMessage, showSuccessToast = true } = {}) {
-  const { contentSaving, overrides, saveOverridesBundle, updateSection, updateLocaleBlock } = useContent();
+  const { contentSaving, overrides, getLatestOverrides, saveOverridesBundle, updateSection, updateLocaleBlock } = useContent();
   const { showToast } = useAdminShell();
   const [saveError, setSaveError] = useState("");
 
@@ -77,15 +77,19 @@ export function useAdminPersist({ successMessage, showSuccessToast = true } = {}
 
   const saveMerged = useCallback(
     async (buildNext, sectionKey) => {
-      const next = await buildNext(overrides);
+      const current = getLatestOverrides ? getLatestOverrides() : overrides;
+      const next = await buildNext(current);
       return saveOverridesBundle(stampSectionMeta(next, sectionKey));
     },
-    [overrides, saveOverridesBundle]
+    [getLatestOverrides, overrides, saveOverridesBundle]
   );
 
   const saveSection = useCallback(
-    (sectionKey, value) => saveOverridesBundle(stampSectionMeta({ ...overrides, [sectionKey]: value }, sectionKey)),
-    [overrides, saveOverridesBundle]
+    (sectionKey, value) => {
+      const current = getLatestOverrides ? getLatestOverrides() : overrides;
+      return saveOverridesBundle(stampSectionMeta({ ...current, [sectionKey]: value }, sectionKey));
+    },
+    [getLatestOverrides, overrides, saveOverridesBundle]
   );
 
   return {

@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import {
   clearOverrides,
   exportContentBundle,
@@ -52,6 +52,7 @@ const isCmsSyncConfigured = isCmsBackendConfigured;
 
 export function ContentProvider({ children }) {
   const initialOverrides = useMemo(() => loadOverrides(), []);
+  const overridesRef = useRef(initialOverrides);
   const [overrides, setOverrides] = useState(initialOverrides);
   const [cmsSyncing, setCmsSyncing] = useState(
     () => isCmsSyncConfigured && !hasUsableCachedCatalog(initialOverrides),
@@ -76,6 +77,7 @@ export function ContentProvider({ children }) {
       .then((remote) => {
         if (cancelled) return;
         if (remote?.overrides && Object.keys(remote.overrides).length > 0) {
+          overridesRef.current = remote.overrides;
           setOverrides(remote.overrides);
           saveOverrides(remote.overrides);
           setLastSyncedAt(remote.updatedAt);
@@ -148,6 +150,7 @@ export function ContentProvider({ children }) {
   }, [overrides, content.cosmetics]);
 
   const persistOverrides = useCallback(async (next, patch = null) => {
+    overridesRef.current = next;
     setOverrides(next);
     saveOverrides(next);
 
@@ -182,13 +185,16 @@ export function ContentProvider({ children }) {
   );
 
   const updateSection = useCallback(
-    (key, value) => persistOverrides({ ...overrides, [key]: value }, { [key]: value }),
-    [overrides, persistOverrides]
+    (key, value) => {
+      const current = overridesRef.current;
+      return persistOverrides({ ...current, [key]: value }, { [key]: value });
+    },
+    [persistOverrides]
   );
 
   const updateLocaleBlock = useCallback(
     (lang, block, value) => {
-      const next = patchLocaleBlock(overrides, lang, block, value);
+      const next = patchLocaleBlock(overridesRef.current, lang, block, value);
       const patch = {
         locales: {
           [lang]: {
@@ -198,11 +204,12 @@ export function ContentProvider({ children }) {
       };
       return persistOverrides(next, patch);
     },
-    [overrides, persistOverrides]
+    [persistOverrides]
   );
 
   const resetContent = useCallback(async () => {
     clearOverrides();
+    overridesRef.current = {};
     setOverrides({});
 
     if (!isCmsSyncConfigured) return;
@@ -234,10 +241,12 @@ export function ContentProvider({ children }) {
   );
 
   const publishFullSnapshot = useCallback(async () => {
-    const next = buildFullPublishedOverrides(overrides);
+    const next = buildFullPublishedOverrides(overridesRef.current);
     await persistOverrides(next);
     return mergeContent(next);
-  }, [overrides, persistOverrides]);
+  }, [persistOverrides]);
+
+  const getLatestOverrides = useCallback(() => overridesRef.current, []);
 
   const getFaqItems = useCallback(
     (lang, fallback = []) => {
@@ -360,6 +369,7 @@ export function ContentProvider({ children }) {
       imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
+      getLatestOverrides,
       updateSection,
       updateLocaleBlock,
       resetContent,
@@ -387,6 +397,7 @@ export function ContentProvider({ children }) {
       imageCacheVersion,
       getImageDataUrl,
       saveOverridesBundle,
+      getLatestOverrides,
       updateSection,
       updateLocaleBlock,
       resetContent,

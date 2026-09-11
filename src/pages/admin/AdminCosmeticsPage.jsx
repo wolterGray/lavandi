@@ -400,7 +400,9 @@ export default function AdminCosmeticsPage() {
         accent: item.accent ?? index % PLACEHOLDER_GRADIENTS.length,
       });
     });
-    const authorProducts = buildAuthorProductsDraft(nextDraft, nextTextDraft);
+    const normalizedFeatured = normalizeFeaturedCosmeticIds(nextFeatured, enriched);
+    const normalizedRetired = nextRetired.filter((id) => !enriched.some((item) => item.id === id));
+    const authorProducts = buildAuthorProductsDraft(enriched, nextTextDraft);
 
     showStatus(adminRu.cosmetics.statusSaving, "info");
 
@@ -410,8 +412,8 @@ export default function AdminCosmeticsPage() {
           {
             ...current,
             cosmetics: enriched,
-            featuredCosmeticIds: normalizeFeaturedCosmeticIds(nextFeatured, enriched),
-            cosmeticRetiredIds: nextRetired.filter((id) => !enriched.some((item) => item.id === id)),
+            featuredCosmeticIds: normalizedFeatured,
+            cosmeticRetiredIds: normalizedRetired,
           },
           authorProducts,
         );
@@ -419,10 +421,10 @@ export default function AdminCosmeticsPage() {
     );
 
     if (ok) {
-      setDraft(nextDraft);
+      setDraft(enriched);
       setTextDraft(nextTextDraft);
-      setFeaturedDraft(nextFeatured);
-      setRetiredDraft(nextRetired);
+      setFeaturedDraft(normalizedFeatured);
+      setRetiredDraft(normalizedRetired);
       setDirty(false);
       showStatus(successMessage ?? adminRu.cosmetics.statusSaved, "success");
     }

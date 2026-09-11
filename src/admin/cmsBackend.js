@@ -1,6 +1,7 @@
 const BACKEND_URL = String(import.meta.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
 const TOKEN_KEY = "nuar_admin_crm_token";
 const USER_KEY = "nuar_admin_crm_user";
+const FETCH_RETRY_DELAYS_MS = [250, 900];
 
 export const isCmsBackendConfigured = Boolean(BACKEND_URL);
 
@@ -86,6 +87,35 @@ async function handleBackendResponse(response, label) {
   return payload?.data ?? payload;
 }
 
+function isTransientFetchError(error) {
+  const message = String(error?.message || "");
+  return error instanceof TypeError || /failed to fetch|network|load failed/i.test(message);
+}
+
+async function wait(ms) {
+  await new Promise((resolve) => {
+    window.setTimeout(resolve, ms);
+  });
+}
+
+async function fetchWithRetry(url, options = {}) {
+  let lastError;
+
+  for (let attempt = 0; attempt <= FETCH_RETRY_DELAYS_MS.length; attempt += 1) {
+    try {
+      return await fetch(url, options);
+    } catch (error) {
+      lastError = error;
+      if (!isTransientFetchError(error) || attempt >= FETCH_RETRY_DELAYS_MS.length) {
+        throw error;
+      }
+      await wait(FETCH_RETRY_DELAYS_MS[attempt]);
+    }
+  }
+
+  throw lastError;
+}
+
 export async function cmsBackendRequest(path, options = {}) {
   if (!isCmsBackendConfigured) {
     throw new Error("CRM backend is not configured");
@@ -96,7 +126,7 @@ export async function cmsBackendRequest(path, options = {}) {
     throw new Error("CRM backend session is missing");
   }
 
-  const response = await fetch(`${BACKEND_URL}${path}`, {
+  const response = await fetchWithRetry(`${BACKEND_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -113,7 +143,7 @@ export async function cmsBackendPublicRequest(path, options = {}) {
     throw new Error("CRM backend is not configured");
   }
 
-  const response = await fetch(`${BACKEND_URL}${path}`, {
+  const response = await fetchWithRetry(`${BACKEND_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -140,7 +170,7 @@ export async function loginCmsBackend({ email, password }) {
     throw new Error("CRM backend is not configured");
   }
 
-  const response = await fetch(`${BACKEND_URL}/api/auth/login`, {
+  const response = await fetchWithRetry(`${BACKEND_URL}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
