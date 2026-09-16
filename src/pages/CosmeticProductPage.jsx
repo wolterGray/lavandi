@@ -362,8 +362,8 @@ export default function CosmeticProductPage({ product }) {
           <ScrollAnimationWrapper direction="left">
             <div className="card-gradient-border relative overflow-visible rounded-card shadow-spa">
               {isUnavailable ? (
-                <div className="pointer-events-none absolute right-4 top-4 z-20">
-                  <span className="inline-flex min-h-[38px] items-center justify-center rounded-pill bg-gold/88 px-5 text-center font-sans text-[10px] font-extrabold uppercase tracking-[0.14em] text-void shadow-spa backdrop-blur-sm sm:text-[11px]">
+                <div className="pointer-events-none absolute right-0 top-5 z-20">
+                  <span className="inline-flex min-h-[38px] items-center justify-center rounded-l-pill bg-gold px-5 text-center font-sans text-[10px] font-extrabold uppercase tracking-[0.14em] text-void shadow-spa sm:text-[11px]">
                     {stockLabel}
                   </span>
                 </div>

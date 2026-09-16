@@ -38,8 +38,8 @@ export default function CosmeticProductCard({
         <div className="pointer-events-none absolute inset-0 z-10 bg-void/28" aria-hidden />
       ) : null}
       {isUnavailable && statusLabel ? (
-        <div className="pointer-events-none absolute right-3 top-3 z-20 sm:right-4 sm:top-4">
-          <span className="inline-flex min-h-[34px] items-center justify-center rounded-pill bg-gold/88 px-4 text-center font-sans text-[9px] font-extrabold uppercase tracking-[0.14em] text-void shadow-spa backdrop-blur-sm sm:text-[10px]">
+        <div className="pointer-events-none absolute right-0 top-4 z-20">
+          <span className="inline-flex min-h-[34px] items-center justify-center rounded-l-pill bg-gold px-4 text-center font-sans text-[9px] font-extrabold uppercase tracking-[0.14em] text-void shadow-spa sm:text-[10px]">
             {statusLabel}
           </span>
         </div>
