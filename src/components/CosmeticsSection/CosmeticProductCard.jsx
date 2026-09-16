@@ -23,22 +23,39 @@ export default function CosmeticProductCard({
       : availability.status === "OUT_OF_STOCK"
         ? t("cosmeticsOrder.outOfStock")
         : "";
+  const isUnavailable = availability.status === "OUT_OF_STOCK";
   const compactCategoryLabel = String(categoryLabel ?? "").split("·")[0]?.trim() || categoryLabel;
 
   const card = (
     <Link
       to={productUrl}
       aria-label={`${product.name} — ${t("cosmetics.viewProduct")}`}
-      className="group flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover"
+      className={`group relative flex h-full flex-col overflow-hidden rounded-card border border-border/50 bg-card shadow-spa transition duration-700 ease-luxury hover:-translate-y-0.5 hover:border-gold/25 hover:shadow-spa-hover ${
+        isUnavailable ? "bg-card/70" : ""
+      }`}
     >
+      {isUnavailable ? (
+        <div className="pointer-events-none absolute inset-0 z-10 bg-void/28" aria-hidden />
+      ) : null}
+      {isUnavailable && statusLabel ? (
+        <div className="pointer-events-none absolute left-1/2 top-[38%] z-20 -translate-x-1/2 -translate-y-1/2">
+          <span className="inline-flex min-h-[36px] items-center justify-center rounded-full bg-void/86 px-5 text-center font-sans text-[10px] font-extrabold uppercase tracking-[0.16em] text-milk shadow-spa ring-1 ring-gold/35 backdrop-blur-sm">
+            {statusLabel}
+          </span>
+        </div>
+      ) : null}
         <CosmeticProductImage
           compact={!featured}
           priority={index < 12}
           product={product}
-          className={`w-full shrink-0 ${featured ? "aspect-[4/5]" : "aspect-square"}`}
+          className={`w-full shrink-0 transition duration-700 ${isUnavailable ? "opacity-45 grayscale-[35%]" : ""} ${
+            featured ? "aspect-[4/5]" : "aspect-square"
+          }`}
         />
         <div
-          className={`flex flex-1 flex-col ${featured ? "p-4 sm:p-5" : "p-3 sm:p-3.5"}`}
+          className={`relative z-20 flex flex-1 flex-col ${
+            isUnavailable ? "opacity-70" : ""
+          } ${featured ? "p-4 sm:p-5" : "p-3 sm:p-3.5"}`}
         >
           <p
             title={categoryLabel}
@@ -74,7 +91,7 @@ export default function CosmeticProductCard({
               {priceLabel}
             </p>
           ) : null}
-          {statusLabel ? (
+          {statusLabel && !isUnavailable ? (
             <p className={`mt-2 inline-flex w-fit rounded-card bg-surface px-2 py-1 font-bold uppercase tracking-[0.08em] ${
               availability.status === "COMING_SOON" ? "text-gold" : "text-stone"
             } ${featured ? "text-[10px]" : "text-[9px]"}`}>
