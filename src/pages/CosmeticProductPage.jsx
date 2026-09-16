@@ -287,6 +287,7 @@ export default function CosmeticProductPage({ product }) {
   const priceValue = getCosmeticPriceNumber(product.price);
   const availability = getCosmeticAvailability(product);
   const canOrder = availability.status === "IN_STOCK";
+  const isUnavailable = availability.status === "OUT_OF_STOCK";
   const stockLabel = availability.status === "COMING_SOON"
     ? t("cosmeticsOrder.comingSoon")
     : availability.stock > 0
@@ -359,10 +360,19 @@ export default function CosmeticProductPage({ product }) {
 
         <div className="mt-4 grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
           <ScrollAnimationWrapper direction="left">
-            <div className="card-gradient-border overflow-visible rounded-card shadow-spa">
+            <div className="card-gradient-border relative overflow-visible rounded-card shadow-spa">
+              {isUnavailable ? (
+                <div className="pointer-events-none absolute right-4 top-4 z-20">
+                  <span className="inline-flex min-h-[38px] items-center justify-center rounded-pill bg-gold/88 px-5 text-center font-sans text-[10px] font-extrabold uppercase tracking-[0.14em] text-void shadow-spa backdrop-blur-sm sm:text-[11px]">
+                    {stockLabel}
+                  </span>
+                </div>
+              ) : null}
               <CosmeticProductGallery
                 product={product}
-                className="min-h-[300px] w-full sm:min-h-[400px] lg:min-h-[460px]"
+                className={`min-h-[300px] w-full sm:min-h-[400px] lg:min-h-[460px] ${
+                  isUnavailable ? "opacity-70 grayscale-[25%]" : ""
+                }`}
               />
             </div>
           </ScrollAnimationWrapper>
