@@ -19,9 +19,11 @@ const VISIBLE_SLOT_COUNT = 8;
 const LOCAL_COPY = {
   pl: {
     anyMaster: "Dowolny specjalista",
+    callNow: "Zadzwoń teraz",
     compactHint: "Wybierz usługę i jeden z najbliższych wolnych terminów. Potwierdzimy wizytę po otrzymaniu zgłoszenia.",
     contactTitle: "Dane do potwierdzenia",
     dateLabel: "Data",
+    disabledTitle: "Rezerwacja telefoniczna",
     fallback: "Nie widzisz wygodnej godziny?",
     slotsTitle: "Najbliższe wolne terminy",
     timeHint: "Pokazujemy tylko najwygodniejsze godziny dla wybranego dnia.",
@@ -29,9 +31,11 @@ const LOCAL_COPY = {
   },
   en: {
     anyMaster: "Any specialist",
+    callNow: "Call now",
     compactHint: "Choose a ritual and one of the closest available times. We will confirm the visit after receiving your request.",
     contactTitle: "Confirmation details",
     dateLabel: "Date",
+    disabledTitle: "Booking by phone",
     fallback: "Need another time?",
     slotsTitle: "Nearest available times",
     timeHint: "Only the most useful times for the selected day are shown.",
@@ -39,9 +43,11 @@ const LOCAL_COPY = {
   },
   uk: {
     anyMaster: "Будь-який спеціаліст",
+    callNow: "Зателефонувати",
     compactHint: "Оберіть ритуал і найближчий зручний час. Ми підтвердимо візит після отримання заявки.",
     contactTitle: "Дані для підтвердження",
     dateLabel: "Дата",
+    disabledTitle: "Запис телефоном",
     fallback: "Потрібен інший час?",
     slotsTitle: "Найближчі вільні години",
     timeHint: "Показуємо тільки найзручніші години для обраного дня.",
@@ -88,6 +94,7 @@ export default function BookingSection() {
   const { t, lang, localizedServices } = useTranslation();
   const { contact } = useContent();
   const copy = LOCAL_COPY[lang] ?? LOCAL_COPY.pl;
+  const siteBookingEnabled = contact?.siteBookingEnabled !== false;
   const defaultServiceSlug = localizedServices[0]?.slug ?? "";
   const [form, setForm] = useState({
     clientEmail: "",
@@ -130,7 +137,7 @@ export default function BookingSection() {
   }, [selectedService, durationOptions]);
 
   useEffect(() => {
-    if (!selectedService || !form.durationMinutes || !form.preferredDate) {
+    if (!siteBookingEnabled || !selectedService || !form.durationMinutes || !form.preferredDate) {
       setSlots([]);
       return undefined;
     }
@@ -160,7 +167,7 @@ export default function BookingSection() {
       });
 
     return () => controller.abort();
-  }, [form.durationMinutes, form.preferredDate, form.preferredMaster, selectedService, t]);
+  }, [form.durationMinutes, form.preferredDate, form.preferredMaster, selectedService, siteBookingEnabled, t]);
 
   const selectedSlot = slots.find((slot) => getSlotKey(slot) === form.preferredTime);
   const visibleSlots = slots.slice(0, VISIBLE_SLOT_COUNT);
@@ -265,7 +272,17 @@ export default function BookingSection() {
             className="mx-auto mt-10 max-w-4xl rounded-card border border-white/12 bg-[linear-gradient(145deg,rgba(18,15,22,0.92),rgba(8,6,12,0.9))] p-5 shadow-spa backdrop-blur sm:p-7"
             onSubmit={handleSubmit}
           >
-            {submitState.success ? (
+            {!siteBookingEnabled ? (
+              <div className="rounded-card border border-gold/25 bg-gold/[0.07] p-5 text-center sm:p-7">
+                <h3 className="font-display text-2xl text-milk">{copy.disabledTitle}</h3>
+                <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-stone">
+                  {t("booking.disabledMessage")}
+                </p>
+                <Button className="mt-6" href={`tel:${contact.phone}`} size="lg">
+                  {copy.callNow}: {contact.phoneDisplay}
+                </Button>
+              </div>
+            ) : submitState.success ? (
               <div className="rounded-card border border-gold/35 bg-gold/[0.08] p-5 text-center">
                 <h3 className="font-display text-2xl text-milk">{t("booking.form.successTitle")}</h3>
                 <p className="mx-auto mt-2 max-w-xl text-sm leading-relaxed text-stone">{t("booking.form.successMessage")}</p>

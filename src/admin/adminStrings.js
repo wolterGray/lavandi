@@ -80,6 +80,8 @@ export const adminRu = {
     phoneDisplay: "Телефон (отображаемый)",
     email: "Email",
     booksyLink: "Ссылка Booksy",
+    siteBookingEnabled: "Запись через сайт включена",
+    siteBookingEnabledHint: "Если выключить, вместо формы на сайте появится кнопка звонка.",
     lat: "Широта (lat)",
     lng: "Долгота (lng)",
     mapsLink: "Ссылка Google Maps",

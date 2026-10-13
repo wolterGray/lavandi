@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { getLocaleDefaults } from "../../admin/siteContent";
 import { LangTabs, useAdminDraft, useAdminPersist, useRegisterAdminDirty } from "../../admin/adminHelpers";
 import { adminRu } from "../../admin/adminStrings";
-import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, adminInputClass } from "../../admin/adminUi";
+import { AdminField, AdminPageHeader, AdminPanel, AdminSaveBar, AdminToggle, adminInputClass } from "../../admin/adminUi";
 import { useContent } from "../../context/ContentProvider";
 
 export default function AdminContactPage() {
@@ -44,6 +44,15 @@ export default function AdminContactPage() {
   return (
     <>
       <AdminPageHeader title="Контакты и локация" description="Адрес, телефон, карта и тексты секции визита." />
+
+      <AdminPanel className="mb-6">
+        <AdminToggle
+          checked={contactDraft.siteBookingEnabled !== false}
+          label={adminRu.common.siteBookingEnabled}
+          onChange={(checked) => patchContact("siteBookingEnabled", checked)}
+        />
+        <p className="mt-2 text-xs text-muted">{adminRu.common.siteBookingEnabledHint}</p>
+      </AdminPanel>
 
       <AdminPanel className="mb-6 grid gap-4 sm:grid-cols-2">
         <AdminField label={adminRu.common.street}><input value={contactDraft.street} onChange={(e) => patchContact("street", e.target.value)} className={adminInputClass()} /></AdminField>

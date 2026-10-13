@@ -4,6 +4,7 @@
   "phone": "+48452402006",
   "phoneDisplay": "+48 452 402 006",
   "email": "nuar.contact@gmail.com",
+  "siteBookingEnabled": true,
   "lat": 52.2510983,
   "lng": 21.0073094,
   "mapsLink": "https://www.google.com/maps/search/?api=1&query=52.2510983,21.0073094",
