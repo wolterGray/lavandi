@@ -9,7 +9,6 @@ import ScrollAnimationWrapper from "../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { isImageRef } from "../admin/siteImages";
 import { SITE_URL } from "../constants/theme";
-import { getDiscountedPrice } from "../utils/serviceUtils";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
 
 function resolveOgImage(image) {
