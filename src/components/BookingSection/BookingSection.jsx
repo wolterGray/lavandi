@@ -168,6 +168,7 @@ export default function BookingSection() {
   const masterPriceForDuration = selectedMasterIsTop
     ? (selectedService?.prices?.topMaster?.[durationNum] ?? selectedService?.priceTopMaster?.[selectedService?.time?.indexOf(durationNum)] ?? 310)
     : selectedDurationOption?.price;
+  const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
   const activePrice = slotFinalPrice > 0 ? slotFinalPrice : masterPriceForDuration || availablePrices[0] || 0;
   const activePriceLabel = activePrice > 0 ? `${activePrice} zł` : "—";
   const updateField = (name, value) => {
