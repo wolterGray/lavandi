@@ -373,7 +373,9 @@
     "description": "Transparent gross prices. Choose your session duration.",
     "empty": "No services for the selected duration.",
     "footer": "Gross prices · Card, BLIK and cash accepted on site",
-    "discount": "-{{percent}}%"
+    "discount": "-{{percent}}%",
+    "master": "Master",
+    "topMaster": "Top Master"
   },
   "lang": {
     "switcher": "Language"

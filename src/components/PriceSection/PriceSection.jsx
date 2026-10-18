@@ -5,31 +5,88 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import BookVisitButton from "../../ui/BookVisitButton";
 import { useTranslation } from "../../i18n/LanguageProvider";
 
-const times = ["30", "60", "75", "90", "120"];
+const ALL_TIMES = ["60", "75", "90", "120"];
+
+const getServicePrice = (service, timeStr, masterTier) => {
+  const timeNum = Number(timeStr);
+  const tierMap = masterTier === "topMaster" ? service.prices?.topMaster : service.prices?.master;
+  if (tierMap && typeof tierMap[timeNum] === "number") {
+    return tierMap[timeNum];
+  }
+
+  const timeIdx = service.time?.indexOf(timeNum);
+  if (timeIdx !== undefined && timeIdx >= 0) {
+    if (masterTier === "topMaster" && Array.isArray(service.priceTopMaster)) {
+      return service.priceTopMaster[timeIdx] ?? service.price?.[timeIdx];
+    }
+    return service.price?.[timeIdx];
+  }
+
+  return null;
+};
 
 function PriceSection({ services = [] }) {
   const { t } = useTranslation();
+  const [masterTier, setMasterTier] = useState("master");
   const [selectedTime, setSelectedTime] = useState("60");
 
-  const filtered = useMemo(
-    () => services.filter((s) => s.time?.includes(+selectedTime)),
-    [services, selectedTime]
-  );
-
-  const getDiscountedPrice = (price, discount = 0) => {
-    if (!price || !discount) return price;
-    return Math.round(price * (1 - discount / 100));
-  };
+  const filtered = useMemo(() => {
+    return services
+      .map((service) => {
+        const price = getServicePrice(service, selectedTime, masterTier);
+        if (price === null || price === undefined || price <= 0) return null;
+        return {
+          ...service,
+          activePrice: price,
+        };
+      })
+      .filter(Boolean);
+  }, [services, selectedTime, masterTier]);
 
   return (
     <section id="prices" className="section-padding bg-cream">
       <Container>
         <ScrollAnimationWrapper>
-          <SectionTitle label={t("pricing.label")} description={t("pricing.description")}>{t("pricing.title")}</SectionTitle>
+          <SectionTitle label={t("pricing.label")} description={t("pricing.description")}>
+            {t("pricing.title")}
+          </SectionTitle>
           <div className="spa-divider" />
 
+          {/* Master / Top Master Toggle */}
+          <div className="mb-6 flex justify-center">
+            <div className="inline-flex rounded-pill border border-border/50 bg-card/80 p-1 shadow-spa backdrop-blur-sm">
+              <button
+                type="button"
+                onClick={() => setMasterTier("master")}
+                aria-pressed={masterTier === "master"}
+                className={[
+                  "rounded-pill px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300",
+                  masterTier === "master"
+                    ? "bg-gold text-void shadow-spa font-extrabold"
+                    : "text-stone hover:text-gold",
+                ].join(" ")}
+              >
+                {t("pricing.master")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setMasterTier("topMaster")}
+                aria-pressed={masterTier === "topMaster"}
+                className={[
+                  "rounded-pill px-6 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-all duration-300",
+                  masterTier === "topMaster"
+                    ? "bg-gold text-void shadow-spa font-extrabold"
+                    : "text-stone hover:text-gold",
+                ].join(" ")}
+              >
+                {t("pricing.topMaster")}
+              </button>
+            </div>
+          </div>
+
+          {/* Duration Pills */}
           <div className="mb-8 flex flex-wrap justify-center gap-3">
-            {times.map((time) => {
+            {ALL_TIMES.map((time) => {
               const active = selectedTime === time;
               return (
                 <button
@@ -58,26 +115,25 @@ function PriceSection({ services = [] }) {
         ) : (
           <div className="card-gradient-border mx-auto max-w-3xl overflow-hidden rounded-card bg-surface shadow-spa">
             <ul className="divide-y divide-spa-brown/10">
-              {filtered.map((service, index) => {
-                const timeIdx = service.time.indexOf(+selectedTime);
-                const price = service.price?.[timeIdx];
-                const discount = service.discount ?? 0;
-                const finalPrice = getDiscountedPrice(price, discount);
-                return (
-                  <li key={service.slug}>
-                    <ScrollAnimationWrapper delay={index * 0.06} className="flex items-center justify-between gap-6 px-6 py-5 sm:px-8 sm:py-6">
-                      <h3 className="font-display text-lg text-milk sm:text-xl">{service.title}</h3>
-                      <div className="shrink-0 text-right">
-                        {discount > 0 && <span className="block text-xs text-muted line-through">{price} {t("common.pln")}</span>}
-                        <span className="text-lg font-bold tabular-nums text-gold sm:text-xl">{finalPrice} {t("common.pln")}</span>
-                      </div>
-                    </ScrollAnimationWrapper>
-                  </li>
-                );
-              })}
+              {filtered.map((service, index) => (
+                <li key={service.slug}>
+                  <ScrollAnimationWrapper
+                    delay={index * 0.05}
+                    className="flex items-center justify-between gap-6 px-6 py-5 sm:px-8 sm:py-6"
+                  >
+                    <h3 className="font-display text-lg text-milk sm:text-xl">{service.title}</h3>
+                    <div className="shrink-0 text-right">
+                      <span className="text-lg font-bold tabular-nums text-gold sm:text-xl">
+                        {service.activePrice} {t("common.pln")}
+                      </span>
+                    </div>
+                  </ScrollAnimationWrapper>
+                </li>
+              ))}
             </ul>
           </div>
         )}
+
         <ScrollAnimationWrapper delay={0.12} className="mt-10 flex justify-center">
           <BookVisitButton size="lg">{t("services.book")}</BookVisitButton>
         </ScrollAnimationWrapper>

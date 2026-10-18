@@ -373,7 +373,9 @@
     "description": "Przejrzyste ceny brutto. Wybierz czas trwania zabiegu.",
     "empty": "Brak usług dla wybranego czasu.",
     "footer": "Ceny brutto · Płatność kartą, BLIK i gotówką na miejscu",
-    "discount": "-{{percent}}%"
+    "discount": "-{{percent}}%",
+    "master": "Master",
+    "topMaster": "Top Master"
   },
   "lang": {
     "switcher": "Język"

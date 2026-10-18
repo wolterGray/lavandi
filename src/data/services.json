@@ -1,138 +1,243 @@
 [
   {
     "title": "Masaż klasyczny",
+    "slug": "masaz-klasyczny",
+    "img": "/services-img/1.webp",
+    "desc": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb.",
+    "seoTitle": "Masaż klasyczny — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
       75,
       90,
       120
     ],
     "price": [
-      170,
-      255,
-      310,
-      360,
-      450
+      200,
+      250,
+      280,
+      360
     ],
-    "desc": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb.",
-    "img": "/services-img/1.webp",
-    "discount": 18,
-    "slug": "masaz-klasyczny",
-    "seoTitle": "Masaż klasyczny — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Masaż klasyczny to sprawdzona metoda relaksu i regeneracji. Łagodzi napięcia, poprawia krążenie i rozluźnia mięśnie, dopasowując się do Twoich potrzeb. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      310,
+      350,
+      370,
+      470
+    ],
+    "prices": {
+      "master": {
+        "60": 200,
+        "75": 250,
+        "90": 280,
+        "120": 360
+      },
+      "topMaster": {
+        "60": 310,
+        "75": 350,
+        "90": 370,
+        "120": 470
+      }
+    }
   },
   {
     "title": "Masaż sportowy",
+    "slug": "masaz-sportowy",
+    "img": "/services-img/2.webp",
+    "desc": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga zapobiegać kontuzjom.",
+    "seoTitle": "Masaż sportowy — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga zapobiegać kontuzjom. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
       75,
       90,
       120
     ],
     "price": [
-      170,
-      255,
-      310,
-      360,
-      450
+      200,
+      250,
+      280,
+      360
     ],
-    "desc": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga zapobiegać kontuzjom.",
-    "img": "/services-img/2.webp",
-    "discount": 18,
-    "slug": "masaz-sportowy",
-    "seoTitle": "Masaż sportowy — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Intensywny masaż wspierający regenerację po wysiłku. Zmniejsza napięcia mięśni, poprawia elastyczność i pomaga zapobiegać kontuzjom. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      310,
+      350,
+      370,
+      470
+    ],
+    "prices": {
+      "master": {
+        "60": 200,
+        "75": 250,
+        "90": 280,
+        "120": 360
+      },
+      "topMaster": {
+        "60": 310,
+        "75": 350,
+        "90": 370,
+        "120": 470
+      }
+    }
   },
   {
     "title": "Masaż relaksacyjny",
+    "slug": "masaz-relaksacyjny",
+    "img": "/services-img/3.webp",
+    "desc": "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia.",
+    "seoTitle": "Masaż relaksacyjny — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
       75,
       90,
       120
     ],
     "price": [
-      170,
-      255,
-      310,
-      360,
-      450
+      200,
+      250,
+      280,
+      360
     ],
-    "desc": "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia.",
-    "img": "/services-img/3.webp",
-    "discount": 18,
-    "slug": "masaz-relaksacyjny",
-    "seoTitle": "Masaż relaksacyjny — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Delikatny masaż, który redukuje stres i napięcie. Płynne, rytmiczne ruchy wprowadzają ciało i umysł w stan głębokiego odprężenia. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      310,
+      350,
+      370,
+      470
+    ],
+    "prices": {
+      "master": {
+        "60": 200,
+        "75": 250,
+        "90": 280,
+        "120": 360
+      },
+      "topMaster": {
+        "60": 310,
+        "75": 350,
+        "90": 370,
+        "120": 470
+      }
+    }
   },
   {
     "title": "Masaż limfatyczny",
+    "slug": "masaz-limfatyczny",
+    "img": "/services-img/4.webp",
+    "desc": "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizmu.",
+    "seoTitle": "Masaż limfatyczny — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizmu. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
       75,
       90,
       120
     ],
     "price": [
-      170,
-      255,
-      310,
-      360,
-      450
+      200,
+      250,
+      280,
+      360
     ],
-    "desc": "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizmu.",
-    "img": "/services-img/4.webp",
-    "discount": 18,
-    "slug": "masaz-limfatyczny",
-    "seoTitle": "Masaż limfatyczny — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Terapia wspierająca układ limfatyczny. Pomaga redukować obrzęki, poprawia przepływ limfy i wspomaga proces detoksykacji organizmu. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      310,
+      350,
+      370,
+      470
+    ],
+    "prices": {
+      "master": {
+        "60": 200,
+        "75": 250,
+        "90": 280,
+        "120": 360
+      },
+      "topMaster": {
+        "60": 310,
+        "75": 350,
+        "90": 370,
+        "120": 470
+      }
+    }
   },
   {
     "title": "Masaż antycellulitowy",
+    "slug": "masaz-antycellulitowy",
+    "img": "/services-img/5.webp",
+    "desc": "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność.",
+    "seoTitle": "Masaż antycellulitowy — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
       75,
       90,
       120
     ],
     "price": [
-      170,
-      255,
-      310,
-      360,
-      450
+      200,
+      250,
+      280,
+      360
     ],
-    "desc": "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność.",
-    "img": "/services-img/5.webp",
-    "discount": 18,
-    "slug": "masaz-antycellulitowy",
-    "seoTitle": "Masaż antycellulitowy — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Zabieg ujędrniający skórę i poprawiający krążenie. Skutecznie wspiera walkę z cellulitem i przywraca skórze gładkość i elastyczność. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      310,
+      350,
+      370,
+      470
+    ],
+    "prices": {
+      "master": {
+        "60": 200,
+        "75": 250,
+        "90": 280,
+        "120": 360
+      },
+      "topMaster": {
+        "60": 310,
+        "75": 350,
+        "90": 370,
+        "120": 470
+      }
+    }
   },
   {
     "title": "Masaż twarzy i głowy",
+    "slug": "masaz-twarzy-i-glowy",
+    "img": "/services-img/6.webp",
+    "desc": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie.",
+    "seoTitle": "Masaż twarzy i głowy — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60
     ],
     "price": [
-      149,
-      220
+      330
     ],
-    "desc": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie.",
-    "img": "/services-img/6.webp",
-    "discount": 18,
-    "slug": "masaz-twarzy-i-glowy",
-    "seoTitle": "Masaż twarzy i głowy — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Relaksujący masaż łagodzący napięcia w okolicy głowy i twarzy. Poprawia krążenie, zmniejsza stres i wspiera ogólne samopoczucie. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      330
+    ],
+    "prices": {
+      "master": {
+        "60": 330
+      },
+      "topMaster": {
+        "60": 330
+      }
+    }
   },
   {
     "title": "Masaż autorski",
+    "slug": "masaz-autorski",
+    "img": "/services-img/7.webp",
+    "desc": "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji.",
+    "seoTitle": "Masaż autorski — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
       90,
       120
@@ -141,34 +246,50 @@
       490,
       590
     ],
-    "desc": "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji.",
-    "img": "/services-img/7.webp",
-    "discount": 18,
-    "slug": "masaz-autorski",
-    "seoTitle": "Masaż autorski — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Indywidualnie dopasowany masaż, łączący techniki klasyczne, relaksacyjne i sportowe. Idealny dla głębokiego relaksu i regeneracji. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      490,
+      590
+    ],
+    "prices": {
+      "master": {
+        "90": 490,
+        "120": 590
+      },
+      "topMaster": {
+        "90": 490,
+        "120": 590
+      }
+    }
   },
   {
-    "title": "Masaż dla dzieci",
+    "title": "Masaż dla dwojga",
+    "slug": "masaz-dla-dwojga",
+    "img": "/services-img/8.webp",
+    "desc": "Wyjątkowy rytuał relaksu we dwoje w nastrojowej atmosferze naszego salonu.",
+    "seoTitle": "Masaż dla dwojga — NUAR Warszawa | Masaż premium",
+    "seoDescription": "Wyjątkowy rytuał relaksu we dwoje w nastrojowej atmosferze naszego salonu. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7.",
+    "discount": 0,
     "time": [
-      30,
       60,
-      75,
-      90,
-      120
+      90
     ],
     "price": [
-      170,
-      250,
-      310,
-      360,
-      450
+      500,
+      650
     ],
-    "desc": "Delikatny masaż wspierający regenerację i redukcję stresu, szczególnie u aktywnych dzieci i młodzieży. Bezpieczny i korzystny dla zdrowia. Dla dzieci od 5 do 18 lat.",
-    "img": "/services-img/9.webp",
-    "discount": 18,
-    "slug": "masaz-dla-dzieci",
-    "seoTitle": "Masaż dla dzieci — NUAR Warszawa | Masaż premium",
-    "seoDescription": "Delikatny masaż wspierający regenerację i redukcję stresu, szczególnie u aktywnych dzieci i młodzieży. Bezpieczny i korzystny dla zdrowia. Dla dzieci od 5 do 18 lat. Zarezerwuj online w centrum Warszawy, ul. Świętojerska 5/7."
+    "priceTopMaster": [
+      500,
+      650
+    ],
+    "prices": {
+      "master": {
+        "60": 500,
+        "90": 650
+      },
+      "topMaster": {
+        "60": 500,
+        "90": 650
+      }
+    }
   }
 ]

@@ -373,7 +373,9 @@
     "description": "Прозорі ціни брутто. Оберіть тривалість сеансу.",
     "empty": "Немає послуг для обраного часу.",
     "footer": "Ціни брутто · Оплата карткою, BLIK та готівкою на місці",
-    "discount": "-{{percent}}%"
+    "discount": "-{{percent}}%",
+    "master": "Master",
+    "topMaster": "Top Master"
   },
   "lang": {
     "switcher": "Мова"

@@ -48,8 +48,8 @@ export default function ServicePage({ service }) {
   const formatPrice = (value) => `${value} ${t("common.pln")}`;
   const priceRows = service.time.map((minutes, index) => {
     const base = service.price[index];
-    const finalPrice = getDiscountedPrice(base, service.discount);
-    return { minutes, base, finalPrice };
+    const top = service.priceTopMaster?.[index];
+    return { minutes, base, top };
   });
 
   return (
@@ -107,24 +107,24 @@ export default function ServicePage({ service }) {
                 </p>
               </div>
 
-              {service.discount > 0 && (
-                <p className="mt-6 inline-flex w-fit rounded-pill border border-gold/25 bg-gold/[0.08] px-4 py-2 text-sm font-bold text-gold">
-                  {t("servicePage.discount", { percent: service.discount })}
-                </p>
-              )}
-
               <div className="mt-5 overflow-hidden rounded-card border border-border/60">
                 <div className="border-b border-border/60 px-4 py-2.5">
                   <h2 className="font-display text-xl text-milk">{t("servicePage.priceList")}</h2>
                 </div>
-                <ul className="grid divide-y divide-border/60 md:grid-cols-5 md:divide-x md:divide-y-0">
-                  {priceRows.map(({ minutes, base, finalPrice }) => (
+                <ul className="grid divide-y divide-border/60 md:grid-cols-4 md:divide-x md:divide-y-0">
+                  {priceRows.map(({ minutes, base, top }) => (
                     <li key={minutes} className="flex items-center justify-between gap-4 px-4 py-3 text-sm md:block md:px-3 md:py-3.5">
                       <span className="text-stone">{minutes} {t("common.min")}</span>
-                      <span className="text-right md:mt-1 md:block md:text-left">
-                        {service.discount > 0 && <span className="mr-2 text-muted line-through md:mr-1 md:block">{formatPrice(base)}</span>}
-                        <span className="font-bold text-gold">{formatPrice(finalPrice)}</span>
-                      </span>
+                      <div className="text-right md:mt-1 md:text-left">
+                        {top && top !== base ? (
+                          <>
+                            <span className="block font-bold text-gold">{formatPrice(base)} <span className="text-xs font-normal text-muted">({t("pricing.master") || "Master"})</span></span>
+                            <span className="block text-xs font-bold text-milk">{formatPrice(top)} <span className="font-normal text-muted">({t("pricing.topMaster") || "Top"})</span></span>
+                          </>
+                        ) : (
+                          <span className="font-bold text-gold">{formatPrice(base)}</span>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
