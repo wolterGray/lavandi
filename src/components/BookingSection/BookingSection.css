@@ -50,6 +50,9 @@
 .booking-select-icon { position: absolute; z-index: 1; left: 14px; bottom: 17px; color: var(--booking-muted); pointer-events: none; }
 .booking-select-icon + select { padding-left: 42px; }
 .booking-duration { border: 0; margin: 0; padding: 0; }
+.booking-field, .booking-schedule-block { transition: opacity .22s ease; }
+.booking-field--disabled, .booking-block--disabled { opacity: .35; pointer-events: none; user-select: none; }
+.booking-field--disabled select, .booking-field--disabled button, .booking-block--disabled button, .booking-block--disabled input { cursor: not-allowed !important; pointer-events: none !important; }
 .booking-segments { display: flex; width: 100%; min-width: 0; height: 52px; overflow: hidden; border: 1px solid var(--booking-border); border-radius: 6px; }
 .booking-segments::-webkit-scrollbar { display: none; }
 .booking-segments button { display: flex; flex: 1 1 0; align-items: center; justify-content: center; gap: 4px; min-width: 64px; border: 0; border-right: 1px solid var(--booking-border); color: #d8cfd3; background: var(--booking-field); }
