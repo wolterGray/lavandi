@@ -39,6 +39,11 @@ function getServiceDurations(service) {
 }
 function normalizeSlotTime(value) { return String(value ?? "").trim().slice(0, 5); }
 function getSlotKey(slot) { return `${slot.startTime}|${slot.master}`; }
+const NORMALIZE_MASTER_DISPLAY = { "ольга": "Olha", "максим": "Max", "olga": "Olha" };
+function formatMasterDisplay(value) {
+  const raw = String(value ?? "").trim();
+  return NORMALIZE_MASTER_DISPLAY[raw.toLowerCase()] || raw;
+}
 function getSlotColumns() {
   if (typeof window === "undefined") return 8;
   if (window.innerWidth <= 360) return 2;
@@ -138,9 +143,13 @@ export default function BookingSection() {
     return Array.from({ length: Math.ceil(visibleSlots.length / pageSize) }, (_, index) => visibleSlots.slice(index * pageSize, (index + 1) * pageSize));
   }, [slotColumns, visibleSlots]);
   const availablePrices = useMemo(() => [...new Set(slots.map((slot) => Number(slot.finalPrice)).filter((price) => price > 0))].sort((a, b) => a - b), [slots]);
-  const availablePriceLabel = availablePrices.length === 1 ? `${availablePrices[0]} zł` : availablePrices.length > 1 ? `${availablePrices[0]}–${availablePrices.at(-1)} zł` : "";
+  const selectedDurationOption = useMemo(
+    () => durationOptions.find((item) => String(item.minutes) === String(form.durationMinutes)),
+    [durationOptions, form.durationMinutes]
+  );
   const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
-  const activePriceLabel = slotFinalPrice > 0 ? `${slotFinalPrice} zł` : availablePriceLabel || "—";
+  const activePrice = slotFinalPrice > 0 ? slotFinalPrice : selectedDurationOption?.price || availablePrices[0] || 0;
+  const activePriceLabel = activePrice > 0 ? `${activePrice} zł` : "—";
   const updateField = (name, value) => {
     setSubmitState((current) => ({ ...current, error: "", success: false }));
     setForm((current) => ({ ...current, [name]: value, ...(["serviceSlug", "durationMinutes", "preferredDate", "preferredMaster"].includes(name) ? { preferredTime: "" } : null), ...(["serviceSlug", "durationMinutes"].includes(name) ? { preferredMaster: "" } : null) }));
@@ -224,7 +233,7 @@ export default function BookingSection() {
           {!siteBookingEnabled ? (
             <div className="booking-state"><CalendarDays aria-hidden="true" /><h3>{copy.disabledTitle}</h3><p>{t("booking.disabledMessage")}</p><Button href={`tel:${contact.phone}`} size="lg">{copy.callNow}: {contact.phoneDisplay}</Button></div>
           ) : submitState.success ? (
-            <div className="booking-state" role="status"><span className="booking-success-mark"><Check /></span><h3>{t("booking.form.successTitle")}</h3><p>{t("booking.form.successMessage")}</p><div className="booking-confirmation-card"><strong>{selectedService?.title}</strong><span>{formattedDate} · {selectedSlot?.startTime} · {selectedSlot?.master}</span></div><Button size="sm" type="button" onClick={resetAfterSuccess}>{t("booking.form.successClose")}</Button></div>
+            <div className="booking-state" role="status"><span className="booking-success-mark"><Check /></span><h3>{t("booking.form.successTitle")}</h3><p>{t("booking.form.successMessage")}</p><div className="booking-confirmation-card"><strong>{selectedService?.title}</strong><span>{formattedDate} · {selectedSlot?.startTime} · {formatMasterDisplay(selectedSlot?.master)}</span></div><Button size="sm" type="button" onClick={resetAfterSuccess}>{t("booking.form.successClose")}</Button></div>
           ) : <>
             <div className="booking-progress"><button className={step === 1 ? "is-active" : "is-complete"} type="button" onClick={() => setStep(1)}><span>{step === 2 ? <Check size={14} /> : "1"}</span>{copy.dayStep}</button><i /><button className={step === 2 ? "is-active" : ""} type="button" disabled={step === 1} onClick={() => setStep(2)}><span>2</span>{copy.detailsStep}</button></div>
             {step === 1 ? (
@@ -232,13 +241,13 @@ export default function BookingSection() {
                 <div className="booking-selection-grid">
                   <Field id="booking-service" label={t("booking.form.service")}><select id="booking-service" value={form.serviceSlug} onChange={(event) => updateField("serviceSlug", event.target.value)}>{localizedServices.map((service) => <option key={service.slug} value={service.slug}>{service.title}</option>)}</select></Field>
                   <fieldset className="booking-field booking-duration"><legend>{t("booking.form.duration")}</legend><div className="booking-segments">{durationOptions.map((item) => <button aria-pressed={String(item.minutes) === String(form.durationMinutes)} className={String(item.minutes) === String(form.durationMinutes) ? "is-active" : ""} key={item.minutes} type="button" onClick={() => updateField("durationMinutes", String(item.minutes))}><strong>{item.minutes}</strong><span>min</span></button>)}</div></fieldset>
-                  <Field id="booking-master" label={copy.master}><select id="booking-master" value={form.preferredMaster} onChange={(event) => updateField("preferredMaster", event.target.value)}><option value="">{copy.anyMaster}</option>{knownMasters.map((master) => <option key={master} value={master}>{master}</option>)}</select></Field>
+                  <Field id="booking-master" label={copy.master}><select id="booking-master" value={form.preferredMaster} onChange={(event) => updateField("preferredMaster", event.target.value)}><option value="">{copy.anyMaster}</option>{knownMasters.map((master) => <option key={master} value={master}>{formatMasterDisplay(master)}</option>)}</select></Field>
                 </div>
                 <div className="booking-schedule">
                   <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input ref={dateInputRef} min={getTomorrowInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
                   <div className="booking-date-row"><button aria-label="Previous dates" disabled={!dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; return <button aria-pressed={form.preferredDate === dateValue} className={form.preferredDate === dateValue ? "is-active" : ""} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label="Next dates" disabled={!dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{slotsLoading ? <small>{t("booking.form.slotsLoading")}</small> : <div className="booking-slot-controls"><button aria-label="Previous times" disabled={!slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label="Next times" disabled={!slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
-                  <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || t("booking.form.noSlots")}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{slot.master} · {Number(slot.finalPrice) || 0} zł</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
+                  <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || t("booking.form.noSlots")}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterDisplay(slot.master)} · {Number(slot.finalPrice) || 0} zł</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
                 </div>
                 {submitState.error ? <p className="booking-error" role="alert">{submitState.error}</p> : null}
                 <div className="booking-actions booking-actions--step-one">
@@ -257,7 +266,7 @@ export default function BookingSection() {
                   <Field id="booking-email" label={t("booking.form.email")} optional={t("booking.form.optional")}><input id="booking-email" autoComplete="email" type="email" value={form.clientEmail} onChange={(event) => updateField("clientEmail", event.target.value)} /></Field>
                   <Field id="booking-note" label={t("booking.form.note")} optional={t("booking.form.optional")}><textarea id="booking-note" rows="3" value={form.note} onChange={(event) => updateField("note", event.target.value)} /></Field>
                 </div>{submitState.error ? <p className="booking-error" role="alert">{submitState.error}</p> : null}</div>
-                <aside className="booking-summary"><span className="booking-summary__eyebrow">{copy.summary}</span><h3>{selectedService?.title}</h3><dl><div><dt><Clock3 size={16} />{t("booking.form.duration")}</dt><dd>{form.durationMinutes} min</dd></div><div><dt><CalendarDays size={16} />{copy.date}</dt><dd>{formattedDate}<br />{selectedSlot?.startTime}</dd></div><div><dt><UserRound size={16} />{copy.master}</dt><dd>{selectedSlot?.master}</dd></div><div className="booking-summary__price"><dt>{copy.price}</dt><dd>{slotFinalPrice > 0 ? `${slotFinalPrice} zł` : "—"}</dd></div></dl><p>{copy.requestNote}</p><Button className="booking-submit" disabled={submitState.loading} size="lg" type="submit">{submitState.loading ? t("booking.form.submitting") : t("booking.form.submit")}</Button></aside>
+                <aside className="booking-summary"><span className="booking-summary__eyebrow">{copy.summary}</span><h3>{selectedService?.title}</h3><dl><div><dt><Clock3 size={16} />{t("booking.form.duration")}</dt><dd>{form.durationMinutes} min</dd></div><div><dt><CalendarDays size={16} />{copy.date}</dt><dd>{formattedDate}<br />{selectedSlot?.startTime}</dd></div><div><dt><UserRound size={16} />{copy.master}</dt><dd>{formatMasterDisplay(selectedSlot?.master)}</dd></div><div className="booking-summary__price"><dt>{copy.price}</dt><dd>{slotFinalPrice > 0 ? `${slotFinalPrice} zł` : "—"}</dd></div></dl><p>{copy.requestNote}</p><Button className="booking-submit" disabled={submitState.loading} size="lg" type="submit">{submitState.loading ? t("booking.form.submitting") : t("booking.form.submit")}</Button></aside>
               </div>
             )}
           </>}
