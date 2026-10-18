@@ -44,9 +44,22 @@ export function clearOverrides() {
   localStorage.removeItem(CONTENT_STORAGE_KEY);
 }
 
+export function isServicesCatalogCurrent(services) {
+  if (!Array.isArray(services) || services.length === 0) return false;
+  const hasStalePrice = services.some(
+    (s) => (Number(s.discount) || 0) > 0 || (Array.isArray(s.price) && s.price.includes(255))
+  );
+  const hasDlaDwojga = services.some((s) => s.slug === "masaz-dla-dwojga");
+  return !hasStalePrice && hasDlaDwojga;
+}
+
 export function mergeContent(overrides = loadOverrides()) {
+  const services = isServicesCatalogCurrent(overrides?.services)
+    ? overrides.services
+    : servicesDefault;
+
   return {
-    services: overrides.services ?? servicesDefault,
+    services,
     gallery: overrides.gallery ?? galleryDefault,
     cosmetics: hasUsableCachedCatalog(overrides) ? overrides.cosmetics : cosmeticsDefault,
     featuredCosmeticIds: overrides.featuredCosmeticIds ?? DEFAULT_FEATURED_COSMETIC_IDS,

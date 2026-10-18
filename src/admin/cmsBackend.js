@@ -1,4 +1,4 @@
-const BACKEND_URL = String(import.meta.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
+const BACKEND_URL = String(import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl").replace(/\/$/, "");
 const TOKEN_KEY = "nuar_admin_crm_token";
 const USER_KEY = "nuar_admin_crm_user";
 const FETCH_RETRY_DELAYS_MS = [250, 900];

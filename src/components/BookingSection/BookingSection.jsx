@@ -39,7 +39,7 @@ function getServiceDurations(service) {
 }
 function normalizeSlotTime(value) { return String(value ?? "").trim().slice(0, 5); }
 function getSlotKey(slot) { return `${slot.startTime}|${slot.master}`; }
-const NORMALIZE_MASTER_DISPLAY = { "ольга": "Olha", "максим": "Max", "olga": "Olha" };
+const NORMALIZE_MASTER_DISPLAY = { "ольга": "Olha", "максим": "Max", "olga": "Olha", "max": "Max" };
 function formatMasterDisplay(value) {
   const raw = String(value ?? "").trim();
   return NORMALIZE_MASTER_DISPLAY[raw.toLowerCase()] || raw;
@@ -98,11 +98,27 @@ export default function BookingSection() {
     setSlotsLoading(true); setSlotsError("");
     fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedService.title, serviceSlug: selectedService.slug })
       .then((data) => {
-        if (controller.signal.aborted) return;
-        const nextSlots = Array.isArray(data?.slots) ? [...data.slots].sort((a, b) => normalizeSlotTime(a.startTime).localeCompare(normalizeSlotTime(b.startTime)) || a.master.localeCompare(b.master)) : [];
+        const rawSlots = Array.isArray(data?.slots) ? data.slots : [];
+        const nextSlots = rawSlots.map((slot) => {
+          const master = formatMasterDisplay(slot.master);
+          const isTopMaster = /top/i.test(master) || /olha/i.test(master);
+          const duration = Number(form.durationMinutes) || 60;
+          const calculatedPrice = isTopMaster
+            ? (selectedService?.prices?.topMaster?.[duration] ?? (duration === 60 ? 310 : duration === 75 ? 350 : duration === 90 ? 370 : 470))
+            : (selectedService?.prices?.master?.[duration] ?? (duration === 60 ? 200 : duration === 75 ? 250 : duration === 90 ? 280 : 360));
+
+          const finalPrice = calculatedPrice > 0 ? calculatedPrice : Number(slot.finalPrice) || 200;
+          return {
+            ...slot,
+            master,
+            basePrice: finalPrice,
+            finalPrice,
+          };
+        }).sort((a, b) => normalizeSlotTime(a.startTime).localeCompare(normalizeSlotTime(b.startTime)) || a.master.localeCompare(b.master));
+
         setSlots(nextSlots);
         const apiMasters = Array.isArray(data?.masters) && data.masters.length
-          ? data.masters.map((m) => String(m).trim()).filter(Boolean)
+          ? data.masters.map(formatMasterDisplay).filter(Boolean)
           : [...new Set(nextSlots.map((slot) => String(slot.master ?? "").trim()).filter(Boolean))];
         if (apiMasters.length) {
           setKnownMasters((current) => [...new Set([...current, ...apiMasters])]);
@@ -147,8 +163,12 @@ export default function BookingSection() {
     () => durationOptions.find((item) => String(item.minutes) === String(form.durationMinutes)),
     [durationOptions, form.durationMinutes]
   );
-  const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
-  const activePrice = slotFinalPrice > 0 ? slotFinalPrice : selectedDurationOption?.price || availablePrices[0] || 0;
+  const selectedMasterIsTop = /top/i.test(form.preferredMaster) || /olha|olga/i.test(form.preferredMaster);
+  const durationNum = Number(form.durationMinutes) || 60;
+  const masterPriceForDuration = selectedMasterIsTop
+    ? (selectedService?.prices?.topMaster?.[durationNum] ?? selectedService?.priceTopMaster?.[selectedService?.time?.indexOf(durationNum)] ?? 310)
+    : selectedDurationOption?.price;
+  const activePrice = slotFinalPrice > 0 ? slotFinalPrice : masterPriceForDuration || availablePrices[0] || 0;
   const activePriceLabel = activePrice > 0 ? `${activePrice} zł` : "—";
   const updateField = (name, value) => {
     setSubmitState((current) => ({ ...current, error: "", success: false }));

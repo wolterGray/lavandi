@@ -55,10 +55,16 @@ export function LanguageProvider({ children }) {
 
   const localizedServices = useMemo(
     () =>
-      servicesBase.map((service) => ({
-        ...service,
-        ...getServiceTexts(lang, service.slug, t),
-      })),
+      servicesBase.map((service) => {
+        const texts = getServiceTexts(lang, service.slug, t);
+        return {
+          ...service,
+          title: (texts?.title && typeof texts.title === "string" && texts.title.trim()) || service.title,
+          desc: (texts?.desc && typeof texts.desc === "string" && texts.desc.trim()) || service.desc,
+          seoTitle: (texts?.seoTitle && typeof texts.seoTitle === "string" && texts.seoTitle.trim()) || service.seoTitle,
+          seoDescription: (texts?.seoDescription && typeof texts.seoDescription === "string" && texts.seoDescription.trim()) || service.seoDescription,
+        };
+      }),
     [t, lang, servicesBase, getServiceTexts]
   );
 
