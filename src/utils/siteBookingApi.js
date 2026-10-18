@@ -26,3 +26,29 @@ export const fetchSiteBookingSlots = (payload) =>
 
 export const submitSiteBookingRequest = (payload) =>
   publicSiteBookingRequest("/api/public/site-booking-submit", payload);
+
+export async function fetchSiteBookingMasters(availabilityFallback) {
+  if (!BACKEND_URL) return { masters: [] };
+
+  try {
+    const response = await fetch(`${BACKEND_URL}/api/public/site-booking-masters`);
+    const payload = await response.json().catch(() => null);
+    if (response.ok && payload?.success !== false) {
+      return payload?.data ?? payload;
+    }
+  } catch {
+    // fall through to availability lookup
+  }
+
+  if (!availabilityFallback) return { masters: [] };
+
+  try {
+    const data = await fetchSiteBookingSlots(availabilityFallback);
+    const masters = Array.isArray(data?.masters) && data.masters.length
+      ? data.masters.map((master) => String(master).trim()).filter(Boolean)
+      : [...new Set((data?.slots ?? []).map((slot) => String(slot?.master ?? "").trim()).filter(Boolean))];
+    return { masters };
+  } catch {
+    return { masters: [] };
+  }
+}
