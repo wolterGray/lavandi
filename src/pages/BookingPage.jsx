@@ -25,7 +25,7 @@ export default function BookingPage() {
   }, []);
 
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[#0d0910] text-[#f7f1f3]">
+    <div className="booking-page relative flex min-h-screen flex-col overflow-x-hidden text-[#f7f1f3]">
       <Helmet>
         <html lang={lang === "uk" ? "uk" : lang} />
         <title>Online Booking | Rezerwacja wizyty — NUAR Warszawa</title>
@@ -35,16 +35,6 @@ export default function BookingPage() {
         />
         <link rel="canonical" href={`${SITE_URL}/booking`} />
       </Helmet>
-
-      {/* Full-screen edge-to-edge salon background covering entire viewport */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
-        <img
-          src="/booking/booking.jpg"
-          alt=""
-          className="h-full w-full object-cover object-center scale-105"
-        />
-        <div className="absolute inset-0 bg-[#0a060b]/75" />
-      </div>
 
       <Header navItems={navItems} linkToHome={true} transparent={true} hideBookButton={true} />
 

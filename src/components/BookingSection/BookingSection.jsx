@@ -165,22 +165,10 @@ export default function BookingSection({ isStandalone = false }) {
     fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedService.title, serviceSlug: selectedService.slug })
       .then((data) => {
         const rawSlots = Array.isArray(data?.slots) ? data.slots : [];
-        const nextSlots = rawSlots.map((slot) => {
-          const master = formatMasterDisplay(slot.master);
-          const isTopMaster = /top/i.test(master) || /olha/i.test(master);
-          const duration = Number(form.durationMinutes) || 60;
-          const calculatedPrice = isTopMaster
-            ? (selectedService?.prices?.topMaster?.[duration] ?? (duration === 60 ? 310 : duration === 75 ? 350 : duration === 90 ? 370 : 470))
-            : (selectedService?.prices?.master?.[duration] ?? (duration === 60 ? 200 : duration === 75 ? 250 : duration === 90 ? 280 : 360));
-
-          const finalPrice = calculatedPrice > 0 ? calculatedPrice : Number(slot.finalPrice) || 200;
-          return {
-            ...slot,
-            master,
-            basePrice: finalPrice,
-            finalPrice,
-          };
-        }).sort((a, b) => normalizeSlotTime(a.startTime).localeCompare(normalizeSlotTime(b.startTime)) || a.master.localeCompare(b.master));
+        const nextSlots = rawSlots.map((slot) => ({
+          ...slot,
+          master: formatMasterDisplay(slot.master),
+        })).sort((a, b) => normalizeSlotTime(a.startTime).localeCompare(normalizeSlotTime(b.startTime)) || a.master.localeCompare(b.master));
 
         setSlots(nextSlots);
         const apiMasters = Array.isArray(data?.masters) && data.masters.length
@@ -224,10 +212,6 @@ export default function BookingSection({ isStandalone = false }) {
     const pageSize = slotColumns * 2;
     return Array.from({ length: Math.ceil(visibleSlots.length / pageSize) }, (_, index) => visibleSlots.slice(index * pageSize, (index + 1) * pageSize));
   }, [slotColumns, visibleSlots]);
-  const selectedDurationOption = useMemo(
-    () => durationOptions.find((item) => String(item.minutes) === String(form.durationMinutes)),
-    [durationOptions, form.durationMinutes]
-  );
   const hasMaster = Boolean(form.preferredMaster);
   const hasService = hasMaster && Boolean(form.serviceSlug);
   const hasDuration = hasService && Boolean(form.durationMinutes);
@@ -239,16 +223,8 @@ export default function BookingSection({ isStandalone = false }) {
   const isPhoneValid = validateInternationalPhoneInput(form.clientPhone).ok;
   const isReadyToSubmit = hasName && isPhoneValid && !submitState.loading;
 
-  const selectedMasterIsTop = /top/i.test(form.preferredMaster) || /olha|olga|ольга/i.test(form.preferredMaster);
-  const durationNum = Number(form.durationMinutes) || 0;
-  const masterPriceForDuration = hasDuration && durationNum > 0
-    ? (selectedMasterIsTop
-        ? (selectedService?.prices?.topMaster?.[durationNum] ?? selectedService?.priceTopMaster?.[selectedService?.time?.indexOf(durationNum)] ?? 310)
-        : (selectedService?.prices?.master?.[durationNum] ?? selectedDurationOption?.price ?? 200))
-    : 0;
   const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
-  const activePrice = slotFinalPrice > 0 ? slotFinalPrice : masterPriceForDuration;
-  const activePriceLabel = activePrice > 0 ? `${activePrice} zł` : "—";
+  const activePriceLabel = slotFinalPrice > 0 ? `${slotFinalPrice} zł` : "—";
   const updateField = (name, value) => {
     setSubmitState((current) => ({ ...current, error: "", success: false }));
     setForm((current) => ({
@@ -317,12 +293,13 @@ export default function BookingSection({ isStandalone = false }) {
     setForm((current) => ({ ...current, clientEmail: "", clientName: "", clientPhone: "", note: "", preferredTime: "" }));
   };
   const formattedDate = form.preferredDate ? new Intl.DateTimeFormat(LOCALES[lang] ?? LOCALES.pl, { day: "numeric", month: "long", year: "numeric" }).format(fromInputDate(form.preferredDate)) : "";
+  const Shell = isStandalone ? "div" : ScrollAnimationWrapper;
 
   return (
     <section id="contact" className={`booking-section ${isStandalone ? "booking-section--standalone" : ""}`.trim()}>
-      <SiteImage src="/booking/booking.jpg" alt="" fill className="booking-section__image" loading="lazy" aria-hidden="true" />
-      <div className="booking-section__veil" />
-      <Container className="booking-section__container"><ScrollAnimationWrapper className="booking-shell">
+      {!isStandalone ? <SiteImage src="/booking/booking.jpg" alt="" fill className="booking-section__image" loading="lazy" aria-hidden="true" /> : null}
+      {!isStandalone ? <div className="booking-section__veil" /> : null}
+      <Container className="booking-section__container"><Shell className="booking-shell">
         <header className="booking-intro">
           {!isStandalone && <p className="section-label text-gold">{copy.sectionLabel}</p>}
           <h2>{copy.title}</h2>
@@ -376,7 +353,7 @@ export default function BookingSection({ isStandalone = false }) {
                   </div>
                   <div className={`booking-schedule-block ${!hasDate ? "booking-block--disabled" : ""}`}>
                     <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{slotsLoading ? <small>{copy.slotsLoading}</small> : <div className="booking-slot-controls"><button aria-label="Previous times" disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label="Next times" disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
-                    <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master)} · {Number(slot.finalPrice) || 0} zł</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
+                    <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master)}</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
                   </div>
                 </div>
                 {submitState.error ? <p className="booking-error" role="alert">{submitState.error}</p> : null}
@@ -513,7 +490,7 @@ export default function BookingSection({ isStandalone = false }) {
             )}
           </>}
         </form>
-      </ScrollAnimationWrapper></Container>
+      </Shell></Container>
     </section>
   );
 }

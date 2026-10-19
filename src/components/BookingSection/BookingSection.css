@@ -1,3 +1,21 @@
+.booking-page {
+  position: relative;
+  isolation: isolate;
+  min-height: 100dvh;
+  background: transparent;
+}
+
+.booking-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(rgba(10, 6, 11, 0.76), rgba(10, 6, 11, 0.82)), url("/booking/booking.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .booking-section {
   --booking-bg: #0d0910;
   --booking-panel: rgba(17, 12, 19, 0.96);
