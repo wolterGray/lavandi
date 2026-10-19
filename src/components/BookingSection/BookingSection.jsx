@@ -85,7 +85,7 @@ function addDays(value, amount) {
   date.setDate(date.getDate() + amount);
   return toInputDate(date);
 }
-function getTomorrowInputDate() { return addDays(new Date(), 1); }
+function getTodayInputDate() { return toInputDate(new Date()); }
 function getServiceDurations(service) {
   return (service?.time ?? []).map((minutes, index) => ({ minutes: Number(minutes), price: Number(service?.price?.[index]) || 0 })).filter((item) => item.minutes > 30);
 }
@@ -123,7 +123,7 @@ export default function BookingSection({ isStandalone = false }) {
   const datesRef = useRef(null);
   const slotsRef = useRef(null);
   const [step, setStep] = useState(1);
-  const [dateWindowStart, setDateWindowStart] = useState(getTomorrowInputDate);
+  const [dateWindowStart, setDateWindowStart] = useState(getTodayInputDate);
   const [dateScroll, setDateScroll] = useState({ left: false, right: true });
   const [slotScroll, setSlotScroll] = useState({ left: false, right: false });
   const [slotColumns, setSlotColumns] = useState(getSlotColumns);
@@ -348,7 +348,7 @@ export default function BookingSection({ isStandalone = false }) {
                 </div>
                 <div className="booking-schedule">
                   <div className={`booking-schedule-block ${!hasDuration ? "booking-block--disabled" : ""}`}>
-                    <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTomorrowInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
+                    <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTodayInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
                     <div className="booking-date-row"><button aria-label="Previous dates" disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label="Next dates" disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   </div>
                   <div className={`booking-schedule-block ${!hasDate ? "booking-block--disabled" : ""}`}>
