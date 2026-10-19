@@ -6,7 +6,7 @@ import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
 import { useTranslation } from "../../i18n/LanguageProvider";
 import { useContent } from "../../context/ContentProvider";
 import Button from "../../ui/Button";
-import { fetchSiteBookingSlots, submitSiteBookingRequest } from "../../utils/siteBookingApi";
+import { fetchSiteBookingMasters, fetchSiteBookingSlots, submitSiteBookingRequest } from "../../utils/siteBookingApi";
 import { defaultPhonePlaceholder, formatInternationalPhoneInput, validateInternationalPhoneInput } from "../../utils/internationalPhone";
 import "./BookingSection.css";
 
@@ -86,8 +86,16 @@ function addDays(value, amount) {
   return toInputDate(date);
 }
 function getTodayInputDate() { return toInputDate(new Date()); }
-function getServiceDurations(service) {
-  return (service?.time ?? []).map((minutes, index) => ({ minutes: Number(minutes), price: Number(service?.price?.[index]) || 0 })).filter((item) => item.minutes > 30);
+function getServiceDurations(service, isTopMaster = false) {
+  return (service?.time ?? [])
+    .map((minutes, index) => {
+      const min = Number(minutes);
+      const topPrice = Number(service?.priceTopMaster?.[index] ?? service?.prices?.topMaster?.[min]);
+      const regularPrice = Number(service?.price?.[index] ?? service?.prices?.master?.[min]);
+      const price = isTopMaster && topPrice > 0 ? topPrice : (regularPrice > 0 ? regularPrice : topPrice || 0);
+      return { minutes: min, price };
+    })
+    .filter((item) => item.minutes >= 30);
 }
 function normalizeSlotTime(value) { return String(value ?? "").trim().slice(0, 5); }
 function getSlotKey(slot) { return `${slot.startTime}|${slot.master}`; }
@@ -103,6 +111,26 @@ function formatMasterWithTier(value) {
   return isTopMaster ? `${name} (Top Master)` : `${name} (Master)`;
 }
 const DEFAULT_KNOWN_MASTERS = ["Olha", "Max"];
+const DEFAULT_SERVICES_BY_MASTER = {
+  Olha: [
+    "masaz-klasyczny",
+    "masaz-relaksacyjny",
+    "masaz-limfatyczny",
+    "masaz-antycellulitowy",
+    "masaz-twarzy-i-glowy",
+    "masaz-autorski",
+    "masaz-dla-dwojga",
+  ],
+  Max: [
+    "masaz-klasyczny",
+    "masaz-sportowy",
+    "masaz-relaksacyjny",
+    "masaz-limfatyczny",
+    "masaz-antycellulitowy",
+    "masaz-autorski",
+    "masaz-dla-dwojga",
+  ],
+};
 function getSlotColumns() {
   if (typeof window === "undefined") return 8;
   if (window.innerWidth <= 360) return 2;
@@ -128,6 +156,7 @@ export default function BookingSection({ isStandalone = false }) {
   const [slotScroll, setSlotScroll] = useState({ left: false, right: false });
   const [slotColumns, setSlotColumns] = useState(getSlotColumns);
   const [knownMasters, setKnownMasters] = useState(DEFAULT_KNOWN_MASTERS);
+  const [servicesByMaster, setServicesByMaster] = useState(DEFAULT_SERVICES_BY_MASTER);
   const [availabilityVersion, setAvailabilityVersion] = useState(0);
   const [form, setForm] = useState({ clientEmail: "", clientName: "", clientPhone: "", durationMinutes: "", note: "", preferredDate: "", preferredMaster: "", preferredTime: "", serviceSlug: "" });
   const [slots, setSlots] = useState([]);
@@ -135,11 +164,43 @@ export default function BookingSection({ isStandalone = false }) {
   const [slotsError, setSlotsError] = useState("");
   const [submitState, setSubmitState] = useState({ error: "", loading: false, success: false });
 
+  useEffect(() => {
+    fetchSiteBookingMasters()
+      .then((data) => {
+        const apiMasters = Array.isArray(data?.masters) && data.masters.length
+          ? data.masters.map(formatMasterDisplay).filter(Boolean)
+          : [];
+        if (apiMasters.length) {
+          setKnownMasters((current) => [...new Set([...current, ...apiMasters])]);
+        }
+        if (data?.servicesByMaster && typeof data.servicesByMaster === "object") {
+          setServicesByMaster((current) => ({ ...current, ...data.servicesByMaster }));
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const isSelectedMasterTop = useMemo(() => {
+    const raw = String(form.preferredMaster ?? "");
+    return /top/i.test(raw) || /olha|olga|ольга/i.test(raw);
+  }, [form.preferredMaster]);
+
+  const availableServices = useMemo(() => {
+    if (!form.preferredMaster) return localizedServices;
+    const masterKey = formatMasterDisplay(form.preferredMaster);
+    const allowed = servicesByMaster[masterKey] ?? DEFAULT_SERVICES_BY_MASTER[masterKey];
+    if (!Array.isArray(allowed) || allowed.length === 0) return localizedServices;
+    return localizedServices.filter((service) => allowed.includes(service.slug));
+  }, [form.preferredMaster, localizedServices, servicesByMaster]);
+
   const selectedService = useMemo(
-    () => (form.serviceSlug ? localizedServices.find((service) => service.slug === form.serviceSlug) ?? null : null),
-    [form.serviceSlug, localizedServices]
+    () => (form.serviceSlug ? availableServices.find((service) => service.slug === form.serviceSlug) ?? null : null),
+    [form.serviceSlug, availableServices]
   );
-  const durationOptions = useMemo(() => (selectedService ? getServiceDurations(selectedService) : []), [selectedService]);
+  const durationOptions = useMemo(
+    () => (selectedService ? getServiceDurations(selectedService, isSelectedMasterTop) : []),
+    [selectedService, isSelectedMasterTop]
+  );
   const defaultDurationPlaceholders = useMemo(() => [{ minutes: 60 }, { minutes: 75 }, { minutes: 90 }, { minutes: 120 }], []);
   const displayDurations = durationOptions.length ? durationOptions : defaultDurationPlaceholders;
   const dateOptions = useMemo(() => Array.from({ length: DAYS_IN_CAROUSEL }, (_, index) => addDays(dateWindowStart, index)), [dateWindowStart]);
@@ -224,14 +285,36 @@ export default function BookingSection({ isStandalone = false }) {
   const isReadyToSubmit = hasName && isPhoneValid && !submitState.loading;
 
   const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
-  const activePriceLabel = slotFinalPrice > 0 ? `${slotFinalPrice} zł` : "—";
+  const estimatedPrice = useMemo(() => {
+    if (slotFinalPrice > 0) return slotFinalPrice;
+    if (!form.durationMinutes || !durationOptions.length) return 0;
+    const match = durationOptions.find((d) => String(d.minutes) === String(form.durationMinutes));
+    return match?.price || 0;
+  }, [slotFinalPrice, form.durationMinutes, durationOptions]);
+  const activePriceLabel = (slotFinalPrice > 0 ? slotFinalPrice : estimatedPrice) > 0
+    ? `${slotFinalPrice > 0 ? slotFinalPrice : estimatedPrice} zł`
+    : "—";
+
   const updateField = (name, value) => {
     setSubmitState((current) => ({ ...current, error: "", success: false }));
-    setForm((current) => ({
-      ...current,
-      [name]: value,
-      ...(["serviceSlug", "durationMinutes", "preferredDate", "preferredMaster"].includes(name) ? { preferredTime: "" } : null),
-    }));
+    setForm((current) => {
+      const next = {
+        ...current,
+        [name]: value,
+        ...(["serviceSlug", "durationMinutes", "preferredDate", "preferredMaster"].includes(name) ? { preferredTime: "" } : null),
+      };
+
+      if (name === "preferredMaster") {
+        const masterKey = formatMasterDisplay(value);
+        const allowed = servicesByMaster[masterKey] ?? DEFAULT_SERVICES_BY_MASTER[masterKey];
+        if (Array.isArray(allowed) && current.serviceSlug && !allowed.includes(current.serviceSlug)) {
+          next.serviceSlug = "";
+          next.durationMinutes = "";
+        }
+      }
+
+      return next;
+    });
   };
   const handlePhoneChange = (event) => updateField("clientPhone", formatInternationalPhoneInput(event.target.value));
   const handleDateChange = (value) => { updateField("preferredDate", value); if (!dateOptions.includes(value)) setDateWindowStart(value); };
@@ -324,7 +407,7 @@ export default function BookingSection({ isStandalone = false }) {
                   <Field className={!hasMaster ? "booking-field--disabled" : ""} id="booking-service" label={copy.service}>
                     <select id="booking-service" disabled={!hasMaster} value={form.serviceSlug} onChange={(event) => updateField("serviceSlug", event.target.value)}>
                       <option value="" disabled hidden>{copy.selectService}</option>
-                      {localizedServices.map((service) => <option key={service.slug} value={service.slug}>{BILINGUAL_SERVICES[service.slug] || service.title}</option>)}
+                      {availableServices.map((service) => <option key={service.slug} value={service.slug}>{BILINGUAL_SERVICES[service.slug] || service.title}</option>)}
                     </select>
                   </Field>
                   <fieldset className={`booking-field booking-duration ${!hasService ? "booking-field--disabled" : ""}`}>
