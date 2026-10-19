@@ -113,8 +113,9 @@ function PublicSite() {
           <Route path="/katalog/:id" element={<CosmeticProductRoute />} />
           <Route path="/club/:token" element={<LoyaltyCardPage />} />
           <Route path="/uslugi/:slug" element={<ServiceRoute />} />
-          <Route path="/rezerwacja" element={<BookingPage />} />
-          <Route path="/booking" element={<Navigate to="/rezerwacja" replace />} />
+          <Route path="/booking" element={<BookingPage />} />
+          <Route path="/rezerwacja" element={<Navigate to="/booking" replace />} />
+          <Route path="/reservation" element={<Navigate to="/booking" replace />} />
           <Route path="/404" element={<NotFoundPage />} />
           <Route path="*" element={<Navigate to="/404" replace />} />
         </Routes>

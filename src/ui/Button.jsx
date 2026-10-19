@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 const variants = {
   primary:
     "bg-gold text-void border border-gold/60 hover:bg-gold-hover hover:border-gold-hover font-bold transition duration-300",
@@ -23,6 +25,7 @@ export default function Button({
   size = "md",
   className = "",
   href,
+  to,
   onClick,
   type = "button",
   ...props
@@ -33,6 +36,14 @@ export default function Button({
     sizes[size],
     className,
   ].join(" ");
+
+  if (to) {
+    return (
+      <Link to={to} onClick={onClick} className={classes} {...props}>
+        {children}
+      </Link>
+    );
+  }
 
   if (href) {
     return (

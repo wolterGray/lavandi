@@ -25,26 +25,26 @@ export default function BookingPage() {
   }, []);
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col bg-[#0d0910] text-[#f7f1f3]">
       <Helmet>
         <html lang={lang === "uk" ? "uk" : lang} />
-        <title>Rezerwacja wizyty online | Book Appointment — NUAR Warszawa</title>
+        <title>Online Booking | Rezerwacja wizyty — NUAR Warszawa</title>
         <meta
           name="description"
-          content="Zarezerwuj masaż w salonie NUAR Warszawa online. Wybierz specjalistę, masaż i dogodny termin. Book your massage appointment at NUAR online."
+          content="Book your massage appointment at NUAR online. Choose your specialist, massage ritual, and convenient time."
         />
-        <link rel="canonical" href={`${SITE_URL}/rezerwacja`} />
+        <link rel="canonical" href={`${SITE_URL}/booking`} />
       </Helmet>
 
       <Header navItems={navItems} linkToHome={true} />
 
-      <main className="booking-page-main py-4 md:py-8">
+      <main className="booking-page-main flex flex-1 flex-col items-center justify-center">
         <BookingSection isStandalone={true} />
       </main>
 
       <Footer navItems={navItems} />
       <CallWidget />
       <ConsentBanner />
-    </>
+    </div>
   );
 }

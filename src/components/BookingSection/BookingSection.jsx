@@ -51,6 +51,7 @@ const BILINGUAL_COPY = {
   phoneLabel: "Phone / Telefon",
   price: "Price / Cena",
   requestNote: "This is a booking request — the NUAR team will confirm your visit / Wizyta zostanie potwierdzona przez zespół NUAR.",
+  sectionLabel: "RESERVATION",
   selectDateHint: "Choose a day to view available times / Wybierz dzień, aby zobaczyć godziny",
   selectMaster: "Choose specialist / Wybierz specjalistę",
   selectService: "Choose treatment / Wybierz zabieg",
@@ -64,7 +65,7 @@ const BILINGUAL_COPY = {
   summaryEyebrow: "YOUR RESERVATION / TWOJA REZERWACJA",
   time: "Available times / Dostępne godziny",
   timeLabel: "Time / Godzina",
-  title: "Reserve a moment for yourself / Zarezerwuj chwilę dla siebie",
+  title: "Reserve a moment for yourself",
   viaBooksy: "Open Booksy / Otwórz Booksy"
 };
 const LOCALES = { pl: "pl-PL", en: "en-GB", uk: "uk-UA" };
@@ -322,7 +323,11 @@ export default function BookingSection({ isStandalone = false }) {
       <SiteImage src="/booking/booking.jpg" alt="" fill className="booking-section__image" loading="lazy" aria-hidden="true" />
       <div className="booking-section__veil" />
       <Container className="booking-section__container"><ScrollAnimationWrapper className="booking-shell">
-        <header className="booking-intro"><p className="section-label text-gold">{t("booking.label")}</p><h2>{copy.title}</h2><p>{copy.formIntro}</p></header>
+        <header className="booking-intro">
+          {!isStandalone && <p className="section-label text-gold">{copy.sectionLabel}</p>}
+          <h2>{copy.title}</h2>
+          {!isStandalone && <p>{copy.formIntro}</p>}
+        </header>
         <form className="booking-panel" onSubmit={handleSubmit} noValidate>
           {!siteBookingEnabled ? (
             <div className="booking-state"><CalendarDays aria-hidden="true" /><h3>{copy.disabledTitle}</h3><p>{t("booking.disabledMessage")}</p><Button href={`tel:${contact.phone}`} size="lg">{copy.callNow}: {contact.phoneDisplay}</Button></div>

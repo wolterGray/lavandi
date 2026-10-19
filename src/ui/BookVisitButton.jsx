@@ -1,33 +1,26 @@
+import { Link } from "react-router-dom";
 import Button from "./Button";
-import { useContent } from "../context/ContentProvider";
-import { BOOKSY_URL } from "../constants/theme";
+
+export const BOOKING_PATH = "/booking";
 
 export function BookVisitLink({ onClick, className = "", children, ...props }) {
-  const { contact } = useContent();
-  const url = contact?.booksyUrl || BOOKSY_URL;
-
   return (
-    <a
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Link
+      to={BOOKING_PATH}
       className={className}
       onClick={onClick}
       {...props}
     >
       {children}
-    </a>
+    </Link>
   );
 }
 
 export default function BookVisitButton({ onClick, ...props }) {
-  const { contact } = useContent();
-  const url = contact?.booksyUrl || BOOKSY_URL;
-
   return (
     <Button
       {...props}
-      href={url}
+      to={BOOKING_PATH}
       onClick={onClick}
     />
   );
