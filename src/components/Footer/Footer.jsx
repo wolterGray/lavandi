@@ -8,12 +8,12 @@ import { useTranslation } from "../../i18n/LanguageProvider";
 import { BOOKSY_URL, SOCIAL } from "../../constants/theme";
 import { useContent } from "../../context/ContentProvider";
 
-export default function Footer({ navItems = [], linkToHome = false }) {
+export default function Footer({ navItems = [], linkToHome = false, transparent = false }) {
   const { t } = useTranslation();
   const { contact } = useContent();
 
   return (
-    <footer className="bg-spa-footer text-white/80">
+    <footer className={transparent ? "bg-[#0a060b]/75 backdrop-blur-md border-t border-[#dec184]/15 text-white/80" : "bg-spa-footer text-white/80"}>
       <Container className="py-14">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           <ScrollAnimationWrapper>

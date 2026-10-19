@@ -32,7 +32,12 @@ function NavLink({ label, path, to, className, onClick, linkToHome, offset = -80
   );
 }
 
-export default function Header({ navItems, linkToHome = false }) {
+export default function Header({
+  navItems,
+  linkToHome = false,
+  transparent = false,
+  hideBookButton = false,
+}) {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -61,8 +66,14 @@ export default function Header({ navItems, linkToHome = false }) {
         className="relative z-50 h-[68px] w-full md:h-[70px] lg:h-[74px]"
       >
         <div
-          className={`fixed inset-x-0 top-0 z-50 w-full bg-purple-header/95 backdrop-blur-md transition-shadow duration-300 ${
-            scrolled ? "shadow-header" : ""
+          className={`fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ${
+            transparent
+              ? scrolled
+                ? "bg-[#0a060b]/85 backdrop-blur-md shadow-header border-b border-white/5"
+                : "bg-transparent border-b border-transparent"
+              : scrolled
+              ? "bg-purple-header/95 backdrop-blur-md shadow-header"
+              : "bg-purple-header/95 backdrop-blur-md"
           }`}
         >
           <Container className="flex items-center justify-between gap-3 py-3.5 lg:py-4">
@@ -89,9 +100,11 @@ export default function Header({ navItems, linkToHome = false }) {
 
           <div className="flex items-center gap-2 sm:gap-3">
             <LanguageSwitcher className="hidden sm:flex" />
-            <BookVisitButton size="sm" className="hidden md:inline-flex">
-              {t("nav.book")}
-            </BookVisitButton>
+            {!hideBookButton && (
+              <BookVisitButton size="sm" className="hidden md:inline-flex">
+                {t("nav.book")}
+              </BookVisitButton>
+            )}
             <button
               type="button"
               className="inline-flex h-10 w-10 items-center justify-center rounded-pill border border-border/60 text-milk lg:hidden"
