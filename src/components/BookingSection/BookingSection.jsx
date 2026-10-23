@@ -11,6 +11,7 @@ import { defaultPhonePlaceholder, formatInternationalPhoneInput, validateInterna
 import "./BookingSection.css";
 
 const DAYS_IN_CAROUSEL = 28;
+const DATE_SEARCH_BATCH_SIZE = 7;
 const EN_PL_SERVICES = {
   "masaz-klasyczny": "Classic massage / Masaż klasyczny",
   "masaz-sportowy": "Sports massage / Masaż sportowy",
@@ -223,6 +224,7 @@ export default function BookingSection({ isStandalone = false }) {
   const dateInputRef = useRef(null);
   const datesRef = useRef(null);
   const slotsRef = useRef(null);
+  const dateSearchRequestRef = useRef(0);
   const [step, setStep] = useState(1);
   const [dateWindowStart, setDateWindowStart] = useState(getTodayInputDate);
   const [dateScroll, setDateScroll] = useState({ left: false, right: true });
@@ -233,6 +235,7 @@ export default function BookingSection({ isStandalone = false }) {
   const [availabilityVersion, setAvailabilityVersion] = useState(0);
   const [form, setForm] = useState({ clientEmail: "", clientName: "", clientPhone: "", durationMinutes: "", note: "", preferredDate: "", preferredMaster: "", preferredTime: "", serviceSlug: "" });
   const [slots, setSlots] = useState([]);
+  const [dateSearchLoading, setDateSearchLoading] = useState(false);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState("");
   const [submitState, setSubmitState] = useState({ error: "", loading: false, success: false });
@@ -270,6 +273,8 @@ export default function BookingSection({ isStandalone = false }) {
     () => (form.serviceSlug ? availableServices.find((service) => service.slug === form.serviceSlug) ?? null : null),
     [form.serviceSlug, availableServices]
   );
+  const selectedServiceSlug = selectedService?.slug ?? "";
+  const selectedServiceTitle = selectedService?.title ?? "";
   const durationOptions = useMemo(
     () => (selectedService ? getServiceDurations(selectedService, isSelectedMasterTop) : []),
     [selectedService, isSelectedMasterTop]
@@ -293,10 +298,63 @@ export default function BookingSection({ isStandalone = false }) {
     });
   }, [durationOptions]);
   useEffect(() => {
-    if (!siteBookingEnabled || !selectedService || !form.durationMinutes || !form.preferredDate) { setSlots([]); return undefined; }
+    if (!siteBookingEnabled || !selectedServiceSlug || !form.durationMinutes || !form.preferredMaster) {
+      setDateSearchLoading(false);
+      return undefined;
+    }
+
+    const controller = new AbortController();
+    const requestId = ++dateSearchRequestRef.current;
+    const findNearestAvailableDate = async () => {
+      setDateSearchLoading(true);
+      setSlotsError("");
+      setSlots([]);
+      setForm((current) => ({ ...current, preferredDate: "", preferredTime: "" }));
+
+      try {
+        const today = getTodayInputDate();
+        for (let offset = 0; offset < DAYS_IN_CAROUSEL; offset += DATE_SEARCH_BATCH_SIZE) {
+          const dates = Array.from(
+            { length: Math.min(DATE_SEARCH_BATCH_SIZE, DAYS_IN_CAROUSEL - offset) },
+            (_, index) => addDays(today, offset + index)
+          );
+          const results = await Promise.all(dates.map(async (preferredDate) => {
+            try {
+              const data = await fetchSiteBookingSlots({
+                durationMinutes: Number(form.durationMinutes),
+                preferredDate,
+                preferredMaster: form.preferredMaster,
+                serviceName: selectedServiceTitle,
+                serviceSlug: selectedServiceSlug,
+              }, { signal: controller.signal });
+              return { preferredDate, slots: Array.isArray(data?.slots) ? data.slots : [] };
+            } catch (error) {
+              if (controller.signal.aborted) throw error;
+              return { preferredDate, slots: [] };
+            }
+          }));
+          const nearest = results.find((result) => result.slots.length > 0);
+          if (nearest && dateSearchRequestRef.current === requestId) {
+            setDateWindowStart(today);
+            setForm((current) => ({ ...current, preferredDate: nearest.preferredDate, preferredTime: "" }));
+            return;
+          }
+        }
+      } catch {
+        // An aborted search is expected when the selection changes quickly.
+      } finally {
+        if (!controller.signal.aborted && dateSearchRequestRef.current === requestId) setDateSearchLoading(false);
+      }
+    };
+
+    findNearestAvailableDate();
+    return () => controller.abort();
+  }, [form.durationMinutes, form.preferredMaster, selectedServiceSlug, selectedServiceTitle, siteBookingEnabled]);
+  useEffect(() => {
+    if (!siteBookingEnabled || !selectedServiceSlug || !form.durationMinutes || !form.preferredDate) { setSlots([]); return undefined; }
     const controller = new AbortController();
     setSlotsLoading(true); setSlotsError("");
-    fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedService.title, serviceSlug: selectedService.slug })
+    fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedServiceTitle, serviceSlug: selectedServiceSlug }, { signal: controller.signal })
       .then((data) => {
         const rawSlots = Array.isArray(data?.slots) ? data.slots : [];
         const nextSlots = rawSlots.map((slot) => ({
@@ -315,7 +373,7 @@ export default function BookingSection({ isStandalone = false }) {
       .catch(() => { if (!controller.signal.aborted) { setSlots([]); setSlotsError(t("booking.form.errorSlots")); } })
       .finally(() => { if (!controller.signal.aborted) setSlotsLoading(false); });
     return () => controller.abort();
-  }, [availabilityVersion, form.durationMinutes, form.preferredDate, form.preferredMaster, selectedService, siteBookingEnabled, t]);
+  }, [availabilityVersion, form.durationMinutes, form.preferredDate, form.preferredMaster, selectedServiceSlug, selectedServiceTitle, siteBookingEnabled, t]);
 
   const selectedSlot = slots.find((slot) => getSlotKey(slot) === form.preferredTime);
   const visibleSlots = useMemo(() => {
@@ -358,14 +416,9 @@ export default function BookingSection({ isStandalone = false }) {
   const isReadyToSubmit = hasName && isPhoneValid && !submitState.loading;
 
   const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
-  const estimatedPrice = useMemo(() => {
-    if (slotFinalPrice > 0) return slotFinalPrice;
-    if (!form.durationMinutes || !durationOptions.length) return 0;
-    const match = durationOptions.find((d) => String(d.minutes) === String(form.durationMinutes));
-    return match?.price || 0;
-  }, [slotFinalPrice, form.durationMinutes, durationOptions]);
-  const activePriceLabel = (slotFinalPrice > 0 ? slotFinalPrice : estimatedPrice) > 0
-    ? `${slotFinalPrice > 0 ? slotFinalPrice : estimatedPrice} zł`
+  const isSelectedSlotPremium = Number(selectedSlot?.premiumPercent) > 0 || Number(selectedSlot?.premiumAmount) > 0;
+  const activePriceLabel = hasTime && slotFinalPrice > 0
+    ? `${slotFinalPrice} zł${isSelectedSlotPremium ? " (Premium godziny)" : ""}`
     : "—";
 
   const updateField = (name, value) => {
@@ -390,7 +443,16 @@ export default function BookingSection({ isStandalone = false }) {
     });
   };
   const handlePhoneChange = (event) => updateField("clientPhone", formatInternationalPhoneInput(event.target.value));
-  const handleDateChange = (value) => { updateField("preferredDate", value); if (!dateOptions.includes(value)) setDateWindowStart(value); };
+  const handleDurationChange = (minutes) => {
+    setSubmitState((current) => ({ ...current, error: "", success: false }));
+    setForm((current) => ({ ...current, durationMinutes: String(minutes), preferredDate: "", preferredTime: "" }));
+  };
+  const handleDateChange = (value) => {
+    dateSearchRequestRef.current += 1;
+    setDateSearchLoading(false);
+    updateField("preferredDate", value);
+    if (!dateOptions.includes(value)) setDateWindowStart(value);
+  };
   const updateDateScroll = () => {
     const element = datesRef.current;
     if (!element) return;
@@ -417,6 +479,11 @@ export default function BookingSection({ isStandalone = false }) {
     const frame = window.requestAnimationFrame(updateDateScroll);
     return () => window.cancelAnimationFrame(frame);
   }, [dateWindowStart]);
+  useEffect(() => {
+    if (!form.preferredDate) return;
+    const selectedDate = datesRef.current?.querySelector(`[data-booking-date="${form.preferredDate}"]`);
+    selectedDate?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [form.preferredDate]);
   const validateSelection = () => {
     if (!form.preferredMaster) return copy.selectMaster;
     if (!selectedService || !form.serviceSlug) return t("booking.form.errorService");
@@ -493,7 +560,7 @@ export default function BookingSection({ isStandalone = false }) {
                           disabled={!hasService}
                           key={item.minutes}
                           type="button"
-                          onClick={() => updateField("durationMinutes", String(item.minutes))}
+                          onClick={() => handleDurationChange(item.minutes)}
                         >
                           <strong>{item.minutes}</strong>
                           <span>{copy.durationUnit}</span>
@@ -505,11 +572,11 @@ export default function BookingSection({ isStandalone = false }) {
                 <div className="booking-schedule">
                   <div className={`booking-schedule-block ${!hasDuration ? "booking-block--disabled" : ""}`}>
                     <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTodayInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
-                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
+                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} data-booking-date={dateValue} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   </div>
                   <div className={`booking-schedule-block ${!hasDate ? "booking-block--disabled" : ""}`}>
-                    <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{slotsLoading ? <small>{copy.slotsLoading}</small> : <div className="booking-slot-controls"><button aria-label={copy.previousTimes} disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label={copy.nextTimes} disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
-                    <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master, isUkrainianMode)}</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
+                    <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{dateSearchLoading || slotsLoading ? <small>{copy.slotsLoading}</small> : <div className="booking-slot-controls"><button aria-label={copy.previousTimes} disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label={copy.nextTimes} disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
+                    <div ref={slotsRef} className="booking-slots" aria-busy={dateSearchLoading || slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{dateSearchLoading ? copy.slotsLoading : copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master, isUkrainianMode)}</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
                   </div>
                 </div>
                 {submitState.error ? <p className="booking-error" role="alert">{submitState.error}</p> : null}

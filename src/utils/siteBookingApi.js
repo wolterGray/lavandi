@@ -1,6 +1,6 @@
 const BACKEND_URL = String(import.meta.env.VITE_CRM_BACKEND_URL || "https://api.nuarr.pl").replace(/\/$/, "");
 
-async function publicSiteBookingRequest(path, body) {
+async function publicSiteBookingRequest(path, body, options = {}) {
   if (!BACKEND_URL) {
     throw new Error("CRM backend is not configured");
   }
@@ -11,6 +11,7 @@ async function publicSiteBookingRequest(path, body) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+    signal: options.signal,
   });
   const payload = await response.json().catch(() => null);
 
@@ -21,8 +22,8 @@ async function publicSiteBookingRequest(path, body) {
   return payload?.data ?? payload;
 }
 
-export const fetchSiteBookingSlots = (payload) =>
-  publicSiteBookingRequest("/api/public/site-booking-availability", payload);
+export const fetchSiteBookingSlots = (payload, options) =>
+  publicSiteBookingRequest("/api/public/site-booking-availability", payload, options);
 
 export const submitSiteBookingRequest = (payload) =>
   publicSiteBookingRequest("/api/public/site-booking-submit", payload);
