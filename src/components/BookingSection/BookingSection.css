@@ -195,6 +195,7 @@
 .booking-actions__price { display: flex; flex-direction: column; gap: 2px; text-align: left; }
 .booking-actions__price-label { color: var(--booking-muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; }
 .booking-actions__price-value { color: var(--booking-gold); font-family: var(--font-heading, serif); font-size: 24px; font-weight: 500; line-height: 1.1; }
+.booking-actions__premium { color: var(--booking-muted); font-size: 10px; font-weight: 400; line-height: 1.2; }
 .booking-actions > div:not(.booking-actions__price) { display: grid; color: var(--booking-muted); font-size: 12px; }
 .booking-actions a { color: var(--booking-gold); font-weight: 600; }
 .booking-actions .btn { margin-left: auto; }

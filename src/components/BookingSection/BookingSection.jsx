@@ -182,7 +182,14 @@ function formatMasterWithTier(value, isUkrainianMode = false) {
   }
   return isTopMaster ? `${name} (Top Master)` : `${name} (Master)`;
 }
-const DEFAULT_KNOWN_MASTERS = ["Olha", "Max"];
+const DEFAULT_KNOWN_MASTERS = ["Max", "Olha"];
+function sortMasters(masters) {
+  const priority = { max: 0, olha: 1 };
+  return [...new Set(masters)].sort((a, b) =>
+    (priority[String(a).toLowerCase()] ?? 2) - (priority[String(b).toLowerCase()] ?? 2) ||
+    String(a).localeCompare(String(b))
+  );
+}
 const DEFAULT_SERVICES_BY_MASTER = {
   Olha: [
     "masaz-klasyczny",
@@ -247,7 +254,7 @@ export default function BookingSection({ isStandalone = false }) {
           ? data.masters.map(formatMasterDisplay).filter(Boolean)
           : [];
         if (apiMasters.length) {
-          setKnownMasters((current) => [...new Set([...current, ...apiMasters])]);
+          setKnownMasters((current) => sortMasters([...current, ...apiMasters]));
         }
         if (data?.servicesByMaster && typeof data.servicesByMaster === "object") {
           setServicesByMaster((current) => ({ ...current, ...data.servicesByMaster }));
@@ -367,7 +374,7 @@ export default function BookingSection({ isStandalone = false }) {
           ? data.masters.map(formatMasterDisplay).filter(Boolean)
           : [...new Set(nextSlots.map((slot) => String(slot.master ?? "").trim()).filter(Boolean))];
         if (apiMasters.length) {
-          setKnownMasters((current) => [...new Set([...current, ...apiMasters])]);
+          setKnownMasters((current) => sortMasters([...current, ...apiMasters]));
         }
       })
       .catch(() => { if (!controller.signal.aborted) { setSlots([]); setSlotsError(t("booking.form.errorSlots")); } })
@@ -418,7 +425,7 @@ export default function BookingSection({ isStandalone = false }) {
   const slotFinalPrice = Number(selectedSlot?.finalPrice) || 0;
   const isSelectedSlotPremium = Number(selectedSlot?.premiumPercent) > 0 || Number(selectedSlot?.premiumAmount) > 0;
   const activePriceLabel = hasTime && slotFinalPrice > 0
-    ? `${slotFinalPrice} zł${isSelectedSlotPremium ? " (Premium godziny)" : ""}`
+    ? `${slotFinalPrice} zł`
     : "—";
 
   const updateField = (name, value) => {
@@ -584,6 +591,7 @@ export default function BookingSection({ isStandalone = false }) {
                   <div className="booking-actions__price">
                     <span className="booking-actions__price-label">{copy.price}</span>
                     <strong className="booking-actions__price-value">{activePriceLabel}</strong>
+                    {isSelectedSlotPremium ? <small className="booking-actions__premium">Premium godziny</small> : null}
                   </div>
                   <Button disabled={!isReadyForDetails} size="lg" type="button" onClick={goToDetails}>{copy.next}<ChevronRight size={17} /></Button>
                 </div>
@@ -698,6 +706,7 @@ export default function BookingSection({ isStandalone = false }) {
                   <div className="booking-actions__price">
                     <span className="booking-actions__price-label">{copy.price}</span>
                     <strong className="booking-actions__price-value">{activePriceLabel}</strong>
+                    {isSelectedSlotPremium ? <small className="booking-actions__premium">Premium godziny</small> : null}
                   </div>
                   <Button
                     className="booking-submit-btn"
