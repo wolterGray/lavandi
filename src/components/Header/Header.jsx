@@ -37,6 +37,7 @@ export default function Header({
   linkToHome = false,
   transparent = false,
   hideBookButton = false,
+  bookingLanguageMode = false,
 }) {
   const { t } = useTranslation();
   const [scrolled, setScrolled] = useState(false);
@@ -99,7 +100,7 @@ export default function Header({
           </nav>
 
           <div className="flex items-center gap-2 sm:gap-3">
-            <LanguageSwitcher className="hidden sm:flex" />
+            <LanguageSwitcher bookingMode={bookingLanguageMode} className="hidden sm:flex" />
             {!hideBookButton && (
               <BookVisitButton size="sm" className="hidden md:inline-flex">
                 {t("nav.book")}
@@ -143,7 +144,7 @@ export default function Header({
               <div className="flex items-center justify-between gap-3">
                 <LogoNuar className="w-[92px] !mb-0" />
                 <div className="flex items-center gap-2">
-                  <LanguageSwitcher />
+                  <LanguageSwitcher bookingMode={bookingLanguageMode} />
                   <button type="button" aria-label={t("nav.close")} onClick={() => setMobileMenuOpen(false)} className="p-2 text-stone hover:text-milk">✕</button>
                 </div>
               </div>

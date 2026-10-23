@@ -148,10 +148,12 @@
 .booking-field--disabled select, .booking-field--disabled button, .booking-block--disabled button, .booking-block--disabled input { cursor: not-allowed !important; pointer-events: none !important; }
 .booking-segments { display: flex; width: 100%; min-width: 0; height: 52px; overflow: hidden; border: 1px solid var(--booking-border); border-radius: 6px; }
 .booking-segments::-webkit-scrollbar { display: none; }
-.booking-segments button { display: flex; flex: 1 1 0; align-items: center; justify-content: center; gap: 4px; min-width: 64px; border: 0; border-right: 1px solid var(--booking-border); color: #d8cfd3; background: var(--booking-field); }
+.booking-segments button { display: flex; flex: 1 1 0; align-items: center; justify-content: center; gap: 3px; min-width: 0; padding: 0 6px; border: 0; border-right: 1px solid var(--booking-border); color: #d8cfd3; background: var(--booking-field); white-space: nowrap; }
+.booking-segments button strong { font-size: 15px; font-weight: 600; line-height: 1; }
+.booking-segments button span { color: var(--booking-muted); font-size: 11px; line-height: 1; letter-spacing: .02em; }
 .booking-segments button:last-child { border-right: 0; }
 .booking-segments button.is-active { color: #171016; background: var(--booking-gold); }
-.booking-segments button.is-active small { color: #554529; }
+.booking-segments button.is-active small, .booking-segments button.is-active span { color: #554529; }
 
 .booking-schedule { margin-top: 22px; padding: 22px; border: 1px solid var(--booking-border); border-radius: 8px; background: rgba(255,255,255,.018); }
 .booking-block-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }

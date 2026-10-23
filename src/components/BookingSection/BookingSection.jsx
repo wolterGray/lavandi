@@ -11,7 +11,7 @@ import { defaultPhonePlaceholder, formatInternationalPhoneInput, validateInterna
 import "./BookingSection.css";
 
 const DAYS_IN_CAROUSEL = 28;
-const BILINGUAL_SERVICES = {
+const EN_PL_SERVICES = {
   "masaz-klasyczny": "Classic massage / Masaż klasyczny",
   "masaz-sportowy": "Sports massage / Masaż sportowy",
   "masaz-relaksacyjny": "Relaxing massage / Masaż relaksacyjny",
@@ -22,7 +22,18 @@ const BILINGUAL_SERVICES = {
   "masaz-dla-dwojga": "Couples massage / Masaż dla dwojga",
 };
 
-const BILINGUAL_COPY = {
+const UK_EN_SERVICES = {
+  "masaz-klasyczny": "Класичний масаж / Classic massage",
+  "masaz-sportowy": "Спортивний масаж / Sports massage",
+  "masaz-relaksacyjny": "Релаксуючий масаж / Relaxing massage",
+  "masaz-limfatyczny": "Лімфодренажний масаж / Lymphatic drainage",
+  "masaz-antycellulitowy": "Антицелюлітний масаж / Anti-cellulite massage",
+  "masaz-twarzy-i-glowy": "Масаж обличчя та голови / Face & head massage",
+  "masaz-autorski": "Авторський масаж / Signature massage",
+  "masaz-dla-dwojga": "Масаж для двох / Couples massage",
+};
+
+const EN_PL_COPY = {
   anyMaster: "Any specialist / Dowolny specjalista",
   back: "Back / Wróć do terminu",
   callNow: "Call now / Zadzwoń teraz",
@@ -36,6 +47,7 @@ const BILINGUAL_COPY = {
   disabledTitle: "Booking by phone / Rezerwacja telefoniczna",
   duration: "Duration / Czas trwania",
   durationLabel: "Duration / Czas trwania",
+  durationUnit: "min",
   emailLabel: "E-mail",
   emailPlaceholder: "name@example.com",
   fallback: "Need a different time? / Nie widzisz odpowiedniej godziny?",
@@ -49,6 +61,8 @@ const BILINGUAL_COPY = {
   notePlaceholder: "Special requests or details / Uwagi dotyczące wizyty...",
   optional: "optional / opcjonalnie",
   phoneLabel: "Phone / Telefon",
+  previousDates: "Previous dates",
+  previousTimes: "Previous times",
   price: "Price / Cena",
   requestNote: "This is a booking request — the NUAR team will confirm your visit / Wizyta zostanie potwierdzona przez zespół NUAR.",
   sectionLabel: "RESERVATION",
@@ -66,7 +80,61 @@ const BILINGUAL_COPY = {
   time: "Available times / Dostępne godziny",
   timeLabel: "Time / Godzina",
   title: "Reserve a moment for yourself",
+  nextDates: "Next dates",
+  nextTimes: "Next times",
   viaBooksy: "Open Booksy / Otwórz Booksy"
+};
+
+const UK_EN_COPY = {
+  anyMaster: "Будь-який спеціаліст / Any specialist",
+  back: "Назад до терміну / Back to appointment",
+  callNow: "Зателефонувати / Call now",
+  date: "Оберіть день / Choose a day",
+  dateLabel: "Дата / Date",
+  datePicker: "Інша дата / Other date",
+  dayStep: "Термін / Appointment",
+  detailsStep: "Ваші дані / Your details",
+  detailsSubtitle: "Введіть контактні дані, щоб ми могли підтвердити запис / Enter your contact details so we can confirm your booking.",
+  detailsTitle: "Ваші дані / Your details",
+  disabledTitle: "Запис телефоном / Booking by phone",
+  duration: "Тривалість / Duration",
+  durationLabel: "Тривалість / Duration",
+  durationUnit: "хв",
+  emailLabel: "E-mail",
+  emailPlaceholder: "name@example.com",
+  fallback: "Потрібен інший час? / Need a different time?",
+  formIntro: "Оберіть послугу та зручний час. Ми зв'яжемося з вами для підтвердження запису / Choose a treatment and a convenient time.",
+  master: "Спеціаліст / Specialist",
+  nameLabel: "Ім'я / Name",
+  namePlaceholder: "Введіть ім'я / Enter name",
+  next: "Далі / Continue",
+  noSlots: "На цей день немає вільного часу / No available times for this day",
+  noteLabel: "Примітки / Notes",
+  notePlaceholder: "Побажання або деталі запису / Special requests or details...",
+  optional: "необов'язково / optional",
+  phoneLabel: "Телефон / Phone",
+  previousDates: "Попередні дати / Previous dates",
+  previousTimes: "Попередній час / Previous times",
+  price: "Ціна / Price",
+  requestNote: "Це запит на запис — команда NUAR підтвердить ваш візит / This is a booking request — the NUAR team will confirm your visit.",
+  sectionLabel: "БРОНЮВАННЯ",
+  selectDateHint: "Оберіть день, щоб переглянути вільний час / Choose a day to view available times",
+  selectMaster: "Оберіть спеціаліста / Choose specialist",
+  selectService: "Оберіть послугу / Choose treatment",
+  service: "Послуга / Treatment",
+  showLess: "Показати менше / Show less",
+  showMore: "Показати весь час / Show all times",
+  slotsLoading: "Перевіряємо доступність… / Checking availability…",
+  submitBtn: "Надіслати запит / Send request",
+  submitting: "Надсилаємо... / Sending...",
+  summary: "Ваш вибір / Your selection",
+  summaryEyebrow: "ВАШЕ БРОНЮВАННЯ / YOUR RESERVATION",
+  time: "Доступний час / Available times",
+  timeLabel: "Час / Time",
+  title: "Забронюйте мить для себе",
+  nextDates: "Наступні дати / Next dates",
+  nextTimes: "Наступний час / Next times",
+  viaBooksy: "Відкрити Booksy / Open Booksy",
 };
 const LOCALES = { pl: "pl-PL", en: "en-GB", uk: "uk-UA" };
 
@@ -104,10 +172,13 @@ function formatMasterDisplay(value) {
   const raw = String(value ?? "").trim();
   return NORMALIZE_MASTER_DISPLAY[raw.toLowerCase()] || raw;
 }
-function formatMasterWithTier(value) {
+function formatMasterWithTier(value, isUkrainianMode = false) {
   const name = formatMasterDisplay(value);
   if (!name) return "";
   const isTopMaster = /top/i.test(name) || /olha|olga|ольга/i.test(name);
+  if (isUkrainianMode) {
+    return isTopMaster ? `${name} (Топ-майстер / Top Master)` : `${name} (Майстер / Master)`;
+  }
   return isTopMaster ? `${name} (Top Master)` : `${name} (Master)`;
 }
 const DEFAULT_KNOWN_MASTERS = ["Olha", "Max"];
@@ -145,7 +216,9 @@ function Field({ children, className = "", id, label, optional }) {
 export default function BookingSection({ isStandalone = false }) {
   const { t, lang, localizedServices } = useTranslation();
   const { contact } = useContent();
-  const copy = BILINGUAL_COPY;
+  const isUkrainianMode = lang === "uk";
+  const copy = isUkrainianMode ? UK_EN_COPY : EN_PL_COPY;
+  const bilingualServices = isUkrainianMode ? UK_EN_SERVICES : EN_PL_SERVICES;
   const siteBookingEnabled = contact?.siteBookingEnabled !== false;
   const dateInputRef = useRef(null);
   const datesRef = useRef(null);
@@ -392,7 +465,7 @@ export default function BookingSection({ isStandalone = false }) {
           {!siteBookingEnabled ? (
             <div className="booking-state"><CalendarDays aria-hidden="true" /><h3>{copy.disabledTitle}</h3><p>{t("booking.disabledMessage")}</p><Button href={`tel:${contact.phone}`} size="lg">{copy.callNow}: {contact.phoneDisplay}</Button></div>
           ) : submitState.success ? (
-            <div className="booking-state" role="status"><span className="booking-success-mark"><Check /></span><h3>{t("booking.form.successTitle")}</h3><p>{t("booking.form.successMessage")}</p><div className="booking-confirmation-card"><strong>{BILINGUAL_SERVICES[selectedService?.slug] || selectedService?.title}</strong><span>{formattedDate} · {selectedSlot?.startTime} · {formatMasterWithTier(selectedSlot?.master)}</span></div><Button size="sm" type="button" onClick={resetAfterSuccess}>{t("booking.form.successClose")}</Button></div>
+            <div className="booking-state" role="status"><span className="booking-success-mark"><Check /></span><h3>{t("booking.form.successTitle")}</h3><p>{t("booking.form.successMessage")}</p><div className="booking-confirmation-card"><strong>{bilingualServices[selectedService?.slug] || selectedService?.title}</strong><span>{formattedDate} · {selectedSlot?.startTime} · {formatMasterWithTier(selectedSlot?.master, isUkrainianMode)}</span></div><Button size="sm" type="button" onClick={resetAfterSuccess}>{t("booking.form.successClose")}</Button></div>
           ) : <>
             <div className="booking-progress"><button className={step === 1 ? "is-active" : "is-complete"} type="button" onClick={() => setStep(1)}><span>{step === 2 ? <Check size={14} /> : "1"}</span>{copy.dayStep}</button><i /><button className={step === 2 ? "is-active" : ""} type="button" disabled={step === 1} onClick={() => setStep(2)}><span>2</span>{copy.detailsStep}</button></div>
             {step === 1 ? (
@@ -401,13 +474,13 @@ export default function BookingSection({ isStandalone = false }) {
                   <Field id="booking-master" label={copy.master}>
                     <select id="booking-master" value={form.preferredMaster} onChange={(event) => updateField("preferredMaster", event.target.value)}>
                       <option value="" disabled hidden>{copy.selectMaster}</option>
-                      {knownMasters.map((master) => <option key={master} value={master}>{formatMasterWithTier(master)}</option>)}
+                      {knownMasters.map((master) => <option key={master} value={master}>{formatMasterWithTier(master, isUkrainianMode)}</option>)}
                     </select>
                   </Field>
                   <Field className={!hasMaster ? "booking-field--disabled" : ""} id="booking-service" label={copy.service}>
                     <select id="booking-service" disabled={!hasMaster} value={form.serviceSlug} onChange={(event) => updateField("serviceSlug", event.target.value)}>
                       <option value="" disabled hidden>{copy.selectService}</option>
-                      {availableServices.map((service) => <option key={service.slug} value={service.slug}>{BILINGUAL_SERVICES[service.slug] || service.title}</option>)}
+                      {availableServices.map((service) => <option key={service.slug} value={service.slug}>{bilingualServices[service.slug] || service.title}</option>)}
                     </select>
                   </Field>
                   <fieldset className={`booking-field booking-duration ${!hasService ? "booking-field--disabled" : ""}`}>
@@ -423,7 +496,7 @@ export default function BookingSection({ isStandalone = false }) {
                           onClick={() => updateField("durationMinutes", String(item.minutes))}
                         >
                           <strong>{item.minutes}</strong>
-                          <span>min</span>
+                          <span>{copy.durationUnit}</span>
                         </button>
                       ))}
                     </div>
@@ -432,11 +505,11 @@ export default function BookingSection({ isStandalone = false }) {
                 <div className="booking-schedule">
                   <div className={`booking-schedule-block ${!hasDuration ? "booking-block--disabled" : ""}`}>
                     <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTodayInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
-                    <div className="booking-date-row"><button aria-label="Previous dates" disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label="Next dates" disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
+                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   </div>
                   <div className={`booking-schedule-block ${!hasDate ? "booking-block--disabled" : ""}`}>
-                    <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{slotsLoading ? <small>{copy.slotsLoading}</small> : <div className="booking-slot-controls"><button aria-label="Previous times" disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label="Next times" disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
-                    <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master)}</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
+                    <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{slotsLoading ? <small>{copy.slotsLoading}</small> : <div className="booking-slot-controls"><button aria-label={copy.previousTimes} disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label={copy.nextTimes} disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div>}</div>
+                    <div ref={slotsRef} className="booking-slots" aria-busy={slotsLoading} onScroll={updateSlotScroll}>{!hasDate ? <div className="booking-empty"><Clock3 /><span>{copy.selectDateHint}</span></div> : !slotsLoading && !visibleSlots.length ? <div className="booking-empty"><Clock3 /><span>{slotsError || copy.noSlots}</span></div> : slotPages.map((pageSlots, pageIndex) => <div className="booking-slot-page" key={`${form.preferredDate}-${pageIndex}`} style={{ "--booking-slot-columns": slotColumns }}>{pageSlots.map((slot) => { const slotKey = getSlotKey(slot); const active = form.preferredTime === slotKey; return <button aria-pressed={active} className={active ? "is-active" : ""} disabled={!hasDate} key={`${slot.master}-${slot.startTime}`} type="button" onClick={() => updateField("preferredTime", slotKey)}><strong>{normalizeSlotTime(slot.startTime)}</strong><span>{formatMasterWithTier(slot.master, isUkrainianMode)}</span>{active ? <Check size={15} /> : null}</button>; })}</div>)}</div>
                   </div>
                 </div>
                 {submitState.error ? <p className="booking-error" role="alert">{submitState.error}</p> : null}
@@ -530,12 +603,12 @@ export default function BookingSection({ isStandalone = false }) {
                   <aside className="booking-summary-col">
                     <div className="booking-summary-card">
                       <span className="booking-summary-card__eyebrow">{copy.summaryEyebrow}</span>
-                      <h3 className="booking-summary-card__title">{BILINGUAL_SERVICES[selectedService?.slug] || selectedService?.title}</h3>
+                      <h3 className="booking-summary-card__title">{bilingualServices[selectedService?.slug] || selectedService?.title}</h3>
 
                       <dl className="booking-summary-card__list">
                         <div className="booking-summary-card__item">
                           <dt className="booking-summary-card__label">{copy.durationLabel}</dt>
-                          <dd className="booking-summary-card__value">{form.durationMinutes} min</dd>
+                          <dd className="booking-summary-card__value">{form.durationMinutes} {copy.durationUnit}</dd>
                         </div>
                         <div className="booking-summary-card__item">
                           <dt className="booking-summary-card__label">{copy.dateLabel}</dt>
@@ -547,7 +620,7 @@ export default function BookingSection({ isStandalone = false }) {
                         </div>
                         <div className="booking-summary-card__item">
                           <dt className="booking-summary-card__label">{copy.master}</dt>
-                          <dd className="booking-summary-card__value">{formatMasterWithTier(selectedSlot?.master || form.preferredMaster)}</dd>
+                          <dd className="booking-summary-card__value">{formatMasterWithTier(selectedSlot?.master || form.preferredMaster, isUkrainianMode)}</dd>
                         </div>
                       </dl>
                     </div>

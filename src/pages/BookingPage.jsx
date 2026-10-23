@@ -36,7 +36,13 @@ export default function BookingPage() {
         <link rel="canonical" href={`${SITE_URL}/booking`} />
       </Helmet>
 
-      <Header navItems={navItems} linkToHome={true} transparent={true} hideBookButton={true} />
+      <Header
+        bookingLanguageMode={true}
+        hideBookButton={true}
+        linkToHome={true}
+        navItems={navItems}
+        transparent={true}
+      />
 
       <main className="booking-page-main relative flex flex-1 flex-col items-center justify-center">
         <BookingSection isStandalone={true} />
