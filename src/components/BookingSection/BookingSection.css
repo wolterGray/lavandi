@@ -181,6 +181,9 @@
 .booking-slot-controls button:disabled { opacity: .25; cursor: default; }
 .booking-slots { display: flex; gap: 8px; min-height: 136px; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .booking-slots::-webkit-scrollbar { display: none; }
+.booking-slot-loading { display: flex; flex: 0 0 100%; min-height: 136px; align-items: center; justify-content: center; gap: 10px; color: var(--booking-muted); font-size: 12px; text-align: center; }
+.booking-slot-loading svg { width: 19px; height: 19px; color: var(--booking-gold); animation: booking-spin .8s linear infinite; }
+@keyframes booking-spin { to { transform: rotate(360deg); } }
 .booking-slot-page { display: grid; flex: 0 0 100%; grid-template-columns: repeat(var(--booking-slot-columns), minmax(0, 1fr)); grid-template-rows: repeat(2, 64px); gap: 8px; scroll-snap-align: start; }
 .booking-slot-page > button { position: relative; display: grid; gap: 4px; min-width: 0; min-height: 64px; padding: 8px 11px; border: 1px solid var(--booking-border); border-radius: 6px; color: #f7f1f3; background: var(--booking-field); text-align: left; }
 .booking-slot-page > button strong { font-family: var(--font-heading, serif); font-size: 17px; }
@@ -377,4 +380,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .booking-section * { scroll-behavior: auto !important; transition: none !important; }
+  .booking-slot-loading svg { animation: none; }
 }
