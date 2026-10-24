@@ -1,9 +1,42 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "rewrites": [
+  "redirects": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "source": "/rezerwacja",
+      "destination": "/booking",
+      "permanent": true
+    },
+    {
+      "source": "/reservation",
+      "destination": "/booking",
+      "permanent": true
     }
+  ],
+  "headers": [
+    {
+      "source": "/booking",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, follow" }]
+    },
+    {
+      "source": "/admin",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/admin/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    },
+    {
+      "source": "/club/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow" }]
+    }
+  ],
+  "rewrites": [
+    { "source": "/booking", "destination": "/booking.html" },
+    { "source": "/katalog", "destination": "/katalog.html" },
+    { "source": "/katalog/:id", "destination": "/katalog/:id.html" },
+    { "source": "/uslugi/:slug", "destination": "/uslugi/:slug.html" },
+    { "source": "/admin", "destination": "/index.html" },
+    { "source": "/admin/:path*", "destination": "/index.html" },
+    { "source": "/club/:token", "destination": "/index.html" }
   ]
 }

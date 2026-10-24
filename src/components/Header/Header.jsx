@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
-import { Link } from "react-scroll";
 import { AnimatePresence, motion } from "framer-motion";
 import LogoNuar from "../../ui/LogoNuar";
 import Container from "../../ui/Container";
@@ -25,11 +24,16 @@ function NavLink({ label, path, to, className, onClick, linkToHome, offset = -80
       </a>
     );
   }
-  return (
-    <Link to={path} smooth duration={600} offset={offset} className={base} onClick={onClick}>
-      {label}
-    </Link>
-  );
+  const handleSectionClick = (event) => {
+    const target = document.getElementById(path);
+    if (!target) return;
+    event.preventDefault();
+    const top = target.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top, behavior: "smooth" });
+    onClick?.(event);
+  };
+
+  return <a href={`/#${path}`} className={base} onClick={handleSectionClick}>{label}</a>;
 }
 
 export default function Header({

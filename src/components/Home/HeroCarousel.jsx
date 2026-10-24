@@ -1,5 +1,4 @@
 import { useRef } from "react";
-import { Link } from "react-scroll";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, EffectFade, Pagination } from "swiper/modules";
 import SiteImage from "../../ui/SiteImage";
@@ -53,23 +52,26 @@ export default function HeroCarousel() {
               <div className="relative z-20 flex h-full flex-col justify-end px-6 pb-12 pt-8 sm:px-10 sm:pb-16 lg:px-16 lg:pb-[72px]">
                 <div className="max-w-xl">
                   <p className="section-label text-[11px] sm:text-xs">{t("hero.eyebrow")}</p>
-                  <h1 className="mt-2 font-display text-3xl font-bold text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-4xl lg:max-w-lg lg:text-5xl">
-                    {slide.title}
-                  </h1>
+                  {index === 0 ? (
+                    <h1 className="mt-2 font-display text-3xl font-bold text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-4xl lg:max-w-lg lg:text-5xl">
+                      {t("hero.title")}
+                    </h1>
+                  ) : (
+                    <h2 className="mt-2 font-display text-3xl font-bold text-milk text-balance [text-shadow:0_1px_16px_rgba(6,5,8,0.55)] sm:text-4xl lg:max-w-lg lg:text-5xl">
+                      {slide.title}
+                    </h2>
+                  )}
                   <p className="mt-3 max-w-md text-sm leading-[1.6] text-stone [text-shadow:0_1px_10px_rgba(6,5,8,0.45)] sm:text-base">
                     {slide.news}
                   </p>
                   <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
                     <BookVisitButton size="md">{t("hero.cta")}</BookVisitButton>
-                    <Link
-                      to="services"
-                      smooth
-                      duration={600}
-                      offset={-80}
+                    <a
+                      href="/#services"
                       className="inline-flex min-h-[44px] cursor-pointer items-center justify-center px-2 text-sm text-stone transition hover:text-milk"
                     >
                       {t("hero.ctaSecondary")} →
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>

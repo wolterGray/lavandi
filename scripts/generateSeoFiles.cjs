@@ -1,4 +1,5 @@
 const { writeFileSync, readFileSync } = require("fs");
+const { execFileSync } = require("child_process");
 const path = require("path");
 const { SitemapStream, streamToPromise } = require("sitemap");
 const generateRobotstxt = require("generate-robotstxt");
@@ -16,6 +17,17 @@ function loadServices() {
 
 function loadCosmetics() {
   return loadJson("../src/data/cosmetics.json");
+}
+
+function gitLastModified(relativePath) {
+  try {
+    return execFileSync("git", ["log", "-1", "--format=%cI", "--", relativePath], {
+      cwd: path.resolve(__dirname, ".."),
+      encoding: "utf8",
+    }).trim() || undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 const fs = require("fs");
@@ -41,6 +53,9 @@ async function generateSitemap() {
 
   let services = [];
   let cosmetics = [];
+  let contentLastmod;
+  let servicesLastmodFromCms;
+  let cosmeticsLastmodFromCms;
 
   const backendUrl = String(process.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
 
@@ -51,6 +66,9 @@ async function generateSitemap() {
       if (response.ok) {
         const payload = await response.json();
         const overrides = payload?.data?.overrides;
+        contentLastmod = payload?.data?.updatedAt;
+        servicesLastmodFromCms = overrides?._adminMeta?.sections?.services;
+        cosmeticsLastmodFromCms = overrides?._adminMeta?.sections?.cosmetics;
         if (overrides) {
           if (Array.isArray(overrides.services)) {
             services = overrides.services;
@@ -78,27 +96,30 @@ async function generateSitemap() {
     console.log(`generate-seo: Loaded ${cosmetics.length} cosmetics from local fallback`);
   }
 
-  const lastmod = new Date().toISOString();
+  const pageLastmod = contentLastmod || gitLastModified("src");
+  const servicesLastmod = servicesLastmodFromCms || contentLastmod || gitLastModified("src/data/services.json") || pageLastmod;
+  const cosmeticsLastmod = cosmeticsLastmodFromCms || contentLastmod || gitLastModified("src/data/cosmetics.json") || pageLastmod;
+  const privacyLastmod = gitLastModified("public/polityka-prywatnosci.html") || pageLastmod;
   const links = [
-    { url: "/", changefreq: "weekly", priority: 1.0, lastmod },
-    { url: "/katalog", changefreq: "weekly", priority: 0.9, lastmod },
+    { url: "/", changefreq: "weekly", priority: 1.0, lastmod: pageLastmod },
+    { url: "/katalog", changefreq: "weekly", priority: 0.9, lastmod: cosmeticsLastmod },
     {
       url: "/polityka-prywatnosci.html",
       changefreq: "yearly",
       priority: 0.3,
-      lastmod,
+      lastmod: privacyLastmod,
     },
     ...services.map((service) => ({
       url: `/uslugi/${service.slug}`,
       changefreq: "monthly",
       priority: 0.8,
-      lastmod,
+      lastmod: servicesLastmod,
     })),
     ...cosmetics.map((product) => ({
       url: `/katalog/${product.id}`,
       changefreq: "weekly",
       priority: 0.75,
-      lastmod,
+      lastmod: cosmeticsLastmod,
     })),
   ];
 
@@ -114,7 +135,13 @@ async function generateSitemap() {
 
 async function generateRobots() {
   const content = await generateRobotstxt({
-    policy: [{ userAgent: "*", allow: "/" }],
+    policy: [
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/admin", "/admin/", "/club/"],
+      },
+    ],
     sitemap: `${baseUrl}/sitemap.xml`,
     host: baseUrl,
   });

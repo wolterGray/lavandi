@@ -1,6 +1,5 @@
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { Link as RouterLink } from "react-router-dom";
-import { Link } from "react-scroll";
 import LogoNuar from "../../ui/LogoNuar";
 import Container from "../../ui/Container";
 import ScrollAnimationWrapper from "../../ui/ScrollAnimationWrapper";
@@ -36,7 +35,7 @@ export default function Footer({ navItems = [], linkToHome = false, transparent 
                     ) : linkToHome ? (
                       <a href={`/#${path}`} className="transition hover:text-white">{label}</a>
                     ) : (
-                      <Link to={path} smooth duration={600} offset={-96} className="cursor-pointer transition hover:text-white">{label}</Link>
+                      <a href={`/#${path}`} className="cursor-pointer transition hover:text-white">{label}</a>
                     )}
                   </li>
                 ))}

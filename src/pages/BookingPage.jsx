@@ -33,6 +33,7 @@ export default function BookingPage() {
           name="description"
           content="Book your massage appointment at NUAR online. Choose your specialist, massage ritual, and convenient time."
         />
+        <meta name="robots" content="noindex, follow" />
         <link rel="canonical" href={`${SITE_URL}/booking`} />
       </Helmet>
 
