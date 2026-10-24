@@ -160,7 +160,7 @@
 .booking-schedule { margin-top: 22px; padding: 22px; border: 1px solid var(--booking-border); border-radius: 8px; background: rgba(255,255,255,.018); }
 .booking-block-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 14px; }
 .booking-block-heading > div { display: flex; align-items: center; gap: 10px; }
-.booking-block-heading > div > span { display: grid; width: 28px; height: 28px; place-items: center; border: 1px solid var(--booking-border-strong); border-radius: 50%; color: var(--booking-gold); font-size: 11px; }
+.booking-block-heading > div > span { display: grid; width: 28px; height: 28px; flex: 0 0 28px; place-items: center; border: 1px solid var(--booking-border-strong); border-radius: 50%; color: var(--booking-gold); font-size: 11px; }
 .booking-block-heading h3 { margin: 0; font-size: 15px; font-weight: 600; }
 .booking-block-heading small { color: var(--booking-muted); }
 .booking-date-picker { position: relative; display: flex; align-items: center; gap: 7px; height: 38px; padding: 0 12px; overflow: hidden; border: 1px solid var(--booking-border); border-radius: 6px; color: #d8cfd3; background: var(--booking-field); }
@@ -370,10 +370,11 @@
   .booking-selection-grid { grid-template-columns: 1fr; gap: 14px; }
   .booking-selection-grid .booking-field:first-child { grid-column: auto; }
   .booking-schedule { width: calc(100% + 24px); min-width: 0; margin: 18px -12px 0; padding: 18px 12px; overflow: hidden; border-right: 0; border-left: 0; border-radius: 0; }
-  .booking-block-heading { min-width: 0; gap: 8px; }
+  .booking-block-heading { display: grid; grid-template-columns: minmax(0, 1fr) auto; min-width: 0; gap: 8px; }
   .booking-block-heading > div { min-width: 0; }
   .booking-block-heading h3 { min-width: 0; line-height: 1.3; }
-  .booking-date-picker { flex: 0 1 auto; min-width: 0; }
+  .booking-date-picker { width: 154px; min-width: 154px; min-height: 46px; height: auto; justify-content: center; padding: 6px 9px; font-size: 12px; line-height: 1.2; text-align: center; white-space: normal; }
+  .booking-date-picker svg { flex: 0 0 auto; }
   .booking-date-row { grid-template-columns: 36px minmax(0, 1fr) 36px; gap: 6px; }
   .booking-date-strip { grid-auto-columns: 64px; }
   .booking-date-strip button { min-height: 72px; }
