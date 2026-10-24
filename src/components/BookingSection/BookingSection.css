@@ -341,7 +341,7 @@
   .booking-details-grid { grid-template-columns: 1fr; gap: 28px; }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .booking-page { width: 100%; max-width: 100vw; min-height: 100dvh; overflow-x: clip; background: var(--booking-bg, #0d0910); }
   .booking-page::before { display: none; }
   .booking-desktop-header, .booking-desktop-footer { display: none; }

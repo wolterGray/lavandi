@@ -213,7 +213,7 @@ const DEFAULT_SERVICES_BY_MASTER = {
 function getSlotColumns() {
   if (typeof window === "undefined") return 8;
   if (window.innerWidth <= 360) return 2;
-  if (window.innerWidth <= 640) return 3;
+  if (window.innerWidth <= 768) return 3;
   if (window.innerWidth <= 900) return 4;
   return 8;
 }
@@ -281,7 +281,10 @@ export default function BookingSection({ isStandalone = false }) {
     [form.serviceSlug, availableServices]
   );
   const selectedServiceSlug = selectedService?.slug ?? "";
-  const selectedServiceTitle = selectedService?.title ?? "";
+  const selectedServiceApiName = useMemo(() => {
+    const bilingualName = EN_PL_SERVICES[selectedServiceSlug] ?? "";
+    return bilingualName.split(" / ").at(-1) || selectedServiceSlug;
+  }, [selectedServiceSlug]);
   const durationOptions = useMemo(
     () => (selectedService ? getServiceDurations(selectedService, isSelectedMasterTop) : []),
     [selectedService, isSelectedMasterTop]
@@ -331,7 +334,7 @@ export default function BookingSection({ isStandalone = false }) {
                 durationMinutes: Number(form.durationMinutes),
                 preferredDate,
                 preferredMaster: form.preferredMaster,
-                serviceName: selectedServiceTitle,
+                serviceName: selectedServiceApiName,
                 serviceSlug: selectedServiceSlug,
               }, { signal: controller.signal });
               return { preferredDate, slots: Array.isArray(data?.slots) ? data.slots : [] };
@@ -356,12 +359,12 @@ export default function BookingSection({ isStandalone = false }) {
 
     findNearestAvailableDate();
     return () => controller.abort();
-  }, [form.durationMinutes, form.preferredMaster, selectedServiceSlug, selectedServiceTitle, siteBookingEnabled]);
+  }, [form.durationMinutes, form.preferredMaster, selectedServiceApiName, selectedServiceSlug, siteBookingEnabled]);
   useEffect(() => {
     if (!siteBookingEnabled || !selectedServiceSlug || !form.durationMinutes || !form.preferredDate) { setSlots([]); return undefined; }
     const controller = new AbortController();
     setSlotsLoading(true); setSlotsError("");
-    fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedServiceTitle, serviceSlug: selectedServiceSlug }, { signal: controller.signal })
+    fetchSiteBookingSlots({ durationMinutes: Number(form.durationMinutes), preferredDate: form.preferredDate, preferredMaster: form.preferredMaster, serviceName: selectedServiceApiName, serviceSlug: selectedServiceSlug }, { signal: controller.signal })
       .then((data) => {
         const rawSlots = Array.isArray(data?.slots) ? data.slots : [];
         const nextSlots = rawSlots.map((slot) => ({
@@ -377,10 +380,10 @@ export default function BookingSection({ isStandalone = false }) {
           setKnownMasters((current) => sortMasters([...current, ...apiMasters]));
         }
       })
-      .catch(() => { if (!controller.signal.aborted) { setSlots([]); setSlotsError(t("booking.form.errorSlots")); } })
+      .catch(() => { if (!controller.signal.aborted) { setSlots([]); setSlotsError(EN_PL_COPY.noSlots); } })
       .finally(() => { if (!controller.signal.aborted) setSlotsLoading(false); });
     return () => controller.abort();
-  }, [availabilityVersion, form.durationMinutes, form.preferredDate, form.preferredMaster, selectedServiceSlug, selectedServiceTitle, siteBookingEnabled, t]);
+  }, [availabilityVersion, form.durationMinutes, form.preferredDate, form.preferredMaster, selectedServiceApiName, selectedServiceSlug, siteBookingEnabled]);
 
   const selectedSlot = slots.find((slot) => getSlotKey(slot) === form.preferredTime);
   const visibleSlots = useMemo(() => {
