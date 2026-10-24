@@ -138,6 +138,26 @@ const UK_EN_COPY = {
   viaBooksy: "Відкрити Booksy / Open Booksy",
 };
 const LOCALES = { pl: "pl-PL", en: "en-GB", uk: "uk-UA" };
+const DATE_LABELS = {
+  en: {
+    weekdays: ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"],
+    months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+  },
+  pl: {
+    weekdays: ["NIE", "PON", "WTO", "ŚRO", "CZW", "PIĄ", "SOB"],
+    months: ["STY", "LUT", "MAR", "KWI", "MAJ", "CZE", "LIP", "SIE", "WRZ", "PAŹ", "LIS", "GRU"],
+  },
+  uk: {
+    weekdays: ["НЕД", "ПОН", "ВІВ", "СЕР", "ЧЕТ", "ПТН", "СУБ"],
+    months: ["СІЧ", "ЛЮТ", "БЕР", "КВІ", "ТРА", "ЧЕР", "ЛИП", "СЕР", "ВЕР", "ЖОВ", "ЛИС", "ГРУ"],
+  },
+};
+
+function getBilingualDateLabel(date, type, language) {
+  const index = type === "weekdays" ? date.getDay() : date.getMonth();
+  const primaryLanguage = language === "uk" ? "uk" : "pl";
+  return `${DATE_LABELS[primaryLanguage][type][index]} / ${DATE_LABELS.en[type][index]}`;
+}
 
 function toInputDate(date) {
   const year = date.getFullYear();
@@ -583,7 +603,7 @@ export default function BookingSection({ isStandalone = false }) {
                 <div className="booking-schedule">
                   <div className={`booking-schedule-block ${!hasDuration ? "booking-block--disabled" : ""}`}>
                     <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTodayInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
-                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const locale = LOCALES[lang] ?? LOCALES.pl; const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} data-booking-date={dateValue} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{new Intl.DateTimeFormat(locale, { weekday: "short" }).format(date)}</span><strong>{date.getDate()}</strong><small>{new Intl.DateTimeFormat(locale, { month: "short" }).format(date)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
+                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} data-booking-date={dateValue} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{getBilingualDateLabel(date, "weekdays", lang)}</span><strong>{date.getDate()}</strong><small>{getBilingualDateLabel(date, "months", lang)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   </div>
                   <div className={`booking-schedule-block ${!hasDate && !isAvailabilityLoading ? "booking-block--disabled" : ""} ${isAvailabilityLoading ? "is-loading" : ""}`.trim()}>
                     <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{!isAvailabilityLoading ? <div className="booking-slot-controls"><button aria-label={copy.previousTimes} disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label={copy.nextTimes} disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div> : null}</div>
