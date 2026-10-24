@@ -1,10 +1,13 @@
 import { useEffect } from "react";
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import BookingSection from "../components/BookingSection/BookingSection";
 import CallWidget from "../ui/CallWidget";
 import ConsentBanner from "../ui/ConsentBanner";
+import LanguageSwitcher from "../ui/LanguageSwitcher";
+import LogoNuar from "../ui/LogoNuar";
 import { useTranslation } from "../i18n/LanguageProvider";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
 import { SITE_URL } from "../constants/theme";
@@ -37,20 +40,32 @@ export default function BookingPage() {
         <link rel="canonical" href={`${SITE_URL}/booking`} />
       </Helmet>
 
-      <Header
-        bookingLanguageMode={true}
-        hideBookButton={true}
-        linkToHome={true}
-        navItems={navItems}
-        transparent={true}
-      />
+      <div className="booking-desktop-header">
+        <Header
+          bookingLanguageMode={true}
+          hideBookButton={true}
+          linkToHome={true}
+          navItems={navItems}
+          transparent={true}
+        />
+      </div>
+
+      <header className="booking-mobile-header">
+        <Link to="/" aria-label={t("nav.home")}>
+          <LogoNuar />
+        </Link>
+        <span>{t("nav.book")}</span>
+        <LanguageSwitcher bookingMode={true} />
+      </header>
 
       <main className="booking-page-main relative flex flex-1 flex-col items-center justify-center">
         <BookingSection isStandalone={true} />
       </main>
 
-      <Footer navItems={navItems} linkToHome={true} transparent={true} />
-      <CallWidget />
+      <div className="booking-desktop-footer">
+        <Footer navItems={navItems} linkToHome={true} transparent={true} />
+        <CallWidget />
+      </div>
       <ConsentBanner />
     </div>
   );

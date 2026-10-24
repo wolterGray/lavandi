@@ -16,6 +16,8 @@
   background-size: cover;
 }
 
+.booking-mobile-header { display: none; }
+
 .booking-section {
   --booking-bg: #0d0910;
   --booking-panel: rgba(17, 12, 19, 0.96);
@@ -340,22 +342,38 @@
 }
 
 @media (max-width: 640px) {
+  .booking-page { width: 100%; max-width: 100vw; min-height: 100dvh; overflow-x: clip; background: var(--booking-bg, #0d0910); }
+  .booking-page::before { display: none; }
+  .booking-desktop-header, .booking-desktop-footer { display: none; }
+  .booking-mobile-header { position: sticky; top: 0; z-index: 50; display: grid; width: 100%; max-width: 100vw; min-height: 60px; grid-template-columns: 82px minmax(0, 1fr) min-content; align-items: center; gap: 8px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; border-bottom: 1px solid rgba(224, 195, 139, .18); background: rgba(13, 9, 16, .98); }
+  .booking-mobile-header > a { display: block; width: 78px; }
+  .booking-mobile-header > a > div { margin: 0 !important; width: 100%; }
+  .booking-mobile-header > span { overflow: hidden; color: #f7f1f3; font-size: 13px; font-weight: 600; text-align: center; text-overflow: ellipsis; white-space: nowrap; }
+  .booking-mobile-header > div { justify-self: end; }
+  .booking-page-main { display: block; width: 100%; max-width: 100vw; min-width: 0; flex: 1 0 auto; overflow-x: clip; }
   .booking-section { min-height: 0; padding: 64px 0 0; }
-  .booking-section--standalone { min-height: calc(100dvh - 68px); padding: 12px 0 16px; }
-  .booking-section--standalone .booking-intro { padding: 0 16px; margin: 4px 0 12px; text-align: center; }
-  .booking-section--standalone .booking-intro h2 { font-size: 20px; }
+  .booking-section--standalone { display: block; width: 100%; max-width: 100vw; min-width: 0; min-height: calc(100dvh - 60px); padding: 0; overflow-x: clip; }
+  .booking-section--standalone .booking-intro { display: none; }
+  .booking-section--standalone .booking-section__container { width: 100%; max-width: 100vw; min-width: 0; padding-inline: 0 !important; }
+  .booking-section--standalone .booking-shell,
+  .booking-panel { width: 100%; max-width: 100%; min-width: 0; }
   .booking-section__veil { background: rgba(10, 6, 11, .9); }
-  .booking-section__container { padding: 0; }
   .booking-intro { padding: 0 18px; margin-bottom: 22px; text-align: left; }
   .booking-intro h2 { font-size: 34px; }
   .booking-intro > p:last-child { font-size: 14px; }
-  .booking-panel { border-right: 0; border-bottom: 0; border-left: 0; border-radius: 0; box-shadow: none; }
-  .booking-progress { justify-content: flex-start; padding: 15px 16px; }
-  .booking-progress i { flex: 1; max-width: 54px; }
+  .booking-panel { min-height: calc(100dvh - 60px); border: 0; border-radius: 0; box-shadow: none; }
+  .booking-progress { position: sticky; top: calc(60px + env(safe-area-inset-top)); z-index: 8; justify-content: stretch; gap: 7px; width: 100%; min-width: 0; padding: 12px; overflow: hidden; background: rgba(13, 9, 16, .98); }
+  .booking-progress button { flex: 1 1 0; min-width: 0; gap: 7px; justify-content: center; font-size: 11px; line-height: 1.25; text-align: left; }
+  .booking-progress button span { flex: 0 0 24px; }
+  .booking-progress i { flex: 0 1 28px; width: auto; max-width: 28px; }
   .booking-step { padding: 18px 12px calc(18px + env(safe-area-inset-bottom)); }
   .booking-selection-grid { grid-template-columns: 1fr; gap: 14px; }
   .booking-selection-grid .booking-field:first-child { grid-column: auto; }
-  .booking-schedule { margin: 18px -12px 0; padding: 18px 12px; border-right: 0; border-left: 0; border-radius: 0; }
+  .booking-schedule { width: calc(100% + 24px); min-width: 0; margin: 18px -12px 0; padding: 18px 12px; overflow: hidden; border-right: 0; border-left: 0; border-radius: 0; }
+  .booking-block-heading { min-width: 0; gap: 8px; }
+  .booking-block-heading > div { min-width: 0; }
+  .booking-block-heading h3 { min-width: 0; line-height: 1.3; }
+  .booking-date-picker { flex: 0 1 auto; min-width: 0; }
   .booking-date-row { grid-template-columns: 36px minmax(0, 1fr) 36px; gap: 6px; }
   .booking-date-strip { grid-auto-columns: 64px; }
   .booking-date-strip button { min-height: 72px; }
