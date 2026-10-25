@@ -88,7 +88,7 @@ export default function ServicePage({ service }) {
               <SiteImage
                 src={service.img}
                 alt={service.title}
-                wrapperClassName="aspect-[4/3] w-full max-h-[520px] sm:aspect-[16/11] lg:aspect-[5/4]"
+                wrapperClassName="aspect-[4/3] w-full max-h-[620px] sm:aspect-[16/11] lg:aspect-[6/5]"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -106,22 +106,28 @@ export default function ServicePage({ service }) {
                 </p>
               </div>
 
-              <div className="mt-5 overflow-hidden rounded-card border border-border/60">
-                <div className="border-b border-border/60 px-4 py-2.5">
-                  <h2 className="font-display text-xl text-milk">{t("servicePage.priceList")}</h2>
+              <div className="mt-7 rounded-card border border-border/70 bg-surface/35 p-3 sm:p-4">
+                <div className="mb-3 px-1 sm:mb-4">
+                  <h2 className="font-display text-2xl text-milk">{t("servicePage.priceList")}</h2>
                 </div>
-                <ul className="grid divide-y divide-border/60 md:grid-cols-4 md:divide-x md:divide-y-0">
+                <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
                   {priceRows.map(({ minutes, base, top }) => (
-                    <li key={minutes} className="flex items-center justify-between gap-4 px-4 py-3 text-sm md:block md:px-3 md:py-3.5">
-                      <span className="text-stone">{minutes} {t("common.min")}</span>
-                      <div className="text-right md:mt-1 md:text-left">
+                    <li key={minutes} className="rounded-card border border-border/70 bg-card/70 px-4 py-4 shadow-sm sm:min-h-[132px]">
+                      <span className="block text-sm font-semibold text-stone">{minutes} {t("common.min")}</span>
+                      <div className="mt-3 space-y-2">
                         {top && top !== base ? (
                           <>
-                            <span className="block font-bold text-gold">{formatPrice(base)} <span className="text-xs font-normal text-muted">({t("pricing.master") || "Master"})</span></span>
-                            <span className="block text-xs font-bold text-milk">{formatPrice(top)} <span className="font-normal text-muted">({t("pricing.topMaster") || "Top"})</span></span>
+                            <div>
+                              <span className="block text-lg font-bold leading-none text-gold">{formatPrice(base)}</span>
+                              <span className="mt-1 block text-xs text-muted">{t("pricing.master") || "Master"}</span>
+                            </div>
+                            <div className="border-t border-border/50 pt-2">
+                              <span className="block text-base font-semibold leading-none text-milk">{formatPrice(top)}</span>
+                              <span className="mt-1 block text-xs text-muted">{t("pricing.topMaster") || "Top Master"}</span>
+                            </div>
                           </>
                         ) : (
-                          <span className="font-bold text-gold">{formatPrice(base)}</span>
+                          <span className="block text-lg font-bold text-gold">{formatPrice(base)}</span>
                         )}
                       </div>
                     </li>
