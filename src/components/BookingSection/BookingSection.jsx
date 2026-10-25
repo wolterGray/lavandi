@@ -262,6 +262,7 @@ export default function BookingSection({ isStandalone = false }) {
   const [availabilityVersion, setAvailabilityVersion] = useState(0);
   const [form, setForm] = useState({ clientEmail: "", clientName: "", clientPhone: "", durationMinutes: "", note: "", preferredDate: "", preferredMaster: "", preferredTime: "", serviceSlug: "" });
   const [slots, setSlots] = useState([]);
+  const [dateAvailability, setDateAvailability] = useState({});
   const [dateSearchLoading, setDateSearchLoading] = useState(false);
   const [slotsLoading, setSlotsLoading] = useState(false);
   const [slotsError, setSlotsError] = useState("");
@@ -330,6 +331,7 @@ export default function BookingSection({ isStandalone = false }) {
   useEffect(() => {
     if (!siteBookingEnabled || !selectedServiceSlug || !form.durationMinutes || !form.preferredMaster) {
       setDateSearchLoading(false);
+      setDateAvailability({});
       return undefined;
     }
 
@@ -339,10 +341,12 @@ export default function BookingSection({ isStandalone = false }) {
       setDateSearchLoading(true);
       setSlotsError("");
       setSlots([]);
+      setDateAvailability({});
       setForm((current) => ({ ...current, preferredDate: "", preferredTime: "" }));
 
       try {
         const today = getTodayInputDate();
+        let nearestSelected = false;
         for (let offset = 0; offset < DAYS_IN_CAROUSEL; offset += DATE_SEARCH_BATCH_SIZE) {
           const dates = Array.from(
             { length: Math.min(DATE_SEARCH_BATCH_SIZE, DAYS_IN_CAROUSEL - offset) },
@@ -363,11 +367,19 @@ export default function BookingSection({ isStandalone = false }) {
               return { preferredDate, slots: [] };
             }
           }));
-          const nearest = results.find((result) => result.slots.length > 0);
-          if (nearest && dateSearchRequestRef.current === requestId) {
+          if (dateSearchRequestRef.current !== requestId) return;
+
+          setDateAvailability((current) => ({
+            ...current,
+            ...Object.fromEntries(results.map((result) => [result.preferredDate, result.slots.length > 0])),
+          }));
+
+          const nearest = !nearestSelected && results.find((result) => result.slots.length > 0);
+          if (nearest) {
+            nearestSelected = true;
             setDateWindowStart(today);
             setForm((current) => ({ ...current, preferredDate: nearest.preferredDate, preferredTime: "" }));
-            return;
+            setDateSearchLoading(false);
           }
         }
       } catch {
@@ -393,6 +405,10 @@ export default function BookingSection({ isStandalone = false }) {
         })).sort((a, b) => normalizeSlotTime(a.startTime).localeCompare(normalizeSlotTime(b.startTime)) || a.master.localeCompare(b.master));
 
         setSlots(nextSlots);
+        setDateAvailability((current) => ({
+          ...current,
+          [form.preferredDate]: nextSlots.length > 0,
+        }));
         const apiMasters = Array.isArray(data?.masters) && data.masters.length
           ? data.masters.map(formatMasterDisplay).filter(Boolean)
           : [...new Set(nextSlots.map((slot) => String(slot.master ?? "").trim()).filter(Boolean))];
@@ -479,6 +495,7 @@ export default function BookingSection({ isStandalone = false }) {
     setForm((current) => ({ ...current, durationMinutes: String(minutes), preferredDate: "", preferredTime: "" }));
   };
   const handleDateChange = (value) => {
+    if (dateAvailability[value] === false) return;
     dateSearchRequestRef.current += 1;
     setDateSearchLoading(false);
     updateField("preferredDate", value);
@@ -603,7 +620,7 @@ export default function BookingSection({ isStandalone = false }) {
                 <div className="booking-schedule">
                   <div className={`booking-schedule-block ${!hasDuration ? "booking-block--disabled" : ""}`}>
                     <div className="booking-block-heading"><div><span>01</span><h3>{copy.date}</h3></div><button className="booking-date-picker" disabled={!hasDuration} type="button" onClick={() => dateInputRef.current?.showPicker?.()}><CalendarDays size={17} />{copy.datePicker}<input disabled={!hasDuration} ref={dateInputRef} min={getTodayInputDate()} type="date" value={form.preferredDate} onChange={(event) => handleDateChange(event.target.value)} /></button></div>
-                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const isSelected = form.preferredDate === dateValue; return <button aria-pressed={isSelected} className={isSelected ? "is-active" : ""} data-booking-date={dateValue} disabled={!hasDuration} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{getBilingualDateLabel(date, "weekdays", lang)}</span><strong>{date.getDate()}</strong><small>{getBilingualDateLabel(date, "months", lang)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
+                    <div className="booking-date-row"><button aria-label={copy.previousDates} disabled={!hasDuration || !dateScroll.left} type="button" onClick={() => scrollDates(-1)}><ChevronLeft /></button><div ref={datesRef} className="booking-date-strip" onScroll={updateDateScroll}>{dateOptions.map((dateValue) => { const date = fromInputDate(dateValue); const isSelected = form.preferredDate === dateValue; const availability = dateAvailability[dateValue]; const isUnavailable = availability === false; const isChecking = hasDuration && availability === undefined; return <button aria-disabled={isUnavailable || isChecking} aria-pressed={isSelected} className={`${isSelected ? "is-active" : ""} ${isUnavailable ? "is-unavailable" : ""} ${isChecking ? "is-checking" : ""}`.trim()} data-booking-date={dateValue} disabled={!hasDuration || isUnavailable || isChecking} key={dateValue} type="button" onClick={() => handleDateChange(dateValue)}><span>{getBilingualDateLabel(date, "weekdays", lang)}</span><strong>{date.getDate()}</strong><small>{getBilingualDateLabel(date, "months", lang)}</small></button>; })}</div><button aria-label={copy.nextDates} disabled={!hasDuration || !dateScroll.right} type="button" onClick={() => scrollDates(1)}><ChevronRight /></button></div>
                   </div>
                   <div className={`booking-schedule-block ${!hasDate && !isAvailabilityLoading ? "booking-block--disabled" : ""} ${isAvailabilityLoading ? "is-loading" : ""}`.trim()}>
                     <div className="booking-block-heading booking-time-heading"><div><span>02</span><h3>{copy.time}</h3></div>{!isAvailabilityLoading ? <div className="booking-slot-controls"><button aria-label={copy.previousTimes} disabled={!hasDate || !slotScroll.left} type="button" onClick={() => scrollSlots(-1)}><ChevronLeft /></button><button aria-label={copy.nextTimes} disabled={!hasDate || !slotScroll.right} type="button" onClick={() => scrollSlots(1)}><ChevronRight /></button></div> : null}</div>

@@ -176,6 +176,17 @@
 .booking-date-strip strong { font-size: 21px; }
 .booking-date-strip button.is-active { border-color: var(--booking-gold); color: #171016; background: var(--booking-gold); }
 .booking-date-strip button.is-active span, .booking-date-strip button.is-active small { color: #554529; }
+.booking-date-strip button.is-unavailable,
+.booking-date-strip button.is-checking {
+  border-color: transparent;
+  color: var(--booking-muted);
+  background: rgba(255,255,255,.018);
+  cursor: default;
+  opacity: .34;
+  filter: grayscale(1);
+}
+.booking-date-strip button.is-unavailable :is(span, strong, small),
+.booking-date-strip button.is-checking :is(span, strong, small) { color: inherit; }
 .booking-time-heading { margin-top: 24px; }
 .booking-slot-controls { display: flex; gap: 6px; }
 .booking-slot-controls button { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--booking-border); border-radius: 6px; color: #d8cfd3; background: var(--booking-field); }
