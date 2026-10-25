@@ -445,8 +445,8 @@
   "booking": {
     "label": "Booking",
     "title": "Pause. Breathe. Book a moment just for yourself.",
-    "subtitle": "Choose your service, therapist, and preferred time directly on Booksy.",
-    "cta": "Book on Booksy",
+    "subtitle": "Choose your service, therapist, and preferred time on our booking page.",
+    "cta": "Book now",
     "disabledMessage": "Online booking is temporarily unavailable. Please contact us via phone or Telegram to book your appointment.",
     "form": {
       "name": "Full name",

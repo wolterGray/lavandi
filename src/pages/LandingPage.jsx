@@ -14,7 +14,7 @@ import GallerySection from "../components/GallerySection/GallerySection";
 import PriceSection from "../components/PriceSection/PriceSection";
 import LocationSection from "../components/LocationSection/LocationSection";
 import FaqSection from "../components/FaqSection/FaqSection";
-import BookingSection from "../components/BookingSection/BookingSection";
+import BookingCta from "../components/BookingCta/BookingCta";
 import CosmeticsSection from "../components/CosmeticsSection/CosmeticsSection";
 import { COSMETICS_ROUTE } from "../components/CosmeticsSection/cosmeticsShared";
 import Footer from "../components/Footer/Footer";
@@ -61,7 +61,7 @@ export default function LandingPage() {
       <GallerySection />
       <LocationSection />
       <FaqSection />
-      <BookingSection />
+      <BookingCta />
       <Footer navItems={navItems} />
       <CallWidget />
       <StickyCta />
