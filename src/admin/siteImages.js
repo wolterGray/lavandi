@@ -33,6 +33,7 @@ const ALLOWED_TYPES = new Set([
 ]);
 
 const IMAGE_FIELD_KEYS = new Set(["img", "src", "aboutImage"]);
+const MAX_BACKEND_IMAGE_PAYLOAD_BYTES = 900 * 1024;
 
 function sanitizeFolder(folder = "uploads") {
   return folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
@@ -237,26 +238,21 @@ export async function saveSiteImageToDatabase(file, folder = "uploads") {
     thumb_size_bytes: thumb?.size ?? null,
     updated_at: new Date().toISOString(),
   };
+  const serializedPayload = JSON.stringify(payload);
 
-  let saved = false;
-
-  if (shouldUseCmsBackend()) {
-    try {
-      await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
-        method: "PUT",
-        body: JSON.stringify(payload),
-        label: "Save site image",
-      });
-      saved = true;
-    } catch {
-      // Fall back to direct Supabase if CMS backend request fails or times out
-    }
+  if (new Blob([serializedPayload]).size > MAX_BACKEND_IMAGE_PAYLOAD_BYTES) {
+    throw new Error("Файл слишком большой для загрузки. Используйте JPG, PNG или WebP размером до 15 МБ.");
   }
 
-  if (!saved) {
+  if (shouldUseCmsBackend()) {
+    await cmsBackendRequest(`/api/site-images/${encodeURIComponent(id)}`, {
+      method: "PUT",
+      body: serializedPayload,
+      label: "Save site image",
+    });
+  } else {
     if (!supabase) throw new Error(adminRu.media.storageNotConfigured);
     const { error } = await supabase.from("site_images").upsert(payload);
-
     if (error) throw error;
   }
 

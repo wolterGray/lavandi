@@ -2,6 +2,14 @@ const SKIP_TYPES = new Set(["image/svg+xml", "image/gif"]);
 
 const FOLDER_PRESETS = {
   cosmetics: { maxWidth: 2000, maxHeight: 2000, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
+  gallery: {
+    maxWidth: 1600,
+    maxHeight: 1600,
+    quality: 0.82,
+    maxBytes: 580 * 1024,
+    thumb: 480,
+    thumbQuality: 0.76,
+  },
   uploads: { maxWidth: 2500, maxHeight: 2500, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
 };
 
@@ -64,12 +72,10 @@ async function renderWebpBlob(source, maxWidth, maxHeight, quality) {
   canvas.height = targetHeight;
   const context = canvas.getContext("2d");
   if (!context) {
-    source.close();
     return null;
   }
 
   source.draw(context, targetWidth, targetHeight);
-  source.close();
 
   return new Promise((resolve) => {
     canvas.toBlob(resolve, "image/webp", quality);
@@ -83,6 +89,7 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
   const maxWidth = thumb ? preset.thumb : preset.maxWidth;
   const maxHeight = thumb ? preset.thumb : preset.maxHeight;
   const quality = thumb ? preset.thumbQuality : preset.quality;
+  const maxBytes = thumb ? null : preset.maxBytes;
 
   let source;
   try {
@@ -91,7 +98,20 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
     return file;
   }
 
-  const blob = await renderWebpBlob(source, maxWidth, maxHeight, quality);
+  let targetWidth = maxWidth;
+  let targetHeight = maxHeight;
+  let targetQuality = quality;
+  let blob = null;
+
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    blob = await renderWebpBlob(source, targetWidth, targetHeight, targetQuality);
+    if (!blob || !maxBytes || blob.size <= maxBytes) break;
+    targetWidth = Math.max(800, Math.round(targetWidth * 0.82));
+    targetHeight = Math.max(800, Math.round(targetHeight * 0.82));
+    targetQuality = Math.max(0.58, targetQuality - 0.08);
+  }
+
+  source.close();
   if (!blob) return file;
   if (!thumb && blob.size >= file.size && file.type === "image/webp") return file;
 

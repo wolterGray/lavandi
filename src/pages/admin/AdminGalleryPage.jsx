@@ -12,7 +12,7 @@ const ALT_KEYS = ["studio", "ambience", "ritual", "space", "classic", "relax", "
 
 export default function AdminGalleryPage() {
   const { gallery, overrides } = useContent();
-  const { contentSaving, saveError, runSave, saveSection } = useAdminPersist();
+  const { contentSaving, saveError, runSave, savePatch } = useAdminPersist();
   const [draft, setDraft] = useState(gallery);
   const [dirty, setDirty] = useState(false);
   const requestConfirm = useAdminConfirm();
@@ -37,7 +37,7 @@ export default function AdminGalleryPage() {
     });
     if (!ok) return;
     const next = draft.filter((_, i) => i !== index);
-    const saved = await runSave(() => saveSection("gallery", next));
+    const saved = await runSave(() => savePatch({ gallery: next }, "gallery"));
     if (saved) {
       setDraft(next);
       setDirty(false);
@@ -66,7 +66,7 @@ export default function AdminGalleryPage() {
   };
 
   const handleSave = async () => {
-    const ok = await runSave(() => saveSection("gallery", draft));
+    const ok = await runSave(() => savePatch({ gallery: draft }, "gallery"));
     if (ok) setDirty(false);
   };
 
