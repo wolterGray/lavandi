@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { Routes, Route, useParams, Navigate, useLocation } from "react-router-dom";
 import { useTranslation } from "./i18n/LanguageProvider";
 import LandingPage from "./pages/LandingPage";
@@ -46,6 +46,19 @@ function PublicLoader() {
       NUAR
     </div>
   );
+}
+
+function InitialPaintReady() {
+  useLayoutEffect(() => {
+    const bootScreen = document.getElementById("nuar-boot-screen");
+    if (!bootScreen) return undefined;
+
+    bootScreen.classList.add("is-ready");
+    const timer = window.setTimeout(() => bootScreen.remove(), 220);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  return null;
 }
 
 function ScrollToTop() {
@@ -127,6 +140,7 @@ function PublicSite() {
 export default function App() {
   return (
     <>
+      <InitialPaintReady />
       <ScrollToTop />
       <Suspense fallback={<AdminLoader />}>
         <Routes>
