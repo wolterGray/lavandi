@@ -1,16 +1,18 @@
 const SKIP_TYPES = new Set(["image/svg+xml", "image/gif"]);
 
 const FOLDER_PRESETS = {
-  cosmetics: { maxWidth: 2000, maxHeight: 2000, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
+  cosmetics: { maxWidth: 1800, maxHeight: 1800, quality: 0.86, maxBytes: 420 * 1024, thumb: 480, thumbQuality: 0.76 },
   gallery: {
     maxWidth: 1600,
     maxHeight: 1600,
     quality: 0.82,
-    maxBytes: 580 * 1024,
+    maxBytes: 420 * 1024,
     thumb: 480,
     thumbQuality: 0.76,
   },
-  uploads: { maxWidth: 2500, maxHeight: 2500, quality: 0.9, thumb: 640, thumbQuality: 0.8 },
+  services: { maxWidth: 1600, maxHeight: 2000, quality: 0.85, maxBytes: 420 * 1024, thumb: 480, thumbQuality: 0.76 },
+  team: { maxWidth: 1200, maxHeight: 1400, quality: 0.85, maxBytes: 400 * 1024, thumb: 400, thumbQuality: 0.76 },
+  uploads: { maxWidth: 1800, maxHeight: 1800, quality: 0.85, maxBytes: 420 * 1024, thumb: 480, thumbQuality: 0.76 },
 };
 
 function getPreset(folder = "uploads") {
@@ -103,12 +105,12 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
   let targetQuality = quality;
   let blob = null;
 
-  for (let attempt = 0; attempt < 5; attempt += 1) {
+  for (let attempt = 0; attempt < 6; attempt += 1) {
     blob = await renderWebpBlob(source, targetWidth, targetHeight, targetQuality);
     if (!blob || !maxBytes || blob.size <= maxBytes) break;
-    targetWidth = Math.max(800, Math.round(targetWidth * 0.82));
-    targetHeight = Math.max(800, Math.round(targetHeight * 0.82));
-    targetQuality = Math.max(0.58, targetQuality - 0.08);
+    targetWidth = Math.max(640, Math.round(targetWidth * 0.82));
+    targetHeight = Math.max(640, Math.round(targetHeight * 0.82));
+    targetQuality = Math.max(0.55, targetQuality - 0.08);
   }
 
   source.close();
@@ -125,7 +127,9 @@ async function renderWebpFile(file, folder, { thumb = false } = {}) {
 
 export async function compressImageForUpload(file, folder = "uploads") {
   if (!file || SKIP_TYPES.has(file.type)) return file;
-  if (file.size <= 1.5 * 1024 * 1024 && file.type === "image/webp") return file;
+  const preset = getPreset(folder);
+  const maxBytes = preset.maxBytes || 420 * 1024;
+  if (file.size <= maxBytes && file.type === "image/webp") return file;
   return renderWebpFile(file, folder, { thumb: false });
 }
 

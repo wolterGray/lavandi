@@ -33,7 +33,7 @@ const ALLOWED_TYPES = new Set([
 ]);
 
 const IMAGE_FIELD_KEYS = new Set(["img", "src", "aboutImage"]);
-const MAX_BACKEND_IMAGE_PAYLOAD_BYTES = 900 * 1024;
+const MAX_BACKEND_IMAGE_PAYLOAD_BYTES = 850 * 1024;
 
 function sanitizeFolder(folder = "uploads") {
   return folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
