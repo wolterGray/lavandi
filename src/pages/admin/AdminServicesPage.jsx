@@ -107,9 +107,6 @@ export default function AdminServicesPage() {
   const selectedService = services.find((service) => service.slug === selectedSlug) ?? filteredServices[0] ?? services[0];
   const selectedSourceService = sourceServices.find((service) => service.slug === selectedService?.slug) ?? selectedService;
   const selectedTexts = textDraft[selectedService?.slug] ?? {};
-  const priceLabel = selectedService?.price?.length
-    ? selectedService.price.map((price, index) => `${selectedService.time?.[index] ?? "?"} мин — ${price} zł`).join(", ")
-    : "—";
 
   return (
     <>
@@ -135,8 +132,8 @@ export default function AdminServicesPage() {
         <AdminViewSiteButton href="/#services" />
       </div>
 
-      <div className="grid items-start gap-3 lg:grid-cols-[260px_minmax(0,1fr)]">
-        <AdminPanel className="overflow-hidden p-0 sm:p-0 lg:sticky lg:top-3">
+      <div className="grid min-w-0 items-start gap-3 lg:grid-cols-[260px_minmax(0,1fr)]">
+        <AdminPanel className="min-w-0 overflow-hidden p-0 sm:p-0 lg:sticky lg:top-3">
           <div className="border-b border-border/40 p-2.5">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" aria-hidden />
@@ -158,7 +155,7 @@ export default function AdminServicesPage() {
                   key={service.slug}
                   type="button"
                   onClick={() => setSelectedSlug(service.slug)}
-                  className={`min-w-[190px] rounded-card border px-3 py-2.5 text-left transition lg:min-w-0 ${
+                  className={`min-w-[180px] rounded-card border px-3 py-2.5 text-left transition lg:min-w-0 ${
                     active
                       ? "border-gold/40 bg-gold/10 text-milk"
                       : "border-transparent text-stone hover:border-border/60 hover:bg-surface"
@@ -168,7 +165,6 @@ export default function AdminServicesPage() {
                     <span className="line-clamp-2 text-sm font-semibold">{texts.title || service.slug}</span>
                     {active ? <Check className="mt-0.5 h-4 w-4 shrink-0 text-gold" aria-hidden /> : null}
                   </span>
-                  <span className="mt-1 block truncate text-[11px] text-muted">{service.slug}</span>
                 </button>
               );
             })}
@@ -177,51 +173,22 @@ export default function AdminServicesPage() {
         </AdminPanel>
 
         {selectedService ? (
-          <AdminPanel className="p-4 sm:p-4">
-              <div className="mb-4 flex flex-wrap items-start justify-between gap-3 border-b border-border/30 pb-3">
-                <div>
-                  <div className="mb-1 flex items-center gap-2 text-gold">
-                    <Sparkles className="h-4 w-4" aria-hidden />
-                    <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Редактор услуги</span>
-                  </div>
-                  <h3 className="font-display text-xl text-milk">{selectedTexts.title || selectedService.slug}</h3>
-                  <p className="mt-1 text-xs text-muted">/{selectedService.slug}</p>
+          <AdminPanel className="min-w-0 overflow-hidden p-4 sm:p-4">
+              <div className="mb-4 flex items-center justify-between gap-3 border-b border-border/30 pb-3">
+                <div className="flex items-center gap-2 text-gold">
+                  <Sparkles className="h-4 w-4" aria-hidden />
+                  <span className="text-[10px] font-bold uppercase tracking-[0.14em]">Редактор услуги</span>
                 </div>
                 <span className="rounded-pill border border-gold/30 bg-gold/10 px-2.5 py-1 text-[10px] font-bold uppercase text-gold">
                   {activeLang}
                 </span>
               </div>
 
-              <div className="grid gap-5 xl:grid-cols-[minmax(260px,0.8fr)_minmax(360px,1.2fr)]">
-                <div className="space-y-4 xl:border-r xl:border-border/30 xl:pr-5">
-                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
-                    <AdminField label={adminRu.common.slug}>
-                      <input value={selectedService.slug} readOnly className={adminInputClass("opacity-60")} />
-                    </AdminField>
-                    <AdminField label="Цены из CRM (только просмотр)" help={adminRu.help.crmPrices}>
-                      <div className="min-h-[42px] rounded-card border border-border/60 bg-surface px-3 py-2.5 text-sm leading-relaxed text-stone">
-                        {priceLabel}
-                      </div>
-                    </AdminField>
-                  </div>
-                  <div className="border-t border-border/30 pt-4">
-                    <div className="mb-3 flex items-center gap-2">
-                      <ImageIcon className="h-4 w-4 text-gold" aria-hidden />
-                      <h4 className="text-sm font-semibold text-milk">Фото услуги</h4>
-                    </div>
-                    <AdminImageField
-                      folder="services"
-                      label={adminRu.common.imageUrl}
-                      value={imgDraft[selectedService.slug] ?? selectedSourceService?.img}
-                      onChange={(img) => updateImg(selectedService.slug, img)}
-                      previewClassName="h-28 w-28 shrink-0 rounded-card object-cover ring-1 ring-border/50"
-                    />
-                  </div>
-                </div>
-                <div>
+              <div className="grid min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
+                <div className="min-w-0">
                   <div className="mb-3 flex items-center gap-2">
                     <Languages className="h-4 w-4 text-gold" aria-hidden />
-                    <h4 className="text-sm font-semibold text-milk">Текст на сайте</h4>
+                    <h3 className="text-sm font-semibold text-milk">Текст услуги</h3>
                   </div>
                   <div className="space-y-4">
                     <AdminField label={adminRu.common.name}>
@@ -235,11 +202,24 @@ export default function AdminServicesPage() {
                       <textarea
                         value={selectedTexts.desc ?? ""}
                         onChange={(event) => updateText(selectedService.slug, { desc: event.target.value })}
-                        rows={9}
-                        className={adminInputClass("min-h-[230px] resize-y leading-relaxed")}
+                        rows={12}
+                        className={adminInputClass("min-h-[310px] resize-y leading-relaxed")}
                       />
                     </AdminField>
                   </div>
+                </div>
+                <div className="min-w-0 overflow-hidden xl:border-l xl:border-border/30 xl:pl-6">
+                  <div className="mb-3 flex items-center gap-2">
+                    <ImageIcon className="h-4 w-4 text-gold" aria-hidden />
+                    <h3 className="text-sm font-semibold text-milk">Фотография</h3>
+                  </div>
+                  <AdminImageField
+                    folder="services"
+                    label="Фото услуги"
+                    value={imgDraft[selectedService.slug] ?? selectedSourceService?.img}
+                    onChange={(img) => updateImg(selectedService.slug, img)}
+                    previewClassName="h-40 w-full max-w-[280px] shrink-0 rounded-card object-cover ring-1 ring-border/50"
+                  />
                 </div>
               </div>
           </AdminPanel>

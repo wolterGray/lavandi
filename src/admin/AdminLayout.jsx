@@ -59,7 +59,7 @@ function AdminLayoutInner() {
   };
 
   return (
-    <div className="admin-shell min-h-screen bg-void font-sans text-milk">
+    <div className="admin-shell min-h-screen overflow-x-hidden bg-void font-sans text-milk">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <aside className="border-b border-border/60 bg-surface lg:w-64 lg:shrink-0 lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between px-5 py-5 lg:block">
@@ -170,8 +170,8 @@ function AdminLayoutInner() {
             </div>
           )}
 
-          {isSupabaseEnabled && (
-            <div className={`${isCompactWorkspace ? "mb-3 px-3 py-2 text-xs" : "mb-6 px-4 py-3 text-sm"} rounded-card border border-border/50 bg-card/60 text-stone`}>
+          {isSupabaseEnabled && !isCompactWorkspace && (
+            <div className="mb-6 rounded-card border border-border/50 bg-card/60 px-4 py-3 text-sm text-stone">
               {contentLoading ? (
                 <p>{adminRu.common.loadingContent}</p>
               ) : syncError ? (
