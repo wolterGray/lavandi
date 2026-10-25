@@ -124,15 +124,16 @@ export function useAdminPersist({ successMessage, showSuccessToast = true } = {}
   };
 }
 
-export function LangTabs({ activeLang, onChange, langs = ADMIN_LANG_CODES }) {
+export function LangTabs({ activeLang, onChange, langs = ADMIN_LANG_CODES, disabled = false }) {
   return (
     <div className="mb-6 flex flex-wrap gap-2">
       {langs.map((code) => (
         <button
           key={code}
           type="button"
+          disabled={disabled && activeLang !== code}
           onClick={() => onChange(code)}
-          className={`rounded-pill border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition ${
+          className={`rounded-pill border px-4 py-2 text-[11px] font-bold uppercase tracking-[0.12em] transition disabled:cursor-not-allowed disabled:opacity-40 ${
             activeLang === code
               ? "border-gold/40 bg-gold/10 text-gold"
               : "border-border/50 text-stone hover:border-gold/30"
