@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { ChevronDown, ExternalLink, LogOut, Search } from "lucide-react";
 import { AdminBreadcrumbs } from "./adminUi";
 import { useAdminAuth } from "./AdminAuthContext";
@@ -33,6 +33,8 @@ function AdminLayoutInner() {
   const { hasOverrides, isSupabaseEnabled, contentLoading, contentSaving, syncError, lastSyncedAt } = useContent();
   const { isAnyDirty, setCommandOpen, confirmLeaveIfDirty } = useAdminShell();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const isCompactWorkspace = pathname === "/admin/services";
   const [collapsedGroups, setCollapsedGroups] = useState(readCollapsedGroups);
 
   useEffect(() => {
@@ -169,7 +171,7 @@ function AdminLayoutInner() {
           )}
 
           {isSupabaseEnabled && (
-            <div className="mb-6 rounded-card border border-border/50 bg-card/60 px-4 py-3 text-sm text-stone">
+            <div className={`${isCompactWorkspace ? "mb-3 px-3 py-2 text-xs" : "mb-6 px-4 py-3 text-sm"} rounded-card border border-border/50 bg-card/60 text-stone`}>
               {contentLoading ? (
                 <p>{adminRu.common.loadingContent}</p>
               ) : syncError ? (
@@ -184,7 +186,7 @@ function AdminLayoutInner() {
               )}
             </div>
           )}
-          <AdminBreadcrumbs />
+          {!isCompactWorkspace ? <AdminBreadcrumbs /> : null}
           <Outlet />
         </main>
       </div>

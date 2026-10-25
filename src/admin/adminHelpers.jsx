@@ -124,9 +124,9 @@ export function useAdminPersist({ successMessage, showSuccessToast = true } = {}
   };
 }
 
-export function LangTabs({ activeLang, onChange, langs = ADMIN_LANG_CODES, disabled = false }) {
+export function LangTabs({ activeLang, onChange, langs = ADMIN_LANG_CODES, disabled = false, className = "mb-6" }) {
   return (
-    <div className="mb-6 flex flex-wrap gap-2">
+    <div className={`flex flex-wrap gap-2 ${className}`}>
       {langs.map((code) => (
         <button
           key={code}
