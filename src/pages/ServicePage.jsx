@@ -77,8 +77,8 @@ export default function ServicePage({ service }) {
 
       <Header navItems={navItems} linkToHome />
 
-      <Container className="pb-20 pt-10 sm:pt-12 lg:pt-14">
-        <div className="mb-6 sm:mb-8">
+      <Container className="pb-20 pt-4 sm:pt-5 lg:pt-6">
+        <div className="mb-4">
           <PageNav />
         </div>
 
@@ -88,8 +88,8 @@ export default function ServicePage({ service }) {
               <SiteImage
                 src={service.img}
                 alt={service.title}
-                wrapperClassName="aspect-[4/3] w-full max-h-[620px] sm:aspect-[16/11] lg:aspect-[6/5]"
-                className="h-full w-full object-cover"
+                wrapperClassName="w-full bg-card/30"
+                className="block max-h-[680px] w-full object-contain"
               />
             </div>
           </ScrollAnimationWrapper>
@@ -106,24 +106,24 @@ export default function ServicePage({ service }) {
                 </p>
               </div>
 
-              <div className="mt-7 rounded-card border border-border/70 bg-surface/35 p-3 sm:p-4">
-                <div className="mb-3 px-1 sm:mb-4">
-                  <h2 className="font-display text-2xl text-milk">{t("servicePage.priceList")}</h2>
+              <div className="mt-7 rounded-card border border-border/70 bg-surface/35 p-2.5 sm:p-4">
+                <div className="mb-2 px-1 sm:mb-4">
+                  <h2 className="font-display text-xl text-milk sm:text-2xl">{t("servicePage.priceList")}</h2>
                 </div>
-                <ul className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4">
+                <ul className="grid grid-cols-2 gap-2 sm:gap-2.5 xl:grid-cols-4">
                   {priceRows.map(({ minutes, base, top }) => (
-                    <li key={minutes} className="rounded-card border border-border/70 bg-card/70 px-4 py-4 shadow-sm sm:min-h-[132px]">
-                      <span className="block text-sm font-semibold text-stone">{minutes} {t("common.min")}</span>
-                      <div className="mt-3 space-y-2">
+                    <li key={minutes} className="rounded-card border border-border/70 bg-card/70 px-3 py-3 shadow-sm sm:min-h-[132px] sm:px-4 sm:py-4">
+                      <span className="block text-xs font-semibold text-stone sm:text-sm">{minutes} {t("common.min")}</span>
+                      <div className="mt-2 space-y-1.5 sm:mt-3 sm:space-y-2">
                         {top && top !== base ? (
                           <>
                             <div>
-                              <span className="block text-lg font-bold leading-none text-gold">{formatPrice(base)}</span>
-                              <span className="mt-1 block text-xs text-muted">{t("pricing.master") || "Master"}</span>
+                              <span className="block text-base font-bold leading-none text-gold sm:text-lg">{formatPrice(base)}</span>
+                              <span className="mt-1 block text-[10px] leading-none text-muted sm:text-xs">{t("pricing.master") || "Master"}</span>
                             </div>
-                            <div className="border-t border-border/50 pt-2">
-                              <span className="block text-base font-semibold leading-none text-milk">{formatPrice(top)}</span>
-                              <span className="mt-1 block text-xs text-muted">{t("pricing.topMaster") || "Top Master"}</span>
+                            <div className="border-t border-border/50 pt-1.5 sm:pt-2">
+                              <span className="block text-sm font-semibold leading-none text-milk sm:text-base">{formatPrice(top)}</span>
+                              <span className="mt-1 block text-[10px] leading-none text-muted sm:text-xs">{t("pricing.topMaster") || "Top Master"}</span>
                             </div>
                           </>
                         ) : (

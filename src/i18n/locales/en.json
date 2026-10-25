@@ -609,7 +609,7 @@
     "location": "NUAR · Warsaw",
     "discount": "Currently up to -{{percent}}% off",
     "priceList": "Pricing",
-    "book": "Book on Booksy",
+    "book": "Book",
     "backToServices": "← All services",
     "navLabel": "Service page navigation"
   },
