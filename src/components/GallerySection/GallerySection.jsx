@@ -35,7 +35,7 @@ export default function GallerySection() {
       <section id="gallery" className="bg-canvas py-14 md:py-16">
         <Container>
           <ScrollAnimationWrapper>
-            <div className="mx-auto max-w-3xl">
+            <div className="mx-auto max-w-5xl">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                   <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-gold">
@@ -49,13 +49,13 @@ export default function GallerySection() {
               </div>
 
               <div className="mt-6 overflow-hidden rounded-card border border-border/50 bg-card shadow-spa ring-1 ring-gold/[0.06]">
-                <div className="grid h-[17.5rem] grid-cols-3 grid-rows-3 gap-[3px] bg-border/40 p-[3px] sm:h-[21rem] sm:gap-1 sm:p-1 md:h-[23rem]">
+                <div className="grid auto-rows-[112px] grid-cols-2 gap-[3px] bg-border/40 p-[3px] sm:auto-rows-[150px] sm:grid-cols-3 sm:gap-1 sm:p-1 lg:auto-rows-[175px]">
                   {galleryImages.map((image, index) => (
                     <button
-                      key={image.src}
+                      key={`${image.src}-${index}`}
                       type="button"
                       onClick={() => setActiveIndex(index)}
-                      className={`group relative overflow-hidden bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/50 ${index === 0 ? "col-span-2 row-span-2" : ""}`}
+                      className={`group relative min-h-0 overflow-hidden bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-gold/50 ${index === 0 ? "col-span-2 row-span-2" : ""}`}
                       aria-label={t(`gallery.items.${image.altKey}`)}
                     >
                       <SiteImage

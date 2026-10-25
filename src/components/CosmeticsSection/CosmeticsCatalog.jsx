@@ -14,10 +14,10 @@ import {
 } from "./cosmeticsShared";
 
 const CATALOG_GRID_CLASSNAME =
-  "mt-10 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]";
+  "mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4 lg:gap-5 xl:grid-cols-[repeat(auto-fill,minmax(220px,1fr))]";
 
 const CATEGORY_GRID_CLASSNAME =
-  "mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3 md:flex md:flex-wrap md:gap-2";
+  "mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3 md:flex md:flex-wrap md:gap-2";
 
 function CategoryFilters({activeCategory, onSelect, t}) {
   return (
@@ -94,7 +94,7 @@ export default function CosmeticsCatalog() {
 
   return (
     <>
-      <ScrollAnimationWrapper delay={0.08} className="mt-10">
+      <ScrollAnimationWrapper delay={0.08} className="mt-6">
         <label className="block" htmlFor="cosmetics-search">
           <span className="sr-only">{t("cosmetics.searchLabel")}</span>
           <div className="relative max-w-xl">
