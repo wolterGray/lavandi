@@ -1,5 +1,6 @@
 const { mkdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const path = require("path");
+const { readSnapshot } = require("./seoBuildData.cjs");
 
 const ROOT = path.resolve(__dirname, "..");
 const DIST = path.join(ROOT, "dist");
@@ -7,55 +8,6 @@ const SITE_URL = "https://nuarr.pl";
 const HOME_TITLE = "Masaż Warszawa – NUAR | Masaż premium w centrum Warszawy";
 const HOME_DESCRIPTION =
   "Masaż premium w centrum Warszawy przy ul. Świętojerskiej 5/7. Wybierz masaż klasyczny, relaksacyjny, sportowy lub rytuał dla dwojga i zarezerwuj online.";
-
-function loadJson(relativePath) {
-  return JSON.parse(readFileSync(path.join(ROOT, relativePath), "utf8"));
-}
-
-function loadEnvFile(relativePath) {
-  const filePath = path.join(ROOT, relativePath);
-  if (!existsSync(filePath)) return;
-  for (const line of readFileSync(filePath, "utf8").split("\n")) {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
-    const separator = trimmed.indexOf("=");
-    if (separator < 1) continue;
-    const key = trimmed.slice(0, separator).trim();
-    const value = trimmed.slice(separator + 1).trim();
-    if (!process.env[key]) process.env[key] = value;
-  }
-}
-
-async function loadSeoContent() {
-  loadEnvFile(".env.production");
-  loadEnvFile(".env");
-  loadEnvFile(".env.local");
-
-  const fallback = {
-    services: loadJson("src/data/services.json"),
-    cosmetics: loadJson("src/data/cosmetics.json"),
-    productTexts: {},
-  };
-  const backendUrl = String(process.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
-  if (!backendUrl) return fallback;
-
-  try {
-    const response = await fetch(`${backendUrl}/api/public/site-content`);
-    if (!response.ok) return fallback;
-    const overrides = (await response.json())?.data?.overrides;
-    return {
-      services: Array.isArray(overrides?.services) && overrides.services.length ? overrides.services : fallback.services,
-      cosmetics: Array.isArray(overrides?.cosmetics) && overrides.cosmetics.length ? overrides.cosmetics : fallback.cosmetics,
-      productTexts:
-        overrides?.locales?.pl?.cosmeticsProducts?.products ||
-        overrides?.locales?.pl?.cosmetics?.products ||
-        {},
-    };
-  } catch (error) {
-    console.warn(`SEO prerender: CRM content unavailable (${error.message}); using local fallback`);
-    return fallback;
-  }
-}
 
 function escapeHtml(value = "") {
   return String(value)
@@ -134,11 +86,34 @@ function productText(product, productTexts) {
   };
 }
 
+function uniqueProductCopies(cosmetics, productTexts) {
+  const copies = cosmetics.map((product) => ({ product, copy: productText(product, productTexts) }));
+  const nameCounts = new Map();
+  copies.forEach(({ copy }) => {
+    const key = copy.name.toLocaleLowerCase("pl");
+    nameCounts.set(key, (nameCounts.get(key) || 0) + 1);
+  });
+  return copies.map(({ product, copy }) => {
+    const duplicate = nameCounts.get(copy.name.toLocaleLowerCase("pl")) > 1;
+    return {
+      product,
+      copy: {
+        ...copy,
+        heading: duplicate ? `${copy.name} (${product.id})` : copy.name,
+        title: duplicate
+          ? `${copy.name} (${product.id}) – Katalog NUAR Warszawa`
+          : `${copy.name} – Katalog NUAR Warszawa`,
+      },
+    };
+  });
+}
+
 async function main() {
   const templatePath = path.join(DIST, "index.html");
   if (!existsSync(templatePath)) throw new Error("dist/index.html does not exist; run Vite first");
   const template = readFileSync(templatePath, "utf8");
-  const { services, cosmetics, productTexts } = await loadSeoContent();
+  const { services, cosmetics, productTexts, source } = readSnapshot();
+  const productCopies = uniqueProductCopies(cosmetics, productTexts);
   const serviceLinks = services.map((service) => ({ href: `/uslugi/${service.slug}`, label: service.title }));
 
   writeRoute("/", renderPage(template, {
@@ -199,24 +174,50 @@ async function main() {
     title: catalogTitle,
     description: catalogDescription,
     canonical: `${SITE_URL}/katalog`,
-    markup: fallbackMarkup({ heading: "Katalog produktów NUAR", text: catalogDescription, links: [{ href: "/", label: "Strona główna" }] }),
+    markup: fallbackMarkup({
+      heading: "Katalog produktów NUAR",
+      text: catalogDescription,
+      links: [
+        ...productCopies.map(({ product, copy }) => ({ href: `/katalog/${product.id}`, label: copy.heading })),
+        { href: "/", label: "Strona główna" },
+      ],
+    }),
+    schema: {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      name: "Katalog produktów NUAR",
+      itemListElement: productCopies.map(({ product, copy }, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: copy.heading,
+        url: `${SITE_URL}/katalog/${product.id}`,
+      })),
+    },
   }));
 
-  for (const product of cosmetics) {
-    if (!product?.id) continue;
-    const copy = productText(product, productTexts);
+  for (const { product, copy } of productCopies) {
     const canonical = `${SITE_URL}/katalog/${product.id}`;
     writeRoute(`/katalog/${product.id}`, renderPage(template, {
-      title: `${copy.name} – Katalog NUAR Warszawa`,
+      title: copy.title,
       description: copy.description,
       canonical,
       image: absoluteUrl(product.image || product.img || product.images?.[0]),
       markup: fallbackMarkup({
         eyebrow: "Katalog NUAR",
-        heading: copy.name,
+        heading: copy.heading,
         text: copy.description,
         links: [{ href: "/katalog", label: "Wróć do katalogu" }],
       }),
+      schema: {
+        "@context": "https://schema.org",
+        "@type": "Product",
+        name: copy.heading,
+        description: copy.description,
+        image: absoluteUrl(product.image || product.img || product.images?.[0]),
+        url: canonical,
+        sku: String(product.id),
+        brand: { "@type": "Brand", name: product.brand || "NUAR" },
+      },
     }));
   }
 
@@ -236,7 +237,7 @@ async function main() {
     markup: fallbackMarkup({ heading: "Strona nie została znaleziona", text: "Sprawdź adres lub wróć na stronę główną.", links: [{ href: "/", label: "Strona główna" }] }),
   }));
 
-  console.log(`SEO prerender: home, booking, catalog, ${services.length} services, ${cosmetics.length} products`);
+  console.log(`SEO prerender: home, booking, catalog, ${services.length} services, ${cosmetics.length} products from ${source}`);
 }
 
 main().catch((error) => {

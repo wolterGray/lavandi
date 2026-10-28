@@ -4,23 +4,10 @@
  */
 const fs = require("fs");
 const path = require("path");
+const { readSnapshot } = require("./seoBuildData.cjs");
 
 const ROOT = path.resolve(__dirname, "..");
 const LANGS = ["pl", "en", "uk"];
-
-function loadEnvFile(filePath) {
-  if (!fs.existsSync(filePath)) return;
-  const text = fs.readFileSync(filePath, "utf8");
-  text.split("\n").forEach((line) => {
-    const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) return;
-    const eq = trimmed.indexOf("=");
-    if (eq === -1) return;
-    const key = trimmed.slice(0, eq).trim();
-    const value = trimmed.slice(eq + 1).trim();
-    if (!process.env[key]) process.env[key] = value;
-  });
-}
 
 function readJson(relativePath) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, relativePath), "utf8"));
@@ -76,27 +63,7 @@ function mergeMemberEntry(existing = {}, patch = {}) {
 }
 
 async function main() {
-  loadEnvFile(path.join(ROOT, ".env.production"));
-
-  const backendUrl = String(process.env.VITE_CRM_BACKEND_URL || "").replace(/\/$/, "");
-
-  if (!backendUrl) {
-    console.log("sync-locales: skip (CRM backend env not set)");
-    return;
-  }
-
-  const response = await fetch(`${backendUrl}/api/public/site-content`);
-
-  if (!response.ok) {
-    console.warn("sync-locales: fetch failed:", response.status, response.statusText);
-    return;
-  }
-
-  const payload = await response.json();
-  const overrides =
-    payload?.data?.overrides && typeof payload.data.overrides === "object"
-      ? payload.data.overrides
-      : null;
+  const { overrides } = readSnapshot();
   if (!overrides) {
     console.log("sync-locales: no CMS overrides, locale JSON unchanged");
     return;

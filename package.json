@@ -8,13 +8,15 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run sync-locales && npm run generate-seo && vite build && npm run prerender-seo",
+    "build": "npm run prepare-seo && npm run sync-locales && npm run generate-seo && vite build && npm run prerender-seo && npm run verify-seo",
+    "prepare-seo": "node scripts/prepareSeoSnapshot.cjs",
     "sync-locales": "node scripts/syncLocalesFromSupabase.cjs",
     "generate-seo": "node scripts/generateSeoFiles.cjs",
     "prerender-seo": "node scripts/generateStaticSeoPages.cjs",
+    "verify-seo": "node scripts/verifySeoBuild.cjs",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run generate-seo && npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
