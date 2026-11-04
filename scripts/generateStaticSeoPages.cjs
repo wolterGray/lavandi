@@ -42,7 +42,7 @@ function replaceHead(html, { title, description, canonical, image, robots = "ind
     `<meta property="og:image" content="${escapeHtml(image || `${SITE_URL}/og-image.jpg`)}">`,
     `<meta property="og:locale" content="pl_PL">`,
     `<meta name="twitter:card" content="summary_large_image">`,
-    schema ? `<script type="application/ld+json">${jsonLd(schema)}</script>` : "",
+    schema ? `<script type="application/ld+json" data-react-helmet="true">${jsonLd(schema)}</script>` : "",
   ].filter(Boolean).join("\n  ");
 
   return html
@@ -106,6 +106,67 @@ function uniqueProductCopies(cosmetics, productTexts) {
       },
     };
   });
+}
+
+const PRODUCT_CATEGORY_LABELS_PL = {
+  "candles-aroma": "Świece i aromaty",
+  "pro-cosmetics": "Kosmetyki profesjonalne",
+  "supplements": "Suplementy diety",
+  "anti-cellulite": "Pielęgnacja antycellulitowa",
+  "gift-certificates": "Bony podarunkowe",
+  "nuar-premium": "Produkty premium NUAR",
+};
+
+const LEGACY_CATEGORY_MAP = {
+  oils: "pro-cosmetics",
+  balms: "pro-cosmetics",
+  creams: "pro-cosmetics",
+  scrubs: "anti-cellulite",
+  aroma: "candles-aroma",
+  candles: "candles-aroma",
+  incense: "candles-aroma",
+  home: "supplements",
+  "home-spa": "supplements",
+  wraps: "anti-cellulite",
+};
+
+function getProductCategoryLabelPl(product) {
+  const rawList = Array.isArray(product?.categories) && product.categories.length
+    ? product.categories
+    : product?.category != null && String(product.category).trim()
+      ? [product.category]
+      : [];
+
+  const normalized = rawList
+    .map((key) => {
+      const trimmed = String(key ?? "").trim();
+      return PRODUCT_CATEGORY_LABELS_PL[trimmed] ? trimmed : (LEGACY_CATEGORY_MAP[trimmed] || "pro-cosmetics");
+    })
+    .filter((key, idx, arr) => arr.indexOf(key) === idx);
+
+  const keys = normalized.length ? normalized : ["pro-cosmetics"];
+  return keys.map((key) => PRODUCT_CATEGORY_LABELS_PL[key] || "Kosmetyki profesjonalne").join(" · ");
+}
+
+function getProductPriceNumber(value) {
+  const raw = String(value ?? "").trim().replace(/\s+/g, " ");
+  if (!raw) return null;
+  const match = raw.match(/^(\d+(?:[.,]\d{1,2})?)\s*(?:zł|zl|pln)?$/iu);
+  if (!match) return null;
+  const normalized = match[1].replace(",", ".");
+  const num = Number(normalized);
+  return Number.isFinite(num) ? num : null;
+}
+
+function getProductSchemaAvailability(product) {
+  if (product?.availabilityStatus === "coming-soon") {
+    return "https://schema.org/PreOrder";
+  }
+  const stock = Number.parseInt(String(product?.stock ?? "").trim(), 10);
+  if (Number.isFinite(stock) && stock <= 0) {
+    return "https://schema.org/OutOfStock";
+  }
+  return "https://schema.org/InStock";
 }
 
 async function main() {
@@ -197,6 +258,34 @@ async function main() {
 
   for (const { product, copy } of productCopies) {
     const canonical = `${SITE_URL}/katalog/${product.id}`;
+    const priceValue = getProductPriceNumber(product.price);
+    const categoryLabel = getProductCategoryLabelPl(product);
+    const schema = {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: copy.heading,
+      description: copy.description,
+      image: absoluteUrl(product.image || product.img || product.images?.[0]),
+      url: canonical,
+      sku: String(product.id),
+      category: categoryLabel,
+      brand: { "@type": "Brand", name: product.brand || "NUAR" },
+      ...(priceValue == null ? {} : {
+        offers: {
+          "@type": "Offer",
+          url: canonical,
+          price: String(priceValue),
+          priceCurrency: "PLN",
+          availability: getProductSchemaAvailability(product),
+          itemCondition: "https://schema.org/NewCondition",
+          seller: {
+            "@type": "Organization",
+            name: "NUAR",
+          },
+        },
+      }),
+    };
+
     writeRoute(`/katalog/${product.id}`, renderPage(template, {
       title: copy.title,
       description: copy.description,
@@ -208,16 +297,7 @@ async function main() {
         text: copy.description,
         links: [{ href: "/katalog", label: "Wróć do katalogu" }],
       }),
-      schema: {
-        "@context": "https://schema.org",
-        "@type": "Product",
-        name: copy.heading,
-        description: copy.description,
-        image: absoluteUrl(product.image || product.img || product.images?.[0]),
-        url: canonical,
-        sku: String(product.id),
-        brand: { "@type": "Brand", name: product.brand || "NUAR" },
-      },
+      schema,
     }));
   }
 
