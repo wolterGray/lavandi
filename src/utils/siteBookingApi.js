@@ -6,6 +6,7 @@ async function publicSiteBookingRequest(path, body, options = {}) {
   }
 
   const response = await fetch(`${BACKEND_URL}${path}`, {
+    cache: "no-store",
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -32,7 +33,7 @@ export async function fetchSiteBookingMasters(availabilityFallback) {
   if (!BACKEND_URL) return { masters: [] };
 
   try {
-    const response = await fetch(`${BACKEND_URL}/api/public/site-booking-masters`);
+    const response = await fetch(`${BACKEND_URL}/api/public/site-booking-masters`, { cache: "no-store" });
     const payload = await response.json().catch(() => null);
     if (response.ok && payload?.success !== false) {
       return payload?.data ?? payload;

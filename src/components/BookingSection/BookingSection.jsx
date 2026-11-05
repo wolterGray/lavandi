@@ -560,8 +560,11 @@ export default function BookingSection({ isStandalone = false }) {
     }
   };
   const resetAfterSuccess = () => {
+    setSlots([]);
+    setSlotsError("");
     setSubmitState({ error: "", loading: false, success: false }); setStep(1);
     setForm((current) => ({ ...current, clientEmail: "", clientName: "", clientPhone: "", note: "", preferredTime: "" }));
+    setAvailabilityVersion((current) => current + 1);
   };
   const formattedDate = form.preferredDate ? new Intl.DateTimeFormat(LOCALES[lang] ?? LOCALES.pl, { day: "numeric", month: "long", year: "numeric" }).format(fromInputDate(form.preferredDate)) : "";
   const Shell = isStandalone ? "div" : ScrollAnimationWrapper;
