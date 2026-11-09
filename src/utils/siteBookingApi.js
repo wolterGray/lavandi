@@ -17,7 +17,10 @@ async function publicSiteBookingRequest(path, body, options = {}) {
   const payload = await response.json().catch(() => null);
 
   if (!response.ok || payload?.success === false) {
-    throw new Error(payload?.error || "Site booking request failed");
+    const error = new Error(payload?.error || "Site booking request failed");
+    error.status = response.status;
+    error.retryAfter = Number(payload?.retryAfter || response.headers.get("Retry-After")) || null;
+    throw error;
   }
 
   return payload?.data ?? payload;
